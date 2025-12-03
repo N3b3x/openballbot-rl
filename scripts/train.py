@@ -7,10 +7,20 @@ import random
 import os
 import argparse
 import shutil
+import platform
+import multiprocessing as mp
+
+# Set multiprocessing start method for macOS compatibility
+if platform.system() == 'Darwin':  # macOS
+    try:
+        mp.set_start_method('spawn', force=True)
+    except RuntimeError:
+        # Already set, ignore
+        pass
 
 import yaml
 from stable_baselines3 import PPO
-from stable_baselines3.common.vec_env import SubprocVecEnv, VecNormalize
+from stable_baselines3.common.vec_env import SubprocVecEnv, DummyVecEnv, VecNormalize
 from stable_baselines3.common.callbacks import CallbackList, CheckpointCallback, EvalCallback
 from stable_baselines3.common.noise import VectorizedActionNoise, NormalActionNoise
 from stable_baselines3.common.logger import configure
@@ -65,15 +75,45 @@ def main(config, seed):
 
     N_ENVS = int(config["num_envs"])
 
-    vec_env = SubprocVecEnv([
-        make_ballbot_env(terrain_type=config["problem"]["terrain_type"],
-                         seed=seed) for _ in range(N_ENVS)
-    ])
-    eval_env = SubprocVecEnv([
-        make_ballbot_env(terrain_type=config["problem"]["terrain_type"],
-                         seed=seed + N_ENVS + env_i,
-                         eval_env=True) for env_i in range(N_ENVS)
-    ])
+    # Use DummyVecEnv on macOS by default to avoid multiprocessing issues
+    # SubprocVecEnv can hang on macOS due to multiprocessing and MuJoCo initialization
+    use_subproc = config.get("use_subproc_vec_env", platform.system() != 'Darwin')
+    if use_subproc:
+        VecEnvClass = SubprocVecEnv
+        print(colored("Using SubprocVecEnv (multi-process)", "cyan"))
+    else:
+        VecEnvClass = DummyVecEnv
+        print(colored("Using DummyVecEnv (single process) for compatibility", "yellow"))
+
+    try:
+        vec_env = VecEnvClass([
+            make_ballbot_env(terrain_type=config["problem"]["terrain_type"],
+                             seed=seed) for _ in range(N_ENVS)
+        ])
+        eval_env = VecEnvClass([
+            make_ballbot_env(terrain_type=config["problem"]["terrain_type"],
+                             seed=seed + N_ENVS + env_i,
+                             eval_env=True) for env_i in range(N_ENVS)
+        ])
+    except Exception as e:
+        if VecEnvClass == SubprocVecEnv:
+            print(colored(
+                f"SubprocVecEnv failed: {e}. Falling back to DummyVecEnv (single process).",
+                "yellow",
+                attrs=["bold"]
+            ))
+            VecEnvClass = DummyVecEnv
+            vec_env = VecEnvClass([
+                make_ballbot_env(terrain_type=config["problem"]["terrain_type"],
+                                 seed=seed) for _ in range(N_ENVS)
+            ])
+            eval_env = VecEnvClass([
+                make_ballbot_env(terrain_type=config["problem"]["terrain_type"],
+                                 seed=seed + N_ENVS + env_i,
+                                 eval_env=True) for env_i in range(N_ENVS)
+            ])
+        else:
+            raise
 
     device = "cuda"
     if not config["resume"]:

@@ -14,6 +14,26 @@ Here are some navigation examples from a trained policy on four different, *rand
 
 Note that in the above, eval episodes `1, 2, 3` are `4000` timesteps long, while episode `4` is `10000` steps long. The policy has been trained with a maximum of `4000` steps, therefore, this last evaluation can bee seen as a demonstration of generalization capability. 
 
+## 📚 Comprehensive Documentation
+
+**New!** We've created extensive documentation that connects the research papers to the implementation. Start with the [Documentation README](docs/README.md) for a complete guide.
+
+### Quick Links
+
+- **[Research Timeline](docs/01_research_timeline.md)** 📅 - Traces the evolution from 2006 ballbot prototype to 2025 RL navigation system, with summaries of each foundational paper
+- **[Mechanics to RL Guide](docs/02_mechanics_to_rl.md)** 🔬 - Shows how Lagrangian dynamics translate into RL reward functions, with complete mathematical derivations
+- **[Environment & RL Workflow](docs/03_environment_and_rl.md)** 🏗️ - Step-by-step implementation guide covering MuJoCo setup, training, and evaluation
+
+### Research Papers
+
+All referenced papers are stored in `research_papers/`:
+- Lauwers et al. (2006) - Original ballbot prototype
+- Nagarajan et al. (2014) - Lagrangian dynamics and control
+- Carius et al. (2022) - Constraint-aware control theory
+- Salehi (2025) - Complete RL navigation system (this repository)
+
+See the [Documentation README](docs/README.md) for recommended reading paths and learning objectives.
+
 ## Warning!
 
 Omniwheels are simulated using capsules with anisotropic friction. This requires a fix that is not (yet) part of the official MuJoCo release. Therefore, you **must** apply the provided patch
