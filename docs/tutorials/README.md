@@ -72,7 +72,15 @@ This tutorial series provides deep, practical knowledge for building reinforceme
 
 ### **Implementation Series**
 
-6. **[Camera Rendering in MuJoCo](07_camera_rendering_in_mujoco.md)** ✅
+6. **[Environment Wrappers and Vectorization](06_environment_wrappers.md)** ✅
+   - What are environment wrappers and why use them
+   - Common wrappers: Monitor, TimeLimit, ClipAction, NormalizeObservation
+   - Vectorized environments: DummyVecEnv vs. SubprocVecEnv
+   - Monitoring and logging training statistics
+   - Wrapper chaining and best practices
+   - Real-world example: Ballbot training setup
+
+7. **[Camera Rendering in MuJoCo](07_camera_rendering_in_mujoco.md)** ✅
    - RGB, Depth, and Segmentation rendering
    - Camera configuration in XML
    - Multi-camera setups
@@ -87,7 +95,24 @@ This tutorial series provides deep, practical knowledge for building reinforceme
    - Real-world example: Ballbot state extraction
    - Best practices and common pitfalls
 
-8. **[Multi-Modal Observation Fusion](10_multimodal_fusion.md)** ✅
+8. **[Working with MuJoCo Simulation State](08_working_with_mujoco_simulation_state.md)** ✅
+   - MuJoCo Model & Data architecture
+   - Accessing positions, velocities, orientations
+   - State estimation techniques (finite difference, matrix logarithm)
+   - Sensor timing & asynchronous updates
+   - Real-world example: Ballbot state extraction
+   - Best practices and common pitfalls
+
+9. **[Hyperparameter Tuning for PPO](09_hyperparameter_tuning.md)** ✅
+   - Understanding PPO hyperparameters and their impact
+   - Learning rate, clip range, entropy coefficient, and more
+   - Tuning strategies: manual, random search, Bayesian optimization
+   - Ballbot-specific considerations and recommendations
+   - Systematic tuning process and common configurations
+   - Monitoring and evaluation metrics
+   - Troubleshooting common hyperparameter issues
+
+10. **[Multi-Modal Observation Fusion](10_multimodal_fusion.md)** ✅
    - Combining proprioceptive and exteroceptive observations
    - Early vs. late fusion strategies
    - Feature extraction design for different modalities
@@ -97,7 +122,7 @@ This tutorial series provides deep, practical knowledge for building reinforceme
    - Normalization across modalities
    - Best practices and common pitfalls
 
-9. **[Debugging & Visualization](11_debugging_visualization.md)** ✅
+11. **[Debugging & Visualization](11_debugging_visualization.md)** ✅
    - Understanding training logs and metrics
    - Visualizing training progress
    - Analyzing loss components
@@ -109,7 +134,7 @@ This tutorial series provides deep, practical knowledge for building reinforceme
    - Modern tools: W&B, TensorBoard, MLflow
    - Advanced visualization techniques
 
-10. **[Sim-to-Real Transfer](12_sim_to_real_transfer.md)** ✅
+12. **[Sim-to-Real Transfer](12_sim_to_real_transfer.md)** ✅
    - The reality gap and how to minimize it
    - Domain randomization techniques
    - Sensor noise modeling (IMU, cameras, encoders)
@@ -118,7 +143,7 @@ This tutorial series provides deep, practical knowledge for building reinforceme
    - Deployment checklist and best practices
    - Real-world example: Ballbot transfer
 
-11. **[Complete Training Pipeline](13_complete_training_guide.md)** ✅
+13. **[Complete Training Pipeline](13_complete_training_guide.md)** ✅
    - End-to-end training workflow
    - Prerequisites and setup
    - Configuration and hyperparameters
@@ -127,7 +152,7 @@ This tutorial series provides deep, practical knowledge for building reinforceme
    - Troubleshooting common issues
    - Complete workflow example
 
-12. **[Curriculum Learning](14_curriculum_learning.md)** ✅
+14. **[Curriculum Learning](14_curriculum_learning.md)** ✅
    - What is curriculum learning and why it works
    - Curriculum design principles
    - Difficulty metrics and measurement
@@ -136,7 +161,7 @@ This tutorial series provides deep, practical knowledge for building reinforceme
    - Real-world example: Ballbot curriculum
    - Advanced techniques
 
-13. **[Terrain Generation](15_terrain_generation.md)** ✅
+15. **[Terrain Generation](15_terrain_generation.md)** ✅
    - Procedural terrain generation with Perlin noise
    - Perlin noise fundamentals
    - Terrain generation parameters (scale, octaves, persistence)
@@ -187,11 +212,11 @@ Throughout these tutorials, we use the **Ballbot RL** project as our primary exa
 - Learns directional locomotion via RL
 
 **Key Files:**
-- `ballbotgym/ballbotgym/bbot_env.py` - Main environment implementation
-- `ballbotgym/ballbotgym/terrain.py` - Terrain generation
-- `ballbotgym/ballbotgym/Rewards.py` - Reward functions
-- `policies/policies.py` - Multi-modal feature extractor
-- `utils/plotting_tools.py` - Training visualization tools
+- `ballbot_gym/bbot_env.py` - Main environment implementation
+- `ballbot_gym/terrain.py` - Terrain generation
+- `ballbot_gym/Rewards.py` - Reward functions
+- `ballbot_rl/policies/policies.py` - Multi-modal feature extractor
+- `ballbot_rl/training/plotting_tools.py` - Training visualization tools
 
 ---
 

@@ -561,7 +561,7 @@ from gymnasium.envs.registration import register
 
 register(
     id="Ballbot-v0.1",
-    entry_point="ballbotgym.ballbotgym.bbot_env:BBotSimulation",
+    entry_point="ballbot_gym.ballbot_gym.bbot_env:BBotSimulation",
     max_episode_steps=4000,
     kwargs={
         "xml_path": "path/to/bbot.xml",
@@ -577,13 +577,13 @@ env = gym.make("Ballbot-v0.1")
 ```python
 register(
     id="Ballbot-v0",
-    entry_point="ballbotgym.ballbotgym.bbot_env:BBotSimulation",
+    entry_point="ballbot_gym.ballbot_gym.bbot_env:BBotSimulation",
     max_episode_steps=4000,
 )
 
 register(
     id="Ballbot-v1",
-    entry_point="ballbotgym.ballbotgym.bbot_env:BBotSimulation",
+    entry_point="ballbot_gym.ballbot_gym.bbot_env:BBotSimulation",
     max_episode_steps=5000,  # Different max steps
 )
 ```
@@ -592,10 +592,10 @@ register(
 ```python
 # setup.py
 setup(
-    name="ballbotgym",
+    name="ballbot_gym",
     entry_points={
         "gymnasium.envs": [
-            "Ballbot-v0.1=ballbotgym.ballbotgym.bbot_env:BBotSimulation",
+            "Ballbot-v0.1=ballbot_gym.ballbot_gym.bbot_env:BBotSimulation",
         ],
     },
 )
@@ -717,6 +717,36 @@ Reward: Directional progress + stability + efficiency
 
 ---
 
+## 🎯 Next Steps
+
+Now that you understand Gymnasium basics, here's what to explore next:
+
+### Related Tutorials
+- **[Action Spaces in RL](02_action_spaces_in_rl.md)** - Learn how actions are defined and structured
+- **[Observation Spaces in RL](03_observation_spaces_in_rl.md)** - Understand what agents observe
+- **[Reward Design](04_reward_design_for_robotics.md)** - Design effective reward functions
+
+### Practical Examples
+- **[Basic Usage Example](../../examples/01_basic_usage.py)** - Run your first environment
+- **[Custom Reward Example](../../examples/02_custom_reward.py)** - Create custom rewards
+- **[Training Workflow](../../examples/05_training_workflow.py)** - Complete training example
+
+### Concepts to Explore
+- **[RL Fundamentals](../concepts/rl_fundamentals.md)** - MDP formulation and RL basics
+- **[Ballbot Mechanics](../concepts/ballbot_mechanics.md)** - Physics and dynamics
+- **[Architecture Overview](../architecture/README.md)** - System design
+
+### Research Papers
+- **[Research Timeline](../research/timeline.md)** - Historical context
+- **[Code Mapping](../research/code_mapping.md)** - Papers → code connections
+
+**Prerequisites for Next Tutorial:**
+- Understanding of Gymnasium API (this tutorial)
+- Basic Python knowledge
+- Familiarity with NumPy arrays
+
+---
+
 ## 📚 Further Reading
 
 ### Documentation
@@ -727,7 +757,7 @@ Reward: Directional progress + stability + efficiency
 - **Brockman et al. (2016)** - "OpenAI Gym" - Original Gym paper
 
 ### Code Examples
-- Ballbot environment: `ballbotgym/ballbotgym/bbot_env.py`
+- Ballbot environment: `ballbot_gym/bbot_env.py`
 - Gymnasium examples: [GitHub](https://github.com/Farama-Foundation/Gymnasium)
 
 ---

@@ -662,7 +662,7 @@ class MultiViewRenderer:
 - **Tassa et al. (2018)** - "Control Suite" - Vision-based control
 
 ### Code Examples
-- Ballbot RGB-D system: `ballbotgym/ballbotgym/bbot_env.py` - `RGBDInputs` class
+- Ballbot RGB-D system: `ballbot_gym/bbot_env.py` - `RGBDInputs` class
 
 ---
 

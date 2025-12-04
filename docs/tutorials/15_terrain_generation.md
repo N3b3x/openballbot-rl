@@ -596,8 +596,8 @@ def load_real_terrain(heightmap_path):
 
 ### Code References
 
-- `ballbotgym/ballbotgym/terrain.py` - Terrain generation implementation
-- `ballbotgym/ballbotgym/bbot_env.py` - Terrain usage in environment
+- `ballbot_gym/terrain.py` - Terrain generation implementation
+- `ballbot_gym/bbot_env.py` - Terrain usage in environment
 
 ---
 

@@ -753,6 +753,36 @@ class ActionChunking:
 
 ---
 
+## 🎯 Next Steps
+
+Now that you understand action spaces, here's what to explore next:
+
+### Related Tutorials
+- **[Observation Spaces in RL](03_observation_spaces_in_rl.md)** - Learn how observations complement actions
+- **[Reward Design](04_reward_design_for_robotics.md)** - Design rewards that work with your action space
+- **[Actor-Critic Methods](05_actor_critic_methods.md)** - See how policies output actions
+
+### Practical Examples
+- **[Basic Usage Example](../../examples/01_basic_usage.py)** - See actions in action
+- **[Custom Policy Example](../../examples/04_custom_policy.py)** - Custom action outputs
+- **[Training Workflow](../../examples/05_training_workflow.py)** - Full training with actions
+
+### Concepts to Explore
+- **[RL Fundamentals](../concepts/rl_fundamentals.md)** - MDP action space formulation
+- **[Reward Design](../concepts/reward_design.md)** - How actions affect rewards
+- **[Architecture Overview](../architecture/README.md)** - Action space in system design
+
+### Research Papers
+- **[Research Timeline](../research/timeline.md)** - How action spaces evolved
+- **[Code Mapping](../research/code_mapping.md)** - Action space implementation
+
+**Prerequisites for Next Tutorial:**
+- Understanding of action spaces (this tutorial)
+- Basic Gymnasium knowledge
+- Familiarity with continuous control
+
+---
+
 ## 📚 Further Reading
 
 ### Papers
@@ -772,7 +802,7 @@ class ActionChunking:
 - **Sutton & Barto** - "Reinforcement Learning: An Introduction" - Chapter 3: Finite Markov Decision Processes
 
 ### Code Examples
-- Ballbot environment: `ballbotgym/ballbotgym/bbot_env.py`
+- Ballbot environment: `ballbot_gym/bbot_env.py`
 - Stable-Baselines3: Continuous action policies
 
 ---

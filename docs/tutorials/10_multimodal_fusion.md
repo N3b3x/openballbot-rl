@@ -646,7 +646,7 @@ features = torch.cat([f_proprio, attended_vision], dim=1)
 
 ## 🤖 Real-World Example: Ballbot Extractor
 
-Let's walk through the complete `Extractor` class from `policies/policies.py`:
+Let's walk through the complete `Extractor` class from `ballbot_rl/policies/policies.py`:
 
 ### Class Structure
 
@@ -1208,8 +1208,8 @@ class HierarchicalAttention(nn.Module):
 
 ### Code References
 
-- `policies/policies.py` - Complete `Extractor` implementation
-- `ballbotgym/ballbotgym/bbot_env.py` - Observation building (`_get_obs` method)
+- `ballbot_rl/policies/policies.py` - Complete `Extractor` implementation
+- `ballbot_gym/bbot_env.py` - Observation building (`_get_obs` method)
 
 ---
 

@@ -1,0 +1,21 @@
+algo:
+  batch_sz: 256
+  clip_range: 0.015
+  ent_coef: 0.001
+  learning_rate: -1
+  n_epochs: 5
+  n_steps: 2048
+  name: ppo
+  normalize_advantage: false
+  target_kl: 0.3
+  vf_coef: 2.0
+  weight_decay: 0.01
+frozen_cnn: ../encoder_frozen/encoder_epoch_53
+hidden_sz: 128
+num_envs: 10
+out: ./log
+problem:
+  terrain_type: perlin
+resume: ''
+seed: 10
+total_timesteps: 10e6

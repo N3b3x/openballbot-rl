@@ -449,12 +449,12 @@ Where:
 ### Implementation Overview
 
 **MuJoCo Model:**
-- File: `ballbotgym/ballbotgym/assets/bbot.xml`
+- File: `ballbot_gym/assets/bbot.xml`
 - Defines: Ball, wheels, body, sensors, actuators
 - Uses: Anisotropic friction (patched MuJoCo)
 
 **Environment:**
-- File: `ballbotgym/ballbotgym/bbot_env.py`
+- File: `ballbot_gym/bbot_env.py`
 - Implements: Gymnasium API
 - Features: Terrain generation, cameras, rewards
 
@@ -621,12 +621,12 @@ reward = (
 
 - [Research Timeline](../01_research_timeline.md) - Historical context
 - [Mechanics to RL Guide](../02_mechanics_to_rl.md) - Physics details
-- [BallbotGym README](../../ballbotgym/README.md) - Implementation details
+- [BallbotGym README](../../ballbot_gym/README.md) - Implementation details
 
 ### Code References
 
-- `ballbotgym/ballbotgym/assets/bbot.xml` - MuJoCo model
-- `ballbotgym/ballbotgym/bbot_env.py` - Environment implementation
+- `ballbot_gym/assets/bbot.xml` - MuJoCo model
+- `ballbot_gym/bbot_env.py` - Environment implementation
 
 ---
 

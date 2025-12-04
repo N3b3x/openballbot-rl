@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ballbot-gym"
+version = "0.1.0"
+description = "Gymnasium environment for ballbot robot simulation"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "gymnasium>=0.28.0",
+    "numpy>=1.21.0",
+    "numpy-quaternion>=2022.4.3",
+    "matplotlib>=3.5.0",
+    "scipy>=1.9.0",
+    "opencv-python>=4.5.0",
+    "termcolor>=2.0.0",
+    # mujoco intentionally omitted - requires patched version
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["ballbot_gym"]

@@ -1,0 +1,171 @@
+# ============================================================================
+# PPO Training Configuration for Directional Navigation
+# ============================================================================
+# 
+# Proximal Policy Optimization (PPO) training configuration for learning
+# directional navigation on uneven terrain. This config references an
+# environment config that defines the problem (terrain + reward).
+#
+# Usage:
+#   python -m ballbot_rl.training.train --config configs/train/ppo_directional.yaml
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# ENVIRONMENT CONFIGURATION REFERENCE
+# ----------------------------------------------------------------------------
+# REQUIRED: Path to environment config file that defines terrain, reward,
+# camera, and environment settings. The system will load and merge this config.
+# 
+# Options:
+#   - "configs/env/perlin_directional.yaml"      (standard)
+#   - "configs/env/flat_directional.yaml"        (baseline)
+#   - "configs/env/perlin_directional_easy.yaml" (easier)
+#   - "configs/env/perlin_directional_hard.yaml" (harder)
+env_config: "configs/env/perlin_directional.yaml"
+
+# ----------------------------------------------------------------------------
+# ALGORITHM HYPERPARAMETERS
+# ----------------------------------------------------------------------------
+# PPO-specific hyperparameters that control learning behavior
+algo:
+  # Algorithm name (must match Stable-Baselines3 algorithm)
+  name: ppo
+  
+  # Entropy coefficient: Encourages exploration
+  # - Higher (0.01-0.1): More exploration, slower convergence
+  # - Lower (0.0001-0.001): Less exploration, faster convergence
+  # - Recommended: 0.001 for balanced exploration
+  ent_coef: 0.001
+  
+  # Clip range: PPO clipping parameter (epsilon)
+  # - Controls how much policy can change per update
+  # - Lower (0.01-0.02): Smaller updates, more stable
+  # - Higher (0.1-0.2): Larger updates, faster learning but less stable
+  # - Recommended: 0.015-0.02 for stable learning
+  clip_range: 0.015
+  
+  # Target KL divergence: Early stopping threshold
+  # - Stops optimization if KL divergence exceeds this value
+  # - Prevents policy from changing too much per update
+  # - Lower (0.1-0.2): Stricter, more conservative updates
+  # - Higher (0.3-0.5): More lenient, allows larger updates
+  # - Recommended: 0.3 for standard PPO
+  target_kl: 0.3
+  
+  # Value function coefficient: Weight for value loss
+  # - Balances policy improvement vs value estimation
+  # - Lower (0.5-1.0): Less emphasis on value learning
+  # - Higher (2.0-5.0): More emphasis on value learning
+  # - Recommended: 2.0 for stable value learning
+  vf_coef: 2.0
+  
+  # Learning rate: Step size for optimization
+  # - -1: Enables automatic learning rate scheduling (recommended)
+  # - Positive value: Fixed learning rate (e.g., 3e-4)
+  # - Recommended: -1 for adaptive learning rate
+  learning_rate: -1
+  
+  # N steps: Steps per environment before policy update
+  # - More steps: Better gradient estimates, slower updates
+  # - Fewer steps: Faster updates, noisier gradients
+  # - Must be divisible by batch_sz
+  # - Recommended: 2048 for standard PPO
+  n_steps: 2048
+  
+  # Weight decay: L2 regularization coefficient
+  # - Not part of standard PPO, but useful for preventing overfitting
+  # - Higher: More regularization, simpler policies
+  # - Lower: Less regularization, more complex policies
+  # - Recommended: 0.01 for regularization
+  weight_decay: 0.01
+  
+  # N epochs: Number of optimization epochs per update
+  # - More epochs: Better use of collected data, slower training
+  # - Fewer epochs: Faster training, less data reuse
+  # - Recommended: 3-10 epochs
+  n_epochs: 5
+  
+  # Batch size: Mini-batch size for optimization
+  # - Larger batches: More stable gradients, more memory
+  # - Smaller batches: Less memory, noisier gradients
+  # - Must divide n_steps evenly
+  # - Recommended: 64-512
+  batch_sz: 256
+  
+  # Normalize advantage: Whether to normalize advantages
+  # - true: Normalizes advantages to zero mean, unit variance
+  # - false: Uses raw advantages
+  # - Recommended: false for PPO (advantage normalization handled by GAE)
+  normalize_advantage: false
+
+# ----------------------------------------------------------------------------
+# POLICY ARCHITECTURE
+# ----------------------------------------------------------------------------
+# Defines the neural network architecture for the policy
+policy:
+  # Policy type: Network architecture
+  # Options: "mlp" (Multi-Layer Perceptron)
+  type: "mlp"
+  
+  config:
+    # Hidden sizes: Number of units in each hidden layer
+    # - More layers/units: More capacity, slower training
+    # - Fewer layers/units: Less capacity, faster training
+    # - Format: [layer1_size, layer2_size, ...]
+    # - Recommended: [128, 128, 128, 128] for standard MLP
+    hidden_sizes: [128, 128, 128, 128]
+    
+    # Activation function: Non-linearity between layers
+    # Options: "relu", "leaky_relu", "tanh", "elu"
+    # - "leaky_relu": Prevents dead neurons, good for deep networks
+    # - "relu": Standard, but can have dead neurons
+    # - Recommended: "leaky_relu" for deep networks
+    activation: "leaky_relu"
+
+# ----------------------------------------------------------------------------
+# TRAINING SETTINGS
+# ----------------------------------------------------------------------------
+# Global training parameters
+
+# Total timesteps: Total number of environment steps to train
+# - More timesteps: Better performance, longer training time
+# - Fewer timesteps: Faster training, potentially worse performance
+# - Format: 10e6 = 10,000,000 steps
+# - Recommended: 10e6 for good performance
+total_timesteps: 10e6
+
+# Frozen CNN: Path to pretrained encoder (if using visual observations)
+# - If specified, loads pretrained encoder and freezes its weights
+# - Useful for transfer learning or using pretrained visual features
+# - Empty string: No pretrained encoder (proprioceptive only)
+# - Example: "outputs/encoders/encoder_epoch_53"
+frozen_cnn: "outputs/encoders/encoder_epoch_53"
+
+# Hidden size: Size of hidden layers (if different from policy config)
+# - Used for feature extractors or additional network components
+# - Should match policy hidden_sizes if using consistent architecture
+hidden_sz: 128
+
+# Number of environments: Parallel environments for data collection
+# - More environments: Faster data collection, more memory
+# - Fewer environments: Slower data collection, less memory
+# - Recommended: 8-16 for good throughput
+num_envs: 10
+
+# Resume: Path to checkpoint to resume training from
+# - Empty string: Start new training
+# - Path to .zip: Resume from checkpoint
+# - Useful for continuing interrupted training
+resume: ""
+
+# Output directory: Where to save training artifacts
+# - Empty string: Auto-generated in outputs/experiments/runs/ with timestamp
+# - Custom path: Save to specified directory
+# - Recommended: "" for automatic naming
+out: ""
+
+# Seed: Random seed for reproducibility
+# - Same seed: Reproducible results
+# - Different seeds: Different random initialization
+# - Recommended: Fixed seed (e.g., 10) for reproducibility
+seed: 10

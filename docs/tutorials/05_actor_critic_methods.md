@@ -1089,6 +1089,36 @@ for param, target_param in zip(critic.parameters(), critic_target.parameters()):
 
 ---
 
+## 🎯 Next Steps
+
+Now that you understand Actor-Critic methods, here's what to explore next:
+
+### Related Tutorials
+- **[Complete Training Guide](13_complete_training_guide.md)** - Full PPO training workflow
+- **[Multi-Modal Fusion](10_multimodal_fusion.md)** - Actor-Critic with multi-modal inputs
+- **[Debugging & Visualization](11_debugging_visualization.md)** - Monitor Actor-Critic training
+
+### Practical Examples
+- **[Training Workflow](../../examples/05_training_workflow.py)** - Complete PPO training example
+- **[Configuration Examples](../../examples/06_configuration_examples.py)** - Configure PPO hyperparameters
+- **[Custom Policy Example](../../examples/04_custom_policy.py)** - Custom Actor-Critic architecture
+
+### Concepts to Explore
+- **[RL Fundamentals](../concepts/rl_fundamentals.md)** - MDP formulation and policy learning
+- **[Design Decisions](../architecture/design_decisions.md)** - Why PPO was chosen
+- **[Code Walkthrough](../api/code_walkthrough.md)** - Actor-Critic implementation details
+
+### Research Papers
+- **[Research Timeline](../research/timeline.md)** - Evolution of Actor-Critic methods
+- **[Code Mapping](../research/code_mapping.md)** - PPO implementation details
+
+**Prerequisites for Next Tutorial:**
+- Understanding of Actor-Critic (this tutorial)
+- Basic RL knowledge
+- Familiarity with neural networks
+
+---
+
 ## 📚 Further Reading
 
 ### Papers

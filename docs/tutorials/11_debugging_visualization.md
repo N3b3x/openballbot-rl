@@ -158,12 +158,12 @@ print(f"Max reward: {max(episode_rewards)}")
 
 ### Using Built-in Plotting Tools
 
-The project includes `utils/plotting_tools.py` for visualizing training:
+The project includes `ballbot_rl/training/plotting_tools.py` for visualizing training:
 
 #### 1. Training vs. Evaluation Progress
 
 ```bash
-python3 ../utils/plotting_tools.py \
+python3 ../ballbot_rl/training/plotting_tools.py \
     --csv log/progress.csv \
     --config log/config.yaml \
     --plot_train
@@ -183,7 +183,7 @@ python3 ../utils/plotting_tools.py \
 #### 2. Loss Component Analysis
 
 ```bash
-python3 ../utils/plotting_tools.py \
+python3 ../ballbot_rl/training/plotting_tools.py \
     --csv log/progress.csv \
     --config log/config.yaml
 ```
@@ -963,8 +963,8 @@ wandb.log({
 
 # Log images (camera frames)
 wandb.log({
-    "images/depth_camera_0": wandb.Image(depth_image),
-    "images/rgb_camera_1": wandb.Image(rgb_image)
+    "outputs/visualizations/images/depth_camera_0": wandb.Image(depth_image),
+    "outputs/visualizations/images/rgb_camera_1": wandb.Image(rgb_image)
 })
 
 # Log videos (episode replays)
@@ -1521,9 +1521,9 @@ Monitor:
 
 ### Code References
 
-- `utils/plotting_tools.py` - Visualization tools
-- `scripts/train.py` - Training script with logging
-- `scripts/test.py` - Policy evaluation script
+- `ballbot_rl/training/plotting_tools.py` - Visualization tools
+- `ballbot_rl/training/train.py` - Training script with logging
+- `ballbot_rl/evaluation/evaluate.py` - Policy evaluation script
 
 ---
 

@@ -788,6 +788,37 @@ class EnsembleReward:
 
 ---
 
+## 🎯 Next Steps
+
+Now that you understand reward design, here's what to explore next:
+
+### Related Tutorials
+- **[Actor-Critic Methods](05_actor_critic_methods.md)** - See how rewards drive policy learning
+- **[Complete Training Guide](13_complete_training_guide.md)** - Full training workflow with rewards
+- **[Multi-Modal Fusion](10_multimodal_fusion.md)** - Combine rewards with multi-modal observations
+
+### Practical Examples
+- **[Custom Reward Example](../../examples/02_custom_reward.py)** - Create your own reward function
+- **[Training Workflow](../../examples/05_training_workflow.py)** - Train with custom rewards
+- **[Configuration Examples](../../examples/06_configuration_examples.py)** - Configure rewards via YAML
+
+### Concepts to Explore
+- **[Reward Design](../concepts/reward_design.md)** - Deep dive into reward engineering principles
+- **[RL Fundamentals](../concepts/rl_fundamentals.md)** - MDP reward function formulation
+- **[Design Decisions](../architecture/design_decisions.md)** - Why directional reward was chosen
+
+### Research Papers
+- **[Research Timeline](../research/timeline.md)** - How reward design evolved
+- **[Code Mapping](../research/code_mapping.md)** - Reward implementation details
+- **[Mechanics to RL Guide](../research/mechanics_to_rl.md)** - Constraints → rewards translation
+
+**Prerequisites for Next Tutorial:**
+- Understanding of reward design (this tutorial)
+- Basic RL knowledge
+- Familiarity with multi-objective optimization
+
+---
+
 ## 📚 Further Reading
 
 ### Papers
@@ -809,8 +840,8 @@ class EnsembleReward:
 - **Sutton & Barto** - "Reinforcement Learning: An Introduction" - Chapter 3: Rewards
 
 ### Code Examples
-- Ballbot environment: `ballbotgym/ballbotgym/bbot_env.py` - `step()` method
-- Ballbot rewards: `ballbotgym/ballbotgym/Rewards.py`
+- Ballbot environment: `ballbot_gym/bbot_env.py` - `step()` method
+- Ballbot rewards: `ballbot_gym/Rewards.py`
 
 ---
 

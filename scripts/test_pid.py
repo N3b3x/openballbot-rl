@@ -8,11 +8,9 @@ import os
 import torch
 from termcolor import colored
 
-sys.path.append("..")
-import policies
-
 import gymnasium as gym
-import ballbotgym
+import ballbot_gym
+from ballbot_gym.controllers import PID
 
 if __name__ == "__main__":
     if len(sys.argv) == 3:
@@ -32,10 +30,10 @@ if __name__ == "__main__":
         terrain_type="flat")
 
     k_vals = [20, 15, 2]  #better for 500hz, but not optimal
-    pid = policies.PID(dt=env.env.env.opt_timestep,
-                       k_p=k_vals[0],
-                       k_i=k_vals[1],
-                       k_d=k_vals[2])
+    pid = PID(dt=env.env.env.opt_timestep,
+              k_p=k_vals[0],
+              k_i=k_vals[1],
+              k_d=k_vals[2])
 
     obs, _ = env.reset(seed=np.random.randint(1000))
 

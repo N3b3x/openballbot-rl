@@ -137,3 +137,35 @@ Thumbs.db
 log/
 MUJOCO_LOG*
 
+# Linting
+.ruff_cache/
+.flake8
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Experiments (keep structure, ignore contents)
+experiments/runs/*/
+!experiments/runs/.gitkeep
+
+# Outputs (keep structure, ignore generated files)
+outputs/models/*.zip
+outputs/logs/*.log
+outputs/visualizations/*.png
+outputs/visualizations/*.gif
+!outputs/.gitkeep
+
+# MuJoCo
+*.mjcf
+*.stl
+*.obj
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+
+# Old structure (removed - kept for reference)
+# These directories have been moved to new structure
+

@@ -64,7 +64,7 @@ This tutorial provides a **complete, end-to-end guide** for training RL policies
 **1. Clone Repository:**
 ```bash
 git clone <repository_url>
-cd OpenBallBot-RL
+cd openballbot-rl
 ```
 
 **2. Install Dependencies:**
@@ -74,7 +74,7 @@ pip install -r requirements.txt
 
 **3. Install Ballbot Environment:**
 ```bash
-cd ballbotgym
+cd ballbot_gym
 pip install -e .
 ```
 
@@ -139,7 +139,7 @@ export MUJOCO_PLUGIN_PATH=/path/to/mujoco/plugin
 
 ### Understanding the Config File
 
-**Location:** `config/train_ppo_directional.yaml`
+**Location:** `configs/train_ppo_directional.yaml`
 
 **Structure:**
 ```yaml
@@ -160,7 +160,7 @@ problem:
   terrain_type: "perlin"   # "perlin" or "flat"
 
 total_timesteps: 10e6      # Total training steps
-frozen_cnn: "../encoder_frozen/encoder_epoch_53"  # Pretrained encoder
+frozen_cnn: "../outputs/encoders/encoder_epoch_53"  # Pretrained encoder
 hidden_sz: 128             # Hidden layer size
 num_envs: 10               # Parallel environments
 resume: ""                 # Resume from checkpoint
@@ -194,7 +194,7 @@ seed: 10                   # Random seed
 
 **Customize for Your Needs:**
 ```yaml
-# config/my_training_config.yaml
+# configs/my_training_config.yaml
 algo:
   name: ppo
   ent_coef: 0.002          # Increase exploration
@@ -226,7 +226,7 @@ out: ./my_training_logs
 
 **Collect Depth Images:**
 ```bash
-python scripts/gather_data.py \
+python ballbot_rl/data/collect.py \
     --n_steps 100000 \
     --n_envs 10 \
     --policy ""  # Empty = random policy
@@ -241,7 +241,7 @@ python scripts/gather_data.py \
 
 **Train Autoencoder:**
 ```bash
-python scripts/pretrain_cnn.py \
+python ballbot_rl/encoders/pretrain.py \
     --data_dir <path_to_collected_data> \
     --save_encoder_to ./encoder_pretrained \
     --epochs 50 \
@@ -266,7 +266,7 @@ python scripts/pretrain_cnn.py \
 **Start Training:**
 ```bash
 cd scripts
-python train.py --config ../config/train_ppo_directional.yaml
+python train.py --config ../configs/train_ppo_directional.yaml
 ```
 
 **What Happens:**
@@ -331,7 +331,7 @@ tail -f scripts/log/progress.csv
 
 **Plot Training Curves:**
 ```bash
-python ../utils/plotting_tools.py \
+python ../ballbot_rl/training/plotting_tools.py \
     --csv log/progress.csv \
     --config log/config.yaml \
     --plot_train
@@ -607,7 +607,7 @@ model.save("model_with_custom.zip",
 ```bash
 # Install dependencies
 pip install -r requirements.txt
-cd ballbotgym && pip install -e . && cd ..
+cd ballbot_gym && pip install -e . && cd ..
 
 # Verify installation
 cd scripts && python test_pid.py
@@ -616,17 +616,17 @@ cd scripts && python test_pid.py
 **2. Configure:**
 ```bash
 # Edit config file
-vim ../config/train_ppo_directional.yaml
+vim ../configs/train_ppo_directional.yaml
 
 # Or create custom config
-cp ../config/train_ppo_directional.yaml my_config.yaml
+cp ../configs/train_ppo_directional.yaml my_config.yaml
 # Edit my_config.yaml
 ```
 
 **3. Train:**
 ```bash
 # Start training
-python train.py --config ../config/train_ppo_directional.yaml
+python train.py --config ../configs/train_ppo_directional.yaml
 
 # Monitor in another terminal
 tail -f log/progress.csv
@@ -635,7 +635,7 @@ tail -f log/progress.csv
 **4. Monitor:**
 ```bash
 # Plot training curves
-python ../utils/plotting_tools.py \
+python ../ballbot_rl/training/plotting_tools.py \
     --csv log/progress.csv \
     --config log/config.yaml \
     --plot_train
@@ -722,9 +722,9 @@ model = PPO.load("log/best_model/best_model.zip")
 
 ### Code References
 
-- `scripts/train.py` - Training script
-- `scripts/test.py` - Evaluation script
-- `config/train_ppo_directional.yaml` - Configuration template
+- `ballbot_rl/training/train.py` - Training script
+- `ballbot_rl/evaluation/evaluate.py` - Evaluation script
+- `configs/train_ppo_directional.yaml` - Configuration template
 
 ---
 

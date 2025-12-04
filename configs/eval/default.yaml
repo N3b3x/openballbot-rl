@@ -1,0 +1,55 @@
+# ============================================================================
+# Default Evaluation Configuration
+# ============================================================================
+# 
+# Default settings for evaluating trained policies. This config controls how
+# many episodes to run, whether to use deterministic actions, and whether
+# to render the environment.
+#
+# Usage:
+#   python -m ballbot_rl.evaluation.evaluate \
+#     --algo ppo \
+#     --path outputs/models/my_model.zip \
+#     --eval_config configs/eval/default.yaml
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# EVALUATION SETTINGS
+# ----------------------------------------------------------------------------
+
+# Number of test episodes: How many episodes to run during evaluation
+# - More episodes: Better performance estimate, longer evaluation
+# - Fewer episodes: Faster evaluation, less reliable estimate
+# - Recommended: 5-10 episodes for good estimate
+n_test_episodes: 5
+
+# Deterministic: Whether to use deterministic policy (no exploration noise)
+# - true: Always takes best action (recommended for evaluation)
+# - false: Uses stochastic policy (includes exploration noise)
+# - Recommended: true for consistent evaluation
+deterministic: true
+
+# Render: Whether to show GUI visualization during evaluation
+# - true: Opens MuJoCo viewer (requires mjpython on macOS)
+# - false: No visualization, faster evaluation
+# - Recommended: true for visual inspection, false for batch evaluation
+render: true
+
+# ----------------------------------------------------------------------------
+# ENVIRONMENT OVERRIDE
+# ----------------------------------------------------------------------------
+
+# Environment config override: Override the environment used during training
+# - null: Uses the same environment config as training (recommended)
+# - Path to env config: Uses different environment (e.g., "configs/env/flat_directional.yaml")
+# - Useful for testing generalization to different terrains
+# - Example: Test policy trained on perlin terrain on flat terrain
+env_config: null
+
+# ----------------------------------------------------------------------------
+# LOGGING (Optional - can be added)
+# ----------------------------------------------------------------------------
+# Uncomment to customize logging during evaluation:
+# logging:
+#   cams: false          # Save camera frames
+#   reward_terms: true   # Save reward component breakdown

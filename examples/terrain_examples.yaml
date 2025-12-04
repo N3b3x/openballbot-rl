@@ -1,0 +1,353 @@
+# Comprehensive Terrain Configuration Examples
+# These examples demonstrate all available terrain types for ballbot control
+
+# ============================================================================
+# BASIC TERRAINS
+# ============================================================================
+
+# Flat terrain - baseline for testing
+flat_example:
+  type: "flat"
+  config: {}
+
+# Perlin noise - general purpose procedural terrain
+perlin_example:
+  type: "perlin"
+  config:
+    scale: 25.0
+    octaves: 4
+    persistence: 0.2
+    lacunarity: 2.0
+    seed: null  # null = random each episode
+
+# Stepped terrain - discrete steps (less ideal for ballbots)
+stepped_example:
+  type: "stepped"
+  config:
+    num_steps: 5
+    step_height: 0.1
+    seed: null
+
+# ============================================================================
+# SLOPE TERRAINS
+# ============================================================================
+
+# Single ramp - testing slope compensation
+ramp_single_x:
+  type: "ramp"
+  config:
+    ramp_angle: 15.0  # degrees (0-30 recommended)
+    ramp_direction: "x"  # "x", "y", or "radial"
+    flat_ratio: 0.3
+    num_ramps: 1
+    transition_smoothness: 0.5
+    seed: null
+
+# Multiple ramps - periodic slope challenges
+ramp_multiple:
+  type: "ramp"
+  config:
+    ramp_angle: 12.0
+    ramp_direction: "y"
+    flat_ratio: 0.2
+    num_ramps: 3
+    transition_smoothness: 0.7
+    seed: null
+
+# Radial ramp - testing radial control
+ramp_radial:
+  type: "ramp"
+  config:
+    ramp_angle: 10.0
+    ramp_direction: "radial"
+    flat_ratio: 0.4
+    num_ramps: 1
+    transition_smoothness: 0.6
+    seed: null
+
+# Gradient field - varying slopes
+gradient_linear:
+  type: "gradient"
+  config:
+    max_slope: 20.0  # degrees
+    gradient_type: "linear"  # "linear", "radial", or "perlin"
+    smoothness: 0.5
+    direction: "x"  # "x" or "y"
+    seed: null
+
+# Gradient with Perlin variation
+gradient_perlin:
+  type: "gradient"
+  config:
+    max_slope: 18.0
+    gradient_type: "perlin"
+    smoothness: 0.4
+    direction: "x"
+    seed: null
+
+# ============================================================================
+# WAVE TERRAINS
+# ============================================================================
+
+# Sinusoidal waves - periodic patterns
+sinusoidal_x:
+  type: "sinusoidal"
+  config:
+    amplitude: 0.5
+    frequency: 0.1
+    direction: "x"  # "x", "y", or "both"
+    phase: 0.0
+    seed: null
+
+# Sinusoidal both directions
+sinusoidal_both:
+  type: "sinusoidal"
+  config:
+    amplitude: 0.4
+    frequency: 0.08
+    direction: "both"
+    phase: 0.0
+    seed: null
+
+# Wavy/undulating - multiple frequencies
+wavy_natural:
+  type: "wavy"
+  config:
+    wave_amplitudes: [0.3, 0.2, 0.1]
+    wave_frequencies: [0.05, 0.1, 0.2]
+    wave_directions: [0.0, 45.0, 90.0]
+    phase_offsets: [0.0, 0.5, 1.0]
+    seed: null
+
+# ============================================================================
+# FEATURE TERRAINS
+# ============================================================================
+
+# Ridge and valley - directional challenges
+ridge_valley_x:
+  type: "ridge_valley"
+  config:
+    ridge_height: 0.6
+    valley_depth: 0.4
+    spacing: 0.2
+    orientation: "x"  # "x", "y", or "diagonal"
+    smoothness: 0.3
+    seed: null
+
+# Ridge valley diagonal
+ridge_valley_diagonal:
+  type: "ridge_valley"
+  config:
+    ridge_height: 0.7
+    valley_depth: 0.3
+    spacing: 0.15
+    orientation: "diagonal"
+    smoothness: 0.4
+    seed: null
+
+# Hills - obstacle navigation
+hills_sparse:
+  type: "hills"
+  config:
+    num_hills: 5
+    hill_height: 0.7
+    hill_radius: 0.15
+    flat_ratio: 0.4
+    seed: null
+
+# Hills dense
+hills_dense:
+  type: "hills"
+  config:
+    num_hills: 10
+    hill_height: 0.5
+    hill_radius: 0.1
+    flat_ratio: 0.3
+    seed: null
+
+# Bowl - recovery training
+bowl_center:
+  type: "bowl"
+  config:
+    depth: 0.6
+    radius: 0.4
+    center_x: 0.5
+    center_y: 0.5
+    smoothness: 0.5
+    seed: null
+
+# Bowl offset
+bowl_offset:
+  type: "bowl"
+  config:
+    depth: 0.5
+    radius: 0.35
+    center_x: 0.3
+    center_y: 0.7
+    smoothness: 0.6
+    seed: null
+
+# ============================================================================
+# SPECIALIZED TERRAINS
+# ============================================================================
+
+# Terraced - smooth elevation changes
+terraced_x:
+  type: "terraced"
+  config:
+    num_terraces: 5
+    terrace_height: 0.15
+    transition_width: 0.1
+    smoothness: 0.7
+    direction: "x"  # "x" or "y"
+    seed: null
+
+# Spiral - rotational challenges
+spiral_cw:
+  type: "spiral"
+  config:
+    spiral_tightness: 0.1
+    height_variation: 0.5
+    direction: "cw"  # "cw" or "ccw"
+    center_x: 0.5
+    center_y: 0.5
+    seed: null
+
+# ============================================================================
+# COMPOSITE TERRAINS
+# ============================================================================
+
+# Mixed terrain - combining multiple types
+mixed_hills_ramp:
+  type: "mixed"
+  config:
+    components:
+      - type: "hills"
+        weight: 0.4
+        config:
+          num_hills: 3
+          hill_height: 0.5
+          hill_radius: 0.12
+      - type: "ramp"
+        weight: 0.3
+        config:
+          ramp_angle: 10.0
+          ramp_direction: "x"
+          flat_ratio: 0.3
+      - type: "perlin"
+        weight: 0.3
+        config:
+          scale: 30.0
+          octaves: 3
+    blend_mode: "additive"  # "additive", "max", or "weighted"
+    seed: null
+
+# Mixed with gradient
+mixed_gradient_hills:
+  type: "mixed"
+  config:
+    components:
+      - type: "gradient"
+        weight: 0.5
+        config:
+          max_slope: 15.0
+          gradient_type: "linear"
+          direction: "x"
+      - type: "hills"
+        weight: 0.5
+        config:
+          num_hills: 4
+          hill_height: 0.4
+          hill_radius: 0.1
+    blend_mode: "weighted"
+    seed: null
+
+# ============================================================================
+# DIFFICULTY PROGRESSION EXAMPLES
+# ============================================================================
+
+# Easy - gentle slopes for initial training
+easy_ramp:
+  type: "ramp"
+  config:
+    ramp_angle: 5.0
+    ramp_direction: "x"
+    flat_ratio: 0.5
+    num_ramps: 1
+    transition_smoothness: 0.8
+    seed: null
+
+easy_hills:
+  type: "hills"
+  config:
+    num_hills: 3
+    hill_height: 0.3
+    hill_radius: 0.2
+    flat_ratio: 0.5
+    seed: null
+
+# Medium - moderate challenges
+medium_perlin:
+  type: "perlin"
+  config:
+    scale: 25.0
+    octaves: 4
+    persistence: 0.2
+    lacunarity: 2.0
+    seed: null
+
+medium_ramp:
+  type: "ramp"
+  config:
+    ramp_angle: 12.0
+    ramp_direction: "x"
+    flat_ratio: 0.3
+    num_ramps: 2
+    transition_smoothness: 0.6
+    seed: null
+
+# Hard - advanced challenges
+hard_perlin:
+  type: "perlin"
+  config:
+    scale: 20.0
+    octaves: 5
+    persistence: 0.25
+    lacunarity: 2.5
+    seed: null
+
+hard_ramp:
+  type: "ramp"
+  config:
+    ramp_angle: 20.0
+    ramp_direction: "x"
+    flat_ratio: 0.2
+    num_ramps: 3
+    transition_smoothness: 0.5
+    seed: null
+
+hard_mixed:
+  type: "mixed"
+  config:
+    components:
+      - type: "perlin"
+        weight: 0.4
+        config:
+          scale: 20.0
+          octaves: 5
+          persistence: 0.25
+      - type: "ramp"
+        weight: 0.3
+        config:
+          ramp_angle: 18.0
+          ramp_direction: "x"
+          flat_ratio: 0.2
+      - type: "hills"
+        weight: 0.3
+        config:
+          num_hills: 6
+          hill_height: 0.6
+          hill_radius: 0.12
+    blend_mode: "additive"
+    seed: null
+

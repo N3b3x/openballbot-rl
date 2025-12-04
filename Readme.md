@@ -6,13 +6,46 @@ Here are some navigation examples from a trained policy on four different, *rand
 
 
 <p float="left">
-  <img src="/images/episode_1.gif" width="40.0%" />
-  <img src="/images/episode_2.gif" width="40.0%" />
-  <img src="/images/episode_3.gif" width="40.0%" />
-  <img src="/images/episode_4.gif" width="29.0%" />
+  <img src="/outputs/visualizations/images/episode_1.gif" width="40.0%" />
+  <img src="/outputs/visualizations/images/episode_2.gif" width="40.0%" />
+  <img src="/outputs/visualizations/images/episode_3.gif" width="40.0%" />
+  <img src="/outputs/visualizations/images/episode_4.gif" width="29.0%" />
 </p>
 
 Note that in the above, eval episodes `1, 2, 3` are `4000` timesteps long, while episode `4` is `10000` steps long. The policy has been trained with a maximum of `4000` steps, therefore, this last evaluation can bee seen as a demonstration of generalization capability. 
+
+## 🏗️ Extensible Architecture
+
+openballbot-rl features a **plugin-based, configuration-driven architecture** that makes it easy to add new components without modifying core code.
+
+### Key Features
+
+- **Component Registry**: Central registry for rewards, terrains, and policies
+- **Factory Pattern**: Create components from configuration
+- **Configuration-Driven**: Switch components via YAML configs
+- **Easy Extension**: Add new components in minutes
+
+### Quick Example: Adding a Custom Reward
+
+```python
+from ballbot_gym.rewards.base import BaseReward
+from ballbot_gym.core.registry import ComponentRegistry
+
+class MyReward(BaseReward):
+    def __call__(self, state: dict) -> float:
+        return reward_value
+
+# Register it
+ComponentRegistry.register_reward("my_reward", MyReward)
+
+# Use in config.yaml
+# problem:
+#   reward:
+#     type: "my_reward"
+#     config: {}
+```
+
+See [Extension Guide](docs/architecture/extension_guide.md) for details.
 
 ## 📚 Comprehensive Documentation
 
@@ -20,13 +53,17 @@ Note that in the above, eval episodes `1, 2, 3` are `4000` timesteps long, while
 
 ### Quick Links
 
-- **[Research Timeline](docs/01_research_timeline.md)** 📅 - Traces the evolution from 2006 ballbot prototype to 2025 RL navigation system, with summaries of each foundational paper
-- **[Mechanics to RL Guide](docs/02_mechanics_to_rl.md)** 🔬 - Shows how Lagrangian dynamics translate into RL reward functions, with complete mathematical derivations
-- **[Environment & RL Workflow](docs/03_environment_and_rl.md)** 🏗️ - Step-by-step implementation guide covering MuJoCo setup, training, and evaluation
+- **[Architecture Overview](docs/architecture/README.md)** 🏗️ - System architecture and design
+- **[Extension Guide](docs/architecture/extension_guide.md)** 🔧 - How to add custom components
+- **[Getting Started](docs/getting_started/quick_start.md)** 🚀 - 5-minute quick start
+- **[Examples](examples/)** 💡 - Code examples and tutorials
+- **[Research Timeline](docs/research/timeline.md)** 📅 - Evolution from 2006 to 2025
+- **[Mechanics to RL Guide](docs/research/mechanics_to_rl.md)** 🔬 - Mathematical derivations
+- **[Training Guide](docs/user_guides/training.md)** 🏗️ - Step-by-step training workflow
 
 ### Research Papers
 
-All referenced papers are stored in `research_papers/`:
+All referenced papers are stored in `docs/research/papers/`:
 - Lauwers et al. (2006) - Original ballbot prototype
 - Nagarajan et al. (2014) - Lagrangian dynamics and control
 - Carius et al. (2022) - Constraint-aware control theory
@@ -41,15 +78,28 @@ to your clone of MuJoCo and build both MuJoCo and the python bindings from sourc
 
 For more information, see [This discussion](https://github.com/google-deepmind/mujoco/discussions/2517).
 
-## Build instructions
+## Installation
 
-Make sure you have CMake and a C++17 compiler installed.
+### Quick Start
+
+```bash
+# Install packages
+make install
+
+# Or with dev dependencies
+make install-dev
+
+# Verify installation
+python setup/verify_installation.py
+```
 
 ### Building MuJoCo from source (python bindings will be built separately)
 
+Make sure you have CMake and a C++17 compiler installed.
+
     1. Clone the MuJoCo repository: `git clone https://github.com/deepmind/mujoco.git` and cd into it.
     2. This step is optional but **recommended** due to the patching issue mentioned above: `git checkout 99490163df46f65a0cabcf8efef61b3164faa620`
-    3. Copy the patch `mujoco_fix.patch` provided in our repository to `<your_mujoco_repo>`, then `cd` into the latter and apply the patch: `patch -p1 < mujoco_fix.patch`
+    3. Copy the patch `tools/mujoco_fix.patch` provided in our repository to `<your_mujoco_repo>`, then `cd` into the latter and apply the patch: `patch -p1 < mujoco_fix.patch`
 
 The rest of the instructions are identical to the [official MuJoCo guide](https://mujoco.readthedocs.io/en/latest/programming/#building-mujoco-from-source) for building from source:
     
@@ -96,56 +146,88 @@ Other requirements can be found in `requirements.txt`.
 
 ### Install the Ballbot Environment
 
-```
-cd OpenBallbot-RL/ballbotgym/
-pip install -e .
+The installation script handles this automatically, but you can also install manually:
+
+```bash
+pip install -e ballbot_gym/
+pip install -e ballbot_rl/
 ```
 
 ### Sanity Check
 
 To test that everything works well, run
 
-```
-cd OpenBallbot-RL/scripts
-python3 test_pid.py
+```bash
+python scripts/test_pid.py
 ```
 
 This uses a simple PID controller to balance the robot on flat terrain.
 
 ## Training an agent
 
-Edit the `OpenBallbot-RL/config/train_ppo_directional.yaml` file if necessary, and then
+Edit the `configs/train/ppo_directional.yaml` file if necessary, and then
 
-```
-cd scripts
-python3  train.py --config ../config/train_ppo_directional.yaml
+```bash
+# Using CLI entry point (after installation)
+ballbot-train --config configs/train/ppo_directional.yaml
+
+# Or using Python module
+python -m ballbot_rl.training.train --config configs/train/ppo_directional.yaml
 ```
 
 To see the progress of your training, you can use
 
-```
-python3 ../utils/plotting_tools.py --csv log/progress.csv --config log/config.yaml --plot_train
+```bash
+python tools/visualization/plot_training.py --csv experiments/runs/*/logs/progress.csv --config experiments/runs/*/config.yaml --plot_train
 ```
 
 The default yaml config file should result in something that looks like 
 <p float="left">
-  <img src="/images/a.png" width="49.0%" />
-  <img src="/images/b.png" width="49.0%" />
+  <img src="/outputs/visualizations/images/a.png" width="49.0%" />
+  <img src="/outputs/visualizations/images/b.png" width="49.0%" />
 </p>
 
-**Note**: The training process uses a pretrained depth-encoder, which is provided in `<root>/encoder_frozen/encoder_epoch_53`. If for some reason you prefer to train your own, you can use the `scripts/gather_data.py` and `sscripts/pretrain_encoder.py` scripts. 
+**Note**: The training process uses a pretrained depth-encoder, which is provided in `outputs/encoders/encoder_epoch_53`. If for some reason you prefer to train your own, you can use:
+
+```bash
+# Collect data
+ballbot-collect --policy <path_to_policy> --n_steps <steps> --n_envs <envs>
+
+# Pretrain encoder
+ballbot-pretrain --data_path <data_path> --save_encoder_to <output_path>
+```
 
 ## Evaluating an agent
 
-You can see how the agent behaves using the `OpenBallbot-RL/scripts/test.py` script.
+You can see how the agent behaves using:
 
-```
-python3 test.py --algo ppo --n_test=<numer_of_tests_to_perform> --path <path_to_your_model>
+```bash
+# Using CLI entry point
+ballbot-eval --algo ppo --n_test <number_of_tests> --path <path_to_your_model>
+
+# Or using Python module
+python -m ballbot_rl.evaluation.evaluate --algo ppo --n_test <number_of_tests> --path <path_to_your_model>
 ```
 
 ## Trained policies
 
-A trained policy is provided in the `OpenBallbot-RL/trained_agents/` directory, and can be tested using the line above.
+A trained policy is provided in the `outputs/models/` directory, and can be tested using the commands above.
+
+## Code Quality
+
+This project uses modern Python tooling for code quality:
+
+- **Black**: Code formatting (run `make format`)
+- **Ruff**: Linting (run `make lint`)
+- **mypy**: Type checking (run `make type-check`)
+- **pytest**: Testing (run `make test`)
+
+Pre-commit hooks are configured to run these checks automatically. Install them with:
+
+```bash
+make install-dev
+pre-commit install
+```
 
 ## Citation
 

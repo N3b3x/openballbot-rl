@@ -945,6 +945,36 @@ class ObservationAugmentation:
 
 ---
 
+## 🎯 Next Steps
+
+Now that you understand observation spaces, here's what to explore next:
+
+### Related Tutorials
+- **[Reward Design](04_reward_design_for_robotics.md)** - Design rewards that work with observations
+- **[Multi-Modal Fusion](10_multimodal_fusion.md)** - Combine multiple observation modalities
+- **[Actor-Critic Methods](05_actor_critic_methods.md)** - See how observations feed into policies
+
+### Practical Examples
+- **[Basic Usage Example](../../examples/01_basic_usage.py)** - See observations in action
+- **[Custom Policy Example](../../examples/04_custom_policy.py)** - Custom observation processing
+- **[Training Workflow](../../examples/05_training_workflow.py)** - Full training with observations
+
+### Concepts to Explore
+- **[Observation Design](../concepts/observation_design.md)** - Deep dive into observation design principles
+- **[RL Fundamentals](../concepts/rl_fundamentals.md)** - MDP observation space formulation
+- **[Multi-Modal Fusion](../tutorials/10_multimodal_fusion.md)** - Combining proprioception and vision
+
+### Research Papers
+- **[Research Timeline](../research/timeline.md)** - How observation spaces evolved
+- **[Code Mapping](../research/code_mapping.md)** - Observation space implementation
+
+**Prerequisites for Next Tutorial:**
+- Understanding of observation spaces (this tutorial)
+- Basic Gymnasium knowledge
+- Familiarity with multi-modal inputs
+
+---
+
 ## 📚 Further Reading
 
 ### Papers
@@ -965,7 +995,7 @@ class ObservationAugmentation:
 - **Sutton & Barto** - "Reinforcement Learning: An Introduction" - Chapter 17: Planning and Learning with Tabular Methods
 
 ### Code Examples
-- Ballbot environment: `ballbotgym/ballbotgym/bbot_env.py` - `_get_obs()` method
+- Ballbot environment: `ballbot_gym/bbot_env.py` - `_get_obs()` method
 
 ---
 
