@@ -9,7 +9,7 @@ import torch
 from termcolor import colored
 
 import gymnasium as gym
-import ballbot_gym
+import ballbot_gym  # Registers environment and components
 from ballbot_gym.controllers import PID
 
 if __name__ == "__main__":

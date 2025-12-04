@@ -1,5 +1,5 @@
 <mujoco model="ballbot">
-  <compiler meshdir="stl_files" texturedir="textures" /> <!--path is relative to the xml file-->
+  <compiler meshdir="meshes" texturedir="textures" /> <!--path is relative to the xml file-->
   <option timestep="0.002" />
   <option cone="elliptic"/>
   <option integrator="RK4"/>

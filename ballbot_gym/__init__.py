@@ -34,6 +34,11 @@ References:
 from gymnasium.envs.registration import register
 import importlib.resources
 
+# Import terrain and reward modules to trigger component registration
+# This ensures all terrains and rewards are registered before the environment is used
+import ballbot_gym.terrain  # noqa: F401 - Registers all terrain generators
+import ballbot_gym.rewards  # noqa: F401 - Registers all reward functions
+
 # Obtain the path to the embedded MuJoCo XML model for the Ballbot
 with importlib.resources.path("ballbot_gym.models", "ballbot.xml") as path:
     _xml_path = str(path)

@@ -9,7 +9,6 @@ description = "Reinforcement learning training and evaluation for ballbot"
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
-    "ballbot-gym>=0.1.0",  # Local dependency
     "stable-baselines3>=2.0.0",
     "torch>=2.0.0",
     "gymnasium>=0.28.0",
