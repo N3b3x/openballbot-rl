@@ -150,6 +150,19 @@ experiments/runs/*/
 !experiments/runs/.gitkeep
 
 # Outputs (keep structure, ignore generated files)
+# Ignore all training runs except legacy folder
+outputs/experiments/runs/*
+!outputs/experiments/runs/.gitkeep
+!outputs/experiments/runs/legacy/
+outputs/experiments/runs/legacy/*
+!outputs/experiments/runs/legacy/**/
+!outputs/experiments/runs/legacy/**/*.zip
+!outputs/experiments/runs/legacy/**/*.yaml
+!outputs/experiments/runs/legacy/**/*.txt
+!outputs/experiments/runs/legacy/**/*.csv
+!outputs/experiments/runs/legacy/**/README.md
+
+# Ignore other outputs
 outputs/models/*.zip
 outputs/logs/*.log
 outputs/visualizations/*.png

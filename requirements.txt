@@ -1,4 +1,5 @@
-gymnasium
+gymnasium[other]  # Includes MoviePy for video recording
+moviepy>=1.0.3  # Explicit dependency for video recording (VecVideoRecorder)
 matplotlib
 noise
 numpy
