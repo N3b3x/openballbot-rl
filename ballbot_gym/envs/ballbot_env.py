@@ -39,6 +39,7 @@ import quaternion
 import os
 import string
 import shutil
+from typing import Optional
 
 from termcolor import colored
 
@@ -57,6 +58,16 @@ _default_dtype = np.float32
 
 
 class BBotSimulation(gym.Env):
+    """
+    Ballbot Simulation Environment for Reinforcement Learning.
+    
+    Metadata:
+        render_modes: List of supported render modes. Supports "rgb_array" for video recording.
+    """
+    metadata = {
+        "render_modes": ["rgb_array"],
+        "render_fps": 30,  # FPS for video recording
+    }
     """
     Ballbot Simulation Environment for Reinforcement Learning
     
@@ -162,8 +173,23 @@ class BBotSimulation(gym.Env):
             eval_env=[False, None],
             reward_config=None,
             terrain_config=None,
-            env_config=None):
+            env_config=None,
+            render_mode: Optional[str] = None):
+        """
+        Initialize ballbot environment.
+        
+        Args:
+            render_mode: Render mode for video recording. Options: "rgb_array" or None.
+                        Defaults to None. Set to "rgb_array" for video recording compatibility.
+        """
         super().__init__()
+        
+        # Validate render_mode
+        if render_mode is not None and render_mode not in self.metadata["render_modes"]:
+            raise ValueError(
+                f"Invalid render_mode: {render_mode}. "
+                f"Supported modes: {self.metadata['render_modes']}"
+            )
 
         # Store configuration parameters
         # Backward compatibility: if terrain_type is provided as string, convert to config
@@ -261,6 +287,17 @@ class BBotSimulation(gym.Env):
             self.rgbd_hist_0 = []
             self.rgbd_hist_1 = []
         self.disable_cameras = disable_cameras
+        
+        # Set render_mode for video recording compatibility
+        # VecVideoRecorder requires this attribute to be set
+        # Use provided render_mode or default to "rgb_array" for video recording
+        self.render_mode = render_mode if render_mode is not None else "rgb_array"
+        
+        # Create a dedicated renderer for video recording (lazy initialization)
+        # This uses a world-view camera (third-person) to see the robot in action
+        # Separate from observation cameras (cam_0, cam_1) which are robot-mounted
+        self._video_renderer = None
+        self._video_renderer_size = (640, 480)  # Standard video resolution (can be higher quality than obs cameras)
 
         # Initialize passive viewer if GUI is requested
         # On macOS, this requires running with mjpython instead of python
@@ -985,8 +1022,77 @@ class BBotSimulation(gym.Env):
         # if glfw.get_current_context() is not None:
         #     glfw.terminate()
 
+        # Clean up video renderer if it exists
+        if hasattr(self, '_video_renderer') and self._video_renderer is not None:
+            try:
+                self._video_renderer.close()
+            except Exception:
+                # Ignore errors during cleanup (renderer may already be closed)
+                pass
+            self._video_renderer = None
+
         # Explicitly delete MuJoCo structures to free memory
         del self.model
         del self.data
+
+    def render(self):
+        """
+        Render the environment and return an RGB array for video recording.
+        
+        This method is required by VecVideoRecorder for video generation.
+        Uses a world-view (third-person) camera that tracks the robot.
+        This is separate from observation cameras (cam_0, cam_1) which are robot-mounted.
+        
+        Returns:
+            np.ndarray: RGB image array of shape (H, W, 3) with values in [0, 255] (uint8).
+                       Always returns a valid RGB array using a world-view camera.
+        
+        Note:
+            - Uses a tracking camera that follows the robot's position
+            - Camera position: behind and above robot, looking down at an angle
+            - This provides a good view of the robot navigating terrain
+            - Observation cameras (cam_0, cam_1) remain for robot perception
+        """
+        # Initialize video renderer if needed (lazy initialization)
+        if self._video_renderer is None:
+            video_height, video_width = self._video_renderer_size
+            self._video_renderer = mujoco.Renderer(self.model, width=video_width, height=video_height)
+        
+        try:
+            # Get robot position for camera tracking
+            body_id = self.model.body("base").id
+            robot_pos = self.data.xpos[body_id].copy()  # [x, y, z]
+            
+            # Create a tracking camera that follows the robot
+            # Position: behind robot (-Y direction), elevated, looking down
+            camera_offset = np.array([0, -2.0, 1.5])  # Behind and above robot
+            camera_pos = robot_pos + camera_offset
+            lookat_pos = robot_pos + np.array([0, 0, 0.2])  # Look at robot center
+            
+            # Use MuJoCo's scene camera API to create a tracking camera
+            # We'll update the scene with a custom camera view
+            scene = self._video_renderer._scene
+            if scene is not None:
+                # Set up tracking camera
+                scene.camera.lookat[:] = lookat_pos
+                scene.camera.distance = np.linalg.norm(camera_offset)
+                scene.camera.elevation = -20  # Look down angle (degrees)
+                scene.camera.azimuth = 90  # Behind robot (90 degrees = -Y direction)
+            
+            # Update scene and render
+            self._video_renderer.update_scene(self.data, camera=None)
+            rgb = self._video_renderer.render().astype(_default_dtype) / 255.0
+            rgb_uint8 = (rgb * 255).astype(np.uint8)
+            return rgb_uint8
+        except Exception:
+            # Fallback: use cam_0 (robot-mounted camera) if tracking fails
+            try:
+                self._video_renderer.update_scene(self.data, camera="cam_0")
+                rgb = self._video_renderer.render().astype(_default_dtype) / 255.0
+                rgb_uint8 = (rgb * 255).astype(np.uint8)
+                return rgb_uint8
+            except Exception:
+                # Last resort: return a black image (should never happen)
+                return np.zeros(self._video_renderer_size + (3,), dtype=np.uint8)
 
 

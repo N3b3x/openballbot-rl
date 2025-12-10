@@ -60,6 +60,10 @@ def make_ballbot_env(terrain_type=None,
         reward_config = {"type": "directional", "config": {"target_direction": [0.0, 1.0]}}
 
     def _init():
+        # For eval environments, set render_mode="rgb_array" for video recording compatibility
+        # Training environments don't need render_mode (saves computation)
+        render_mode = "rgb_array" if eval_env else None
+        
         env = gym.make(
             "ballbot-v0.1",
             GUI=gui,  #should be disabled in parallel training
@@ -68,7 +72,8 @@ def make_ballbot_env(terrain_type=None,
             reward_config=reward_config,
             terrain_config=terrain_config,
             env_config=env_config,  # Pass env config for camera/env settings
-            eval_env=[eval_env, seed]
+            eval_env=[eval_env, seed],
+            render_mode=render_mode  # Set render_mode for video recording
         )  #because stablebaselines's EvalCallback, in contrast with training, doesn't seed at the first iteration
 
         return Monitor(
