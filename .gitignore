@@ -150,17 +150,21 @@ experiments/runs/*/
 !experiments/runs/.gitkeep
 
 # Outputs (keep structure, ignore generated files)
-# Ignore all training runs except legacy folder
+# Ignore all training runs (they're in runs/)
 outputs/experiments/runs/*
 !outputs/experiments/runs/.gitkeep
-!outputs/experiments/runs/legacy/
-outputs/experiments/runs/legacy/*
-!outputs/experiments/runs/legacy/**/
-!outputs/experiments/runs/legacy/**/*.zip
-!outputs/experiments/runs/legacy/**/*.yaml
-!outputs/experiments/runs/legacy/**/*.txt
-!outputs/experiments/runs/legacy/**/*.csv
-!outputs/experiments/runs/legacy/**/README.md
+
+# Archived models (published models for GitHub)
+# Allow all archived models to be tracked
+outputs/experiments/archived_models/*
+!outputs/experiments/archived_models/.gitkeep
+!outputs/experiments/archived_models/**/
+!outputs/experiments/archived_models/**/*.zip
+!outputs/experiments/archived_models/**/*.yaml
+!outputs/experiments/archived_models/**/*.txt
+!outputs/experiments/archived_models/**/*.csv
+!outputs/experiments/archived_models/**/*.npz
+!outputs/experiments/archived_models/**/README.md
 
 # Ignore other outputs
 outputs/models/*.zip
