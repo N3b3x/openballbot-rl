@@ -19,7 +19,8 @@ def make_ballbot_env(terrain_type=None,
                          "cams": False,
                          "reward_terms": False
                      },
-                     eval_env=False):
+                     eval_env=False,
+                     viewer_title=None):
     """
     Factory function to create ballbot environment.
     
@@ -73,7 +74,8 @@ def make_ballbot_env(terrain_type=None,
             terrain_config=terrain_config,
             env_config=env_config,  # Pass env config for camera/env settings
             eval_env=[eval_env, seed],
-            render_mode=render_mode  # Set render_mode for video recording
+            render_mode=render_mode,  # Set render_mode for video recording
+            viewer_title=viewer_title  # Set window title for viewer
         )  #because stablebaselines's EvalCallback, in contrast with training, doesn't seed at the first iteration
 
         return Monitor(

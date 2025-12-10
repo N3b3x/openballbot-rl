@@ -92,6 +92,24 @@ python test.py \
     --path log/checkpoints/ppo_agent_200000_steps.zip
 ```
 
+### Visualize Environments
+```bash
+# Interactive browser (recommended)
+ballbot-browse-env
+
+# Direct visualization
+ballbot-visualize-env --env_config configs/env/perlin_directional.yaml
+```
+
+### Visualize Models
+```bash
+# Single model
+ballbot-visualize-model --model_path .../best_model.zip --keep_open
+
+# All archived models (parallel)
+python scripts/utils/visualize_all_archived_models.py --visualize --parallel
+```
+
 ### Plot Training Progress
 ```bash
 # Using CLI command (recommended)

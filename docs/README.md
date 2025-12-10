@@ -181,7 +181,29 @@ Essential formulas, commands, and information at a glance.
 
 ---
 
-### 9. [Advanced Topics](user_guides/advanced_topics.md) 🔬
+### 9. [Visualization Guide](user_guides/visualization.md) 🎨
+
+Complete guide to visualizing environments, models, and training progress.
+
+**What you'll learn:**
+- How to visualize environments interactively
+- Visualizing single trained models
+- Batch visualization of archived models
+- Plotting training progress
+- Window titles and identification
+- Troubleshooting visualization issues
+
+**Reading time:** ~20 minutes
+
+**Use when:** You want to visualize environments or trained models
+
+**See also:**
+- [Training Guide](user_guides/training.md) - How to train models
+- [Experiment Organization](user_guides/experiment_organization.md) - Managing archived models
+
+---
+
+### 10. [Advanced Topics](user_guides/advanced_topics.md) 🔬
 
 In-depth analysis of advanced concepts and implementation details.
 

@@ -60,6 +60,7 @@ See [Extension Guide](docs/architecture/extension_guide.md) for details.
 - **[Research Timeline](docs/research/timeline.md)** 📅 - Evolution from 2006 to 2025
 - **[Mechanics to RL Guide](docs/research/mechanics_to_rl.md)** 🔬 - Mathematical derivations
 - **[Training Guide](docs/user_guides/training.md)** 🏗️ - Step-by-step training workflow
+- **[Visualization Guide](docs/user_guides/visualization.md)** 🎨 - Visualizing environments, models, and training progress
 
 ### Research Papers
 
@@ -196,6 +197,37 @@ ballbot-collect --policy <path_to_policy> --n_steps <steps> --n_envs <envs>
 # Pretrain encoder
 ballbot-pretrain --data_path <data_path> --save_encoder_to <output_path>
 ```
+
+## Visualizing environments and models
+
+### Visualize Environments
+
+Explore and test environment configurations:
+
+```bash
+# Interactive environment browser (recommended)
+ballbot-browse-env
+
+# Direct visualization from config
+ballbot-visualize-env --env_config configs/env/perlin_directional.yaml
+```
+
+### Visualize Trained Models
+
+Visualize trained models in MuJoCo:
+
+```bash
+# Single model visualization
+ballbot-visualize-model --model_path outputs/experiments/archived_models/.../best_model.zip
+
+# Keep viewer open for continuous testing
+ballbot-visualize-model --model_path .../best_model.zip --keep_open
+
+# Visualize all archived models (parallel mode)
+python scripts/utils/visualize_all_archived_models.py --visualize --parallel
+```
+
+See the [Visualization Guide](docs/user_guides/visualization.md) for complete documentation.
 
 ## Evaluating an agent
 

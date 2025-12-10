@@ -174,7 +174,8 @@ class BBotSimulation(gym.Env):
             reward_config=None,
             terrain_config=None,
             env_config=None,
-            render_mode: Optional[str] = None):
+            render_mode: Optional[str] = None,
+            viewer_title: Optional[str] = None):
         """
         Initialize ballbot environment.
         
@@ -299,12 +300,50 @@ class BBotSimulation(gym.Env):
         self._video_renderer = None
         self._video_renderer_size = (640, 480)  # Standard video resolution (can be higher quality than obs cameras)
 
+        # Store viewer title for later use
+        self._viewer_title = viewer_title
+        
         # Initialize passive viewer if GUI is requested
         # On macOS, this requires running with mjpython instead of python
         if GUI:
             try:
                 self.passive_viewer = mujoco.viewer.launch_passive(
                     self.model, self.data)
+                
+                # Try to set window title if viewer_title is provided
+                if viewer_title and self.passive_viewer is not None:
+                    try:
+                        import glfw
+                        window = None
+                        
+                        # Try multiple ways to access the GLFW window
+                        # Method 1: Direct access through Handle.sim.window
+                        if hasattr(self.passive_viewer, 'sim'):
+                            sim = self.passive_viewer.sim
+                            if hasattr(sim, 'window'):
+                                window = sim.window
+                            elif hasattr(sim, '_window'):
+                                window = sim._window
+                        
+                        # Method 2: Try accessing through Handle attributes
+                        if window is None and hasattr(self.passive_viewer, 'window'):
+                            window = self.passive_viewer.window
+                        
+                        # Method 3: Try accessing through Handle's internal _simulate
+                        if window is None and hasattr(self.passive_viewer, '_simulate'):
+                            sim = self.passive_viewer._simulate
+                            if hasattr(sim, 'window'):
+                                window = sim.window
+                            elif hasattr(sim, '_window'):
+                                window = sim._window
+                        
+                        # Set the title if we found the window
+                        if window is not None:
+                            glfw.set_window_title(window, viewer_title)
+                    except (AttributeError, ImportError, Exception) as e:
+                        # Silently fail if we can't set the title
+                        # This is expected if the viewer structure changes or GLFW isn't available
+                        pass
             except RuntimeError as e:
                 if "mjpython" in str(e).lower():
                     print(colored(
