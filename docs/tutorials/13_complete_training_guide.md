@@ -331,7 +331,7 @@ tail -f scripts/log/progress.csv
 
 **Plot Training Curves:**
 ```bash
-python ../ballbot_rl/training/plotting_tools.py \
+ballbot-plot-training \
     --csv log/progress.csv \
     --config log/config.yaml \
     --plot_train
@@ -635,7 +635,7 @@ tail -f log/progress.csv
 **4. Monitor:**
 ```bash
 # Plot training curves
-python ../ballbot_rl/training/plotting_tools.py \
+ballbot-plot-training \
     --csv log/progress.csv \
     --config log/config.yaml \
     --plot_train

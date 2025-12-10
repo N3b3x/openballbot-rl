@@ -720,6 +720,36 @@ EvalCallback(
 - **Early stopping:** Can stop if performance plateaus
 - **Best model:** Saves best performing policy
 
+**VideoRecorderCallback:**
+
+The project includes a custom `VideoRecorderCallback` that automatically records videos when new best models are found:
+
+```python
+from ballbot_rl.training.callbacks import VideoRecorderCallback
+
+VideoRecorderCallback(
+    eval_env=eval_env,
+    video_folder=f'{config["out"]}/videos',
+    video_length=4000,  # Max steps per video
+    name_prefix="best_model",
+    async_recording=True  # Non-blocking
+)
+```
+
+**Functionality:**
+- **Automatic video recording:** Records videos when new best models are found
+- **Asynchronous recording:** Videos recorded in background thread (doesn't slow training)
+- **RenderModeWrapper:** Handles render_mode compatibility for VecVideoRecorder
+
+**Configuration:**
+Video recording is configured in `configs/train/ppo_directional.yaml`:
+```yaml
+visualization:
+  record_videos: true
+  video_freq: "on_new_best"  # or "every_eval" or integer N
+  video_episodes: 1
+```
+
 ### Evaluation Metrics
 
 **Logged Metrics:**

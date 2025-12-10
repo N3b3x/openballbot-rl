@@ -33,8 +33,10 @@ This walkthrough explains how the codebase is organized and how different compon
 - `ballbot_gym/terrain.py` - Terrain generation
 - `ballbot_rl/policies/policies.py` - Neural network architectures
 - `ballbot_rl/training/train.py` - Training pipeline
+- `ballbot_rl/training/callbacks.py` - Training callbacks (video recording, checkpoints)
 - `ballbot_rl/evaluation/evaluate.py` - Evaluation script
 - `ballbot_rl/training/utils.py` - Environment factory
+- `ballbot_rl/visualization/` - Visualization tools (plot_training, visualize_env, visualize_model, browse_environments)
 - `configs/train_ppo_directional.yaml` - Hyperparameters
 
 ---
@@ -660,9 +662,11 @@ class PID:
 ```python
 def main(config, seed):
     # 1. Create environments
+    # Extract terrain config using safe access pattern
+    terrain_config = config.get("problem", {}).get("terrain", {})
     vec_env = VecEnvClass([
         make_ballbot_env(
-            terrain_type=config["problem"]["terrain_type"],
+            terrain_config=terrain_config,
             seed=seed + i
         ) for i in range(N_ENVS)
     ])
@@ -719,6 +723,8 @@ def lr_schedule(progress_remaining):
 **Callbacks:**
 - **CheckpointCallback:** Saves model periodically
 - **EvalCallback:** Evaluates policy during training
+- **VideoRecorderCallback:** Records videos of best models (async, non-blocking)
+- **RenderModeWrapper:** Ensures render_mode compatibility for video recording
 
 ---
 

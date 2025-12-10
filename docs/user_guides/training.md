@@ -445,9 +445,16 @@ The `progress.csv` file contains:
 Use the plotting tools:
 
 ```bash
-python3 ../ballbot_rl/training/plotting_tools.py \
-    --csv log/progress.csv \
-    --config log/config.yaml \
+# Using CLI command (recommended)
+ballbot-plot-training \
+    --csv outputs/experiments/runs/.../progress.csv \
+    --config outputs/experiments/runs/.../config.yaml \
+    --plot_train
+
+# Or using Python module
+python -m ballbot_rl.visualization.plot_training \
+    --csv outputs/experiments/runs/.../progress.csv \
+    --config outputs/experiments/runs/.../config.yaml \
     --plot_train
 ```
 
@@ -510,7 +517,7 @@ env = BBotSimulation(..., log_options={"cams": True})
 #### Plotting Tools
 
 ```bash
-python3 ../ballbot_rl/training/plotting_tools.py \
+ballbot-plot-training \
     --csv log/progress.csv \
     --config log/config.yaml \
     --plot_train \
@@ -623,7 +630,7 @@ python3 train.py --config ../configs/train_ppo_directional.yaml
 tail -f log/progress.csv
 
 # Generate plots periodically
-python3 ../ballbot_rl/training/plotting_tools.py \
+ballbot-plot-training \
     --csv log/progress.csv \
     --config log/config.yaml \
     --plot_train

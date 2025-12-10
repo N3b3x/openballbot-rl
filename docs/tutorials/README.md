@@ -216,7 +216,10 @@ Throughout these tutorials, we use the **Ballbot RL** project as our primary exa
 - `ballbot_gym/terrain.py` - Terrain generation
 - `ballbot_gym/Rewards.py` - Reward functions
 - `ballbot_rl/policies/policies.py` - Multi-modal feature extractor
-- `ballbot_rl/training/plotting_tools.py` - Training visualization tools
+- `ballbot_rl/visualization/plot_training.py` - Training progress visualization
+- `ballbot_rl/visualization/visualize_env.py` - Environment visualization
+- `ballbot_rl/visualization/visualize_model.py` - Model visualization
+- `ballbot_rl/visualization/browse_environments.py` - Interactive environment browser
 
 ---
 

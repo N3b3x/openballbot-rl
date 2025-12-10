@@ -417,7 +417,7 @@ if self.terrain_type == "custom":
 
 **Visualization:**
 ```bash
-python ballbot_rl/training/plotting_tools.py \
+ballbot-plot-training \
     --csv scripts/log/progress.csv \
     --plot_train
 ```

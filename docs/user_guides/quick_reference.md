@@ -94,9 +94,16 @@ python test.py \
 
 ### Plot Training Progress
 ```bash
-python ballbot_rl/training/plotting_tools.py \
-    --csv scripts/log/progress.csv \
-    --config scripts/log/config.yaml \
+# Using CLI command (recommended)
+ballbot-plot-training \
+    --csv outputs/experiments/runs/.../progress.csv \
+    --config outputs/experiments/runs/.../config.yaml \
+    --plot_train
+
+# Or using Python module
+python -m ballbot_rl.visualization.plot_training \
+    --csv outputs/experiments/runs/.../progress.csv \
+    --config outputs/experiments/runs/.../config.yaml \
     --plot_train
 ```
 

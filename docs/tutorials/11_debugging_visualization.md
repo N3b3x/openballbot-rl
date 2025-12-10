@@ -156,16 +156,36 @@ print(f"Max reward: {max(episode_rewards)}")
 
 ## 📈 Visualizing Training Progress
 
+### Visualization Module Overview
+
+The project includes a comprehensive visualization module (`ballbot_rl/visualization/`) with the following tools:
+
+1. **`plot_training.py`** - Plot training progress and loss curves from CSV logs
+2. **`visualize_env.py`** - Visualize environment configurations before training
+3. **`visualize_model.py`** - Visualize trained models and their behavior
+4. **`browse_environments.py`** - Interactive browser for exploring environments
+
+All tools are available as CLI commands (after installation) or as Python modules.
+
 ### Using Built-in Plotting Tools
 
-The project includes `ballbot_rl/training/plotting_tools.py` for visualizing training:
+The project includes visualization tools in `ballbot_rl/visualization/` for visualizing training. You can use the CLI command or Python module:
 
 #### 1. Training vs. Evaluation Progress
 
+**Using CLI command (recommended after installation):**
 ```bash
-python3 ../ballbot_rl/training/plotting_tools.py \
-    --csv log/progress.csv \
-    --config log/config.yaml \
+ballbot-plot-training \
+    --csv outputs/experiments/runs/.../progress.csv \
+    --config outputs/experiments/runs/.../config.yaml \
+    --plot_train
+```
+
+**Or using Python module:**
+```bash
+python -m ballbot_rl.visualization.plot_training \
+    --csv outputs/experiments/runs/.../progress.csv \
+    --config outputs/experiments/runs/.../config.yaml \
     --plot_train
 ```
 
@@ -182,10 +202,18 @@ python3 ../ballbot_rl/training/plotting_tools.py \
 
 #### 2. Loss Component Analysis
 
+**Using CLI command:**
 ```bash
-python3 ../ballbot_rl/training/plotting_tools.py \
-    --csv log/progress.csv \
-    --config log/config.yaml
+ballbot-plot-training \
+    --csv outputs/experiments/runs/.../progress.csv \
+    --config outputs/experiments/runs/.../config.yaml
+```
+
+**Or using Python module:**
+```bash
+python -m ballbot_rl.visualization.plot_training \
+    --csv outputs/experiments/runs/.../progress.csv \
+    --config outputs/experiments/runs/.../config.yaml
 ```
 
 **What it shows:**
@@ -198,6 +226,63 @@ python3 ../ballbot_rl/training/plotting_tools.py \
 - ✅ Losses stabilizing (converging)
 - ⚠️ Losses oscillating = unstable learning
 - ⚠️ Losses not decreasing = not learning
+
+### Other Visualization Tools
+
+#### 3. Visualize Environment Configuration
+
+Before training, you can visualize your environment setup:
+
+```bash
+# Using CLI command
+ballbot-visualize-env --env_config configs/env/perlin_directional.yaml
+
+# Or from training config
+ballbot-visualize-env --train_config configs/train/ppo_directional.yaml
+
+# Or as Python module
+python -m ballbot_rl.visualization.visualize_env --env_config configs/env/perlin_directional.yaml
+```
+
+This shows:
+- Terrain generation (height map visualization)
+- Robot spawn position
+- Camera setup
+- Environment behavior
+
+#### 4. Visualize Trained Model
+
+After training, visualize your trained policy:
+
+```bash
+# Using CLI command
+ballbot-visualize-model --model_path outputs/experiments/runs/.../best_model/best_model.zip
+
+# With more episodes
+ballbot-visualize-model --model_path .../best_model.zip --n_episodes 5
+
+# Or as Python module
+python -m ballbot_rl.visualization.visualize_model --model_path .../best_model.zip
+```
+
+#### 5. Interactive Environment Browser
+
+Browse and explore all available environments interactively:
+
+```bash
+# Interactive mode (recommended)
+ballbot-browse-env
+
+# Or as Python module
+python -m ballbot_rl.visualization.browse_environments
+```
+
+This provides an interactive interface to:
+- Browse predefined environment configurations
+- Browse training configurations
+- Select and configure terrain types
+- Select and configure reward types
+- Create custom environments
 
 ### Custom Visualization Scripts
 
@@ -884,7 +969,7 @@ def profile_training_speed(model, env, n_steps=10000):
 
 ### Weights & Biases (W&B) Integration ⭐
 
-**W&B** is the industry standard for experiment tracking in deep learning and RL research.
+**W&B** is commonly used for experiment tracking in deep learning and RL research.
 
 **Why Use W&B:**
 - Real-time dashboards
@@ -1521,7 +1606,10 @@ Monitor:
 
 ### Code References
 
-- `ballbot_rl/training/plotting_tools.py` - Visualization tools
+- `ballbot_rl/visualization/plot_training.py` - Training progress visualization
+- `ballbot_rl/visualization/visualize_env.py` - Environment visualization
+- `ballbot_rl/visualization/visualize_model.py` - Model visualization
+- `ballbot_rl/visualization/browse_environments.py` - Interactive environment browser
 - `ballbot_rl/training/train.py` - Training script with logging
 - `ballbot_rl/evaluation/evaluate.py` - Policy evaluation script
 
