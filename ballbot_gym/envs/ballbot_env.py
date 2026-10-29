@@ -51,6 +51,7 @@ from ballbot_gym.core.config import get_component_config
 from ballbot_gym.sensors import RGBDInputs, StampedImPair
 from ballbot_gym.utils.helpers import warnings_stdout_off, sample_direction_uniform
 from ballbot_gym.utils.logging import save_episode_logs
+from ballbot_gym.utils.contact_frame import ContactFrameStepper
 from ballbot_gym.envs.observation_spaces import create_observation_space
 
 # Default data type for all arrays (float32 for efficiency and compatibility)
@@ -209,6 +210,8 @@ class BBotSimulation(gym.Env):
             env_config = {}
         env_settings = env_config.get("env", {})
         camera_settings = env_config.get("camera", {})
+        if camera_settings.get("enabled", True) is False:
+            disable_cameras = True  # proprioception-only ablation
         logging_settings = env_config.get("logging", {})
         
         # Override log_options with config if provided
@@ -221,6 +224,25 @@ class BBotSimulation(gym.Env):
         self.max_ep_steps = env_settings.get("max_ep_steps", max_ep_steps if max_ep_steps is not None else 4000)
         self.max_allowed_tilt = env_settings.get("max_allowed_tilt", 20.0)  # degrees
         self.max_wheel_velocity = env_settings.get("max_wheel_velocity", 10.0)  # rad/s
+        # Physics steps per policy decision (1 = 500 Hz control as in the paper)
+        self.action_repeat = int(env_settings.get("action_repeat", 1))
+        # Goal distance along the target direction [m]. Reaching it ends the episode as a
+        # success (time-limit style truncation so PPO bootstraps the value). None = disabled.
+        self.goal_progress = env_settings.get("goal_progress", None)
+        # Waypoint task (H3). goal_mode: None | "relative" (obs = goal - position, closed loop)
+        # | "direction" (obs = unit direction to the goal at reset, open loop).
+        self.goal_mode = env_settings.get("goal_mode", None)
+        self.goal_radius = float(env_settings.get("goal_radius", 0.3))
+        self.goal_dist_range = tuple(env_settings.get("goal_dist_range", (2.0, 3.0)))
+        self.goal_bearing_deg = float(env_settings.get("goal_bearing_deg", 60.0))
+        self.goal_xy = np.array([0.0, 3.0])
+        self.goal_dir0 = np.array([0.0, 1.0])
+        # Re-align omniwheel contact frames in Python (needed for stock, unpatched MuJoCo)
+        self.fix_wheel_contacts = bool(env_settings.get("fix_wheel_contacts", True))
+        # Optional depth corruption for the perception-robustness study (H2)
+        self.depth_noise_std = float(camera_settings.get("depth_noise_std", 0.0))
+        self.depth_dropout = float(camera_settings.get("depth_dropout", 0.0))
+        self.depth_occlusion = float(camera_settings.get("depth_occlusion", 0.0))
         self.camera_frame_rate = camera_settings.get("frame_rate", 90)  # Hz
         self.depth_only = depth_only
         
@@ -229,6 +251,8 @@ class BBotSimulation(gym.Env):
         self.reward_scale = reward_config_dict.get("scale", 0.01)  # Default: /100
         self.action_reg_coef = reward_config_dict.get("action_reg_coef", -0.0001)
         self.survival_bonus = reward_config_dict.get("survival_bonus", 0.02)
+        self.fall_penalty = float(reward_config_dict.get("fall_penalty", 0.0))
+        self.reward_cap = reward_config_dict.get("cap", None)  # max raw directional speed [m/s]
 
         # Define action space: 3D continuous actions for three omniwheels
         # Actions are normalized to [-1, 1] and scaled internally to [-10, 10] rad/s
@@ -255,11 +279,17 @@ class BBotSimulation(gym.Env):
             disable_cameras=disable_cameras
         )
 
+        if self.goal_mode:
+            spaces = dict(self.observation_space.spaces)
+            spaces["goal"] = gym.spaces.Box(-1.5, 1.5, shape=(2, ), dtype=_default_dtype)
+            self.observation_space = gym.spaces.Dict(spaces)
+
         # Load MuJoCo model and create simulation data structure
         # The model contains all physical properties (masses, inertias, geometries, etc.)
         # The data structure holds the current simulation state (positions, velocities, etc.)
         self.model = mujoco.MjModel.from_xml_path(self.xml_path)
         self.data = mujoco.MjData(self.model)
+        self._stepper = ContactFrameStepper(self.model, fix_frames=self.fix_wheel_contacts)
 
         # Initialize RGB-D camera system if enabled
         # Cameras are updated at a lower frequency than physics (see camera_frame_rate)
@@ -509,8 +539,15 @@ class BBotSimulation(gym.Env):
             r_seed = terrain_config_dict["seed"]
             self.last_r_seed = r_seed
         
+        # Optional per-episode difficulty: amplitude ~ U(lo, hi) (Perlin only)
+        extra = {}
+        amp_range = terrain_config_dict.get("amplitude_range")
+        if amp_range:
+            self.last_amplitude = float(self._np_random.uniform(*amp_range))
+            extra["amplitude"] = self.last_amplitude
+
         # Generate terrain with seed
-        self.model.hfield_data = terrain_gen(nrows, seed=r_seed)
+        self.model.hfield_data = terrain_gen(nrows, seed=r_seed, **extra)
 
         # Update viewer if active (so terrain is visible)
         if self.passive_viewer is not None:
@@ -600,6 +637,11 @@ class BBotSimulation(gym.Env):
 
         # Reset goal direction and reward function
         self._reset_goal_and_reward_objs()
+        if self.goal_mode:
+            phi = np.radians(self._np_random.uniform(-self.goal_bearing_deg, self.goal_bearing_deg))
+            dist = self._np_random.uniform(*self.goal_dist_range)
+            self.goal_dir0 = np.array([np.sin(phi), np.cos(phi)])
+            self.goal_xy = dist * self.goal_dir0
 
         # Reset episode counters
         self.step_counter = 0
@@ -698,6 +740,26 @@ class BBotSimulation(gym.Env):
             eval_env=self.eval_env
         )
 
+    def _corrupt_depth(self, img):
+        """Apply optional noise / dropout / occlusion to the depth channel (last channel)."""
+        if not (self.depth_noise_std or self.depth_dropout or self.depth_occlusion):
+            return img
+        rng = self._np_random
+        depth = img[..., -1]
+        if self.depth_noise_std:
+            depth = depth + rng.normal(0.0, self.depth_noise_std, depth.shape)
+        if self.depth_dropout:
+            depth = np.where(rng.random(depth.shape) < self.depth_dropout, 1.0, depth)
+        if self.depth_occlusion:
+            h, w = depth.shape
+            frac = np.sqrt(self.depth_occlusion)
+            bh, bw = max(1, int(h * frac)), max(1, int(w * frac))
+            y0 = int(rng.integers(0, h - bh + 1))
+            x0 = int(rng.integers(0, w - bw + 1))
+            depth[y0:y0 + bh, x0:x0 + bw] = 0.0  # near-range occluder
+        img[..., -1] = np.clip(depth, 0.0, 1.0)
+        return img
+
     def _get_obs(self, last_ctrl):
         """
         Construct the observation dictionary from current simulation state.
@@ -749,8 +811,10 @@ class BBotSimulation(gym.Env):
             # See docstring for detailed explanation of frame rate logic
             if self.prev_im_pair.im_0 is None or delta_time >= 1.0 / self.camera_frame_rate:
                 # Render new images from both cameras
-                rgbd_0 = self.rgbd_inputs(self.data, "cam_0").astype(_default_dtype)
-                rgbd_1 = self.rgbd_inputs(self.data, "cam_1").astype(_default_dtype)
+                rgbd_0 = self._corrupt_depth(
+                    self.rgbd_inputs(self.data, "cam_0").astype(_default_dtype))
+                rgbd_1 = self._corrupt_depth(
+                    self.rgbd_inputs(self.data, "cam_1").astype(_default_dtype))
                 
                 # Log images if enabled
                 if self.log_options["cams"]:
@@ -792,8 +856,10 @@ class BBotSimulation(gym.Env):
         # data.cvel provides 6D velocity: [linear_vel (3D), angular_vel (3D)]
         # This is more accurate than finite difference and doesn't require state storage
         cvel = self.data.cvel[body_id]
-        linear_vel = cvel[:3].copy().astype(_default_dtype)  # Linear velocity in world frame [m/s]
-        angular_vel = cvel[3:].copy().astype(_default_dtype)  # Angular velocity in world frame [rad/s]
+        # MuJoCo's cvel is (rotational:3, translational:3). The original code had the two
+        # halves swapped, so the "directional" reward was paying for angular velocity.
+        angular_vel = cvel[:3].copy().astype(_default_dtype)  # Angular velocity in world frame [rad/s]
+        linear_vel = cvel[3:].copy().astype(_default_dtype)  # Linear velocity in world frame [m/s]
         
         # Clip velocities to reasonable ranges for observations
         vel = np.clip(linear_vel, a_min=-2.0, a_max=2.0)
@@ -826,6 +892,13 @@ class BBotSimulation(gym.Env):
                 ]).astype(_default_dtype),
             }
 
+        if self.goal_mode:
+            if self.goal_mode == "relative":
+                g = np.clip((self.goal_xy - position[:2]) / 3.0, -1.5, 1.5)
+            else:
+                g = self.goal_dir0
+            obs["goal"] = np.asarray(g, dtype=_default_dtype)
+
         return obs
 
     def _get_info(self):
@@ -847,7 +920,8 @@ class BBotSimulation(gym.Env):
             "success": False,  # Currently unused (could indicate goal reached)
             "failure": False,   # Set to True in step() if robot falls
             "step_counter": self.step_counter,  # Current step in episode
-            "pos2d": position[:-1]  # 2D position [x, y] (exclude height z)
+            "pos2d": position[:-1],  # 2D position [x, y] (exclude height z)
+            "progress": float(np.dot(position[:-1], getattr(self, "goal_2d", [0.0, 1.0]))),
         }
         return info
 
@@ -908,8 +982,8 @@ class BBotSimulation(gym.Env):
         
         # Step physics simulation forward
         # Suppress warnings about objective convexity (benign MuJoCo warnings)
-        with warnings_stdout_off():
-            mujoco.mj_step(self.model, self.data)
+        for _ in range(self.action_repeat):
+            self._stepper.step(self.data)
 
         # Reset applied forces (MuJoCo applies forces until explicitly reset)
         # This prevents forces from accumulating across steps
@@ -926,13 +1000,25 @@ class BBotSimulation(gym.Env):
         # 1. Directional reward: velocity component in target direction
         # This encourages movement toward the goal direction
         # Scaled by reward_scale (default: 0.01 = /100) to keep rewards in reasonable range
-        reward = self.reward_obj(obs) * self.reward_scale
+        if self.goal_mode:
+            if self.goal_mode == "relative":
+                vec = self.goal_xy - info["pos2d"]
+                heading = vec / (np.linalg.norm(vec) + 1e-6)
+            else:
+                heading = self.goal_dir0
+            raw_reward = float(np.dot(obs["vel"][:2], heading))
+        else:
+            raw_reward = self.reward_obj(obs)
+        if self.reward_cap is not None:
+            raw_reward = min(raw_reward, self.reward_cap)  # cap speed reward: no incentive to lunge
+        reward = raw_reward * self.reward_scale * self.action_repeat
         self.reward_term_1_hist.append(reward)
 
         # 2. Action regularization: penalize large actions
         # This encourages energy-efficient control and smooth motions
         # The L2 norm squared gives quadratic penalty
-        action_regularization = self.action_reg_coef * (np.linalg.norm(omniwheel_commands)**2)
+        action_regularization = (self.action_reg_coef * self.action_repeat *
+                                 (np.linalg.norm(omniwheel_commands)**2))
         self.reward_term_2_hist.append(action_regularization)
         reward += action_regularization
 
@@ -981,8 +1067,8 @@ class BBotSimulation(gym.Env):
         # Check if episode exceeded maximum steps
         if self.step_counter >= self.max_ep_steps:
             if self.verbose:
-                print(f"terminated. Cause: {self.step_counter} >= {self.max_ep_steps}")
-            terminated = True
+                print(f"truncated. Cause: {self.step_counter} >= {self.max_ep_steps}")
+            truncated = True  # time limit (bootstrapped by SB3 via TimeLimit.truncated)
 
         # Check if robot has fallen (tilted too much)
         # Compute angle between robot's up-axis and gravity vector
@@ -1015,16 +1101,28 @@ class BBotSimulation(gym.Env):
             info["success"] = False
             info["failure"] = True
             terminated = True
+            reward -= self.fall_penalty
         else:
             # Robot is still upright: add survival bonus
-            reward += self.survival_bonus
+            reward += self.survival_bonus * self.action_repeat
 
         # Accumulate episode return (for logging/analysis)
         gamma = 1.0  # Discount factor (not used algorithmically, but tracked)
         self.G_tau += (gamma**self.step_counter) * reward
         
         # Save logs if episode ended
-        if terminated:
+        if self.goal_mode:
+            info["goal_dist"] = float(np.linalg.norm(self.goal_xy - info["pos2d"]))
+            if not info["failure"] and info["goal_dist"] <= self.goal_radius:
+                info["success"] = True
+                truncated = True
+        if (self.goal_progress is not None and not info["failure"]
+                and info["progress"] >= self.goal_progress):
+            info["success"] = True
+            truncated = True
+        truncated = truncated and not terminated
+
+        if terminated or truncated:
             if self.verbose:
                 print(colored(
                     f"Episode ended. Return: {self.G_tau:.2f}, Steps: {self.step_counter}",

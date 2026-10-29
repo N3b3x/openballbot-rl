@@ -187,3 +187,15 @@ outputs/visualizations/*.gif
 # These directories have been moved to new structure
 
 **/papers/*.txt
+# configs/env holds the environment configs (must be tracked; plain 'env/' above would hide it)
+!configs/env/
+
+# --- perception-guided ballbot study ---
+!notebooks/
+!notebooks/*.ipynb
+outputs/study/runs/
+outputs/study/*.log
+!outputs/study/sample/
+!outputs/study/sample/**
+!outputs/study/results/
+!outputs/study/analysis/

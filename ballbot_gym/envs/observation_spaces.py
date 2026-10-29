@@ -72,9 +72,6 @@ def create_observation_space(
         "actions": gym.spaces.Box(
             -1.0, 1.0, shape=(3, ), dtype=_default_dtype
         ),
-        "relative_image_timestamp": gym.spaces.Box(
-            low=0.0, high=0.1, shape=(1, ), dtype=_default_dtype
-        ),
     })
     
     # Select appropriate observation space based on camera configuration

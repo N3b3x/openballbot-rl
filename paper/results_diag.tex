@@ -1,0 +1,30 @@
+Four measurements explain why the earlier replication attempt on this codebase (best return 9.20 and 378-step episodes after 10M steps on flat ground, versus $\approx$86 and 4000 steps reported by Salehi \cite{salehi2025}) did not converge. They were obtained with stock MuJoCo 3.13, the configuration used for all experiments below.
+
+\textbf{(1) Wheel friction frames.} Table~\ref{tab:frame} lists the alignment between each wheel's capsule axis and the first contact tangent $t_1$; only wheel~0 is correct on stock MuJoCo.
+
+\begin{table}[h]
+\centering\caption{$|\langle \text{capsule axis},t_1\rangle|$ for the ball--wheel contacts (1 = correctly aligned).}\label{tab:frame}
+\small\begin{tabular}{lccc}\toprule
+ & Wheel 0 & Wheel 1 & Wheel 2\\ \midrule
+Stock MuJoCo 3.13 & 0.999 & 0.209 & 0.537\\
+With our frame fix & 1.000 & 1.000 & 1.000\\ \bottomrule
+\end{tabular}\end{table}
+
+\textbf{(2) Velocity indexing.} Comparing MuJoCo's \texttt{cvel} with finite differences of the base position, the last three entries are the linear velocity (e.g.\ $(0.017,-0.005)$ vs.\ $(0.016,-0.005)$\,m/s) while the first three are the angular velocity. The environment used the first three as ``velocity''.
+
+\textbf{(3) Terrain steepness.} Table~\ref{tab:slope} gives the slope statistics of the height field (20 held-out seeds per row). The default amplitude of 1 produces slopes that no policy with a $20^\circ$ tilt limit can climb; the amplitudes used in our experiments span $1^\circ$--$12^\circ$ mean slope.
+
+\begin{table}[h]
+\centering\caption{Perlin terrain slope versus amplitude $A$ (degrees).}\label{tab:slope}
+\small\begin{tabular}{rccc}\toprule
+$A$ & mean slope & 95th pct. & max\\ \midrule
+0.02 & 1.3 & 2.3 & 3.7\\
+0.04 & 2.7 & 4.7 & 7.3\\
+0.08 & 5.3 & 9.3 & 14.4\\
+0.12 & 7.9 & 13.8 & 21.1\\
+0.14 & 9.2 & 15.9 & 24.2\\
+0.18 & 11.8 & 20.2 & 30.0\\
+1.00 (default) & 46.2 & 63.9 & 72.7\\ \bottomrule
+\end{tabular}\end{table}
+
+\textbf{(4) Effect of the fixes on flat ground.} \input{results_ablation.tex}

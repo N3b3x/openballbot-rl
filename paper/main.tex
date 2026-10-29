@@ -1,0 +1,184 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{graphicx,booktabs,amsmath,amssymb,hyperref,xcolor,tikz,array,multirow}
+\usetikzlibrary{arrows.meta,positioning,fit,calc}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black}
+
+% placeholder macro: anything still to be measured is shown in red brackets
+\newcommand{\tbd}[1]{\textcolor{red}{[\textbf{TBD:} #1]}}
+\newcommand{\hyp}[1]{\textbf{#1}}
+
+\begin{document}
+
+\title{Perception-Guided Reinforcement Learning for Ballbot Navigation\\on Uneven Terrain in Simulation}
+\author{\IEEEauthorblockN{Nebiyu Tadesse}
+\IEEEauthorblockA{Department of Electrical and Computer Engineering, Johns Hopkins University\\
+Course: Artificial Intelligence for Robotics --- \emph{Draft for instructor review}}}
+\maketitle
+
+\begin{abstract}
+A ballbot is an underactuated robot that balances on a single ball and moves by controlled leaning. Navigating uneven terrain requires the robot to keep its balance and make progress at the same time, using only limited sensing. We study this problem in simulation, starting from the open-source MuJoCo benchmark and PPO pipeline of Salehi (2025). Our first result is diagnostic: the pipeline as released does not train on a stock MuJoCo installation. We identify three causes: (i) the omniwheel anisotropic friction relies on a collision-frame patch to MuJoCo, and on stock MuJoCo two of the three wheels get the wrong friction direction; (ii) the velocity used by the directional reward was read from the wrong half of MuJoCo's 6-D velocity vector, so the reward paid for angular rather than linear velocity; and (iii) the default Perlin terrain is far steeper (mean slope $\approx 46^\circ$) than the $20^\circ$ tilt limit. We repair all three in software, re-tune PPO, and train proprioception-only and proprioception$+$depth policies. We evaluate on held-out terrain seeds and difficulties and test three hypotheses: \hyp{H1} adding depth improves success and reduces falls; \hyp{H2} performance degrades under depth noise and occlusion; \hyp{H3} a goal signal improves time-to-goal over open-loop directional drive. In our preliminary results (two seeds per variant, 1M decisions), depth did not reduce falls (H1 not supported) and corrupting or even blanking the depth input changed nothing (the policies ignore it, so the H2 drop is not observed); the waypoint stretch (H3) is inconclusive.. The full code, configs, and notebook are included.
+\end{abstract}
+
+\begin{IEEEkeywords}
+ballbot, reinforcement learning, PPO, depth perception, rough-terrain navigation, MuJoCo
+\end{IEEEkeywords}
+
+%=====================================================================
+\section{Introduction}
+%=====================================================================
+A ballbot is a tall, narrow robot that balances dynamically on a single sphere driven by actuated rollers or omniwheels \cite{lauwers2006,nagarajan2014}. Because its support polygon collapses to one contact point, it is omnidirectional and agile, and it is statically unstable: if the controller stops, the robot falls. Classical ballbot control derives Lagrangian dynamics and stabilises decoupled planar models with PID/LQR-style controllers on a flat floor \cite{nagarajan2014,abdelrahim2025}. These assumptions (flat ground, no slip between ball and floor) are exactly what is violated when the robot must \emph{navigate} over uneven ground.
+
+\textbf{Task.} We consider goal-directed navigation of a simulated ballbot on procedurally generated uneven terrain. At every decision step the policy outputs normalised commands for three omniwheel motors. The episode succeeds if the robot makes a required amount of progress along a target direction without exceeding a $20^\circ$ tilt (a fall).
+
+\textbf{Environment and sensing.} The robot is simulated in MuJoCo \cite{todorov2012} at 500\,Hz. It senses (i) proprioception: orientation, angular and linear velocity, wheel speeds and the previous action; and (ii) two low-resolution depth cameras ($64{\times}64$) aimed at the ball--ground contact region, which reveal terrain the proprioceptive state alone cannot disambiguate \cite{salehi2025}.
+
+\textbf{Goals.} (1) Reproduce a working baseline of \cite{salehi2025,salehi2025code}; (2) study how perception and goal specification affect navigation (proprioception-only vs.\ proprioception$+$depth; depth noise and occlusion; an optional waypoint signal); (3) report clear metrics --- success, fall rate, return, time-to-goal and robustness --- on held-out terrain seeds and difficulties.
+
+\textbf{Contributions.} (i) A root-cause analysis of why the baseline does not train on a stock simulator, including a velocity-indexing bug in the reward (Sec.~\ref{sec:method-physics}); (ii) software fixes that make it train; (iii) a controlled comparison of perception variants with paired statistics on held-out terrains; (iv) an open, runnable notebook and scripts.
+
+%=====================================================================
+\section{Related Work}
+%=====================================================================
+\textbf{Ballbot dynamics and control.} Lauwers et al.\ built the first practical ballbot with an inverse mouse-ball drive \cite{lauwers2006}. Nagarajan et al.\ derived the Lagrangian dynamics and demonstrated decoupled planar balancing and trajectory control on a human-sized ballbot with an omniwheel drive \cite{nagarajan2014}; their controllers assume a flat, level floor and linearised dynamics. Subsequent work covers drivetrain design for agility and payload \cite{xiao2023}, systematic modelling and control \cite{abdelrahim2025}, and motion planning among people with topology-informed MPC \cite{mavrogiannis2021}. Carius et al.\ control a simulated ballbot on uneven ground with a path-integral stochastic optimal control method whose rollouts come from a physics engine \cite{carius2022}.
+
+\textbf{Learning for ballbots.} Zhou et al.\ cast balancing as a recovery task and combine a conventional feedback controller with deep RL in a compound controller that tolerates larger initial tilts \cite{zhou2022}. Salehi (2025) was the first to learn \emph{navigation} on random uneven terrain with model-free RL: a PPO policy \cite{schulman2017} conditioned on proprioception and on features of two depth images produced by a pretrained, frozen autoencoder encoder \cite{salehi2025}. It also released the MuJoCo simulator and training code \cite{salehi2025code}.
+
+\textbf{Learning-based rough-terrain locomotion.} In legged robots, policies trained in simulation with RL transfer to hardware \cite{hwangbo2019}; proprioception alone can already traverse challenging terrain \cite{lee2020}, and fusing exteroception with proprioception improves robustness, including when perception is noisy or missing \cite{miki2022}. Massively parallel PPO with terrain curricula makes such training fast \cite{rudin2022}. Our H1/H2 transfer these perception questions to the ballbot, where the base is far less stable than a legged robot.
+
+\textbf{Position relative to Salehi (2025).} We use the same simulator family, observation structure, depth encoder and PPO method. We differ in three ways: (1) we expose and fix three reproducibility problems (friction frame, velocity indexing in the reward, terrain steepness) and re-tune the learning setup; (2) we add the controlled ablations absent from the original: proprioception-only vs.\ depth, and perception corruption; (3) we report success/fall metrics with paired statistics on disjoint held-out terrains rather than only learning curves.
+
+%=====================================================================
+\section{Research Problem and Hypotheses}
+%=====================================================================
+We model navigation as an MDP $\langle \mathcal{S},\mathcal{A},P,P_0,R,\gamma\rangle$ \cite{schulman2017}. The policy $\pi_\theta(a_t\mid o_t)$ maps an observation $o_t$ to $a_t\in[-1,1]^3$. The terrain is sampled from a Perlin-noise distribution \cite{perlin1985} with difficulty (amplitude) $A$ and seed $\sigma$; $A$ controls slope. Training uses seeds $\sigma<10^4$ and $A\sim U(0.02,0.14)$; testing uses disjoint seeds $\sigma\ge 10^5$ at fixed amplitudes, including a harder level outside the training range.
+
+\textbf{Observation ambiguity.} With proprioception only, two situations with identical $(\zeta,\dot\zeta,v,\dot m,a_{t-1})$ may face different terrain ahead; depth is the only channel that can resolve this \cite{salehi2025}.
+
+\textbf{Metrics.} Per held-out episode we record: \emph{success} (reaches $d^\ast$ m of progress along the target direction $g$ without falling within $T$ steps), \emph{fall} (tilt $>20^\circ$), \emph{return}, \emph{time-to-goal} (first step reaching $d^\ast$), and mean speed. Progress is $p_t=\langle \mathbf{x}_t - \mathbf{x}_0, g\rangle$.
+
+\begin{itemize}
+\item[\hyp{H1}] PPO with proprioception$+$depth achieves higher success and lower fall rate on held-out terrains than proprioception-only.
+\item[\hyp{H2}] Success degrades under depth noise and partial occlusion; the drop quantifies reliance on vision.
+\item[\hyp{H3}] (stretch) A simple goal/waypoint signal reduces time-to-goal relative to open-loop directional drive on the same terrains.
+\end{itemize}
+Statistical plan: paired comparisons over identical terrains (same seed and amplitude), reporting the mean difference with a bootstrap 95\% CI and a Wilcoxon signed-rank $p$-value, and Wilson intervals for rates; training seeds are treated as replicates \cite{henderson2018,agarwal2021}.
+
+%=====================================================================
+\section{Method}
+%=====================================================================
+\subsection{Sensing $\rightarrow$ decision $\rightarrow$ action}
+Fig.~\ref{fig:block} shows the pipeline. Proprioception $o^{\text{prop}}_t\in\mathbb{R}^{15}$ is z-scored with running statistics. Each depth image $I^{(c)}_t\in[0,1]^{64\times64}$ ($c\in\{0,1\}$) is mapped by a convolutional encoder $E$ (two stride-2 $3{\times}3$ conv layers with batch norm and LeakyReLU, then a linear layer to 20 units with $\tanh$) to $z^{(c)}_t\in\mathbb{R}^{20}$. The concatenation $[o^{\text{prop}}_t, z^{(0)}_t, z^{(1)}_t]\in\mathbb{R}^{55}$ feeds actor and critic MLPs ($2{\times}256$, $\tanh$). The encoder is the autoencoder encoder released with \cite{salehi2025}, \emph{frozen} and kept in evaluation mode (fixed batch-norm statistics); the variant without cameras has a 15-dimensional input and renders no images.
+
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[font=\small,
+  box/.style={draw, rounded corners=2pt, minimum height=9mm, minimum width=24mm, align=center, fill=blue!6},
+  pbox/.style={draw, rounded corners=2pt, minimum height=9mm, minimum width=24mm, align=center, fill=orange!14},
+  arr/.style={-{Latex[length=2mm]}, thick}]
+ \node[box] (imu) at (0,0.9) {Proprioception\\{\scriptsize tilt, rates, vel., wheels, $a_{t-1}$ (15-d)}};
+ \node[box] (cam) at (0,-0.9) {2$\times$ depth cameras\\{\scriptsize $64{\times}64$, 83\,Hz}};
+ \node[pbox] (enc) at (4.6,-0.9) {Depth encoder $E$\\{\scriptsize pretrained, frozen; 20-d each}};
+ \node[box] (cat) at (8.4,0) {Concatenate\\{\scriptsize 55-d feature}};
+ \node[pbox] (mlp) at (11.4,0) {Actor / critic\\MLP $2{\times}256$, tanh};
+ \node[box] (act) at (14.4,0) {Action $a_t\in[-1,1]^3$\\{\scriptsize 100\,Hz, held 5 steps}};
+ \node[box] (sim) at (14.4,-2.0) {MuJoCo ballbot\\{\scriptsize 500\,Hz, RK4, terrain}};
+ \coordinate (join) at (6.7,0);
+ \draw[arr] (cam) -- (enc);
+ \draw[thick] (imu.east) -| (join);
+ \draw[thick] (enc.east) -| (join);
+ \draw[arr] (join) -- (cat.west);
+ \draw[arr] (cat) -- (mlp);
+ \draw[arr] (mlp) -- (act);
+ \draw[arr] (act) -- (sim);
+ \draw[arr, dashed] (sim.west) -- (0,-2.0) node[midway, below]{\scriptsize new state and terrain} -- (cam.south);
+ \draw[arr, dashed] (0,-2.0) -- (cam.south);
+\end{tikzpicture}
+\caption{Sensing$\rightarrow$decision$\rightarrow$action flow. Orange blocks are learned or pretrained networks; the proprioception-only variant omits the cameras and the encoder.}
+\label{fig:block}
+\end{figure*}
+
+\subsection{Actuation, reward and PPO}
+The action is three normalised motor commands scaled by 10 (torque-controlled omniwheels). The policy acts at $100$\,Hz: each action is held for 5 physics steps (2\,ms, RK4). The per-decision reward is
+\begin{equation}
+r_t = c\,\big(\alpha_1\min(\langle v^{xy}_t,g\rangle,v_{\max}) + \alpha_2\|a_t\|^2 + \alpha_3\,\mathbf{1}[\text{upright}]\big),
+\end{equation}
+with $c{=}5$ (the action-repeat factor, which keeps returns comparable across control rates), $\alpha_1{=}0.1$ (the baseline uses $0.01$ at 500\,Hz), $\alpha_2{=}-10^{-4}$, $\alpha_3{=}0.02$ and a speed cap $v_{\max}{=}0.6$\,m/s that removes any incentive to lunge forward and fall. Episodes end on a fall (terminal), at an 800-step (8\,s) time limit (truncation, value bootstrapped) or when the goal progress $d^\ast{=}2$\,m is reached (success, truncation).
+
+We optimise with PPO \cite{schulman2017} from Stable-Baselines3 \cite{raffin2021}, GAE($\lambda{=}0.95$) \cite{schulman2016} and the settings in Table~\ref{tab:hp}.
+
+\begin{table}[t]
+\centering\caption{PPO setup (ours) versus the released baseline config.}\label{tab:hp}
+\small
+\begin{tabular}{lcc}
+\toprule
+ & Baseline \cite{salehi2025code} & Ours \\
+\midrule
+Control rate & 500\,Hz & 100\,Hz \\
+Net (actor/critic) & $4{\times}128$ LeakyReLU & $2{\times}256$ tanh \\
+Learning rate & custom schedule & $3\!\cdot\!10^{-4}\!\to\!3\!\cdot\!10^{-5}$ lin. \\
+Clip $\epsilon$ & 0.015 & 0.2 \\
+$\gamma$ / $\lambda$ & 0.99 / 0.95 & 0.995 / 0.95 \\
+Rollout & $10{\times}2048$ & $20{\times}256$ \\
+Epochs / batch & 5 / 256 & 8 / 1280 \\
+Initial $\log\sigma$ & 0 & $-1$ \\
+Normalisation & none & obs (proprio) + reward \\
+Target KL & 0.3 & 0.03 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Making the simulator trainable}\label{sec:method-physics}
+\textbf{(1) Omniwheel friction frame.} Each wheel is a capsule with anisotropic ball--wheel friction (\texttt{friction="0.001 1.0"}), which only models an omniwheel if the first contact tangent is the capsule axis. Stock MuJoCo does not guarantee this; the baseline therefore requires a source patch to MuJoCo \cite{salehi2025code}. We measured $|\langle \text{axis}, t_1\rangle|$ on an unpatched MuJoCo 3.13 and found $0.999, 0.209, 0.537$ for the three wheels: only one is aligned. Because building MuJoCo from source was not possible on our machine, we re-implemented the patch in Python: \texttt{ContactFrameStepper} runs RK4 stage by stage and rewrites the wheel-contact frames between collision detection and constraint assembly. With the fix off it matches \texttt{mj\_step} exactly (max difference $0$ over 1000 steps, unit-tested); with it on, all three wheels give $|\langle \text{axis}, t_1\rangle|=1$.
+
+\textbf{(2) Velocity indexing.} MuJoCo's \texttt{cvel} is ordered (rotational, translational). The environment read the \emph{first} three entries as linear velocity, so the observation named ``vel'' was the angular velocity and the directional reward $\langle v^{xy},g\rangle$ rewarded rotation about the horizontal axes. We verified against finite differences of the base position that the \emph{last} three entries are the linear velocity, and swapped them. With the bug, a policy that learned to balance on flat ground made no progress (net displacement $-0.016$\,m in 8\,s); after the fix the same setup moves $1.24$\,m in 8\,s after only 0.3M decisions (Sec.~\ref{sec:exp}).
+
+\textbf{(3) Terrain difficulty.} The default Perlin height field (2\,m vertical scale, amplitude 1) has mean slope $46^\circ$ and 95th percentile $64^\circ$, far above the $20^\circ$ tilt limit. We add an amplitude parameter; amplitudes $0.04, 0.08, 0.12, 0.18$ give mean slopes of roughly $3^\circ$--$13^\circ$ (95th percentile up to $22^\circ$ at $0.2$). A portable NumPy gradient-noise fallback replaces the C \texttt{noise} package, which has no Windows build; it changes the exact noise but not its statistics.
+
+\subsection{Training and evaluation protocol}
+Each run uses 20 parallel environments, one random seed, and 1M decisions (about 2.8 simulated hours at 100\,Hz); two seeds per variant. Variants: \texttt{proprio}, \texttt{depth\_frozen} (\texttt{depth\_e2e}, a CNN trained jointly with PPO, is implemented but not yet evaluated). Evaluation uses the deterministic policy on held-out seeds $\sigma=10^5+7i$ at four amplitudes, 30 episodes per cell (20 for H2). H2 corrupts the depth channel at test time only: additive Gaussian noise ($\sigma_n\in\{0.05,0.15,0.30\}$ in normalised depth), random pixel dropout (20\%), and a square occluder covering 25\% or 50\% of each image.
+
+%=====================================================================
+\section{Experiments}\label{sec:exp}
+%=====================================================================
+\textbf{Status.} All numbers below are measured but preliminary (two seeds, 1M decisions); the draft lists what remains in Sec.~\ref{sec:concl}.
+
+\subsection{Reproduction diagnostics (done)}
+\input{results_diag.tex}
+
+\subsection{H1: proprioception vs.\ proprioception$+$depth}
+\input{results_h1.tex}
+
+\subsection{H2: robustness to depth noise and occlusion}
+\input{results_h2.tex}
+
+\subsection{H3 (stretch): goal-conditioned navigation}
+\input{results_h3.tex}
+
+%=====================================================================
+\section{Conclusions and Next Steps}
+%=====================================================================
+\input{conclusion.tex}
+
+\begin{thebibliography}{99}\small
+\bibitem{salehi2025} A.~Salehi, ``Reinforcement learning for ballbot navigation in uneven terrain,'' arXiv:2505.18417, 2025.
+\bibitem{salehi2025code} A.~Salehi, ``OpenBallBot-RL,'' \url{https://github.com/salehiac/OpenBallBot-RL}.
+\bibitem{lauwers2006} T.~B.~Lauwers, G.~A.~Kantor, and R.~L.~Hollis, ``A dynamically stable single-wheeled mobile robot with inverse mouse-ball drive,'' in \emph{Proc.\ IEEE ICRA}, 2006, pp.~2884--2889.
+\bibitem{nagarajan2014} U.~Nagarajan, G.~Kantor, and R.~Hollis, ``The ballbot: An omnidirectional balancing mobile robot,'' \emph{Int.\ J.\ Robotics Research}, vol.~33, no.~6, pp.~917--930, 2014.
+\bibitem{schulman2017} J.~Schulman, F.~Wolski, P.~Dhariwal, A.~Radford, and O.~Klimov, ``Proximal policy optimization algorithms,'' arXiv:1707.06347, 2017.
+\bibitem{schulman2016} J.~Schulman, P.~Moritz, S.~Levine, M.~Jordan, and P.~Abbeel, ``High-dimensional continuous control using generalized advantage estimation,'' in \emph{Proc.\ ICLR}, 2016.
+\bibitem{todorov2012} E.~Todorov, T.~Erez, and Y.~Tassa, ``MuJoCo: A physics engine for model-based control,'' in \emph{Proc.\ IEEE/RSJ IROS}, 2012, pp.~5026--5033.
+\bibitem{raffin2021} A.~Raffin \emph{et al.}, ``Stable-Baselines3: Reliable reinforcement learning implementations,'' \emph{J.\ Mach.\ Learn.\ Res.}, vol.~22, no.~268, pp.~1--8, 2021.
+\bibitem{zhou2022} Y.~Zhou, J.~Lin, S.~Wang, and C.~Zhang, ``Learning ball-balancing robot through deep reinforcement learning,'' arXiv:2208.10142, 2022.
+\bibitem{xiao2023} C.~Xiao \emph{et al.}, ``Design and control of a ballbot drivetrain with high agility, minimal footprint, and high payload,'' arXiv:2304.02887, 2023.
+\bibitem{abdelrahim2025} M.~Abdelrahim \emph{et al.}, ``Modeling and control of a ballbot: A systematic approach,'' \emph{IEEE Access}, 2025, doi:10.1109/ACCESS.2025.3597797.
+\bibitem{mavrogiannis2021} C.~Mavrogiannis, K.~Balasubramanian, S.~Poddar, A.~Gandra, and S.~S.~Srinivasa, ``Topology-informed model predictive control for anticipatory collision avoidance on a ballbot,'' 2021.
+\bibitem{carius2022} J.~Carius, R.~Ranftl, F.~Farshidian, and M.~Hutter, ``Constrained stochastic optimal control with learned importance sampling: A path integral approach,'' \emph{Int.\ J.\ Robotics Research}, vol.~41, no.~2, 2022, doi:10.1177/02783649211047890.
+\bibitem{hwangbo2019} J.~Hwangbo \emph{et al.}, ``Learning agile and dynamic motor skills for legged robots,'' \emph{Science Robotics}, vol.~4, no.~26, 2019.
+\bibitem{lee2020} J.~Lee, J.~Hwangbo, L.~Wellhausen, V.~Koltun, and M.~Hutter, ``Learning quadrupedal locomotion over challenging terrain,'' \emph{Science Robotics}, vol.~5, no.~47, 2020.
+\bibitem{miki2022} T.~Miki \emph{et al.}, ``Learning robust perceptive locomotion for quadrupedal robots in the wild,'' \emph{Science Robotics}, vol.~7, no.~62, 2022.
+\bibitem{rudin2022} N.~Rudin, D.~Hoeller, P.~Reist, and M.~Hutter, ``Learning to walk in minutes using massively parallel deep reinforcement learning,'' in \emph{Proc.\ CoRL}, 2022.
+\bibitem{perlin1985} K.~Perlin, ``An image synthesizer,'' in \emph{Proc.\ ACM SIGGRAPH}, 1985, pp.~287--296.
+\bibitem{henderson2018} P.~Henderson \emph{et al.}, ``Deep reinforcement learning that matters,'' in \emph{Proc.\ AAAI}, 2018.
+\bibitem{agarwal2021} R.~Agarwal \emph{et al.}, ``Deep reinforcement learning at the edge of the statistical precipice,'' in \emph{Proc.\ NeurIPS}, 2021.
+\end{thebibliography}
+\end{document}

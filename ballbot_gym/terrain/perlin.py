@@ -3,7 +3,11 @@ import numpy as np
 import quaternion
 import matplotlib.pyplot as plt
 
-from noise import snoise2  # more coherent than pnoise2
+try:
+    from noise import snoise2  # more coherent than pnoise2
+except ImportError:  # no C toolchain / Windows: use the NumPy fallback
+    snoise2 = None
+    from ballbot_gym.terrain._noise_fallback import fractal_noise_grid
 
 def generate_perlin_terrain(
         n: int,
@@ -12,7 +16,8 @@ def generate_perlin_terrain(
         persistence: float = 0.2,
         lacunarity: float = 2.0,
         amplitude: float = 1.0,  # Added amplitude control
-        seed: int = 0
+        seed: int = 0,
+        amplitude_range=None  # consumed by the env (per-episode difficulty sampling)
     ) -> np.ndarray:
     """
     Generate a Perlin noise-based terrain heightfield as a 1D array.
@@ -43,6 +48,12 @@ def generate_perlin_terrain(
             The flattened (1D) terrain array, shape (n * n,) with values in [0, 1].
     """
     assert n % 2 == 1, "n should be odd for heightfield symmetry"
+
+    if snoise2 is None:
+        noise_grid = fractal_noise_grid(n, scale, octaves, persistence,
+                                        lacunarity, seed)
+        terrain = np.clip((noise_grid + 1.0) / 2.0 * amplitude, 0.0, 1.0)
+        return terrain.flatten()
 
     # Initialize empty terrain
     terrain = np.zeros((n, n))

@@ -14,6 +14,14 @@ Here are some navigation examples from a trained policy on four different, *rand
 
 Note that in the above, eval episodes `1, 2, 3` are `4000` timesteps long, while episode `4` is `10000` steps long. The policy has been trained with a maximum of `4000` steps, therefore, this last evaluation can bee seen as a demonstration of generalization capability. 
 
+## Perception-guided ballbot study (course project)
+
+`paper/main.tex` (draft paper), `notebooks/ballbot_perception_rl_draft.ipynb` (runnable notebook with sample data) and
+`scripts/study/` (train / evaluate / analyze) contain a controlled study of proprioception-only vs. proprioception+depth PPO
+policies, depth-noise/occlusion robustness and a waypoint-conditioned variant. The study required fixes to the environment
+(omniwheel contact frames on stock MuJoCo, a velocity-indexing bug in the reward, terrain amplitude); see
+[scripts/study/README.md](scripts/study/README.md).
+
 ## 🏗️ Extensible Architecture
 
 openballbot-rl features a **plugin-based, configuration-driven architecture** that makes it easy to add new components without modifying core code.
