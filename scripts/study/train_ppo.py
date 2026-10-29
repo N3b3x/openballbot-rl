@@ -66,7 +66,7 @@ def load_env_cfg(path, variant, overrides=None):
 
 
 def make_vec_env(cfg, n_envs, seed):
-    env_config = {k: cfg[k] for k in ("camera", "env", "logging")}
+    env_config = {k: cfg[k] for k in ("camera", "env", "logging", "tof", "height_scan") if k in cfg}
     fns = [
         make_ballbot_env(terrain_config=cfg["terrain"],
                          reward_config=cfg["reward"],

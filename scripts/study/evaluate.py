@@ -66,7 +66,7 @@ def run_job(job):
     job.setdefault("goal_task", bool(cfg["env"].get("goal_mode")))
     job.setdefault("eval_goal", 1.0)
     model, vn = _load_policy(job["run_dir"], job["variant"], job["ckpt"]) if job["run_dir"] else (None, None)
-    env_config = {k: cfg[k] for k in ("camera", "env", "logging")}
+    env_config = {k: cfg[k] for k in ("camera", "env", "logging", "tof", "height_scan") if k in cfg}
     env = make_ballbot_env(terrain_config=cfg["terrain"], reward_config=cfg["reward"],
                            env_config=env_config, seed=0, eval_env=True)()
     base = env.unwrapped
@@ -77,6 +77,9 @@ def run_job(job):
         if base.terrain_type == "perlin":
             tcfg["amplitude"] = float(amp)
             tcfg.pop("amplitude_range", None)
+        elif base.terrain_type == "book":  # the "amplitude" column holds the book height [m]
+            tcfg["step_height_m"] = float(amp)
+            tcfg.pop("ranges", None)
         obs, info = env.reset(seed=int(seed))
         ret, steps, t_goal, fell, success = 0.0, 0, None, False, False
         d0 = float(np.linalg.norm(base.goal_xy)) if job["goal_task"] else 0.0

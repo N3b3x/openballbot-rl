@@ -13,6 +13,7 @@ from ballbot_gym.terrain.terraced import generate_terraced_terrain
 from ballbot_gym.terrain.wavy import generate_wavy_terrain
 from ballbot_gym.terrain.spiral import generate_spiral_terrain
 from ballbot_gym.terrain.mixed import generate_mixed_terrain
+from ballbot_gym.terrain.book import generate_book_terrain
 
 # Auto-register components on import
 ComponentRegistry.register_terrain("perlin", generate_perlin_terrain)
@@ -27,6 +28,7 @@ ComponentRegistry.register_terrain("terraced", generate_terraced_terrain)
 ComponentRegistry.register_terrain("wavy", generate_wavy_terrain)
 ComponentRegistry.register_terrain("spiral", generate_spiral_terrain)
 ComponentRegistry.register_terrain("mixed", generate_mixed_terrain)
+ComponentRegistry.register_terrain("book", generate_book_terrain)
 
 # Register flat terrain as a simple function
 def generate_flat_terrain(n: int, **kwargs) -> np.ndarray:
