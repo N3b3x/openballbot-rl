@@ -8,7 +8,7 @@ md = lambda s: C.append(nbf.v4.new_markdown_cell(s.strip("\n")))
 code = lambda s: C.append(nbf.v4.new_code_cell(s.strip("\n")))
 
 md(r"""
-# Perception-Guided RL for Ballbot Navigation on Uneven Terrain — draft notebook
+# Perception-Guided RL for Ballbot Navigation on Uneven Terrain (draft notebook)
 
 **Nebiyu Tadesse · AI for Robotics · draft for instructor review**
 
@@ -27,7 +27,7 @@ are **self-generated MuJoCo rollouts on procedural Perlin terrains**.
 | 7 | Hypothesis tests H1 / H2 on the saved result tables | prototype |
 | 8 | H3 (waypoint) and remaining work | partly done (see paper); placeholder list below |
 
-**To run:** `pip install -r requirements.txt` (the `noise` package is optional — a NumPy fallback is used when it cannot be built, e.g. on Windows),
+**To run:** `pip install -r requirements.txt` (the `noise` package is optional; a NumPy fallback is used when it cannot be built, e.g. on Windows),
 then `jupyter lab`. On a headless Linux box set `MUJOCO_GL=egl` before starting Jupyter.
 """)
 
@@ -175,7 +175,7 @@ plt.tight_layout(); plt.show()
 
 md(r"""
 ## 5. Tiny PPO training demo (pipeline smoke test, ~1 min)
-This is *not* the experiment — the paper's runs use ~10⁶ decisions on 5–20 parallel environments (see `scripts/study/train_ppo.py`).
+This is *not* the experiment: the paper's runs use ~10⁶ decisions on 5–20 parallel environments (see `scripts/study/train_ppo.py`).
 """)
 
 code(r"""
@@ -250,9 +250,19 @@ t
 
 md(r"""
 ## 8. Placeholders (to be completed before the final submission)
-* **H3** — waypoint task implemented (`env.goal_mode`) and trained once (1M decisions, proprio-only); neither policy reaches the 0.3 m goal radius within 8 s, so H3 is **inconclusive**; needs longer training / more seeds (results in the paper, Sec. V-D).
+* **H3**: waypoint task implemented (`env.goal_mode`) and trained once (1M decisions, proprio-only); neither policy reaches the 0.3 m goal radius within 8 s, so H3 is **inconclusive**; needs longer training / more seeds (results in the paper, Sec. V-D).
 * Full-budget runs with more training seeds and an end-to-end CNN variant (`--variant depth_e2e`).
 * Final statistical tables (all seeds), effect sizes and confidence intervals for the paper's Sec. V.
+""")
+
+md(r"""
+## 9. Figure gallery (regenerate with `python scripts/study/make_figures.py`)
+MuJoCo renders and diagrams used in the paper.
+""")
+code(r"""
+from IPython.display import Image, display
+for f in ("fig_robot_views", "fig_episode_strip", "fig_trajectories", "fig_tilt_time", "fig_terrain_levels"):
+    display(Image(filename=str(ROOT / "paper" / "figures" / f"{f}.png"), width=900))
 """)
 
 nb["cells"] = C

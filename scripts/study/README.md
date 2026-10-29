@@ -1,4 +1,4 @@
-# Perception-guided ballbot study — scripts
+# Perception-guided ballbot study: scripts
 
 Everything needed to reproduce the experiments in `paper/main.tex`.
 
@@ -7,6 +7,7 @@ Everything needed to reproduce the experiments in `paper/main.tex`.
 | `train_ppo.py` | PPO training. `--variant proprio \| depth_frozen \| depth_e2e`, any `configs/env/*.yaml` |
 | `evaluate.py` | Held-out evaluation (seeds >= 100000) incl. depth-noise / dropout / occlusion conditions |
 | `analyze.py` | Tables, paired statistics (bootstrap CI + Wilcoxon) and figures |
+| `make_figures.py` | MuJoCo renders, filmstrip, trajectories, tilt and terrain figures (`paper/figures/`) |
 | `make_notebook.py` | Regenerates `notebooks/ballbot_perception_rl_draft.ipynb` |
 
 ```bash
