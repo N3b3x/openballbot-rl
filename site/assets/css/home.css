@@ -10,6 +10,7 @@
 .hero-copy{position:relative;z-index:2;pointer-events:none;padding-top:clamp(48px,10vh,110px);padding-bottom:140px;max-width:var(--maxw);margin:0 auto;padding-left:var(--gutter);padding-right:var(--gutter)}
 .hero-copy > *{max-width:min(40rem,100%)}
 @media (min-width:701px) and (max-width:1199px){.hero-copy > *{max-width:min(40rem,56vw)}}
+@media (min-width:701px) and (max-width:1000px){.hero-copy > *{max-width:min(34rem,49vw)}}
 .hero-copy a,.hero-copy button{pointer-events:auto}
 .hero h1{margin-bottom:.35em;font-size:clamp(2rem,5vw,3.6rem)}
 .hero h1 em{font-style:italic;color:var(--hybrid-text)}

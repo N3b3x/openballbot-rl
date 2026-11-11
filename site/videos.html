@@ -505,6 +505,20 @@ button.both:focus-visible{outline:2px solid var(--hybrid);outline-offset:2px}
   </div>
 
   <div class="solo">
+    <article class="clip ok" id="c15_g39_push_pull_hold">
+      <div class="player" data-src="videos/c15_g39_push_pull_hold.mp4" data-poster="videos/c15_g39_push_pull_hold.jpg" data-title="The recommended controller holding a goal while pushed and pulled">
+        <button type="button" class="ph" aria-label="Play: the recommended controller holding a goal while pushed and pulled"><img src="videos/c15_g39_push_pull_hold.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot holding position on a flat tile at 6.0 s, 0.05 m/s, tilt 1.6 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">12.0 s &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>g39, the recommended controller: the same hold, pushed and pulled</h3>
+        <p class="lead">The same world, seed and disturbances as the g34 and g40 clips above, with <b>g39</b> (S121): the standard 80 ms history with all goal logic on the true ball centre. It is the controller the ROS 2 package exports.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.15 / 0.3</span> g39_goalcentre_s0 (goal logic on the true ball centre), motion layer on</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>goal hold on a flat tile; short pushes (up to 25 N in this clip) plus sustained 3 to 12 N pulls for 0.5 to 2 s; DR on, noise on</dd><dt>Arrestors</dt><dd class="on">on</dd><dt>Clip</dt><dd>single run, 12.0 s, no fall; same seed as c13 and c14. In four quick runs of this seed family three survived 12 s, one fell (the same seed that also fell for g34 and g40)</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">6.0 s</span> the HUD reads 0.05 m/s and 1.6 degrees of tilt while holding. The red arrow shows each push and pull. Over three seeds and 528 worlds the goal test gives a hold error of 3.6 to 4.9 cm for g39 against 11 to 14 cm for g34 (S118, S121), and the sustained-pull limit is unchanged (S116). One world, not a statistic.</p>
+      </div>
+    </article>
+  </div>
+
+  <div class="solo">
     <article class="clip ok" id="c11_goal_hold_nom">
       <div class="player" data-src="videos/c11_goal_hold_nom.mp4" data-poster="videos/c11_goal_hold_nom.jpg" data-title="Drive 1 m, brake, hold still">
         <button type="button" class="ph" aria-label="Play: drive 1 metre, brake, hold still"><img src="videos/c11_goal_hold_nom.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot braking beside the red goal marker at 5.0 s, 0.06 m/s against a 0.21 m/s command, tilt 6.9 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">10.0 s &middot; no fall</span></button>
