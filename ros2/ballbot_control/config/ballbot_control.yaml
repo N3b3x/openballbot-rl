@@ -1,0 +1,36 @@
+# Parameters for ballbot_control (see ros2/README.md). bundle_path is set by the launch file (default: the installed
+# g39_goalcentre_s0 bundle, the recommended controller; g34_mref_rsad_db_s0 is installed too, pass bundle:=... to use it).
+ballbot_controller:
+  ros__parameters:
+    bundle_path: ""                  # bundle.json from experiments/warp_ppo/export_policy.py
+    design: nom                      # design entry of the bundle (sets LQR gains, torque limit, design vector, kinematics)
+    policy_backend: numpy            # numpy (no extra dependency) or onnx (needs onnxruntime)
+    residual_enabled: true           # false = LQR base only (diagnostic / fallback)
+    control_rate_hz: 100.0           # the rate the policy was trained at; do not change
+    cmd_timeout: 0.5                 # s without /cmd_vel -> stop
+    hold_on_timeout: true            # after a timeout hold position at the braking point (trained goal hold)
+    cmd_vel_frame: base_link         # Nav2 controllers publish in base_link; use "odom" for world-frame commands
+    max_speed: 0.6                   # m/s cap (trained up to 1.2; the study evaluated 0.3 to 0.9)
+    max_yaw_rate: 1.0                # rad/s (training range)
+    tilt_cutoff_deg: 30.0            # FAULT (zero torque, latched) above this tilt
+    engage_tilt_deg: 3.0             # enable only when the body is this upright
+    state_timeout: 0.05              # s; FAULT if no fresh IMU + encoder data
+    sensor_timeout: 0.05             # s; older samples are not fed to the estimator
+    torque_limit: 0.0                # N m hardware clamp; 0 = the design's actuator limit only
+    track_point: ""                  # empty = the bundle's goal point (ball_centre for g39, ball_body_origin for g34)
+    wheel_joints: [wheel_joint_0, wheel_joint_1, wheel_joint_2]
+    auto_enable: false               # true = enable as soon as upright (for simulation only)
+    use_goal_topic: false            # accept geometry_msgs/PoseStamped on goal_pose (odom frame)
+    publish_debug: false
+    diag_rate_hz: 5.0
+
+ballbot_estimator:
+  ros__parameters:
+    bundle_path: ""
+    design: nom
+    rate_hz: 100.0
+    odom_frame: odom
+    base_frame: base_link
+    publish_tf: true
+    wheel_joints: [wheel_joint_0, wheel_joint_1, wheel_joint_2]
+    sensor_timeout: 0.05
