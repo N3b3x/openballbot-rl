@@ -1,0 +1,52 @@
+{
+ "id": "cine_compare_perlin8_tour_lqr_vs_res_c",
+ "title": "Tour on 8 cm Perlin terrain: LQR vs res_c (hybrid)",
+ "scenario": "perlin8_tour",
+ "terrain": "Perlin floor, 8 cm amplitude",
+ "controllers": [
+  "lqr",
+  "res_c_s0"
+ ],
+ "controller_families": [
+  "model",
+  "hybrid"
+ ],
+ "description": "Two controllers on the same scenario and terrain, simulated separately and replayed in sync.",
+ "outcome": "LQR: no fall, mean error 40.1 cm, max 116.0 cm; res_c (hybrid): no fall, mean error 42.4 cm, max 120.4 cm",
+ "stats": {
+  "a": {
+   "duration_s": 24.5,
+   "fell": false,
+   "fall_t_s": null,
+   "fall_reason": null,
+   "mean_err_cm": 40.1,
+   "max_err_cm": 116.0,
+   "final_err_cm": 33.5,
+   "dist_travelled_m": 11.87,
+   "max_off_ball_deg": 13.1,
+   "max_lean_deg": 13.5,
+   "mean_speed_err_mps": 0.363,
+   "end_to_plan_end_cm": 33.5,
+   "pushes": 0
+  },
+  "b": {
+   "duration_s": 24.5,
+   "fell": false,
+   "fall_t_s": null,
+   "fall_reason": null,
+   "mean_err_cm": 42.4,
+   "max_err_cm": 120.4,
+   "final_err_cm": 37.9,
+   "dist_travelled_m": 11.78,
+   "max_off_ball_deg": 15.0,
+   "max_lean_deg": 15.3,
+   "mean_speed_err_mps": 0.397,
+   "end_to_plan_end_cm": 37.9,
+   "pushes": 0
+  }
+ },
+ "duration_s": 28.5,
+ "sim_only": true,
+ "domain_randomisation": false,
+ "command": "python scripts/study/render_cinematic.py --compare perlin8_tour_lqr perlin8_tour_res_c"
+}

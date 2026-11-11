@@ -1,0 +1,79 @@
+{
+ "run": "ggen_hist8dc_s0",
+ "args": {
+  "run": "ggen_hist8dc_s0",
+  "task": "vel",
+  "speed": 0.3,
+  "n": 32,
+  "dr": false,
+  "surfaces": false,
+  "pull": false,
+  "eval_designs": "zlow,zlow",
+  "steps": 800,
+  "tile_seed": 0
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.015625,
+   "success": 0.015625,
+   "track_err": 0.16291207075119019
+  },
+  "step_up": {
+   "fall": 0.109375,
+   "success": 0.0,
+   "track_err": 0.22006404399871826
+  },
+  "step_down": {
+   "fall": 0.015625,
+   "success": 0.078125,
+   "track_err": 0.16105131804943085
+  },
+  "small_drop": {
+   "fall": 0.015625,
+   "success": 0.1875,
+   "track_err": 0.16316889226436615
+  },
+  "large_drop": {
+   "fall": 0.40625,
+   "success": 0.078125,
+   "track_err": 0.16744418442249298
+  },
+  "ramp_up": {
+   "fall": 0.078125,
+   "success": 0.0,
+   "track_err": 0.2294023483991623
+  },
+  "ramp_down": {
+   "fall": 0.0625,
+   "success": 0.5625,
+   "track_err": 0.18581554293632507
+  },
+  "stairs": {
+   "fall": 0.125,
+   "success": 0.0,
+   "track_err": 0.2369290143251419
+  },
+  "bump": {
+   "fall": 0.09375,
+   "success": 0.0,
+   "track_err": 0.22093957662582397
+  },
+  "rough": {
+   "fall": 0.015625,
+   "success": 0.0,
+   "track_err": 0.20830197632312775
+  }
+ },
+ "by_design": {
+  "zlow": {
+   "fall": 0.08125000447034836,
+   "success": 0.09375,
+   "track_err": 0.19606581330299377
+  }
+ },
+ "overall": {
+  "fall": 0.09375,
+  "success": 0.09218750149011612,
+  "track_err": 0.19585268199443817
+ }
+}

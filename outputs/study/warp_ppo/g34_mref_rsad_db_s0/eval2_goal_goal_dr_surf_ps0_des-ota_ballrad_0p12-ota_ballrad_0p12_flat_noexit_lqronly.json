@@ -1,0 +1,123 @@
+{
+ "run": "g34_mref_rsad_db_s0",
+ "args": {
+  "run": "g34_mref_rsad_db_s0",
+  "task": "goal",
+  "speed": 0.6,
+  "n": 128,
+  "dr": true,
+  "surfaces": true,
+  "pull": false,
+  "eval_designs": "ota_ballrad_0p12,ota_ballrad_0p12",
+  "steps": 800,
+  "tile_seed": 0
+ },
+ "env_settings": {
+  "overrides": {},
+  "push_scale": 0.0,
+  "dr_scale": null,
+  "tiles_flat": true,
+  "no_exit": true,
+  "dr_off": "",
+  "dr_mft": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "lqr_base": 0.25,
+  "eval_designs": [
+   "ota_ballrad_0p12",
+   "ota_ballrad_0p12"
+  ],
+  "retainer": "0,0,0,100",
+  "pair_mu1": 0.01
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.03125,
+   "success": 0.96875,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 1.909999966621399
+  },
+  "step_up": {
+   "fall": 0.01171875,
+   "success": 0.98828125,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 1.909999966621399
+  },
+  "step_down": {
+   "fall": 0.01171875,
+   "success": 0.98828125,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 1.909999966621399
+  },
+  "small_drop": {
+   "fall": 0.01171875,
+   "success": 0.98828125,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 1.9199999570846558
+  },
+  "large_drop": {
+   "fall": 0.02734375,
+   "success": 0.97265625,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 1.9199999570846558
+  },
+  "ramp_up": {
+   "fall": 0.02734375,
+   "success": 0.97265625,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 1.909999966621399
+  },
+  "ramp_down": {
+   "fall": 0.0234375,
+   "success": 0.9765625,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 1.899999976158142
+  },
+  "stairs": {
+   "fall": 0.01953125,
+   "success": 0.98046875,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 1.9299999475479126
+  },
+  "bump": {
+   "fall": 0.0234375,
+   "success": 0.9765625,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 1.909999966621399
+  },
+  "rough": {
+   "fall": 0.03125,
+   "success": 0.96875,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 1.909999966621399
+  }
+ },
+ "by_design": {
+  "ota_ballrad_0p12": {
+   "fall": 0.02031250111758709,
+   "success": 0.979687511920929,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 1.909999966621399
+  }
+ },
+ "overall": {
+  "fall": 0.02187499962747097,
+  "success": 0.9781250357627869,
+  "nonfinite": 0.0,
+  "fall_at_map_edge": 0.0,
+  "median_time_s": 1.909999966621399
+ }
+}

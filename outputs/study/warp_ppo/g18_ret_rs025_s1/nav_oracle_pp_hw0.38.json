@@ -1,0 +1,111 @@
+{
+ "run": "g18_ret_rs025_s1",
+ "source": "oracle",
+ "sensor": null,
+ "planner": {
+  "kind": "wave",
+  "hyst": 1.0,
+  "look": 0.6,
+  "half_w": 0.38,
+  "thr": 0.03,
+  "v_max": 0.3,
+  "mem": 600,
+  "goal_r": 1.2
+ },
+ "steps": 2000,
+ "worlds": 528,
+ "push_scale": 1.0,
+ "pull": true,
+ "retainer": "0,0,0,100",
+ "overall": {
+  "fall": 0.5738636255264282,
+  "success": 0.0018939394503831863,
+  "stuck": 0.42424243688583374,
+  "over_block": 0.21212121844291687,
+  "median_time_s": 9.569999694824219
+ },
+ "diag": {
+  "stuck_final_goal_dist_median": 1.2062631845474243,
+  "stuck_cmd_zero_frac": 0.9955357313156128,
+  "stuck_dist_from_start_median": 0.2096843272447586
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.4375,
+   "success": 0.0,
+   "stuck": 0.5625,
+   "over_block": 0.375,
+   "median_time_s": null
+  },
+  "zhigh": {
+   "fall": 0.6666666865348816,
+   "success": 0.0,
+   "stuck": 0.3333333432674408,
+   "over_block": 0.375,
+   "median_time_s": null
+  },
+  "zlow": {
+   "fall": 0.5833333730697632,
+   "success": 0.0,
+   "stuck": 0.4166666865348816,
+   "over_block": 0.1458333432674408,
+   "median_time_s": null
+  },
+  "kb4": {
+   "fall": 0.8333333730697632,
+   "success": 0.0,
+   "stuck": 0.1666666716337204,
+   "over_block": 0.3125,
+   "median_time_s": null
+  },
+  "bal4": {
+   "fall": 0.0625,
+   "success": 0.0,
+   "stuck": 0.9375,
+   "over_block": 0.0,
+   "median_time_s": null
+  },
+  "J02": {
+   "fall": 0.5625,
+   "success": 0.0,
+   "stuck": 0.4375,
+   "over_block": 0.2916666865348816,
+   "median_time_s": null
+  },
+  "tau6": {
+   "fall": 0.3333333432674408,
+   "success": 0.0,
+   "stuck": 0.6666666865348816,
+   "over_block": 0.0625,
+   "median_time_s": null
+  },
+  "bal025": {
+   "fall": 1.0,
+   "success": 0.0,
+   "stuck": 0.0,
+   "over_block": 0.0833333358168602,
+   "median_time_s": null
+  },
+  "kb025": {
+   "fall": 0.7083333730697632,
+   "success": 0.0,
+   "stuck": 0.2916666865348816,
+   "over_block": 0.1666666716337204,
+   "median_time_s": null
+  },
+  "zeta41": {
+   "fall": 0.5208333730697632,
+   "success": 0.02083333395421505,
+   "stuck": 0.4583333432674408,
+   "over_block": 0.2708333432674408,
+   "median_time_s": 9.569999694824219
+  },
+  "zeta66": {
+   "fall": 0.6041666865348816,
+   "success": 0.0,
+   "stuck": 0.3958333432674408,
+   "over_block": 0.25,
+   "median_time_s": null
+  }
+ }
+}

@@ -1,0 +1,26 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{The motion-layer recipe and its variants (S110 to S116). Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error; wheel-ball free-rolling friction 0.01. Domain randomisation: on at scale 1 unless a column says 1.75 or 2.5 (training: ramped to 1.75). Observation noise: on. Worlds per cell: goal test 528 per row (48 per design, 11 designs); battery 1760 per cell (16 per design and terrain kind). Seeds: one per row; three seeds of the recommended recipe g34 (s0, s1, s2). Protocol: goal test: eval\_motion.py, goal 1.2 m away on flat interior tiles, 15 s, no pushes, commands through the motion layer for every run trained with it (the g26 row uses raw commands, as it was trained); hard designs = kb025 (light ball, 0.25 x ball mass), bal4 (heavy body, 4 x ballast) and tau6 (weak motors, 6 N m torque limit against 30). Battery: eval\_battery.py, goal task 1.1 m and velocity task 0.3 m/s on the tiled map, 8 s, surfaces on, arrestors on; pushes 5 to 20 N for 50 ms every 2 to 4 s and pulls 3 to 12 N for 0.5 to 2 s every 4 to 10 s. All recipes 200M steps except g36 (400M); files outputs/study/warp\_ppo/RUN/motion\_goal\_ref.json (g26: motion\_goal\_raw.json) and RUN/battery.json.}\label{tab:gen_motion}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{p{4.2cm}cccccccc}\toprule
+Recipe (run) & Goal test: falls & Command reversals per world & Hold speed RMS [m/s] & Falls of the three hard designs (mean) & Battery goal success DR 1: undisturbed / pushes + pulls & DR 1.75 & DR 2.5 & Tile velocity falls DR 1: undisturbed / pushes + pulls\\\midrule
+previous recommendation, raw commands, no motion layer (g26 s1) & 0.146 & 1.19 & 0.077 & 0.42 & 0.74 / 0.46 & 0.72 / 0.42 & 0.69 / 0.36 & 0.34 / 0.51\\
+motion layer, fixed authority 0.25 (g29 s0) & 0.108 & 0.38 & 0.047 & 0.33 & 0.76 / 0.49 & 0.73 / 0.44 & 0.67 / 0.39 & 0.34 / 0.50\\
+motion layer, fixed authority 0.25 (g29 s1) & 0.121 & 0.39 & 0.049 & 0.37 & 0.78 / 0.49 & 0.73 / 0.45 & 0.68 / 0.39 & 0.32 / 0.52\\
+motion layer, fixed authority 0.25 (g29 s2) & 0.108 & 0.71 & 0.050 & 0.32 & 0.78 / 0.51 & 0.75 / 0.46 & 0.70 / 0.40 & 0.33 / 0.49\\
+adaptive authority 0.15 / 0.3 (g32 s0) & 0.083 & 4.94 & 0.096 & 0.29 & 0.76 / 0.50 & 0.73 / 0.44 & 0.68 / 0.39 & 0.32 / 0.48\\
+adaptive authority 0.15 / 0.3 (g32 s1) & 0.104 & 0.57 & 0.063 & 0.35 & 0.75 / 0.52 & 0.72 / 0.46 & 0.67 / 0.38 & 0.32 / 0.48\\
+recommended: adaptive authority + goal dead band (g34 s0) & 0.104 & 0.67 & 0.058 & 0.32 & 0.79 / 0.51 & 0.77 / 0.47 & 0.69 / 0.39 & 0.32 / 0.48\\
+recommended: adaptive authority + goal dead band (g34 s1) & 0.091 & 0.86 & 0.065 & 0.31 & 0.77 / 0.51 & 0.73 / 0.45 & 0.68 / 0.39 & 0.32 / 0.48\\
+recommended: adaptive authority + goal dead band (g34 s2) & 0.110 & 0.48 & 0.052 & 0.30 & 0.78 / 0.52 & 0.75 / 0.45 & 0.69 / 0.39 & 0.31 / 0.48\\
+adaptive + tracking reward 3 (g33 s0) & 0.100 & 0.99 & 0.068 & 0.33 & 0.77 / 0.53 & 0.75 / 0.45 & 0.70 / 0.41 & 0.32 / 0.48\\
+adaptive + tracking reward 3 (g33 s1) & 0.081 & 1.38 & 0.060 & 0.29 & 0.77 / 0.51 & 0.73 / 0.45 & 0.67 / 0.38 & 0.30 / 0.48\\
+adaptive + hard-design weighting (g35 s0) & 0.091 & 0.91 & 0.063 & 0.28 & 0.81 / 0.53 & 0.78 / 0.45 & 0.72 / 0.39 & 0.32 / 0.49\\
+adaptive + hard-design weighting (g35 s1) & 0.108 & 0.40 & 0.059 & 0.29 & 0.79 / 0.52 & 0.77 / 0.45 & 0.72 / 0.39 & 0.31 / 0.49\\
+adaptive + hard-design weighting (g35 s2) & 0.081 & 0.69 & 0.044 & 0.28 & 0.77 / 0.52 & 0.73 / 0.49 & 0.67 / 0.40 & 0.31 / 0.46\\
+recommended + weighting, 400M steps (g36 s0) & 0.068 & 3.73 & 0.076 & 0.23 & 0.74 / 0.47 & 0.71 / 0.42 & 0.65 / 0.35 & 0.32 / 0.49\\
+recommended + weighting, 400M steps (g36 s1) & 0.072 & 2.52 & 0.067 & 0.25 & 0.73 / 0.48 & 0.69 / 0.46 & 0.65 / 0.38 & 0.32 / 0.49\\
+recommended + weighting, 400M steps (g36 s2) & 0.064 & 3.36 & 0.073 & 0.22 & 0.72 / 0.45 & 0.69 / 0.41 & 0.64 / 0.34 & 0.32 / 0.49\\
+recommended, trained on 1.5 x pushes and pulls (g37 s0) & 0.136 & 1.58 & 0.082 & 0.37 & 0.79 / 0.49 & 0.76 / 0.43 & 0.70 / 0.36 & 0.34 / 0.50\\
+recommended, trained on 2 x pushes and pulls (g37 s0) & 0.119 & 1.84 & 0.073 & 0.37 & 0.79 / 0.49 & 0.76 / 0.45 & 0.72 / 0.36 & 0.33 / 0.52\\
+\bottomrule\end{tabular}}
+\end{table*}

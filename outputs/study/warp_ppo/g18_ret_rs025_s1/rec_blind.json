@@ -1,0 +1,111 @@
+{
+ "run": "g18_ret_rs025_s1",
+ "source": "blind",
+ "sensor": null,
+ "planner": {
+  "kind": "wave",
+  "hyst": 1.0,
+  "look": 0.6,
+  "half_w": 0.22,
+  "thr": 0.03,
+  "v_max": 0.3,
+  "mem": 600,
+  "goal_r": 1.2
+ },
+ "steps": 2000,
+ "worlds": 22,
+ "push_scale": 0.0,
+ "pull": false,
+ "retainer": "0,0,0,100",
+ "overall": {
+  "fall": 1.0,
+  "success": 0.0,
+  "stuck": 0.0,
+  "over_block": 0.6818181872367859,
+  "median_time_s": null
+ },
+ "diag": {
+  "stuck_final_goal_dist_median": null,
+  "stuck_cmd_zero_frac": null,
+  "stuck_dist_from_start_median": null
+ },
+ "by_design": {
+  "nom": {
+   "fall": 1.0,
+   "success": 0.0,
+   "stuck": 0.0,
+   "over_block": 0.5,
+   "median_time_s": null
+  },
+  "zhigh": {
+   "fall": 1.0,
+   "success": 0.0,
+   "stuck": 0.0,
+   "over_block": 1.0,
+   "median_time_s": null
+  },
+  "zlow": {
+   "fall": 1.0,
+   "success": 0.0,
+   "stuck": 0.0,
+   "over_block": 0.5,
+   "median_time_s": null
+  },
+  "kb4": {
+   "fall": 1.0,
+   "success": 0.0,
+   "stuck": 0.0,
+   "over_block": 1.0,
+   "median_time_s": null
+  },
+  "bal4": {
+   "fall": 1.0,
+   "success": 0.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": null
+  },
+  "J02": {
+   "fall": 1.0,
+   "success": 0.0,
+   "stuck": 0.0,
+   "over_block": 1.0,
+   "median_time_s": null
+  },
+  "tau6": {
+   "fall": 1.0,
+   "success": 0.0,
+   "stuck": 0.0,
+   "over_block": 1.0,
+   "median_time_s": null
+  },
+  "bal025": {
+   "fall": 1.0,
+   "success": 0.0,
+   "stuck": 0.0,
+   "over_block": 1.0,
+   "median_time_s": null
+  },
+  "kb025": {
+   "fall": 1.0,
+   "success": 0.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": null
+  },
+  "zeta41": {
+   "fall": 1.0,
+   "success": 0.0,
+   "stuck": 0.0,
+   "over_block": 0.5,
+   "median_time_s": null
+  },
+  "zeta66": {
+   "fall": 1.0,
+   "success": 0.0,
+   "stuck": 0.0,
+   "over_block": 1.0,
+   "median_time_s": null
+  }
+ }
+}

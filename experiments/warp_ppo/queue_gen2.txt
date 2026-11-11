@@ -1,0 +1,7 @@
+# stage 2: distillation and ablations; launched as GPU memory and slots free up
+after:gtea_s0 distill.py --teacher gtea_s0 --name gstu_depth_h16_s0 --nworld 4096 --steps 200e6 --tiles --surfaces --pull --goal-p 0.4 --designs nom,s0.5,zhigh,zlow,kb4,bal4,J02,tau6,bal025,kb025,J0005,zeta41,zeta66 --width 512 --layers 3 --hist 16
+train_dev.py --name ggen_hist16_s0 --nworld 4096 --steps 300e6 --tiles --surfaces --pull --designs nom,s0.5,zhigh,zlow,kb4,bal4,J02,tau6,bal025,kb025,J0005,zeta41,zeta66 --width 512 --layers 3 --goal-p 0.4 --seed 0 --hist 16 --asym
+train_dev.py --name gtea_s1 --nworld 4096 --steps 300e6 --tiles --surfaces --pull --designs nom,s0.5,zhigh,zlow,kb4,bal4,J02,tau6,bal025,kb025,J0005,zeta41,zeta66 --width 512 --layers 3 --goal-p 0.4 --seed 1 --sensor scan --asym --design-cond
+train_dev.py --name ggen_nodc_s0 --nworld 4096 --steps 300e6 --tiles --surfaces --pull --designs nom,s0.5,zhigh,zlow,kb4,bal4,J02,tau6,bal025,kb025,J0005,zeta41,zeta66 --width 512 --layers 3 --goal-p 0.4 --seed 0 --hist 8 --asym
+train_dev.py --name ggen_w1024_s0 --nworld 4096 --steps 300e6 --tiles --surfaces --pull --designs nom,s0.5,zhigh,zlow,kb4,bal4,J02,tau6,bal025,kb025,J0005,zeta41,zeta66 --width 1024 --layers 3 --goal-p 0.4 --seed 0 --hist 8 --asym --design-cond
+train_dev.py --name ggen_track_s0 --nworld 4096 --steps 300e6 --tiles --surfaces --pull --designs nom,s0.5,zhigh,zlow,kb4,bal4,J02,tau6,bal025,kb025,J0005,zeta41,zeta66 --width 512 --layers 3 --goal-p 0.0 --seed 0 --hist 8 --asym --design-cond

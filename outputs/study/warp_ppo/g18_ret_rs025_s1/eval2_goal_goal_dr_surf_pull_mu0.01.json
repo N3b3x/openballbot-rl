@@ -1,0 +1,180 @@
+{
+ "run": "g18_ret_rs025_s1",
+ "args": {
+  "run": "g18_ret_rs025_s1",
+  "task": "goal",
+  "speed": 0.6,
+  "n": 16,
+  "dr": true,
+  "surfaces": true,
+  "pull": true,
+  "eval_designs": null,
+  "steps": 800,
+  "tile_seed": 0
+ },
+ "env_settings": {
+  "overrides": {},
+  "push_scale": 1.0,
+  "dr_scale": null,
+  "tiles_flat": false,
+  "no_exit": false,
+  "dr_off": "",
+  "dr_mft": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "lqr_base": 0.25,
+  "eval_designs": [
+   "nom",
+   "zhigh",
+   "zlow",
+   "kb4",
+   "bal4",
+   "J02",
+   "tau6",
+   "bal025",
+   "kb025",
+   "zeta41",
+   "zeta66"
+  ],
+  "retainer": "0,0,0,100",
+  "pair_mu1": 0.01
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.46590909361839294,
+   "success": 0.5340909361839294,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.3499999046325684
+  },
+  "step_up": {
+   "fall": 0.6420454978942871,
+   "success": 0.35795456171035767,
+   "fall_at_map_edge": 0.008849557489156723,
+   "median_time_s": 2.419999837875366
+  },
+  "step_down": {
+   "fall": 0.5,
+   "success": 0.5,
+   "fall_at_map_edge": 0.022727273404598236,
+   "median_time_s": 2.2200000286102295
+  },
+  "small_drop": {
+   "fall": 0.5738636255264282,
+   "success": 0.4261363744735718,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.3299999237060547
+  },
+  "large_drop": {
+   "fall": 0.698863685131073,
+   "success": 0.3011363744735718,
+   "fall_at_map_edge": 0.008130080997943878,
+   "median_time_s": 2.259999990463257
+  },
+  "ramp_up": {
+   "fall": 0.39772728085517883,
+   "success": 0.6022727489471436,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.5399999618530273
+  },
+  "ramp_down": {
+   "fall": 0.5965909361839294,
+   "success": 0.40340909361839294,
+   "fall_at_map_edge": 0.009523809887468815,
+   "median_time_s": 2.369999885559082
+  },
+  "stairs": {
+   "fall": 0.5340909361839294,
+   "success": 0.46022728085517883,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.509999990463257
+  },
+  "bump": {
+   "fall": 0.6704545617103577,
+   "success": 0.3238636553287506,
+   "fall_at_map_edge": 0.008474576286971569,
+   "median_time_s": 2.3999998569488525
+  },
+  "rough": {
+   "fall": 0.48295456171035767,
+   "success": 0.5170454978942871,
+   "fall_at_map_edge": 0.0470588244497776,
+   "median_time_s": 2.299999952316284
+  }
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.4937500059604645,
+   "success": 0.5062500238418579,
+   "fall_at_map_edge": 0.012658228166401386,
+   "median_time_s": 2.359999895095825
+  },
+  "zhigh": {
+   "fall": 0.46875,
+   "success": 0.53125,
+   "fall_at_map_edge": 0.013333333656191826,
+   "median_time_s": 2.180000066757202
+  },
+  "zlow": {
+   "fall": 0.4937500059604645,
+   "success": 0.5,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.5199999809265137
+  },
+  "kb4": {
+   "fall": 0.45000001788139343,
+   "success": 0.550000011920929,
+   "fall_at_map_edge": 0.013888888992369175,
+   "median_time_s": 2.25
+  },
+  "bal4": {
+   "fall": 0.4000000059604645,
+   "success": 0.6000000238418579,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.5899999141693115
+  },
+  "J02": {
+   "fall": 0.5375000238418579,
+   "success": 0.4625000059604645,
+   "fall_at_map_edge": 0.04651162773370743,
+   "median_time_s": 2.429999828338623
+  },
+  "tau6": {
+   "fall": 0.606249988079071,
+   "success": 0.38750001788139343,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 1.9299999475479126
+  },
+  "bal025": {
+   "fall": 0.96875,
+   "success": 0.03125,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.0899999141693115
+  },
+  "kb025": {
+   "fall": 0.800000011920929,
+   "success": 0.20000000298023224,
+   "fall_at_map_edge": 0.0078125,
+   "median_time_s": 2.3499999046325684
+  },
+  "zeta41": {
+   "fall": 0.4375,
+   "success": 0.5625,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.240000009536743
+  },
+  "zeta66": {
+   "fall": 0.4625000059604645,
+   "success": 0.5375000238418579,
+   "fall_at_map_edge": 0.027027027681469917,
+   "median_time_s": 2.5399999618530273
+  }
+ },
+ "overall": {
+  "fall": 0.5562499761581421,
+  "success": 0.4426136314868927,
+  "fall_at_map_edge": 0.010214504785835743,
+  "median_time_s": 2.369999885559082
+ }
+}

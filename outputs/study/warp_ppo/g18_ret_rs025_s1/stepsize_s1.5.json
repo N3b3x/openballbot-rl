@@ -1,0 +1,266 @@
+{
+ "run": "g18_ret_rs025_s1",
+ "task": "vel",
+ "speed": 0.3,
+ "source": "none",
+ "steps": 2000,
+ "push_scale": 0.0,
+ "pull": false,
+ "tile_seed": 0,
+ "mode": "slow",
+ "governor": null,
+ "mean_speed_scale": 1.0,
+ "retainer": "0,0,0,100",
+ "overall": {
+  "fall": 0.34062501788139343,
+  "success": 0.659375011920929,
+  "refused": 0.0,
+  "median_time_s": 5.329999923706055,
+  "progress_m": 1.3927861452102661
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.0546875,
+   "success": 0.9453125,
+   "refused": 0.0,
+   "median_time_s": 5.159999847412109,
+   "progress_m": 1.5365077257156372
+  },
+  "step_up": {
+   "fall": 0.4921875,
+   "success": 0.5078125,
+   "refused": 0.0,
+   "median_time_s": 5.359999656677246,
+   "progress_m": 1.1679728031158447
+  },
+  "step_down": {
+   "fall": 0.171875,
+   "success": 0.828125,
+   "refused": 0.0,
+   "median_time_s": 4.699999809265137,
+   "progress_m": 1.5320277214050293
+  },
+  "small_drop": {
+   "fall": 0.28125,
+   "success": 0.71875,
+   "refused": 0.0,
+   "median_time_s": 5.509999752044678,
+   "progress_m": 1.5345016717910767
+  },
+  "large_drop": {
+   "fall": 0.671875,
+   "success": 0.328125,
+   "refused": 0.0,
+   "median_time_s": 5.480000019073486,
+   "progress_m": 1.2413299083709717
+  },
+  "ramp_up": {
+   "fall": 0.3359375,
+   "success": 0.6640625,
+   "refused": 0.0,
+   "median_time_s": 6.509999752044678,
+   "progress_m": 1.4181909561157227
+  },
+  "ramp_down": {
+   "fall": 0.3359375,
+   "success": 0.6640625,
+   "refused": 0.0,
+   "median_time_s": 4.389999866485596,
+   "progress_m": 1.4725944995880127
+  },
+  "stairs": {
+   "fall": 0.4140625,
+   "success": 0.5859375,
+   "refused": 0.0,
+   "median_time_s": 5.429999828338623,
+   "progress_m": 1.3141021728515625
+  },
+  "bump": {
+   "fall": 0.4765625,
+   "success": 0.5234375,
+   "refused": 0.0,
+   "median_time_s": 4.819999694824219,
+   "progress_m": 1.2065329551696777
+  },
+  "rough": {
+   "fall": 0.171875,
+   "success": 0.828125,
+   "refused": 0.0,
+   "median_time_s": 5.190000057220459,
+   "progress_m": 1.5041006803512573
+  }
+ },
+ "by_severity": {
+  "step_up": {
+   "split": 0.02348933555185795,
+   "small": {
+    "fall": 0.2602739632129669,
+    "success": 0.7397260069847107,
+    "refused": 0.0,
+    "median_time_s": 5.46999979019165,
+    "progress_m": 1.3968418836593628
+   },
+   "large": {
+    "fall": 0.7999999523162842,
+    "success": 0.19999998807907104,
+    "refused": 0.0,
+    "median_time_s": 4.789999961853027,
+    "progress_m": 0.8642008900642395
+   },
+   "sev_min": 0.01130827609449625,
+   "sev_max": 0.05895585939288139
+  },
+  "step_down": {
+   "split": 0.025529753416776657,
+   "small": {
+    "fall": 0.13698630034923553,
+    "success": 0.8630136847496033,
+    "refused": 0.0,
+    "median_time_s": 4.579999923706055,
+    "progress_m": 1.5195015668869019
+   },
+   "large": {
+    "fall": 0.2181818187236786,
+    "success": 0.781818151473999,
+    "refused": 0.0,
+    "median_time_s": 4.839999675750732,
+    "progress_m": 1.54865300655365
+   },
+   "sev_min": 0.012048676609992981,
+   "sev_max": 0.05464351177215576
+  },
+  "small_drop": {
+   "split": 0.04361580312252045,
+   "small": {
+    "fall": 0.2083333283662796,
+    "success": 0.7916666865348816,
+    "refused": 0.0,
+    "median_time_s": 5.210000038146973,
+    "progress_m": 1.5494894981384277
+   },
+   "large": {
+    "fall": 0.3750000298023224,
+    "success": 0.625,
+    "refused": 0.0,
+    "median_time_s": 5.589999675750732,
+    "progress_m": 1.5152316093444824
+   },
+   "sev_min": 0.030826382339000702,
+   "sev_max": 0.057539355009794235
+  },
+  "large_drop": {
+   "split": 0.15057218074798584,
+   "small": {
+    "fall": 0.625,
+    "success": 0.375,
+    "refused": 0.0,
+    "median_time_s": 5.009999752044678,
+    "progress_m": 1.3394527435302734
+   },
+   "large": {
+    "fall": 0.71875,
+    "success": 0.28125,
+    "refused": 0.0,
+    "median_time_s": 6.099999904632568,
+    "progress_m": 1.143207311630249
+   },
+   "sev_min": 0.10890533030033112,
+   "sev_max": 0.1827041506767273
+  },
+  "ramp_up": {
+   "split": 9.55586051940918,
+   "small": {
+    "fall": 0.3125,
+    "success": 0.6875,
+    "refused": 0.0,
+    "median_time_s": 6.369999885559082,
+    "progress_m": 1.4675118923187256
+   },
+   "large": {
+    "fall": 0.359375,
+    "success": 0.640625,
+    "refused": 0.0,
+    "median_time_s": 6.929999828338623,
+    "progress_m": 1.3688699007034302
+   },
+   "sev_min": 3.519289493560791,
+   "sev_max": 11.214799880981445
+  },
+  "ramp_down": {
+   "split": 8.459721565246582,
+   "small": {
+    "fall": 0.23076923191547394,
+    "success": 0.7692307829856873,
+    "refused": 0.0,
+    "median_time_s": 4.869999885559082,
+    "progress_m": 1.5352482795715332
+   },
+   "large": {
+    "fall": 0.444444477558136,
+    "success": 0.5555555820465088,
+    "refused": 0.0,
+    "median_time_s": 4.130000114440918,
+    "progress_m": 1.407951831817627
+   },
+   "sev_min": 5.195192813873291,
+   "sev_max": 11.872572898864746
+  },
+  "stairs": {
+   "split": 0.013689490035176277,
+   "small": {
+    "fall": 0.1875,
+    "success": 0.8125,
+    "refused": 0.0,
+    "median_time_s": 5.420000076293945,
+    "progress_m": 1.4850329160690308
+   },
+   "large": {
+    "fall": 0.640625,
+    "success": 0.359375,
+    "refused": 0.0,
+    "median_time_s": 5.900000095367432,
+    "progress_m": 1.1431716680526733
+   },
+   "sev_min": 0.011837610974907875,
+   "sev_max": 0.031884897500276566
+  },
+  "bump": {
+   "split": 0.024091368541121483,
+   "small": {
+    "fall": 0.328125,
+    "success": 0.671875,
+    "refused": 0.0,
+    "median_time_s": 4.769999980926514,
+    "progress_m": 1.3206031322479248
+   },
+   "large": {
+    "fall": 0.625,
+    "success": 0.375,
+    "refused": 0.0,
+    "median_time_s": 5.049999713897705,
+    "progress_m": 1.0924625396728516
+   },
+   "sev_min": 0.01412955205887556,
+   "sev_max": 0.03571520745754242
+  },
+  "rough": {
+   "split": 0.0132927680388093,
+   "small": {
+    "fall": 0.046875,
+    "success": 0.953125,
+    "refused": 0.0,
+    "median_time_s": 5.190000057220459,
+    "progress_m": 1.5707248449325562
+   },
+   "large": {
+    "fall": 0.296875,
+    "success": 0.703125,
+    "refused": 0.0,
+    "median_time_s": 5.259999752044678,
+    "progress_m": 1.437476634979248
+   },
+   "sev_min": 0.005448298994451761,
+   "sev_max": 0.028376810252666473
+  }
+ }
+}

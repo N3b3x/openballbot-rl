@@ -1,0 +1,12 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Five robot sizes against the same obstacles (falls on the smaller / larger half of each feature range, mean of two training seeds; 0.5 scale one seed). Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on at scale 1 (floor friction 0.4 to 1.2 by surface class). Observation noise: on. Worlds per cell: 128 per terrain kind, robot scale and seed (1280 per scale and seed), split into halves at the midpoint of each feature's drawn range. Seeds: two training seeds of one recipe (g24\_scale\_rs025\_s0, g24\_scale\_rs025\_s1), the recommended recipe trained on the 11 designs plus the robot at 0.75, 1.5 and 2 times nominal size (14 designs); cells are the mean of the two seeds (the last column gives each seed); the 0.5 scale was never trained on and was evaluated with seed 0 only, at friction 0.001. Protocol: velocity task at 0.3 m/s Froude-scaled (times the square root of the scale) on the tiles, undisturbed, arrestors re-fitted per scale, 20 s episodes, tile seed 0; feature sizes are the same absolute sizes for every robot (eval\_governor.py --source none --eval-designs); evaluated at wheel-ball free-rolling friction 0.01 (S98) with policies trained at 0.001 (files stepsize\_mu01\_*.json).}\label{tab:gen_scale5}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccccccc}\toprule
+Robot scale & Ball radius & Predicted limit 0.29 r & Step up, falls: 1.1 to 2.3 / 2.3 to 5.9 cm & Bump: 1.4 to 2.4 / 2.4 to 3.6 cm & Stairs riser: below / above 1.4 cm & Large drop: 10.9 to 15.1 / 15.1 to 18.3 cm & Flat & All ten tile kinds & All ten tile kinds, per seed\\\midrule
+0.5 (held out, not trained); at friction 0.001 only & 4.5 cm & 1.3 cm & 0.90 / 1.00 & 0.98 / 1.00 & 0.94 / 1.00 & 0.98 / 0.98 & 0.90 & 0.95 & 0.95 (seed 0 only)\\
+0.75 & 6.75 cm & 2.0 cm & 0.49 / 1.00 & 0.77 / 0.99 & 0.34 / 0.82 & 0.84 / 0.89 & 0.13 & 0.46 & 0.46 | 0.46\\
+1 (nominal) & 9 cm & 2.6 cm & 0.33 / 0.94 & 0.68 / 0.95 & 0.16 / 0.68 & 0.59 / 0.84 & 0.03 & 0.32 & 0.31 | 0.34\\
+1.5 & 13.5 cm & 4.0 cm & 0.25 / 0.61 & 0.37 / 0.50 & 0.12 / 0.45 & 0.35 / 0.48 & 0.00 & 0.21 & 0.20 | 0.21\\
+2 & 18 cm & 5.3 cm & 0.17 / 0.58 & 0.26 / 0.41 & 0.08 / 0.29 & 0.23 / 0.27 & 0.00 & 0.13 & 0.13 | 0.13\\
+\bottomrule\end{tabular}}
+\end{table*}

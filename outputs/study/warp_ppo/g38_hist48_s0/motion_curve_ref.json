@@ -1,0 +1,35 @@
+{
+ "run": "g38_hist48_s0",
+ "scenario": "curve",
+ "rs_adapt": [
+  0.15,
+  0.3,
+  0.05
+ ],
+ "mode": "ref",
+ "lqr_only": false,
+ "steps": 1500,
+ "speed": 0.3,
+ "pair_mu1": "0.01",
+ "push_scale": 0.0,
+ "worlds": 528,
+ "fall": 0.03787878900766373,
+ "heading_rate_rms_actual": 2.083714246749878,
+ "heading_rate_rms_command": 0.600003182888031,
+ "along_ratio": 0.7394648194313049,
+ "side_speed_mean": 0.0469638928771019,
+ "cmd_reversals_per_world": 0.0,
+ "by_design": {
+  "nom": 0.0,
+  "zhigh": 0.0,
+  "zlow": 0.0,
+  "kb4": 0.0,
+  "bal4": 0.0833333358168602,
+  "J02": 0.0,
+  "tau6": 0.0,
+  "bal025": 0.0,
+  "kb025": 0.3333333432674408,
+  "zeta41": 0.0,
+  "zeta66": 0.0
+ }
+}

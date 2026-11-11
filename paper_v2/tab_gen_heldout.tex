@@ -1,0 +1,9 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Goal task on held-out terrain (tile seed 1), corrected engine. Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 16 per (design, terrain kind): 176 per terrain kind, 1760 per cell. Seeds: seeds 0 and 1 of the recipe. Protocol: goal task of Table 2 on a freshly generated tile map (tile seed 1: new severities and positions, same ten kinds and ranges) while the policy was trained on tile seed 0; undisturbed = pushes and pulls off, disturbed = on.}\label{tab:gen_heldout}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccc}\toprule
+Policy & Undisturbed success, tile seed 1 (held out) & tile seed 0 (trained) & Disturbed success, tile seed 1 & tile seed 0 & Median time [s], undisturbed / disturbed & Seed\\\midrule
+ramped to 1.75x (g12\_dr175\_s0, seed 0) & 0.52 & 0.58 & 0.26 & 0.29 & 2.44 / 2.35 & seed 0\\
+ramped to 1.75x (g12\_dr175\_s1, seed 1) & 0.53 & 0.60 & 0.26 & 0.30 & 2.32 / 2.24 & seed 1\\
+\bottomrule\end{tabular}}
+\end{table*}

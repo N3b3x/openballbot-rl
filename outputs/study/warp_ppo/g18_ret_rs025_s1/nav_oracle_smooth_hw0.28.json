@@ -1,0 +1,150 @@
+{
+ "run": "g18_ret_rs025_s1",
+ "source": "oracle",
+ "sensor": null,
+ "planner": {
+  "kind": "smooth",
+  "carrot": 0.3,
+  "w_max": 2.0,
+  "a_max": 0.6,
+  "hyst": 1.0,
+  "look": 0.6,
+  "half_w": 0.28,
+  "thr": 0.03,
+  "v_max": 0.3,
+  "mem": 600,
+  "goal_r": 1.2
+ },
+ "steps": 2000,
+ "worlds": 528,
+ "push_scale": 0.0,
+ "pull": false,
+ "retainer": "0,0,0,100",
+ "overall": {
+  "path_ratio": null,
+  "heading_rate_rms": null,
+  "cmd_change_mean": null,
+  "fall": 0.0625,
+  "success": 0.0,
+  "stuck": 0.9375,
+  "over_block": 0.0,
+  "median_time_s": null
+ },
+ "diag": {
+  "stuck_final_goal_dist_median": 1.1991968154907227,
+  "stuck_cmd_zero_frac": 1.0,
+  "stuck_dist_from_start_median": 0.08408799767494202
+ },
+ "by_design": {
+  "nom": {
+   "path_ratio": null,
+   "heading_rate_rms": null,
+   "cmd_change_mean": null,
+   "fall": 0.0,
+   "success": 0.0,
+   "stuck": 1.0,
+   "over_block": 0.0,
+   "median_time_s": null
+  },
+  "zhigh": {
+   "path_ratio": null,
+   "heading_rate_rms": null,
+   "cmd_change_mean": null,
+   "fall": 0.125,
+   "success": 0.0,
+   "stuck": 0.875,
+   "over_block": 0.0,
+   "median_time_s": null
+  },
+  "zlow": {
+   "path_ratio": null,
+   "heading_rate_rms": null,
+   "cmd_change_mean": null,
+   "fall": 0.02083333395421505,
+   "success": 0.0,
+   "stuck": 0.9791666865348816,
+   "over_block": 0.0,
+   "median_time_s": null
+  },
+  "kb4": {
+   "path_ratio": null,
+   "heading_rate_rms": null,
+   "cmd_change_mean": null,
+   "fall": 0.2083333432674408,
+   "success": 0.0,
+   "stuck": 0.7916666865348816,
+   "over_block": 0.0,
+   "median_time_s": null
+  },
+  "bal4": {
+   "path_ratio": null,
+   "heading_rate_rms": null,
+   "cmd_change_mean": null,
+   "fall": 0.02083333395421505,
+   "success": 0.0,
+   "stuck": 0.9791666865348816,
+   "over_block": 0.0,
+   "median_time_s": null
+  },
+  "J02": {
+   "path_ratio": null,
+   "heading_rate_rms": null,
+   "cmd_change_mean": null,
+   "fall": 0.0,
+   "success": 0.0,
+   "stuck": 1.0,
+   "over_block": 0.0,
+   "median_time_s": null
+  },
+  "tau6": {
+   "path_ratio": null,
+   "heading_rate_rms": null,
+   "cmd_change_mean": null,
+   "fall": 0.0416666679084301,
+   "success": 0.0,
+   "stuck": 0.9583333730697632,
+   "over_block": 0.0,
+   "median_time_s": null
+  },
+  "bal025": {
+   "path_ratio": null,
+   "heading_rate_rms": null,
+   "cmd_change_mean": null,
+   "fall": 0.0,
+   "success": 0.0,
+   "stuck": 1.0,
+   "over_block": 0.0,
+   "median_time_s": null
+  },
+  "kb025": {
+   "path_ratio": null,
+   "heading_rate_rms": null,
+   "cmd_change_mean": null,
+   "fall": 0.1875,
+   "success": 0.0,
+   "stuck": 0.8125,
+   "over_block": 0.0,
+   "median_time_s": null
+  },
+  "zeta41": {
+   "path_ratio": null,
+   "heading_rate_rms": null,
+   "cmd_change_mean": null,
+   "fall": 0.0,
+   "success": 0.0,
+   "stuck": 1.0,
+   "over_block": 0.0,
+   "median_time_s": null
+  },
+  "zeta66": {
+   "path_ratio": null,
+   "heading_rate_rms": null,
+   "cmd_change_mean": null,
+   "fall": 0.0833333358168602,
+   "success": 0.0,
+   "stuck": 0.9166666865348816,
+   "over_block": 0.0,
+   "median_time_s": null
+  }
+ }
+}

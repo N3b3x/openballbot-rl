@@ -1,0 +1,20 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{The 13 compiled designs (eleven used in training).}\label{tab:gen_designs}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llccccccc}\toprule
+Design & What it changes & Body mass [kg] & Ball mass [kg] & COM height l [m] & Rotor inertia [kg m$^2$] & Torque limit [N m] & Contact zenith [deg] & In training set\\\midrule
+nom & reference robot & 3.85 & 0.168 & 0.131 & 0.005 & 30 & 51 & yes\\
+zhigh & ballast raised: COM height about 1.9 times nominal & 3.85 & 0.168 & 0.254 & 0.005 & 30 & 51 & yes\\
+zlow & ballast lowered: COM height about 0.67 times nominal & 3.85 & 0.168 & 0.087 & 0.005 & 30 & 51 & yes\\
+kb4 & ball mass x4 & 3.85 & 0.672 & 0.131 & 0.005 & 30 & 51 & yes\\
+bal4 & body ballast x4 (body mass 3.5 times nominal, pushes scaled) & 13.45 & 0.168 & 0.124 & 0.005 & 30 & 51 & yes\\
+J02 & wheel rotor inertia x4 & 3.85 & 0.168 & 0.131 & 0.02 & 30 & 51 & yes\\
+tau6 & torque limit 6 N m (one fifth) & 3.85 & 0.168 & 0.131 & 0.005 & 6 & 51 & yes\\
+bal025 & ballast x0.25 (body mass 0.38 times nominal) & 1.45 & 0.168 & 0.145 & 0.005 & 30 & 51 & yes\\
+kb025 & ball mass x0.25 & 3.85 & 0.042 & 0.131 & 0.005 & 30 & 51 & yes\\
+zeta41 & wheel contact zenith 41 deg (nominal 51) & 3.85 & 0.168 & 0.132 & 0.005 & 30 & 41 & yes\\
+zeta66 & wheel contact zenith 66 deg & 3.85 & 0.168 & 0.129 & 0.005 & 30 & 66 & yes\\
+s0.5 & half scale (all lengths x0.5, masses x0.125) & 0.48 & 0.021 & 0.065 & 0.0001563 & 1.875 & 51 & no (dropped)\\
+J0005 & rotor inertia x0.1 & 3.85 & 0.168 & 0.131 & 0.0005 & 30 & 51 & no (dropped)\\
+\bottomrule\end{tabular}}
+\end{table*}

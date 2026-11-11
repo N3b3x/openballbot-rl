@@ -1,0 +1,15 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Limits on flat ground: hard designs and sustained pulls (S114, S116). Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error; wheel-ball free-rolling friction 0.01. Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 528 per row in the first two rows (48 per design); 352 per row in the others (32 per design). Seeds: one controller seed (g34\_mref\_rsad\_db\_s0, recommended recipe), frozen. Protocol: TILES\_FLAT=1, so no terrain is involved. First two rows: eval\_motion.py goal test (1.2 m, 15 s, motion layer in the loop), files motion\_goal\_ref\_allflat[\_lqronly].json. Other rows: eval\_tiles2.py goal task (1.1 m, 8 s) with PUSH\_SCALE multiplying both the pushes and the sustained pulls, files eval2\_goal\_goal\_dr\_surf\_*\_flat\_noexit.json.}\label{tab:gen_limits}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{p{5.2cm}ccccc}\toprule
+Test on a fully flat map (g34 s0) & Falls, all 11 designs & kb025 light ball (0.25 x ball mass) & bal4 heavy body (4 x ballast) & tau6 weak motors (6 N m) & the other eight designs\\\midrule
+goal arrival, no disturbances: full controller (LQR + residual + motion layer) & 0.068 & 0.38 & 0.23 & 0.12 & at most 0.02\\
+goal arrival, no disturbances: LQR alone (residual zeroed), same motion layer & 0.324 & 0.96 & 0.38 & 0.15 & 0.17 to 0.35\\
+goal task 1.1 m, no pushes, no pulls & 0.074 & 0.42 & 0.17 & 0.13 & 0.00 to 0.07\\
+goal task 1.1 m, short pushes only (5 to 20 N, 50 ms) & 0.078 & 0.40 & 0.19 & 0.13 & 0.00 to 0.08\\
+goal task 1.1 m, pushes and pulls at 0.25 x (pulls 0.75 to 3 N) & 0.078 & 0.41 & 0.18 & 0.08 & 0.00 to 0.07\\
+goal task 1.1 m, 0.5 x (pulls 1.5 to 6 N) & 0.139 & 0.47 & 0.18 & 0.11 & 0.01 to 0.58\\
+goal task 1.1 m, 0.75 x (pulls 2.25 to 9 N) & 0.221 & 0.52 & 0.18 & 0.21 & 0.06 to 0.83\\
+goal task 1.1 m, 1 x, the standard battery (pulls 3 to 12 N) & 0.361 & 0.59 & 0.18 & 0.47 & 0.17 to 0.93\\
+\bottomrule\end{tabular}}
+\end{table*}

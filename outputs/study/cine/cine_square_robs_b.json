@@ -1,0 +1,33 @@
+{
+ "id": "cine_square_robs_b",
+ "title": "Square course",
+ "controller": "robs_b_s0@ki=1.0",
+ "controller_family": "learned",
+ "scenario": "square",
+ "terrain": "flat floor, no relief",
+ "description": "PPO (robs_b + integral) on the same square course.",
+ "outcome": "Fell at t = 16.64 s (left the ball). Mean position error 45.9 cm, max 127.4 cm, final 127.4 cm; max off-ball angle 31.5 deg.",
+ "stats": {
+  "duration_s": 16.65,
+  "fell": true,
+  "fall_t_s": 16.64,
+  "fall_reason": "left the ball",
+  "mean_err_cm": 45.9,
+  "max_err_cm": 127.4,
+  "final_err_cm": 127.4,
+  "dist_travelled_m": 8.24,
+  "max_off_ball_deg": 31.5,
+  "max_lean_deg": 29.2,
+  "mean_speed_err_mps": 0.285,
+  "end_to_plan_end_cm": 99.9,
+  "pushes": 0
+ },
+ "duration_s": 20.3,
+ "sim_only": true,
+ "domain_randomisation": false,
+ "slow_motion": 1.0,
+ "pushes": "",
+ "config": "configs/env/robs_b.yaml",
+ "sequence": "square",
+ "command": "python scripts/study/render_cinematic.py --job square_robs_b"
+}

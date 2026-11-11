@@ -1,0 +1,11 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Depth sensor against blind control, both with edge-focused starts, corrected engine. Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on (flat error column: off). Observation noise: on (flat error column: off). Worlds per cell: 176 per terrain kind (1760 per cell); 64 for the flat column. Seeds: one seed per arm (seed 0), the reference rows are the two seeds of the ramped recipe. Protocol: goal task of Table 2 at DR scales 1, 1.75 and 2.5; the per-kind columns are undisturbed success at scale 1; tile velocity task at 0.3 m/s; both arms are the ramped recipe plus --edge-focus 0.5 and differ only by the depth sensor.}\label{tab:gen_percarm}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccccccc}\toprule
+Policy & Goal success DR 1: undisturbed / disturbed & DR 1.75 & DR 2.5 & Median time [s] & step up & stairs & bump & Tile velocity falls: undisturbed / disturbed & Flat error at 0.9 m/s\\\midrule
+depth sensor (18x14, head mount) + edge starts g15\_edge\_depth\_s0, seed 0 & 0.60 / 0.29 & 0.53 / 0.26 & 0.45 / 0.18 & 2.36 & 0.36 & 0.44 & 0.27 & 0.56 / 0.73 & 0.044\\
+blind control + edge starts g15\_edge\_blind\_s0, seed 0 & 0.60 / 0.28 & 0.54 / 0.23 & 0.47 / 0.19 & 2.30 & 0.38 & 0.41 & 0.28 & 0.53 / 0.73 & 0.046\\
+reference: ramped recipe, no edge starts g12\_dr175\_s0, seed 0 & 0.58 / 0.29 & 0.54 / 0.25 & 0.45 / 0.19 & 2.44 & 0.31 & 0.44 & 0.26 & 0.54 / 0.71 & 0.057\\
+reference: ramped recipe, no edge starts g12\_dr175\_s1, seed 1 & 0.60 / 0.30 & 0.56 / 0.25 & 0.47 / 0.19 & 2.33 & 0.39 & 0.47 & 0.20 & 0.53 / 0.71 & 0.041\\
+\bottomrule\end{tabular}}
+\end{table*}

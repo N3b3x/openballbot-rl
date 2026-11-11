@@ -101,6 +101,9 @@ def main():
     ap.add_argument("--out-root", default="outputs/study/runs")
     ap.add_argument("--device", default="auto")
     ap.add_argument("--init-from", default="", help="resume weights from a model zip")
+    ap.add_argument("--zero-init-actor", action="store_true", help="zero the policy output layer (residual control)")
+    ap.add_argument("--gate-bias", type=float, default=None,
+                    help="hybrid_gate envs: zero the output layer and set the gate logit bias (-0.8 -> gate 0.1, i.e. start as ~LQR)")
     args = ap.parse_args()
 
     set_random_seed(args.seed)
@@ -120,8 +123,30 @@ def main():
                 gamma=args.gamma, gae_lambda=0.95, clip_range=0.2, ent_coef=args.ent_coef,
                 vf_coef=0.5, max_grad_norm=0.5, target_kl=0.03, seed=args.seed,
                 device=args.device, verbose=1)
+    if args.zero_init_actor:
+        # policy mean starts at exactly zero: with residual_lqr the initial controller is the LQR itself
+        with torch.no_grad():
+            model.policy.action_net.weight.zero_()
+            model.policy.action_net.bias.zero_()
+    if args.gate_bias is not None:
+        with torch.no_grad():
+            model.policy.action_net.weight.zero_()
+            model.policy.action_net.bias.zero_()
+            model.policy.action_net.bias[3] = args.gate_bias
     if args.init_from:
         model.set_parameters(args.init_from, exact_match=False)
+        vn_src = Path(args.init_from).parent / "vecnormalize.pkl"
+        if not vn_src.exists():  # checkpoint: ppo_<n>_steps.zip -> ppo_vecnormalize_<n>_steps.pkl
+            vn_src = Path(args.init_from).with_name(Path(args.init_from).name.replace("ppo_", "ppo_vecnormalize_").replace(".zip", ".pkl"))
+        if vn_src.exists():
+            import pickle
+            with open(vn_src, "rb") as f:
+                old = pickle.load(f)
+            for k, v in old.obs_rms.items():
+                if k in venv.obs_rms:
+                    venv.obs_rms[k] = v
+            venv.ret_rms = old.ret_rms
+            print("restored VecNormalize stats from", vn_src, flush=True)
     model.set_logger(configure(str(out), ["stdout", "csv"]))
 
     n_params = sum(p.numel() for p in model.policy.parameters())

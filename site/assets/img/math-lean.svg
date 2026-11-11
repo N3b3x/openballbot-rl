@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 260" class="d-lean" role="img" aria-labelledby="dl-t">
+<title id="dl-t">The lean law: to hold a steady acceleration a, the body must lean by an angle theta with sin theta = kappa a. Three robots are drawn at rest, at moderate acceleration and at the 20 degree budget.</title>
+<style>
+.d-lean text{font-family:Inter,system-ui,sans-serif;font-size:13px;fill:var(--text,#dfe6f0)}
+.d-lean .m{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;fill:var(--text-2,#9aa8bb)}
+.d-lean .k{fill:var(--text-3,#8a97ab);font-size:11px}
+</style>
+<defs><marker id="dl-ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--model,#4aa8ff)"/></marker></defs>
+<line x1="10" y1="215" x2="510" y2="215" style="stroke:var(--line-2,#5a6b84);stroke-width:2"/>
+<g id="dl-r0" transform="translate(90 182)">
+<circle r="33" style="fill:var(--bg-3,#161e2a);stroke:var(--model,#4aa8ff);stroke-width:2"/>
+<g><rect x="-12" y="-125" width="24" height="98" rx="8" style="fill:var(--bg-3,#161e2a);stroke:var(--model,#4aa8ff);stroke-width:2"/><circle cy="-88" r="4" style="fill:var(--warn,#ffb454)"/></g>
+</g>
+<text x="52" y="245" class="m">a = 0, theta = 0</text>
+<g transform="translate(260 182)">
+<circle r="33" style="fill:var(--bg-3,#161e2a);stroke:var(--model,#4aa8ff);stroke-width:2"/>
+<g transform="rotate(10)"><rect x="-12" y="-125" width="24" height="98" rx="8" style="fill:var(--bg-3,#161e2a);stroke:var(--model,#4aa8ff);stroke-width:2"/><circle cy="-88" r="4" style="fill:var(--warn,#ffb454)"/></g>
+<line x1="0" y1="0" x2="0" y2="-135" style="stroke:var(--line-2,#5a6b84);stroke-dasharray:2 5"/>
+<line x1="40" y1="-60" x2="95" y2="-60" style="stroke:var(--model,#4aa8ff);stroke-width:2.5" marker-end="url(#dl-ar)"/>
+<text x="44" y="-68" class="m" style="fill:var(--model,#4aa8ff)">a = 1 m/s²</text>
+</g>
+<text x="205" y="245" class="m">theta about 10 deg</text>
+<g transform="translate(430 182)">
+<circle r="33" style="fill:var(--bg-3,#161e2a);stroke:var(--model,#4aa8ff);stroke-width:2"/>
+<g transform="rotate(20)"><rect x="-12" y="-125" width="24" height="98" rx="8" style="fill:var(--bg-3,#161e2a);stroke:var(--warn,#ffb454);stroke-width:2"/><circle cy="-88" r="4" style="fill:var(--warn,#ffb454)"/></g>
+<line x1="0" y1="0" x2="0" y2="-135" style="stroke:var(--line-2,#5a6b84);stroke-dasharray:2 5"/>
+<line x1="44" y1="-60" x2="110" y2="-60" style="stroke:var(--model,#4aa8ff);stroke-width:2.5" marker-end="url(#dl-ar)"/>
+<text x="46" y="-68" class="m" style="fill:var(--model,#4aa8ff)">a about 2 m/s²</text>
+</g>
+<text x="350" y="245" class="m" style="fill:var(--warn,#ffb454)">20 deg: the lean budget</text>
+<text x="14" y="24">The body is the only thing that can hold the ball back.</text>
+<text x="14" y="44" class="k">Lean forward and gravity pulls the top over; the wheels must roll the ball forward under it to keep up. Steady lean means steady acceleration.</text>
+</svg>

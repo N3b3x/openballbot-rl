@@ -25,7 +25,8 @@ class ContactFrameStepper:
 
     def __init__(self, model, ball_geom="the_ball", wheel_geoms=None,
                  fix_frames=True):
-        assert model.opt.integrator == mujoco.mjtIntegrator.mjINT_RK4
+        assert model.opt.integrator in (mujoco.mjtIntegrator.mjINT_RK4, mujoco.mjtIntegrator.mjINT_IMPLICITFAST,
+                                        mujoco.mjtIntegrator.mjINT_EULER)
         assert model.na == 0, "activation states are not supported"
         assert model.ntendon == 0 and model.nflex == 0, "tendons/flex are not supported"
         assert model.opt.solver == mujoco.mjtSolver.mjSOL_NEWTON
@@ -82,6 +83,14 @@ class ContactFrameStepper:
     # -- RK4 identical to mj_RungeKutta(m, d, 4) ----------------------------
     def step(self, d):
         m = self.m
+        if m.opt.integrator != mujoco.mjtIntegrator.mjINT_RK4:
+            # single-evaluation integrators (about 4x cheaper than RK4): forward with the frame hook, then integrate
+            self.forward(d)
+            if m.opt.integrator == mujoco.mjtIntegrator.mjINT_EULER:
+                mujoco.mj_Euler(m, d)
+            else:
+                mujoco.mj_implicit(m, d)
+            return
         h = m.opt.timestep
         t0 = d.time
         self.forward(d)

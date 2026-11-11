@@ -1,0 +1,15 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Smooth following with the ToF sensor: variants. Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error; earlier measurement: controller g18\_ret\_rs025\_s1 trained and evaluated at wheel-ball free-rolling friction 0.001 (the recommended checkpoint at 0.01 is in Table 37). Domain randomisation: on at scale 1. Observation noise: on (sensor ranges noisy, with dropout). Worlds per cell: 528 per row. Seeds: one controller seed (g18\_ret\_rs025\_s1, frozen). Protocol: blocks map, undisturbed, 20 s; the head gimbal is yawed either to the command direction or to the planner's target heading (eval hook; on hardware the gimbal would be commanded by the navigation layer).}\label{tab:gen_smoothtof}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccc}\toprule
+Smooth follower with the ToF 18 x 14 sensor (head) & Reached goal & Falls & Stuck & Rolled onto a block & Commanded heading-rate RMS [rad/s]\\\midrule
+smooth follower, sensor yawed along the command & 0.72 & 0.22 & 0.05 & 0.16 & 1.8\\
+smooth follower, sensor aimed at the target heading, 2 rad/s (adopted) & 0.78 & 0.16 & 0.05 & 0.03 & 1.8\\
+sensor aimed at the target heading, 4 rad/s & 0.76 & 0.17 & 0.07 & 0.04 & 3.3\\
+rejected: faster turning, 4 rad/s, sensor along the command & 0.74 & 0.20 & 0.05 & 0.07 & 3.4\\
+rejected: replanning every 0.04 s & 0.69 & 0.25 & 0.06 & 0.26 & 1.9\\
+rejected: slow-down within 0.3 m of seen obstacles & 0.44 & 0.28 & 0.28 & 0.05 & 2.1\\
+rejected: slow-down within 0.5 m & 0.26 & 0.29 & 0.46 & 0.03 & 2.2\\
+S89 wavefront (jerky), for reference & 0.85 & 0.11 & 0.04 & 0.02 & 14.4$^\dagger$\\
+\bottomrule\end{tabular}}
+\end{table*}

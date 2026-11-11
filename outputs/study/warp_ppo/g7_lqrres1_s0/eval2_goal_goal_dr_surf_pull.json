@@ -1,0 +1,129 @@
+{
+ "run": "g7_lqrres1_s0",
+ "args": {
+  "run": "g7_lqrres1_s0",
+  "task": "goal",
+  "speed": 0.6,
+  "n": 16,
+  "dr": true,
+  "surfaces": true,
+  "pull": true,
+  "eval_designs": null,
+  "steps": 800,
+  "tile_seed": 0
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.9204545617103577,
+   "success": 0.07954545319080353,
+   "median_time_s": 2.109999895095825
+  },
+  "step_up": {
+   "fall": 0.9715909361839294,
+   "success": 0.028409091755747795,
+   "median_time_s": 2.759999990463257
+  },
+  "step_down": {
+   "fall": 0.9431818723678589,
+   "success": 0.05681818351149559,
+   "median_time_s": 2.1599998474121094
+  },
+  "small_drop": {
+   "fall": 0.9772727489471436,
+   "success": 0.022727273404598236,
+   "median_time_s": 2.5399999618530273
+  },
+  "large_drop": {
+   "fall": 0.9772727489471436,
+   "success": 0.022727273404598236,
+   "median_time_s": 1.7599999904632568
+  },
+  "ramp_up": {
+   "fall": 0.948863685131073,
+   "success": 0.05113636702299118,
+   "median_time_s": 2.569999933242798
+  },
+  "ramp_down": {
+   "fall": 0.948863685131073,
+   "success": 0.05113636702299118,
+   "median_time_s": 2.0399999618530273
+  },
+  "stairs": {
+   "fall": 0.9715909361839294,
+   "success": 0.028409091755747795,
+   "median_time_s": 2.2699999809265137
+  },
+  "bump": {
+   "fall": 0.9886363744735718,
+   "success": 0.011363636702299118,
+   "median_time_s": 1.4800000190734863
+  },
+  "rough": {
+   "fall": 0.948863685131073,
+   "success": 0.05113636702299118,
+   "median_time_s": 2.0299999713897705
+  }
+ },
+ "by_design": {
+  "nom": {
+   "fall": 1.0,
+   "success": 0.0,
+   "median_time_s": null
+  },
+  "zhigh": {
+   "fall": 1.0,
+   "success": 0.0,
+   "median_time_s": null
+  },
+  "zlow": {
+   "fall": 1.0,
+   "success": 0.0,
+   "median_time_s": null
+  },
+  "kb4": {
+   "fall": 1.0,
+   "success": 0.0,
+   "median_time_s": null
+  },
+  "bal4": {
+   "fall": 1.0,
+   "success": 0.0,
+   "median_time_s": null
+  },
+  "J02": {
+   "fall": 0.7437500357627869,
+   "success": 0.2562499940395355,
+   "median_time_s": 2.549999952316284
+  },
+  "tau6": {
+   "fall": 0.8125,
+   "success": 0.1875,
+   "median_time_s": 2.0199999809265137
+  },
+  "bal025": {
+   "fall": 1.0,
+   "success": 0.0,
+   "median_time_s": null
+  },
+  "kb025": {
+   "fall": 1.0,
+   "success": 0.0,
+   "median_time_s": null
+  },
+  "zeta41": {
+   "fall": 1.0,
+   "success": 0.0,
+   "median_time_s": null
+  },
+  "zeta66": {
+   "fall": 1.0,
+   "success": 0.0,
+   "median_time_s": null
+  }
+ },
+ "overall": {
+  "fall": 0.9596590399742126,
+  "success": 0.040340907871723175,
+  "median_time_s": 2.2899999618530273
+ }
+}

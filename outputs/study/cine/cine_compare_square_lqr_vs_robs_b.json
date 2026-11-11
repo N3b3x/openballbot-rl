@@ -1,0 +1,52 @@
+{
+ "id": "cine_compare_square_lqr_vs_robs_b",
+ "title": "Square course: LQR vs robs_b",
+ "scenario": "square",
+ "terrain": "flat floor, no relief",
+ "controllers": [
+  "lqr",
+  "robs_b_s0@ki=1.0"
+ ],
+ "controller_families": [
+  "model",
+  "learned"
+ ],
+ "description": "Two controllers on the same scenario and terrain, simulated separately and replayed in sync.",
+ "outcome": "LQR: no fall, mean error 35.5 cm, max 101.8 cm; robs_b: fell at 16.64 s, mean error 45.9 cm, max 127.4 cm",
+ "stats": {
+  "a": {
+   "duration_s": 26.0,
+   "fell": false,
+   "fall_t_s": null,
+   "fall_reason": null,
+   "mean_err_cm": 35.5,
+   "max_err_cm": 101.8,
+   "final_err_cm": 20.4,
+   "dist_travelled_m": 12.63,
+   "max_off_ball_deg": 9.3,
+   "max_lean_deg": 9.0,
+   "mean_speed_err_mps": 0.244,
+   "end_to_plan_end_cm": 20.4,
+   "pushes": 0
+  },
+  "b": {
+   "duration_s": 16.65,
+   "fell": true,
+   "fall_t_s": 16.64,
+   "fall_reason": "left the ball",
+   "mean_err_cm": 45.9,
+   "max_err_cm": 127.4,
+   "final_err_cm": 127.4,
+   "dist_travelled_m": 8.24,
+   "max_off_ball_deg": 31.5,
+   "max_lean_deg": 29.2,
+   "mean_speed_err_mps": 0.285,
+   "end_to_plan_end_cm": 99.9,
+   "pushes": 0
+  }
+ },
+ "duration_s": 30.0,
+ "sim_only": true,
+ "domain_randomisation": false,
+ "command": "python scripts/study/render_cinematic.py --compare square_lqr square_robs_b"
+}

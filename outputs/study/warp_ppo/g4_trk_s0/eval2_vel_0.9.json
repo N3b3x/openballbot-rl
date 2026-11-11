@@ -1,0 +1,103 @@
+{
+ "run": "g4_trk_s0",
+ "args": {
+  "run": "g4_trk_s0",
+  "task": "vel",
+  "speed": 0.9,
+  "n": 32,
+  "dr": false,
+  "surfaces": false,
+  "pull": false,
+  "eval_designs": "nom,nom",
+  "steps": 800,
+  "tile_seed": 0
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.109375,
+   "success": 0.0,
+   "track_err": 0.45996177196502686,
+   "late_err": 0.4127405285835266,
+   "late_speed_ratio": 0.5437819361686707
+  },
+  "step_up": {
+   "fall": 0.109375,
+   "success": 0.0,
+   "track_err": 0.46207672357559204,
+   "late_err": 0.41559216380119324,
+   "late_speed_ratio": 0.541254460811615
+  },
+  "step_down": {
+   "fall": 0.078125,
+   "success": 0.0,
+   "track_err": 0.4531865119934082,
+   "late_err": 0.40420299768447876,
+   "late_speed_ratio": 0.5538018345832825
+  },
+  "small_drop": {
+   "fall": 0.09375,
+   "success": 0.0,
+   "track_err": 0.45825332403182983,
+   "late_err": 0.4101293683052063,
+   "late_speed_ratio": 0.5472677946090698
+  },
+  "large_drop": {
+   "fall": 0.078125,
+   "success": 0.0,
+   "track_err": 0.45971551537513733,
+   "late_err": 0.41311147809028625,
+   "late_speed_ratio": 0.5440872311592102
+  },
+  "ramp_up": {
+   "fall": 0.1875,
+   "success": 0.0,
+   "track_err": 0.4588349163532257,
+   "late_err": 0.4083399772644043,
+   "late_speed_ratio": 0.5491975545883179
+  },
+  "ramp_down": {
+   "fall": 0.203125,
+   "success": 0.0,
+   "track_err": 0.45528772473335266,
+   "late_err": 0.40359002351760864,
+   "late_speed_ratio": 0.5555436015129089
+  },
+  "stairs": {
+   "fall": 0.171875,
+   "success": 0.0,
+   "track_err": 0.4508737325668335,
+   "late_err": 0.40077829360961914,
+   "late_speed_ratio": 0.558910608291626
+  },
+  "bump": {
+   "fall": 0.125,
+   "success": 0.0,
+   "track_err": 0.4661761224269867,
+   "late_err": 0.4219672381877899,
+   "late_speed_ratio": 0.5336441993713379
+  },
+  "rough": {
+   "fall": 0.078125,
+   "success": 0.0,
+   "track_err": 0.4718221426010132,
+   "late_err": 0.42781174182891846,
+   "late_speed_ratio": 0.5273191332817078
+  }
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.11874999850988388,
+   "success": 0.0,
+   "track_err": 0.4610261917114258,
+   "late_err": 0.4136296212673187,
+   "late_speed_ratio": 0.5433940887451172
+  }
+ },
+ "overall": {
+  "fall": 0.12343750149011612,
+  "success": 0.0,
+  "track_err": 0.45965152978897095,
+  "late_err": 0.41193264722824097,
+  "late_speed_ratio": 0.5453549027442932
+ }
+}

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 230" class="d-res" role="img" aria-labelledby="dr-t">
+<title id="dr-t">Residual control: the LQR action and the policy action scaled by the authority rho are summed and clipped to the wheel range. The policy sees the same observations the LQR state comes from, plus the command and heading.</title>
+<style>
+.d-res text{font-family:Inter,system-ui,sans-serif;font-size:13px;fill:var(--text,#dfe6f0)}
+.d-res .m{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;fill:var(--text-2,#9aa8bb)}
+.d-res .k{fill:var(--text-3,#8a97ab);font-size:11px}
+.d-res .bm{fill:var(--bg-3,#161e2a);stroke:var(--model,#4aa8ff);stroke-width:1.8}
+.d-res .bl{fill:var(--bg-3,#161e2a);stroke:var(--learned,#a78bfa);stroke-width:1.8}
+.d-res .bh{fill:var(--bg-3,#161e2a);stroke:var(--hybrid,#2ee6c4);stroke-width:2}
+.d-res .bw{fill:var(--bg-3,#161e2a);stroke:var(--warn,#ffb454);stroke-width:1.8}
+</style>
+<defs>
+<marker id="dr-am" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--model,#4aa8ff)"/></marker>
+<marker id="dr-al" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--learned,#a78bfa)"/></marker>
+<marker id="dr-ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--hybrid,#2ee6c4)"/></marker>
+</defs>
+<text x="10" y="30" class="m">observations, command</text>
+<path d="M10 40 H40 V70 H60" fill="none" style="stroke:var(--line-2,#5a6b84);stroke-width:1.5" marker-end="url(#dr-am)"/>
+<path d="M40 70 V150 H60" fill="none" style="stroke:var(--line-2,#5a6b84);stroke-width:1.5" marker-end="url(#dr-al)"/>
+<rect x="62" y="44" width="170" height="54" rx="10" class="bm"/>
+<text x="76" y="67">LQR + governor</text><text x="76" y="86" class="m">a_LQR in [-1, 1]^3</text>
+<rect x="62" y="124" width="170" height="54" rx="10" class="bl"/>
+<text x="76" y="147">PPO policy (MLP)</text><text x="76" y="166" class="m">a_pi in [-1, 1]^3</text>
+<path d="M232 71 H318" fill="none" style="stroke:var(--model,#4aa8ff);stroke-width:1.8" marker-end="url(#dr-am)"/>
+<path d="M232 151 H262" fill="none" style="stroke:var(--learned,#a78bfa);stroke-width:1.8" marker-end="url(#dr-al)"/>
+<!-- rho gain -->
+<polygon points="264,136 264,166 300,151" style="fill:var(--bg-3,#161e2a);stroke:var(--learned,#a78bfa);stroke-width:1.8"/>
+<text x="268" y="128" class="m" style="fill:var(--learned,#a78bfa)">x rho</text>
+<path d="M300 151 H318" fill="none" style="stroke:var(--learned,#a78bfa);stroke-width:1.8" marker-end="url(#dr-al)"/>
+<!-- sum -->
+<circle cx="340" cy="111" r="20" class="bh"/><text x="333" y="117" style="font-size:18px">+</text>
+<path d="M340 73 V89" fill="none" style="stroke:var(--model,#4aa8ff);stroke-width:1.8"/>
+<path d="M320 151 H340 V133" fill="none" style="stroke:var(--learned,#a78bfa);stroke-width:1.8"/>
+<path d="M320 71 H340" fill="none" style="stroke:var(--model,#4aa8ff);stroke-width:1.8"/>
+<path d="M360 111 H398" fill="none" style="stroke:var(--hybrid,#2ee6c4);stroke-width:2" marker-end="url(#dr-ah)"/>
+<!-- clip -->
+<rect x="400" y="84" width="110" height="54" rx="10" class="bw"/>
+<text x="414" y="107">clip to [-1, 1]</text><text x="414" y="126" class="m">per wheel</text>
+<path d="M510 111 H548" fill="none" style="stroke:var(--hybrid,#2ee6c4);stroke-width:2" marker-end="url(#dr-ah)"/>
+<rect x="550" y="84" width="80" height="54" rx="10" class="bh"/>
+<text x="562" y="107">wheels</text><text x="562" y="126" class="m">a x tau_max</text>
+<text x="10" y="212" class="k">a = clip(a_LQR + rho a_pi). With rho = 0.25 the policy can move each wheel command by at most a quarter of full scale. Teal = the combined controller.</text>
+</svg>

@@ -1,0 +1,11 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Supervised depth-to-height encoder. Engine: Warp GPU (MuJoCo-Warp 3.17, float32). Domain randomisation: on in the data collection (see the caveat). Observation noise: on (depth zone noise 0.5 \% of range, 2 \% dropout). Worlds per cell: 606k frames from 2048 worlds, 11 designs; validation = 10 \% of worlds, split by world. Seeds: 1. Protocol: supervised regression of the height grid ahead and rise/drop hazards from an 18x14 simulated depth image; the driver policy is g2\_goal\_s0. Caveat: the frames were collected by a policy running on the engine before the S69 fix (stale subtree mass under mass randomisation). The metrics describe depth-to-height prediction, which does not depend on that artefact, but the frame distribution does.}\label{tab:gen_encoder}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccc}\toprule
+Encoder & R2 (7x5 height grid) & MAE [cm] & rise $\ge$ 2 cm F1 & drop $\ge$ 2 cm F1 & R2 by forward row (0.1 ... 1.3 m)\\\midrule
+mean baseline & -0.00 & 3.87 & 0.00 & 0.00 & -0.00 -0.00 -0.00 -0.00 -0.00 -0.00 -0.00\\
+proprio only & 0.02 & 3.97 & 0.25 & 0.20 & 0.04 0.05 0.04 0.02 -0.01 -0.02 -0.01\\
+depth+proprio & 0.55 & 2.19 & 0.62 & 0.67 & 0.13 0.42 0.61 0.69 0.70 0.68 0.64\\
+depth only policy shaped & 0.60 & 1.93 & 0.70 & 0.73 & 0.17 0.47 0.68 0.74 0.74 0.71 0.67\\
+\bottomrule\end{tabular}}
+\end{table*}

@@ -1,0 +1,4 @@
+# generalist round 1: teacher with privileged scan, blind history policy with design vector, blind history policy that must infer the design
+train_dev.py --name gtea_s0 --nworld 8192 --steps 400e6 --tiles --surfaces --pull --goal-p 0.4 --designs nom,s0.5,zhigh,zlow,kb4,bal4,J02,tau6,bal025,kb025,J0005,zeta41,zeta66 --width 512 --layers 3 --seed 0 --sensor scan --asym --design-cond
+train_dev.py --name ggen_hist8dc_s0 --nworld 8192 --steps 400e6 --tiles --surfaces --pull --goal-p 0.4 --designs nom,s0.5,zhigh,zlow,kb4,bal4,J02,tau6,bal025,kb025,J0005,zeta41,zeta66 --width 512 --layers 3 --seed 0 --hist 8 --asym --design-cond
+train_dev.py --name ggen_hist16_s0 --nworld 8192 --steps 400e6 --tiles --surfaces --pull --goal-p 0.4 --designs nom,s0.5,zhigh,zlow,kb4,bal4,J02,tau6,bal025,kb025,J0005,zeta41,zeta66 --width 512 --layers 3 --seed 0 --hist 16 --asym

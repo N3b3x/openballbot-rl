@@ -1,0 +1,150 @@
+{
+ "run": "g18_ret_rs025_s1",
+ "source": "oracle",
+ "sensor": null,
+ "planner": {
+  "kind": "smooth",
+  "carrot": 0.3,
+  "w_max": 2.0,
+  "a_max": 0.6,
+  "hyst": 1.0,
+  "look": 0.6,
+  "half_w": 0.22,
+  "thr": 0.03,
+  "v_max": 0.3,
+  "mem": 600,
+  "goal_r": 1.2
+ },
+ "steps": 2000,
+ "worlds": 528,
+ "push_scale": 0.0,
+ "pull": false,
+ "retainer": "0,0,0,100",
+ "overall": {
+  "path_ratio": 1.8864132165908813,
+  "heading_rate_rms": 1.729910135269165,
+  "cmd_change_mean": 0.5659785866737366,
+  "fall": 0.13825757801532745,
+  "success": 0.8579545617103577,
+  "stuck": 0.0037878789007663727,
+  "over_block": 0.039772726595401764,
+  "median_time_s": 8.139999389648438
+ },
+ "diag": {
+  "stuck_final_goal_dist_median": 0.9649308323860168,
+  "stuck_cmd_zero_frac": 0.0,
+  "stuck_dist_from_start_median": 2.102566957473755
+ },
+ "by_design": {
+  "nom": {
+   "path_ratio": 1.8538721799850464,
+   "heading_rate_rms": 1.7303916215896606,
+   "cmd_change_mean": 0.5708505511283875,
+   "fall": 0.0416666679084301,
+   "success": 0.9375,
+   "stuck": 0.02083333395421505,
+   "over_block": 0.0416666679084301,
+   "median_time_s": 8.059999465942383
+  },
+  "zhigh": {
+   "path_ratio": 1.8776161670684814,
+   "heading_rate_rms": 1.7434642314910889,
+   "cmd_change_mean": 0.5715128183364868,
+   "fall": 0.0833333358168602,
+   "success": 0.9166666865348816,
+   "stuck": 0.0,
+   "over_block": 0.0625,
+   "median_time_s": 7.609999656677246
+  },
+  "zlow": {
+   "path_ratio": 1.9921281337738037,
+   "heading_rate_rms": 1.744802474975586,
+   "cmd_change_mean": 0.581697404384613,
+   "fall": 0.1458333432674408,
+   "success": 0.8541666865348816,
+   "stuck": 0.0,
+   "over_block": 0.02083333395421505,
+   "median_time_s": 8.59999942779541
+  },
+  "kb4": {
+   "path_ratio": 1.7928004264831543,
+   "heading_rate_rms": 1.7326217889785767,
+   "cmd_change_mean": 0.5642795562744141,
+   "fall": 0.375,
+   "success": 0.625,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 7.119999885559082
+  },
+  "bal4": {
+   "path_ratio": 1.9142177104949951,
+   "heading_rate_rms": 1.7255949974060059,
+   "cmd_change_mean": 0.5693145394325256,
+   "fall": 0.1875,
+   "success": 0.8125,
+   "stuck": 0.0,
+   "over_block": 0.02083333395421505,
+   "median_time_s": 9.0
+  },
+  "J02": {
+   "path_ratio": 1.878388524055481,
+   "heading_rate_rms": 1.6885486841201782,
+   "cmd_change_mean": 0.5530179142951965,
+   "fall": 0.0,
+   "success": 0.9791666865348816,
+   "stuck": 0.02083333395421505,
+   "over_block": 0.0833333358168602,
+   "median_time_s": 8.429999351501465
+  },
+  "tau6": {
+   "path_ratio": 1.8233188390731812,
+   "heading_rate_rms": 1.7600584030151367,
+   "cmd_change_mean": 0.5737156271934509,
+   "fall": 0.02083333395421505,
+   "success": 0.9791666865348816,
+   "stuck": 0.0,
+   "over_block": 0.0625,
+   "median_time_s": 6.670000076293945
+  },
+  "bal025": {
+   "path_ratio": 1.8199138641357422,
+   "heading_rate_rms": 1.7405657768249512,
+   "cmd_change_mean": 0.558977484703064,
+   "fall": 0.125,
+   "success": 0.875,
+   "stuck": 0.0,
+   "over_block": 0.02083333395421505,
+   "median_time_s": 7.699999809265137
+  },
+  "kb025": {
+   "path_ratio": 2.0622169971466064,
+   "heading_rate_rms": 1.7442952394485474,
+   "cmd_change_mean": 0.5799322724342346,
+   "fall": 0.3958333432674408,
+   "success": 0.6041666865348816,
+   "stuck": 0.0,
+   "over_block": 0.0416666679084301,
+   "median_time_s": 8.510000228881836
+  },
+  "zeta41": {
+   "path_ratio": 1.8242865800857544,
+   "heading_rate_rms": 1.7399336099624634,
+   "cmd_change_mean": 0.5602246522903442,
+   "fall": 0.0416666679084301,
+   "success": 0.9583333730697632,
+   "stuck": 0.0,
+   "over_block": 0.0416666679084301,
+   "median_time_s": 8.059999465942383
+  },
+  "zeta66": {
+   "path_ratio": 1.8618148565292358,
+   "heading_rate_rms": 1.6972651481628418,
+   "cmd_change_mean": 0.5476818084716797,
+   "fall": 0.1041666716337204,
+   "success": 0.8958333730697632,
+   "stuck": 0.0,
+   "over_block": 0.0416666679084301,
+   "median_time_s": 9.960000038146973
+  }
+ }
+}

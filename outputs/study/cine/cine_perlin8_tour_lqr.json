@@ -1,0 +1,33 @@
+{
+ "id": "cine_perlin8_tour_lqr",
+ "title": "Tour on 8 cm Perlin terrain",
+ "controller": "lqr",
+ "controller_family": "model",
+ "scenario": "perlin8_tour",
+ "terrain": "Perlin floor, 8 cm amplitude",
+ "description": "Plain LQR on the same 8 cm Perlin floor and command tour.",
+ "outcome": "No fall. Mean position error 40.1 cm, max 116.0 cm, final 33.5 cm; max off-ball angle 13.1 deg.",
+ "stats": {
+  "duration_s": 24.5,
+  "fell": false,
+  "fall_t_s": null,
+  "fall_reason": null,
+  "mean_err_cm": 40.1,
+  "max_err_cm": 116.0,
+  "final_err_cm": 33.5,
+  "dist_travelled_m": 11.87,
+  "max_off_ball_deg": 13.1,
+  "max_lean_deg": 13.5,
+  "mean_speed_err_mps": 0.363,
+  "end_to_plan_end_cm": 33.5,
+  "pushes": 0
+ },
+ "duration_s": 28.1,
+ "sim_only": true,
+ "domain_randomisation": false,
+ "slow_motion": 1.0,
+ "pushes": "",
+ "config": "configs/env/res_c.yaml",
+ "sequence": "tour",
+ "command": "python scripts/study/render_cinematic.py --job perlin8_tour_lqr"
+}

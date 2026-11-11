@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lessons from building this | Ballbot</title>
+<meta name="description" content="Seven development lessons from the ballbot study, each with what happened, what it cost, the transferable rule and how the code now guards it: engine invariants, file names that carry settings, exposure artefacts, finite maps, reference frames for conditioning vectors, loaded reference poses, and sensor aiming.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/bounds.css?v=2">
+<script type="module" src="assets/js/layout.js"></script>
+</head>
+<body>
+<main>
+
+<section class="wrap page-head">
+  <div class="eyebrow">Lessons</div>
+  <h1>Lessons from building this</h1>
+  <p class="lede">Eight things that went wrong in a way worth remembering. Each one changed a result, cost a re-run, and left behind a rule and a line of code that enforces it. Ordinary bugs (timeouts, misread listings) are not here.</p>
+  <div class="tagrow"><span class="chip sim">Simulation only, no hardware</span><span class="chip">Development lessons, not a bug list</span></div>
+  <p class="src">Sources: <code>docs/research/tracking_study_log.md</code>, cited by entry number, and the files named under each lesson. Terms link to the <a href="glossary.html">glossary</a>.</p>
+</section>
+
+<section class="wrap">
+  <aside class="tldr"><span class="readtime"></span>
+    <h2>The eight rules</h2>
+    <ol class="rule-list">
+      <li><b>Recompute every derived field</b> when you batch a model field, and test far from the origin. <a href="#lesson-invariants">Lesson 1</a></li>
+      <li><b>Every setting that changes a result</b> goes into the file name and into the file. <a href="#lesson-filenames">Lesson 2</a></li>
+      <li><b>Check that every world is exposed</b> to the feature you are measuring before you read the rate. <a href="#lesson-exposure">Lesson 3</a></li>
+      <li><b>Record where failures happen</b>, not only that they happened. <a href="#lesson-maps">Lesson 4</a></li>
+      <li><b>A conditioning vector's reference frame</b> is part of the model; fix it once, and verify it on held-out inputs. <a href="#lesson-reference">Lesson 5</a></li>
+      <li><b>Place mechanisms at the loaded pose</b>: settle under gravity first. <a href="#lesson-settle">Lesson 6</a></li>
+      <li><b>Aim the sensor where the planner is going</b>, not where the robot is going. <a href="#lesson-aim">Lesson 7</a></li>
+      <li><b>Log a non-finite state separately from a fall</b>, treat extreme friction ratios as a float32 hazard, and put a long stationary test in every protocol. <a href="#lesson-blowup">Lesson 8</a></li>
+    </ol>
+    <span class="fine">Cited to S65, S69, S70, S78, S79, S85-R, S86, S87, S90, S92 and S98 of the study log.</span>
+  </aside>
+  <nav class="pagetoc" aria-label="On this page"></nav>
+</section>
+
+<section class="block">
+<div class="wrap">
+
+<!-- ============================ LESSON 1 ============================ -->
+  <article class="rule bad" id="lesson-invariants">
+    <header><span class="no">Lesson 1</span><div><div class="eyebrow" style="margin-bottom:.2em">Physics engine</div><h2>Engine invariants: a stale derived field</h2></div></header>
+    <p class="statement">Randomising a body's mass without recomputing the engine's cached subtree mass corrupted the physics in proportion to the robot's distance from the world origin.</p>
+    <div class="rule-grid">
+      <div>
+        <h4>What happened</h4>
+        <p>The GPU engine finds each body subtree's centre of mass by dividing mass-weighted positions by a stored field, <code>body_subtreemass</code>, and uses that point as the reference of the dynamics. <a class="term" href="glossary.html#dr" data-def="Training and testing over many slightly different robots and worlds so the policy does not overfit one set of parameters.">Domain randomisation</a> scaled <code>body_mass</code> of the ball and base per world but never updated the stored subtree mass, so the reference point was wrong by a fraction of the robot's distance from the origin; training and evaluation tiles lie up to 12 m out (S69).</p>
+        <p>The error is zero at nominal mass, which is why every unrandomised run looked fine and why a mass ablation "found" that mass randomisation was the main cause of falls. A second copy of the same fault lived in the evaluation path: <code>set_design</code> wrote each design's nominal subtree mass back over the corrected value (S70).</p>
+      </div>
+      <div>
+        <h4>What it cost</h4>
+        <div class="lesson-cost">
+          <p>Every domain-randomised result before S69, training or evaluation, was superseded: all goal-task and tile-velocity evaluations from S37 to S68, every policy trained up to that point (g2 to g11), and the conclusions "wide randomisation does not help" (S67) and "mass is the driver" (S68), which were artefacts. Three training runs were stopped and the whole recipe chain was retrained as g12 on the corrected engine (S69, S70, S71).</p>
+          <p>Not lost: anything with randomisation off, such as the flat-world tracking benchmark and the LQR calibration.</p>
+        </div>
+      </div>
+      <div>
+        <h4>The rule and the guard</h4>
+        <div class="lesson-rule"><p><b>Rule.</b> When you batch or randomise a model field, recompute every field the engine derives from it, and test far from the origin, where position-dependent errors show.</p></div>
+        <div class="lesson-guard" style="margin-top:10px"><p><b>Guard.</b> <code>experiments/warp_ppo/train_dev.py</code>: <code>_subtree()</code> recomputes the subtree masses from the per-world masses at every reset and again inside <code>set_design</code>; <code>experiments/warp_ppo/lqr_gpu.py</code> does the same for the LQR-only runs. The corrected ablation (S70) shows no single randomisation term dominating, which is the sanity check to repeat after any engine change.</p></div>
+      </div>
+    </div>
+  </article>
+
+<!-- ============================ LESSON 2 ============================ -->
+  <article class="rule" id="lesson-filenames">
+    <header><span class="no">Lesson 2</span><div><div class="eyebrow" style="margin-bottom:.2em">Bookkeeping</div><h2>File names carry settings</h2></div></header>
+    <p class="statement">Evaluation files were silently overwritten until every setting that changes a result went into the file name and into the JSON itself.</p>
+    <div class="rule-grid">
+      <div>
+        <h4>What happened</h4>
+        <p>In the S53 era the evaluation script wrote one JSON per run and task. It did not record the push scale, the <a class="term" href="glossary.html#dr-scale" data-def="A single multiplier on every randomisation range; 1 is the training range, 1.75 and 2.5 are wider.">DR scale</a>, the flat-world flag or the no-exit flag, and a later evaluation with different settings reused the same file name. The goal-task files of one run ended up holding the DR scale 2.5 results after a later chain ran over them (S65).</p>
+        <p>A site and paper cross-check (<code>docs/research/site_crosscheck.md</code>) found the mismatch when the files no longer matched the printed numbers in the log. A depth-sensor battery was later overwritten in the same way by an accidental second run (S78).</p>
+      </div>
+      <div>
+        <h4>What it cost</h4>
+        <div class="lesson-cost">
+          <p>The cross-check had to re-derive which stored file belonged to which experiment, and corrected the world counts of four flat-benchmark entries (64 worlds, not 32), one ramp-up value and three wording claims about accuracy and speed (S65). The S78 depth battery survives only as the second run's file; the two runs differed by up to 0.02 in goal success, which became the study's direct measure of evaluation noise.</p>
+          <p>No conclusion changed, but no stored file from before S65 can be trusted without the log entry that printed it.</p>
+        </div>
+      </div>
+      <div>
+        <h4>The rule and the guard</h4>
+        <div class="lesson-rule"><p><b>Rule.</b> Every setting that changes a result goes into the file name and is stored inside the file; a result file that can be overwritten by a different experiment is not a record.</p></div>
+        <div class="lesson-guard" style="margin-top:10px"><p><b>Guard.</b> <code>experiments/warp_ppo/eval_tiles2.py</code> appends <code>_ps</code>, <code>_drs</code>, <code>_flat</code>, <code>_noexit</code>, <code>_off-</code> and the tile seed <code>_ts</code> to every file name and stores an <code>env_settings</code> block in the JSON; <code>experiments/warp_ppo/eval_battery.py</code> runs the standard battery with every setting explicit and writes one <code>battery.json</code> per run. The site reads a frozen snapshot, <code>site/data/eval_snapshot/</code>.</p></div>
+      </div>
+    </div>
+  </article>
+
+<!-- ============================ LESSON 3 ============================ -->
+  <article class="rule bad" id="lesson-exposure">
+    <header><span class="no">Lesson 3</span><div><div class="eyebrow" style="margin-bottom:.2em">Evaluation design</div><h2>Exposure artefacts</h2></div></header>
+    <p class="statement">Eight-second episodes made slow robots look safe on obstacles because, at low speed, many of them never reached the obstacle.</p>
+    <div class="rule-grid">
+      <div>
+        <h4>What happened</h4>
+        <p>A speed sweep on the terrain <a class="term" href="glossary.html#tiles" data-def="Square patches of the 24 m height field, each carrying one terrain kind, with the robot starting at the centre.">tiles</a> showed step-up falls dropping from 0.62 at 0.3 m/s to 0.16 at 0.1 m/s, and bump falls from 0.74 to 0.16 (S86). The conclusion was that an obstacle-aware speed layer could remove most terrain falls.</p>
+        <p>Terrain features start 0.6 m or more from the tile centre. In an 8 s episode at 0.1 m/s the robot travels about 0.8 m, so many worlds ended before the robot touched the feature and were counted as survivors. With 20 s episodes the low-speed advantage largely vanished, step-up falls reading 0.64 at every speed (S87); the part of that reading that was a solver blow-up is the subject of <a href="#lesson-blowup">lesson 8</a>, and the exposure correction itself stands. This is the <a class="term" href="glossary.html#exposure" data-def="A false rate caused by counting worlds that never met the feature being measured.">exposure artefact</a>.</p>
+      </div>
+      <div>
+        <h4>What it cost</h4>
+        <div class="lesson-cost">
+          <p>S86 was withdrawn. The speed-governor idea it motivated was still built and tested, as a privileged slow-down near discontinuities, and moved falls only from 0.39 to 0.37 (S87), so it was dropped. The corrected analysis then had to be done by feature size instead of speed, which produced the traction limit (S87, S88) and redirected the perception work from climbing to routing (S89). The size result stands; the "speed does not matter" part of S87 was later superseded on the corrected contact model (S100, see lesson 8).</p>
+          <p><b>The second instance.</b> Re-tested on the corrected contact model, the speed layer looked like it halved obstacle falls, but those episodes were 15 s long and slowed robots covered only 0.96 to 1.07 m against features from 0.6 m out. With 40 s episodes the falls are 0.38 with no layer, 0.33 with the perfect-map layer and 0.35 with the ToF layer: the layer is worth 0.03 to 0.05, mostly on stairs (S103). The halving was withdrawn, along with the site claims built on it.</p>
+          <p><b>The third instance.</b> A zigzag test (60 degree command switches every 2 s for 15 s) cost 0.28 to 0.33 of robots for every motion-layer variant and was read as a turning weakness. The test started each robot on a flat tile, but the zigzag carried it about 2 m onto neighbouring terrain tiles; on a fully flat map the same test falls 0.051, while a curve test that stays on its tile falls 0.03 to 0.05 (S113 zigzag addendum). It was measuring terrain exposure, not turning.</p>
+        </div>
+      </div>
+      <div>
+        <h4>The rule and the guard</h4>
+        <div class="lesson-rule"><p><b>Rule.</b> A slowed robot must be given the time to meet the obstacle; check exposure every time an intervention changes speed. Episode length times the slowest speed must exceed the distance to the feature, and the denominator must count only exposed worlds.</p></div>
+        <div class="lesson-guard" style="margin-top:10px"><p><b>Guard.</b> <code>experiments/warp_ppo/eval_governor.py</code> runs with no episode truncation inside the evaluation (<code>max_steps</code> raised) and a <code>--steps</code> length chosen per protocol; every terrain result since S87 uses 20 s episodes. <code>experiments/warp_ppo/tiles.py</code> records each feature's drawn severity (<code>RANGE</code>), so results are split by size, not by speed.</p></div>
+      </div>
+    </div>
+  </article>
+
+<!-- ============================ LESSON 4 ============================ -->
+  <article class="rule bad" id="lesson-maps">
+    <header><span class="no">Lesson 4</span><div><div class="eyebrow" style="margin-bottom:.2em">Evaluation design</div><h2>Finite maps</h2></div></header>
+    <p class="statement">Robots driving off the edge of the height field were counted as falls, which inflated every flat-ground fall rate and made falls appear to rise with speed.</p>
+    <div class="rule-grid">
+      <div>
+        <h4>What happened</h4>
+        <p>The flat benchmark placed its 64 worlds on the tile positions of the normal protocol, which include the border tiles of the 24 m height field: tile centres at 10.5 m, 1.5 m from the edge. With tile-exit truncation off, a robot driving outward left the height field and the termination check called it a fall (S92).</p>
+        <p>A new per-fall position record showed that at 0.9 m/s for 8 s, 97 percent of the recorded flat falls were within 0.6 m of the border (0.25 recorded, about 0.01 real), and at 0.3 m/s for 20 s over 11 designs, 74 to 76 percent (0.33 recorded, about 0.08 real). This is the <a class="term" href="glossary.html#map-edge" data-def="A fall counted when the robot drove off the edge of the finite height field rather than tipping over.">map-edge artefact</a>.</p>
+      </div>
+      <div>
+        <h4>What it cost</h4>
+        <div class="lesson-cost">
+          <p>The "flat falls" column of every battery since S59 was superseded, and the 8 to 15 percent flat base rate quoted in S87 and S89 with it. The flat rows of every battery were re-run on interior tiles. Tracking error and achieved speed were computed over surviving worlds and were unaffected (S92).</p>
+          <p>The corrected base rate then appeared design specific, with the extreme-ball designs carrying nearly all flat falls (S92 addendum, S93); the standing part of that picture was itself an artefact, see <a href="#lesson-blowup">lesson 8</a>.</p>
+        </div>
+      </div>
+      <div>
+        <h4>The rule and the guard</h4>
+        <div class="lesson-rule"><p><b>Rule.</b> Record where failures happen, not only that they happened; a failure at the boundary of the simulated world is a property of the world, not of the controller.</p></div>
+        <div class="lesson-guard" style="margin-top:10px"><p><b>Guard.</b> <code>experiments/warp_ppo/eval_tiles2.py</code> stores the fall position of every world and a <code>fall_at_map_edge</code> fraction (fell within 0.6 m of the border); <code>experiments/warp_ppo/eval_battery.py --flat-only</code> re-runs the flat benchmark on interior tiles at least 7.5 m from the border and keeps <code>falls_at_map_edge</code> in <code>battery.json</code>, so a non-zero value is visible in the file.</p></div>
+      </div>
+    </div>
+  </article>
+
+<!-- ============================ LESSON 5 ============================ -->
+  <article class="rule learned" id="lesson-reference">
+    <header><span class="no">Lesson 5</span><div><div class="eyebrow" style="margin-bottom:.2em">Policy inputs</div><h2>Reference frames for conditioning vectors</h2></div></header>
+    <p class="statement">Held-out robot designs were described to the policy relative to the wrong reference design, so the generalisation test fed the policy a design vector it had never seen in training.</p>
+    <div class="rule-grid">
+      <div>
+        <h4>What happened</h4>
+        <p><a class="term" href="glossary.html#design-conditioning" data-def="Giving the policy a 6-number description of the robot it controls, relative to the nominal design.">Design-conditioned</a> policies receive a 6-number design vector computed relative to a reference design. In training the nominal design is loaded first and is the reference. The held-out evaluation loaded only the two unseen designs, so the vector was computed relative to the first of them: the 1.5x robot was presented as nominal-sized, and the low-torque design was described relative to the 1.5x robot (S87, S85 suspended).</p>
+        <p>The LQR part of the controllers always used the correct per-design gains, so only the learned residual saw the wrong input.</p>
+      </div>
+      <div>
+        <h4>What it cost</h4>
+        <div class="lesson-cost">
+          <p>S85 and the <a class="term" href="glossary.html#held-out-design" data-def="A robot design the policy never trained on, used to test transfer to unknown parameters.">held-out design</a> addendum of S83 were suspended and could not be used until the re-run was logged. The re-run (S85-R) reproduced the conclusions on correct inputs: LQR-based controllers keep 0.61 to 0.71 on the unseen larger robot, pure learning collapses to 0.09 to 0.15, and the tenth-torque design is motor limited for every controller. The cost was a re-evaluation and a period in which the study's main generalisation claim had to be marked unusable.</p>
+        </div>
+      </div>
+      <div>
+        <h4>The rule and the guard</h4>
+        <div class="lesson-rule"><p><b>Rule.</b> A conditioning vector's reference frame is part of the trained model; define it once, independent of what is loaded at evaluation, and verify held-out inputs against a training-time vector before reading any generalisation number.</p></div>
+        <div class="lesson-guard" style="margin-top:10px"><p><b>Guard.</b> <code>experiments/warp_ppo/train_dev.py</code>: the design-vector reference is always the <code>nom</code> design, loaded explicitly when it is not in the evaluated list, and the vectors were verified to match a nominal-first list (S87). Held-out evaluation files are re-written with the corrected vector and carry the design list in their name (<code>_des-s1.5-tau3</code>).</p></div>
+      </div>
+    </div>
+  </article>
+
+<!-- ============================ LESSON 6 ============================ -->
+  <article class="rule" id="lesson-settle">
+    <header><span class="no">Lesson 6</span><div><div class="eyebrow" style="margin-bottom:.2em">Mechanism modelling</div><h2>Mechanisms need a loaded reference pose</h2></div></header>
+    <p class="statement">Ball arrestors placed at the unloaded reset pose wedged the ball at the first step; they must be placed at the pose the robot settles into under gravity.</p>
+    <div class="rule-grid">
+      <div>
+        <h4>What happened</h4>
+        <p>The model's reset pose starts the wheels 10 mm inside the ball; the loaded seat, where the robot actually rests, is about 1 cm higher with 2.2 mm of wheel penetration (S79). <a class="term" href="glossary.html#arrestor" data-def="A small passive roller on the body that touches the ball only when the body starts to lift or slide off it.">Arrestors</a> that just touch the ball at the reset pose therefore press into it once the robot is seated, and the first attempt wedged the ball.</p>
+        <p>Two more pitfalls appeared while fixing it: the settle must start with the ball resting on the floor (dropping the robot wedged the wheels into the ball), and it must run on a flat copy of the model, because the first design's live model already carries the tile terrain (S79).</p>
+      </div>
+      <div>
+        <h4>What it cost</h4>
+        <div class="lesson-cost">
+          <p>Nothing was retracted: all three pitfalls were found and fixed before any arrestor result was kept, and arrestor runs start from the seated pose. The cost was time, and the lesson is recorded because the same mistake would silently change the outcome of the single most important mechanical result in the study (goal success 0.57 to 0.75 zero-shot, S79).</p>
+        </div>
+      </div>
+      <div>
+        <h4>The rule and the guard</h4>
+        <div class="lesson-rule"><p><b>Rule.</b> Place any mechanism that touches a loaded contact at the loaded pose: settle the model under gravity first, on the surface it will stand on, and derive the geometry from that pose.</p></div>
+        <div class="lesson-guard" style="margin-top:10px"><p><b>Guard.</b> <code>experiments/warp_ppo/retainer.py</code>: <code>settle()</code> lets the base settle onto the ball with the body held upright, on a flat copy of the model when the live one carries terrain, and the arrestor placement functions compute the loaded seat from that settled pose with zero preload (the docstrings state the rule).</p></div>
+      </div>
+    </div>
+  </article>
+
+<!-- ============================ LESSON 7 ============================ -->
+  <article class="rule" id="lesson-aim">
+    <header><span class="no">Lesson 7</span><div><div class="eyebrow" style="margin-bottom:.2em">Perception and planning</div><h2>Aim the sensor where the planner is going</h2></div></header>
+    <p class="statement">Making the robot's motion smooth made its forward sensor miss obstacles, because a slowly turning command also turned the sensor slowly; the fix was to let the planner aim the sensor at its own target.</p>
+    <div class="rule-grid">
+      <div>
+        <h4>What happened</h4>
+        <p>The first <a class="term" href="glossary.html#wavefront" data-def="A grid planner that computes the distance to the goal around inflated obstacles and descends it.">wavefront planner</a> picked the best of 24 neighbours every step and jumped its heading (heading-rate RMS 14 rad/s). A <a class="term" href="glossary.html#carrot" data-def="Steering toward a point a fixed distance down the planner's field, with rate-limited heading and speed.">smooth follower</a> cut that to 1.7 rad/s with the perfect map at a cost of a few points (0.91 to 0.86 reached, S90).</p>
+        <p>With the real <a class="term" href="glossary.html#tof" data-def="A cheap range sensor that measures distance in a grid of zones by timing a light pulse.">ToF sensor</a> the smooth follower dropped from 0.85 to 0.72 reached, with 0.16 of worlds rolling onto a block. The head gimbal yawed to the command direction, and a rate-limited command sweeps the field of view slowly, so blocks to the side entered the map late (S90).</p>
+      </div>
+      <div>
+        <h4>What it cost</h4>
+        <div class="lesson-cost">
+          <p>Three fixes were tried and rejected: a proximity slow-down near seen obstacles (0.44 or 0.26 reached, because every route passes within 0.5 m of a block and the robot crawled), faster turning at 4 rad/s (0.74) and replanning every 0.04 s (0.69, the noisy map flickered). Aiming the sensor at the planner's target heading gave 0.78 reached and 0.03 on a block at the same smoothness (S90). About 7 points remain against the jerky planner, mostly slow or stuck approaches at the 20 s limit.</p>
+        </div>
+      </div>
+      <div>
+        <h4>The rule and the guard</h4>
+        <div class="lesson-rule"><p><b>Rule.</b> Smooth motion with a real sensor needs the sensor aimed where the planner is going, not where the robot is going; the navigation layer owns the sensor's aim.</p></div>
+        <div class="lesson-guard" style="margin-top:10px"><p><b>Guard.</b> <code>experiments/warp_ppo/eval_nav.py</code> sets <code>env.yaw_override</code> to the follower's target heading every step, and <code>experiments/warp_ppo/train_dev.py</code> honours that hook when computing the head yaw. On hardware this is the gimbal command from the navigation layer (<a href="bounds.html#rule-sensor">Rule 8</a>).</p></div>
+      </div>
+    </div>
+  </article>
+
+<!-- ============================ LESSON 8 ============================ -->
+  <article class="rule bad" id="lesson-blowup">
+    <header><span class="no">Lesson 8</span><div><div class="eyebrow" style="margin-bottom:.2em">Physics engine</div><h2>A standing "fall" that was a solver blow-up</h2></div></header>
+    <p class="statement">Three log entries treated a 20 s standing fall rate as a controller weakness, and one training run was designed to fix it, before the "falls" turned out to be the float32 contact solver going non-finite on a 1000 to 1 anisotropic friction ratio.</p>
+    <div class="rule-grid">
+      <div>
+        <h4>What happened</h4>
+        <p>The wheel-ball contact pairs use <a class="term" href="glossary.html#anisotropic-friction" data-def="Different friction along and across a contact; here 0.001 along the roller axis and 1.0 across it, with an elliptic friction cone.">anisotropic friction</a> "0.001 1.0" with an elliptic cone: free rolling along the roller axis, grip across it. In MuJoCo-Warp float32 that ratio makes the Newton solve go non-finite when the robot stands still, preferentially on designs with a heavy ball relative to the body: in a 10 s LQR-alone test over 880 worlds, kb4 69 percent, bal025 28 percent, zeta66 25 percent, nominal 0 (S98).</p>
+        <p>The training termination counts a <a class="term" href="glossary.html#nan-termination" data-def="A world whose simulated state becomes NaN or infinite; the training termination counted it as a fall.">non-finite state</a> as a fall, so these entered every 20 s standing number. The 8 s battery and the driving tests never showed it, because the blow-up needs a near-stationary wheel-ball contact.</p>
+        <p>The honest timeline: S93 read the standing falls as an LQR gain problem and concluded that the integral term was essential and that two ball-mass designs were unfixable; S94 measured the seed spread and a 20 s-episode run against it; S96 and S97 compared recipes and trained a standing-focused run (g25) to cure it. S98 then classified the "falls": on the worst seed, 91 percent were neither a tip nor an unseating but robots upright at 1 to 2 degrees of tilt whose state became NaN in one 10 ms step.</p>
+      </div>
+      <div>
+        <h4>What it cost</h4>
+        <div class="lesson-cost">
+          <p>Every 20 s standing fall rate in S93, S94, S96 and S97 (0.06 to 0.49 across seeds of the recommended controller) is void as a controller result, and the standing-focused recipe comparison is withdrawn: g25 answered an artefact. The design-level claims built on them (heavy-ball designs fail, integral term essential) must be re-measured. Driving numbers were affected only slightly (S98 addendum).</p>
+          <p>Finding it took ruling out, one at a time, the contact buffer size, the arrestors, the contact-frame kernel, warm start, the solver type, the iteration counts, domain randomisation and the height field, before the friction ratio: free-rolling 0.001 gives 12.7 percent non-finite worlds, 0.002 gives 0.1 percent, 0.005 and above give 0, with the real fall count unchanged at 64 to 69 of 880 (S98 addendum).</p>
+          <p>With free-rolling friction 0.01 the recommended policy, trained at 0.001, stands 20 s at 0.027 and 0.039 for seeds 1 and 2 (kb4 and bal025 at 0.00) and drives at 0.063 and 0.075. What remains is real: the light ball kb025 unseats within a second, and the heavy base bal4 falls in 0.18 to 0.23 of driving worlds.</p>
+          <p><b>The second consequence: the artefact had also hidden a real effect.</b> A robot creeping toward an obstacle at 0.1 m/s is nearly stationary for most of the episode, the blow-up condition, so the S87 speed sweep was inflated most at low speed (all-tile falls 0.42 at 0.1 m/s against 0.28 on the corrected model) and read as "speed does not matter". On the corrected model falls rise steadily with commanded speed, 0.28 / 0.34 / 0.35 / 0.40 / 0.51 at 0.1 / 0.2 / 0.3 / 0.6 / 0.9 m/s (S100), and obstacle size still dominates (S88 re-check unchanged within 0.11). So the blow-up had hidden a real but small speed dependence. The speed layer's apparent large gain when it was re-tested (a halving in 15 s episodes) did not come from the blow-up but from exposure: with 40 s episodes it is worth 0.03 to 0.05 of obstacle falls (S103, <a href="#lesson-exposure">lesson 3</a>).</p>
+          <p><b>The same artefact bit a second time.</b> After the fix, the training script and the battery script read the run's own free-rolling friction from its <code>args.json</code>, but one evaluation script (<code>eval_governor.py</code>) and five others did not, so policies retrained at 0.01 were evaluated on the obstacle course at the old 0.001. That produced an apparent gap, the retrained seeds gaining less from slowing down (0.32 to 0.35 with the speed layer against 0.18 to 0.19 for the older seeds), a hypothesis to explain it, and a three-seed training run to test the hypothesis. Evaluated on the same contact model the two are equal within 0.02: 0.16 against 0.17 with the speed layer, 0.37 against 0.35 without. The gap, the hypothesis and its test run were withdrawn (S102). (These are 15 s obstacle-course runs, valid as 15 s measurements only; the speed-layer gain they show was later withdrawn as an exposure artefact, S103, but the equality of the two checkpoint sets, measured on the same protocol on both sides, stands.)</p>
+        </div>
+      </div>
+      <div>
+        <h4>The rule and the guard</h4>
+        <div class="lesson-rule"><p><b>Rule.</b> In a float32 contact solver an extreme anisotropic friction ratio is a numerical hazard; a non-finite state must be logged separately from a physical fall; and a long stationary test belongs in every protocol, because a blow-up that needs a still contact is invisible to short or moving tests. When such an artefact is found, re-run the null results it touched as well as the positive ones: an artefact can hide a real effect as easily as it can invent one. When a model parameter changes, every evaluation and rendering path must read the run's parameters from one place, and a new result that contradicts the standard battery should first be checked for a configuration mismatch.</p></div>
+        <div class="lesson-guard" style="margin-top:10px"><p><b>Guard.</b> Free-rolling friction 0.01 is the model default (<code>experiments/warp_ppo/train_dev.py --pair-mu1</code>, recorded in <code>args.json</code> and re-applied by the evaluation scripts; the knob lives in <code>common.load_cpu_model</code> so it survives per-design and per-world friction batching). <code>experiments/warp_ppo/fall_cause.py --stand</code> classifies standing falls into tip, unseating and non-finite, and <code>experiments/warp_ppo/nan_hunt.py</code> is the stability test over 880 worlds. Since S102 all six evaluation and rendering scripts (<code>eval_governor.py</code>, <code>fall_cause.py</code>, <code>render_policy.py</code>, <code>eval_nav.py</code>, <code>render_nav.py</code>, <code>nan_hunt.py</code>) re-apply the free-rolling friction from the run's <code>args.json</code> when it is not set explicitly, and <code>eval_governor.py</code> records it in its output. The recommended checkpoints are the g26 seeds, retrained at 0.01.</p></div>
+      </div>
+    </div>
+  </article>
+
+  <div class="callout">
+    <p style="margin:0"><strong>A pattern.</strong> Five of the eight (lessons 1, 3, 4, 5 and 8) are measurement faults that produced a clean, plausible result pointing the wrong way, and each was caught by a check the result itself did not suggest: a cross-check against the model, a longer episode, a position record, a vector printout, a per-fall classification. The rules on this page are those checks, written down so they run before the next result, not after.</p>
+  </div>
+</div>
+</section>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,159 @@
+{
+ "run": "g39_goalcentre_s2",
+ "source": "oracle",
+ "position_point": "ball_centre",
+ "motion_ref": true,
+ "mref_kw": null,
+ "sensor": null,
+ "planner": {
+  "kind": "smooth",
+  "aim": "cmd",
+  "replan": 20,
+  "prox": 0.0,
+  "carrot": 0.3,
+  "w_max": 2.0,
+  "a_max": 0.6,
+  "hyst": 1.0,
+  "look": 0.6,
+  "half_w": 0.22,
+  "thr": 0.03,
+  "v_max": 0.3,
+  "mem": 600,
+  "goal_r": 1.2
+ },
+ "steps": 2000,
+ "worlds": 528,
+ "push_scale": 0.0,
+ "pull": false,
+ "retainer": "0,0,0,100",
+ "overall": {
+  "path_ratio": 1.4302016496658325,
+  "heading_rate_rms": 1.2171903848648071,
+  "cmd_change_mean": 0.44557133316993713,
+  "fall": 0.054924242198467255,
+  "success": 0.9375,
+  "stuck": 0.007575757801532745,
+  "over_block": 0.0,
+  "median_time_s": 7.789999961853027
+ },
+ "diag": {
+  "escape_events": null,
+  "escape_gave_up": null,
+  "escape_fails_median": null,
+  "stuck_final_goal_dist_median": 0.3938261866569519,
+  "stuck_cmd_zero_frac": 0.0,
+  "stuck_dist_from_start_median": 1.507852554321289
+ },
+ "by_design": {
+  "nom": {
+   "path_ratio": 1.440148115158081,
+   "heading_rate_rms": 1.2115873098373413,
+   "cmd_change_mean": 0.44034355878829956,
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 8.069999694824219
+  },
+  "zhigh": {
+   "path_ratio": 1.499437928199768,
+   "heading_rate_rms": 1.2411996126174927,
+   "cmd_change_mean": 0.45434170961380005,
+   "fall": 0.02083333395421505,
+   "success": 0.9791666865348816,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 7.449999809265137
+  },
+  "zlow": {
+   "path_ratio": 1.36394464969635,
+   "heading_rate_rms": 1.1878935098648071,
+   "cmd_change_mean": 0.43644610047340393,
+   "fall": 0.0,
+   "success": 0.9791666865348816,
+   "stuck": 0.02083333395421505,
+   "over_block": 0.0,
+   "median_time_s": 7.989999771118164
+  },
+  "kb4": {
+   "path_ratio": 1.415526032447815,
+   "heading_rate_rms": 1.2364919185638428,
+   "cmd_change_mean": 0.4579432010650635,
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 7.329999923706055
+  },
+  "bal4": {
+   "path_ratio": 1.4179726839065552,
+   "heading_rate_rms": 1.2034986019134521,
+   "cmd_change_mean": 0.4420870840549469,
+   "fall": 0.1666666716337204,
+   "success": 0.8333333730697632,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 8.309999465942383
+  },
+  "J02": {
+   "path_ratio": 1.4663581848144531,
+   "heading_rate_rms": 1.2191972732543945,
+   "cmd_change_mean": 0.44755712151527405,
+   "fall": 0.0,
+   "success": 0.9583333730697632,
+   "stuck": 0.0416666679084301,
+   "over_block": 0.0,
+   "median_time_s": 9.019999504089355
+  },
+  "tau6": {
+   "path_ratio": 1.4017012119293213,
+   "heading_rate_rms": 1.2576587200164795,
+   "cmd_change_mean": 0.45022135972976685,
+   "fall": 0.02083333395421505,
+   "success": 0.9791666865348816,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 6.309999942779541
+  },
+  "bal025": {
+   "path_ratio": 1.3831826448440552,
+   "heading_rate_rms": 1.2193711996078491,
+   "cmd_change_mean": 0.44266390800476074,
+   "fall": 0.02083333395421505,
+   "success": 0.9791666865348816,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 7.599999904632568
+  },
+  "kb025": {
+   "path_ratio": 1.5130977630615234,
+   "heading_rate_rms": 1.2142388820648193,
+   "cmd_change_mean": 0.4448992609977722,
+   "fall": 0.375,
+   "success": 0.6041666865348816,
+   "stuck": 0.02083333395421505,
+   "over_block": 0.0,
+   "median_time_s": 8.069999694824219
+  },
+  "zeta41": {
+   "path_ratio": 1.4032937288284302,
+   "heading_rate_rms": 1.2125808000564575,
+   "cmd_change_mean": 0.4445874094963074,
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 8.069999694824219
+  },
+  "zeta66": {
+   "path_ratio": 1.4171075820922852,
+   "heading_rate_rms": 1.1962748765945435,
+   "cmd_change_mean": 0.4394584894180298,
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 8.380000114440918
+  }
+ }
+}

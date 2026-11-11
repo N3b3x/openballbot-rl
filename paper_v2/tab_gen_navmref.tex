@@ -1,0 +1,11 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Navigation with the motion layer (S114). Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error; wheel-ball free-rolling friction 0.01. Domain randomisation: on at scale 1 (11 designs, floor classes). Observation noise: on (sensor ranges: noise 0.5 percent of range, 2 percent dropout). Worlds per cell: 528 (48 per design, 11 designs). Seeds: one controller seed per row, frozen. Protocol: eval\_nav.py on the blocks map (8 cm blocks, goal 1.2 m away behind a block), 20 s, smooth wavefront follower (carrot 0.3 m, turn limit 2 rad/s, v\_max 0.3 m/s), ToF on the head pitched down 25 deg and aimed at the planner target; for runs trained with the motion layer the planner command passes through motion\_ref.py (arrival braking, goal hold) unless NO\_MREF=1; pushes 5 to 20 N and pulls 3 to 12 N in the pushes column; files outputs/study/warp\_ppo/RUN/navS\_{tof18,tof18\_pp,oracle}[\_nomref].json.}\label{tab:gen_navmref}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{p{4cm}ccccccc}\toprule
+Controller (motion layer in the loop or not) & ToF 18 x 14: reached / fell / stuck & Commanded heading-rate RMS [rad/s] & Command change per step & Median time to goal & ToF, pushes and pulls: reached / fell & Perfect map: reached / fell / stuck & Perfect map heading-rate RMS [rad/s]\\\midrule
+previous recommendation, no motion layer (g26 s1; Table 37) & 0.845 / 0.072 / 0.083 & 1.74 & 0.50 & 10.8 s & 0.511 / 0.432 & 0.886 / 0.072 / 0.042 & 1.69\\
+adaptive authority, with the motion layer (g32 s1) & 0.852 / 0.078 / 0.070 & 1.29 & 0.40 & 9.7 s & 0.544 / 0.400 & 0.926 / 0.064 / 0.009 & 1.23\\
+recommended, with the motion layer (g34 s0) & 0.877 / 0.080 / 0.044 & 1.31 & 0.40 & 9.2 s & 0.557 / 0.413 & 0.938 / 0.061 / 0.002 & 1.23\\
+recommended checkpoint, planner commands raw (g34 s0, NO\_MREF=1) & 0.881 / 0.070 / 0.049 & 1.79 & 0.51 & 8.9 s & not run & 0.915 / 0.083 / 0.002 & 1.74\\
+\bottomrule\end{tabular}}
+\end{table*}

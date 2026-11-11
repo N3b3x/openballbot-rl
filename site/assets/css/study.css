@@ -1,0 +1,51 @@
+/* Shared by method.html and generalist.html (generated figures and tables, see site/build_data.py) */
+.sfig{margin:1.6em 0}
+.sfig img{width:100%;height:auto;background:transparent}
+.sfig .fig-dark{display:none}
+:root[data-theme="dark"] .sfig .fig-light{display:none}
+:root[data-theme="dark"] .sfig .fig-dark{display:block}
+.sfig figcaption,.cap{font-size:.84rem;color:var(--text-3);line-height:1.5;margin:.6em 0 0}
+.cap b{color:var(--text-2)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-sm);margin:1em 0 0}
+.tablewrap table{min-width:640px;font-size:.84rem}
+.tablewrap td small{color:var(--text-3);font-family:var(--font-mono);font-size:.72rem}
+.num{font-family:var(--font-mono)}
+.tablewrap td,.tablewrap th{vertical-align:top}
+.pend{display:inline-block;font:600 .7rem var(--font-mono);letter-spacing:.06em;padding:.1em .55em;border-radius:99px;border:1px dashed var(--warn);color:var(--warn)}
+.v{font-family:var(--font-mono);font-size:.94em;color:var(--text)}
+.vgrid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));list-style:none;margin:0;padding:0}
+.vcard{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.vcard .vbody{padding:12px 16px}.vcard h3{font-size:1.02rem;margin:.2em 0 .3em}.vcard p{font-size:.88rem;margin:0 0 .5em}
+.vcard .vmeta{color:var(--text-3);font-size:.78rem;line-height:1.45}
+b.good{color:var(--good)} b.bad{color:var(--bad)}
+.eqn{overflow-x:auto;padding:2px 0}
+.chapters{display:flex;flex-wrap:wrap;gap:8px;margin:1.2em 0 0;padding:0;list-style:none}
+.chapters a{display:inline-block;font:500 .8rem var(--font-mono);padding:.3em .8em;border-radius:99px;border:1px solid var(--line-2);color:var(--text-2)}
+.chapters a:hover{border-color:var(--hybrid);color:var(--text);text-decoration:none}
+.stat-row{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));margin:1.4em 0}
+.stat{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+.stat b{display:block;font:600 1.7rem var(--font-mono);color:var(--text)}
+.stat span{font-size:.82rem;color:var(--text-3);line-height:1.4;display:block}
+.stat.model b{color:var(--model)} .stat.learned b{color:var(--learned)} .stat.hybrid b{color:var(--hybrid)} .stat.bad b{color:var(--bad)}
+details.proof{border:1px solid var(--line);border-radius:var(--radius-sm);padding:.4em 1em;margin:1em 0;background:var(--bg-2)}
+details.proof summary{cursor:pointer;color:var(--text-2);font-weight:500}
+.archsvg{width:100%;height:auto}
+.archsvg text{font:500 12px var(--font-sans);fill:var(--text)}
+.archsvg .muted{fill:var(--text-3)}
+.archsvg rect.b{fill:var(--bg-2);stroke-width:2}
+.archsvg path.a{fill:none;stroke:var(--text-3);stroke-width:1.6;marker-end:url(#ah)}
+.sidebyside{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))}
+code{overflow-wrap:anywhere;word-break:break-word}
+.table .scroll table{min-width:max-content}
+.table td small{color:var(--text-3);font-family:var(--font-mono);font-size:.72rem}
+.table .caption b{color:var(--text-2)}
+/* contain KaTeX absolutely positioned MathML copies and wide content inside the scroll boxes (otherwise they stretch the document width) */
+.table .scroll,.eqn,.sfig,.tablewrap,.table-scroll{position:relative}
+/* defined terms (first use links to glossary.html#id) and the "what this means" line after each result */
+.term a{color:var(--text);border-bottom:1px dotted var(--hybrid);text-decoration:none}
+.term a:hover{border-bottom-style:solid;color:var(--hybrid)}
+.wtm{border-left:3px solid var(--learned);background:var(--bg-2);padding:10px 16px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:.8em 0 1.4em;font-size:.95rem}
+.wtm b{color:var(--learned)}
+.lead{color:var(--text-2);margin:1.2em 0 .4em}
+.lead b{color:var(--text)}
+@media (max-width:700px){.stat b{font-size:1.4rem}.tablewrap table{font-size:.8rem}.sfig{overflow-x:auto;-webkit-overflow-scrolling:touch}.sfig img,.sfig .archsvg{min-width:640px}.sfig figcaption{position:sticky;left:0;max-width:calc(100vw - 2*var(--gutter))}}

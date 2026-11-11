@@ -1,0 +1,40 @@
+camera:
+  enabled: false
+  disable_rgb: true
+  frame_rate: 90
+  height: 64
+  width: 64
+env:
+  max_allowed_tilt: 70
+  max_ball_offset_deg: 30
+  action_rate_coef: -0.02
+  lean_coef: 0.5
+  ball_offset_coef: 0.05
+  max_ep_steps: 800
+  action_repeat: 5
+  max_wheel_velocity: 30.0
+  fix_wheel_contacts: true
+  command_mode: true
+  cmd_resample_steps: 300
+  cmd_zero_prob: 0.1
+  wheel_damping: 0.1
+  cmd_vmax: 1.5
+  cmd_wmax: 1.5
+  obs_vel_clip: 8.0
+  cmd_reward: err
+logging:
+  cams: false
+  reward_terms: false
+reward:
+  type: directional
+  config:
+    action_reg_coef: -0.0001
+    scale: 0.5
+    survival_bonus: 0.02
+    fall_penalty: 2.0
+    target_direction:
+    - 0.0
+    - 1.0
+terrain:
+  type: flat
+  config: {}

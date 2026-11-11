@@ -1,0 +1,334 @@
+{
+ "file": "C:\\Users\\Owner\\Documents\\GitHub\\openballbot-rl\\experiments\\isaac_port\\import_test\\usd\\ballbot.usdc",
+ "bodies": [
+  {
+   "path": "/ballbot/Geometry/terrain",
+   "type": "Plane",
+   "apis": [
+    "PhysicsCollisionAPI",
+    "PhysicsMassAPI",
+    "MaterialBindingAPI"
+   ],
+   "attrs": {
+    "axis": "Z",
+    "physics:centerOfMass": "(-inf, -inf, -inf)",
+    "physics:diagonalInertia": "(0, 0, 0)",
+    "physics:mass": "0.0",
+    "physics:principalAxes": "(0, 0, 0, 0)"
+   }
+  },
+  {
+   "path": "/ballbot/Geometry/base",
+   "type": "Xform",
+   "apis": [
+    "PhysicsRigidBodyAPI",
+    "PhysicsMassAPI",
+    "PhysicsArticulationRootAPI"
+   ],
+   "attrs": {
+    "physics:centerOfMass": "(0, 0, 0.016411241)",
+    "physics:diagonalInertia": "(0.03286527, 0.03286527, 0.022853043)",
+    "physics:mass": "3.4511916637420654",
+    "physics:principalAxes": "(1, 0, 0, 0)"
+   }
+  },
+  {
+   "path": "/ballbot/Geometry/base/tower_collision",
+   "type": "Cylinder",
+   "apis": [
+    "PhysicsCollisionAPI",
+    "PhysicsMassAPI",
+    "MaterialBindingAPI"
+   ],
+   "attrs": {
+    "axis": "Z",
+    "height": "0.28",
+    "physics:centerOfMass": "(-inf, -inf, -inf)",
+    "physics:diagonalInertia": "(0, 0, 0)",
+    "physics:mass": "0.0",
+    "physics:principalAxes": "(0, 0, 0, 0)",
+    "radius": "0.11"
+   }
+  },
+  {
+   "path": "/ballbot/Geometry/base/cam_0_body",
+   "type": "Xform",
+   "apis": [
+    "PhysicsRigidBodyAPI"
+   ],
+   "attrs": {}
+  },
+  {
+   "path": "/ballbot/Geometry/base/cam_0_body/cam_0_geom",
+   "type": "Mesh",
+   "apis": [
+    "PhysicsCollisionAPI",
+    "PhysicsMeshCollisionAPI",
+    "PhysicsMassAPI",
+    "MaterialBindingAPI"
+   ],
+   "attrs": {
+    "physics:centerOfMass": "(-inf, -inf, -inf)",
+    "physics:diagonalInertia": "(0, 0, 0)",
+    "physics:mass": "0.0",
+    "physics:principalAxes": "(0, 0, 0, 0)"
+   }
+  },
+  {
+   "path": "/ballbot/Geometry/base/cam_0_body/cam_0_stick",
+   "type": "Capsule",
+   "apis": [
+    "PhysicsCollisionAPI",
+    "PhysicsMassAPI",
+    "MaterialBindingAPI"
+   ],
+   "attrs": {
+    "axis": "Z",
+    "height": "0.2",
+    "physics:centerOfMass": "(-inf, -inf, -inf)",
+    "physics:diagonalInertia": "(0, 0, 0)",
+    "physics:mass": "0.0",
+    "physics:principalAxes": "(0, 0, 0, 0)",
+    "radius": "0.01"
+   }
+  },
+  {
+   "path": "/ballbot/Geometry/base/cam_1_body",
+   "type": "Xform",
+   "apis": [
+    "PhysicsRigidBodyAPI"
+   ],
+   "attrs": {}
+  },
+  {
+   "path": "/ballbot/Geometry/base/cam_1_body/cam_1_geom",
+   "type": "Mesh",
+   "apis": [
+    "PhysicsCollisionAPI",
+    "PhysicsMeshCollisionAPI",
+    "PhysicsMassAPI",
+    "MaterialBindingAPI"
+   ],
+   "attrs": {
+    "physics:centerOfMass": "(-inf, -inf, -inf)",
+    "physics:diagonalInertia": "(0, 0, 0)",
+    "physics:mass": "0.0",
+    "physics:principalAxes": "(0, 0, 0, 0)"
+   }
+  },
+  {
+   "path": "/ballbot/Geometry/base/cam_1_body/cam_1_stick",
+   "type": "Capsule",
+   "apis": [
+    "PhysicsCollisionAPI",
+    "PhysicsMassAPI",
+    "MaterialBindingAPI"
+   ],
+   "attrs": {
+    "axis": "Z",
+    "height": "0.2",
+    "physics:centerOfMass": "(-inf, -inf, -inf)",
+    "physics:diagonalInertia": "(0, 0, 0)",
+    "physics:mass": "0.0",
+    "physics:principalAxes": "(0, 0, 0, 0)",
+    "radius": "0.01"
+   }
+  },
+  {
+   "path": "/ballbot/Geometry/base/wheel_0",
+   "type": "Xform",
+   "apis": [
+    "PhysicsRigidBodyAPI"
+   ],
+   "attrs": {}
+  },
+  {
+   "path": "/ballbot/Geometry/base/wheel_0/wheel_mesh_0",
+   "type": "Capsule",
+   "apis": [
+    "PhysicsCollisionAPI",
+    "PhysicsMassAPI",
+    "MaterialBindingAPI"
+   ],
+   "attrs": {
+    "axis": "Z",
+    "height": "0.04",
+    "physics:centerOfMass": "(-inf, -inf, -inf)",
+    "physics:diagonalInertia": "(0, 0, 0)",
+    "physics:mass": "0.0",
+    "physics:principalAxes": "(0, 0, 0, 0)",
+    "radius": "0.025"
+   }
+  },
+  {
+   "path": "/ballbot/Geometry/base/wheel_1",
+   "type": "Xform",
+   "apis": [
+    "PhysicsRigidBodyAPI"
+   ],
+   "attrs": {}
+  },
+  {
+   "path": "/ballbot/Geometry/base/wheel_1/wheel_mesh_1",
+   "type": "Capsule",
+   "apis": [
+    "PhysicsCollisionAPI",
+    "PhysicsMassAPI",
+    "MaterialBindingAPI"
+   ],
+   "attrs": {
+    "axis": "Z",
+    "height": "0.04",
+    "physics:centerOfMass": "(-inf, -inf, -inf)",
+    "physics:diagonalInertia": "(0, 0, 0)",
+    "physics:mass": "0.0",
+    "physics:principalAxes": "(0, 0, 0, 0)",
+    "radius": "0.025"
+   }
+  },
+  {
+   "path": "/ballbot/Geometry/base/wheel_2",
+   "type": "Xform",
+   "apis": [
+    "PhysicsRigidBodyAPI"
+   ],
+   "attrs": {}
+  },
+  {
+   "path": "/ballbot/Geometry/base/wheel_2/wheel_mesh_2",
+   "type": "Capsule",
+   "apis": [
+    "PhysicsCollisionAPI",
+    "PhysicsMassAPI",
+    "MaterialBindingAPI"
+   ],
+   "attrs": {
+    "axis": "Z",
+    "height": "0.04",
+    "physics:centerOfMass": "(-inf, -inf, -inf)",
+    "physics:diagonalInertia": "(0, 0, 0)",
+    "physics:mass": "0.0",
+    "physics:principalAxes": "(0, 0, 0, 0)",
+    "radius": "0.025"
+   }
+  },
+  {
+   "path": "/ballbot/Geometry/ball",
+   "type": "Xform",
+   "apis": [
+    "PhysicsRigidBodyAPI"
+   ],
+   "attrs": {}
+  },
+  {
+   "path": "/ballbot/Geometry/ball/the_ball",
+   "type": "Sphere",
+   "apis": [
+    "PhysicsCollisionAPI",
+    "PhysicsMassAPI",
+    "MaterialBindingAPI"
+   ],
+   "attrs": {
+    "physics:centerOfMass": "(-inf, -inf, -inf)",
+    "physics:diagonalInertia": "(0, 0, 0)",
+    "physics:mass": "0.0",
+    "physics:principalAxes": "(0, 0, 0, 0)",
+    "radius": "0.09"
+   }
+  }
+ ],
+ "joints": [
+  {
+   "path": "/ballbot/Geometry/base/cam_0_body/PhysicsFixedJoint",
+   "type": "PhysicsFixedJoint",
+   "attrs": {
+    "physics:localPos0": "(0.17, -0.01, -0.06)",
+    "physics:localPos1": "(0, 0, 0)"
+   }
+  },
+  {
+   "path": "/ballbot/Geometry/base/cam_1_body/PhysicsFixedJoint",
+   "type": "PhysicsFixedJoint",
+   "attrs": {
+    "physics:localPos0": "(-0.17, -0.01, -0.06)",
+    "physics:localPos1": "(0, 0, 0)"
+   }
+  },
+  {
+   "path": "/ballbot/Geometry/base/wheel_0/wheel_joint_0",
+   "type": "PhysicsRevoluteJoint",
+   "attrs": {
+    "mjc:damping": "0.1",
+    "newton:armature": "0.004999999888241291",
+    "newton:damping": "0.001745329238474369",
+    "physics:axis": "X",
+    "physics:localPos0": "(0, 0, 0.0283)",
+    "physics:localPos1": "(0, 0, 0.0293)"
+   }
+  },
+  {
+   "path": "/ballbot/Geometry/base/wheel_1/wheel_joint_1",
+   "type": "PhysicsRevoluteJoint",
+   "attrs": {
+    "mjc:damping": "0.1",
+    "newton:armature": "0.004999999888241291",
+    "newton:damping": "0.001745329238474369",
+    "physics:axis": "X",
+    "physics:localPos0": "(0, 0, 0.0283)",
+    "physics:localPos1": "(0, 0, 0.0293)"
+   }
+  },
+  {
+   "path": "/ballbot/Geometry/base/wheel_2/wheel_joint_2",
+   "type": "PhysicsRevoluteJoint",
+   "attrs": {
+    "mjc:damping": "0.1",
+    "newton:armature": "0.004999999888241291",
+    "newton:damping": "0.001745329238474369",
+    "physics:axis": "X",
+    "physics:localPos0": "(0, 0, 0.0283)",
+    "physics:localPos1": "(0, 0, 0.0293)"
+   }
+  }
+ ],
+ "colliders": [],
+ "materials": [
+  {
+   "path": "/ballbot/Materials/floor_chk",
+   "apis": [],
+   "attrs": {}
+  },
+  {
+   "path": "/ballbot/Materials/grid",
+   "apis": [],
+   "attrs": {}
+  },
+  {
+   "path": "/ballbot/Materials/basketball_mat",
+   "apis": [],
+   "attrs": {}
+  },
+  {
+   "path": "/ballbot/Physics/PhysicsMaterial",
+   "apis": [
+    "PhysicsMaterialAPI"
+   ],
+   "attrs": {
+    "newton:rollingFriction": "9.999999747378752e-05",
+    "newton:torsionalFriction": "0.004999999888241291",
+    "physics:dynamicFriction": "1.0",
+    "physics:restitution": "0.0",
+    "physics:staticFriction": "1.0"
+   }
+  }
+ ],
+ "other": [
+  {
+   "path": "/ballbot/Geometry/base/imu_site",
+   "type": "Sphere",
+   "attrs": {
+    "radius": "0.01"
+   }
+  }
+ ]
+}

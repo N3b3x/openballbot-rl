@@ -2,7 +2,7 @@
 
 Heights are returned normalised by the height-field z size (2.0 m in ballbot.xml),
 so ``step_height_m=0.03`` is a 3 cm book. The robot starts at the origin and drives
-towards +y; array index [i, j] <-> (x, y).
+towards +y; array index [row, col] <-> (y, x) (MuJoCo height-field layout).
 """
 import numpy as np
 
@@ -27,7 +27,7 @@ def generate_book_terrain(
     ramp_len > 0 makes the front edge a ramp of that length (a soft lip)."""
     half = 5.0
     coords = np.linspace(-half, half, n)
-    X, Y = np.meshgrid(coords, coords, indexing="ij")
+    Y, X = np.meshgrid(coords, coords, indexing="ij")  # rows = y, cols = x
     y1 = step_y + book_len if book_len > 0 else np.inf
     if ramp_len > 0:
         up = np.clip((Y - step_y) / ramp_len, 0.0, 1.0)

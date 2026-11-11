@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" class="d-stack" role="img" aria-labelledby="ds-t">
+<title id="ds-t">Controller stack, left to right: a goal enters the navigation layer, which outputs a planar velocity command; the command enters the LQR and the residual policy in parallel; their actions are summed with authority 0.25 and clipped; the result becomes three wheel torques that drive the simulated robot fitted with ball arrestors; the measured state feeds back to the LQR and the policy.</title>
+<style>
+.d-stack text{font-family:Inter,system-ui,sans-serif;font-size:13px;fill:var(--text,#dfe6f0)}
+.d-stack .m{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;fill:var(--text-2,#9aa8bb)}
+.d-stack .k{fill:var(--text-3,#8a97ab);font-size:11px}
+.d-stack .h{font-size:14px;font-weight:600}
+.d-stack .bx{fill:var(--bg-3,#161e2a);stroke-width:1.8}
+.d-stack .bm{stroke:var(--model,#4aa8ff)} .d-stack .bl{stroke:var(--learned,#a78bfa)} .d-stack .bh{stroke:var(--hybrid,#2ee6c4)} .d-stack .bw{stroke:var(--warn,#ffb454)} .d-stack .bn{stroke:var(--line-2,#5a6b84)} .d-stack .bg{stroke:var(--good,#5ee08a)}
+.d-stack .w{fill:none;stroke:var(--line-2,#5a6b84);stroke-width:1.6}
+.d-stack .fb{fill:none;stroke:var(--line-2,#5a6b84);stroke-width:1.6;stroke-dasharray:5 4}
+</style>
+<defs>
+<marker id="ds-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--line-2,#5a6b84)"/></marker>
+<marker id="ds-ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--hybrid,#2ee6c4)"/></marker>
+</defs>
+<text x="14" y="26" class="k">Blue: model-based. Violet: learned. Teal: the combined action. Amber: a limit. Green: mechanical safety.</text>
+<!-- goal -->
+<g data-d="goal" class="node" tabindex="0" role="button" aria-label="Goal">
+<rect x="14" y="100" width="100" height="62" rx="10" class="bx bg"/>
+<text x="26" y="124" class="h">Goal</text><text x="26" y="144" class="m">1.1 m away</text>
+</g>
+<path d="M114 131H150" class="w" marker-end="url(#ds-a)"/>
+<!-- nav -->
+<g data-d="nav" class="node" tabindex="0" role="button" aria-label="Navigation layer">
+<rect x="152" y="78" width="180" height="106" rx="10" class="bx bm"/>
+<text x="166" y="102" class="h">Navigation layer</text>
+<text x="166" y="122" class="m">distance field map</text>
+<text x="166" y="138" class="m">carrot 0.3 m, 2 rad/s</text>
+<text x="166" y="154" class="m">v &lt;= 0.3 m/s (Froude)</text>
+<text x="166" y="172" class="k">nav.py (WavePlanner)</text>
+</g>
+<path d="M332 131H368" class="w" marker-end="url(#ds-a)"/>
+<text x="334" y="122" class="m">v cmd</text>
+<!-- split -->
+<path d="M368 131V70H408" class="w" marker-end="url(#ds-a)"/>
+<path d="M368 131V190H408" class="w" marker-end="url(#ds-a)"/>
+<!-- LQR -->
+<g data-d="lqr" class="node" tabindex="0" role="button" aria-label="LQR with governor and integral">
+<rect x="410" y="36" width="200" height="76" rx="10" class="bx bm"/>
+<text x="424" y="60" class="h">LQR + governor</text>
+<text x="424" y="80" class="m">Q diag(1e-6,50,1,1), R 1</text>
+<text x="424" y="96" class="m">a_max 0.5, k_i 1, k_yaw 5</text>
+</g>
+<!-- policy -->
+<g data-d="policy" class="node" tabindex="0" role="button" aria-label="Residual PPO policy">
+<rect x="410" y="156" width="200" height="76" rx="10" class="bx bl"/>
+<text x="424" y="180" class="h">Residual policy (PPO)</text>
+<text x="424" y="200" class="m">MLP, 25 obs + design vec</text>
+<text x="424" y="216" class="m">output x rho, rho = 0.25</text>
+</g>
+<!-- sum -->
+<path d="M610 74H640V111" class="w"/><path d="M610 194H640V151" class="w"/>
+<g data-d="mix" class="node" tabindex="0" role="button" aria-label="Sum and clip">
+<circle cx="640" cy="131" r="20" class="bx bh"/>
+<text x="633" y="137" style="font-size:18px">+</text>
+<text x="622" y="180" class="m">clip(a_LQR + 0.25 a_pi)</text>
+</g>
+<path d="M660 131H700" fill="none" style="stroke:var(--hybrid,#2ee6c4);stroke-width:2" marker-end="url(#ds-ah)"/>
+<!-- torques -->
+<g data-d="torque" class="node" tabindex="0" role="button" aria-label="Wheel torques">
+<rect x="702" y="100" width="100" height="62" rx="10" class="bx bw"/>
+<text x="714" y="124" class="h">Wheels</text><text x="714" y="142" class="m">3 torques</text><text x="714" y="156" class="k">clipped</text>
+</g>
+<path d="M802 131H828" class="w" marker-end="url(#ds-a)"/>
+<!-- robot -->
+<g data-d="robot" class="node" tabindex="0" role="button" aria-label="Simulated robot with arrestors">
+<rect x="830" y="86" width="116" height="90" rx="10" class="bx bn"/>
+<text x="842" y="110" class="h">Robot</text><text x="842" y="128" class="m">MuJoCo-Warp</text><text x="842" y="144" class="m">100 Hz</text><text x="842" y="162" class="m" style="fill:var(--good,#5ee08a)">3 arrestors</text>
+</g>
+<!-- feedback bus -->
+<path d="M888 176V268H392V90H406" class="fb" marker-end="url(#ds-a)"/>
+<path d="M392 210H406" class="fb" marker-end="url(#ds-a)"/>
+<text x="392" y="286" class="k">feedback every 10 ms: tilt, rates, ball rate, velocity, heading; the policy also gets command, integral and goal</text>
+</svg>

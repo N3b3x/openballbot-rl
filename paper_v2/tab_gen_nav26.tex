@@ -1,0 +1,12 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Navigation with the recommended checkpoint at friction 0.01 (smooth follower). Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error; wheel-ball free-rolling friction 0.01, the controller's own training value. Domain randomisation: on at scale 1 (11 designs, floor classes). Observation noise: on (sensor ranges: noise 0.5 percent of range, 2 percent dropout). Worlds per cell: 528 per row (48 per design, 11 designs). Seeds: one controller seed (g26\_ret\_rs025\_mu01\_s1, a recommended checkpoint, frozen). Protocol: blocks map, 20 s, smooth follower (carrot 0.3 m, turn rate at most 2 rad/s; the blind row heads straight for the goal), sensor gimbal aimed at the planner's target heading; pushes 5 to 20 N and pulls 3 to 12 N in the last two rows; files g26\_ret\_rs025\_mu01\_s1/navS\_{blind,oracle,tof18}.json and navS\_{oracle,tof18}\_pp.json.}\label{tab:gen_nav26}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccc}\toprule
+Hazard source (recommended checkpoint) & Reached goal & Fell & Stuck & Rolled onto a block & Median time to goal & Commanded heading-rate RMS [rad/s]\\\midrule
+blind (straight to the goal) & 0.09 & 0.91 & 0.00 & 0.75 & 6.5 s & 2.21\\
+perfect height map (upper bound) & 0.89 & 0.07 & 0.04 & 0.01 & 9.5 s & 1.69\\
+ToF 18 x 14, head, pitched down 25 deg, aimed at the target heading & 0.84 & 0.07 & 0.08 & 0.04 & 10.8 s & 1.74\\
+perfect height map, pushes and pulls & 0.57 & 0.39 & 0.04 & 0.16 & 8.6 s & 1.69\\
+ToF 18 x 14, pushes and pulls & 0.51 & 0.43 & 0.06 & 0.17 & 9.4 s & 1.74\\
+\bottomrule\end{tabular}}
+\end{table*}

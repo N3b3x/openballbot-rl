@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Design space explorer: what shape of ballbot can work? | Ballbot</title>
+<meta name="description" content="Interactive ballbot design explorer: sliders for scale, masses, COM height, rotor inertia, motor torque and wheel contact angle drive live physical-feasibility gauges from the planar model, shown next to the MuJoCo simulation evidence, including where the model was refuted.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/math.css">
+<script type="module" src="assets/js/layout.js"></script>
+<script type="module" src="assets/js/design.js"></script>
+</head>
+<body>
+<main>
+
+<section class="wrap" style="padding-top:clamp(40px,7vw,80px);padding-bottom:36px">
+  <div class="eyebrow">Design space</div>
+  <h1>What shape of ballbot can work at all?</h1>
+  <p class="lede">Move the sliders and the constraint gauges recompute from the same planar model as the <a href="math.html">Math lab</a>. Below the explorer, the same designs are shown again as MuJoCo evidence, kept visibly apart from the predictions, including the cases where simulation contradicted the model.</p>
+  <div class="tagrow">
+    <span class="chip model">MODEL: planar linear model, live in your browser</span>
+    <span class="chip sim">SIM: MuJoCo runs, numbers copied from the repo CSVs</span>
+    <span class="chip bad">REFUTED: model prediction contradicted by simulation</span>
+  </div>
+  <p style="font-size:.92rem;color:var(--text-3)">All results are simulation only; nothing here is a hardware measurement. Sources: <code>scripts/study/design_space.py</code>, <code>design_constraints.py</code>, <code>docs/research/design_rules.md</code>, <code>outputs/study/results/{design_sweep,design_constraints,dz_lqr,dz_lqr_motor}.csv</code>.</p>
+</section>
+
+<!-- ======================= EXPLORER ======================= -->
+<section class="block" id="explorer">
+<div class="wrap">
+  <div class="eyebrow">1. Explorer <span class="chip model" style="margin-left:.6em">MODEL</span></div>
+  <h2>Seven constraints, live</h2>
+  <div class="btn-row" role="group" aria-label="Design presets" style="margin:0 0 16px">
+    <button class="pill" data-preset="nominal">Nominal</button>
+    <button class="pill" data-preset="half">Half scale</button>
+    <button class="pill" data-preset="highcom">COM high (ballast at 0.3 m)</button>
+    <button class="pill" data-preset="lightball">Light ball (x0.25)</button>
+    <button class="pill" data-preset="steep">Steep contact (66&deg;)</button>
+    <button class="pill" data-preset="weak">Weak motors (1.5 N m)</button>
+  </div>
+  <div class="explorer">
+    <div class="lab-ctl" id="dctl" role="group" aria-label="Design parameters" style="align-self:start">
+      <div class="ctl"><label for="d-s">Scale s <b id="dv-s"></b></label><input id="d-s" type="range"><div class="hint">Lengths x s, masses x s<sup>3</sup>, inertias x s<sup>5</sup>, torque x s<sup>4</sup>.</div></div>
+      <div class="ctl"><label for="d-kball">Ball mass (x nominal) <b id="dv-kball"></b></label><input id="d-kball" type="range"><div class="hint" id="dh-kball"></div></div>
+      <div class="ctl"><label for="d-kbal">Body ballast mass (x nominal) <b id="dv-kbal"></b></label><input id="d-kbal" type="range"><div class="hint" id="dh-kbal"></div></div>
+      <div class="ctl"><label for="d-zb">Ballast height (moves the COM) <b id="dv-zb"></b></label><input id="d-zb" type="range"><div class="hint" id="dh-zb"></div></div>
+      <div class="ctl"><label for="d-J">Wheel rotor inertia J at s = 1 <b id="dv-J"></b></label><input id="d-J" type="range"><div class="hint" id="dh-J"></div></div>
+      <div class="ctl"><label for="d-tau">Motor torque limit per wheel at s = 1 <b id="dv-tau"></b></label><input id="d-tau" type="range"><div class="hint" id="dh-tau"></div></div>
+      <div class="ctl"><label for="d-dz">Wheel contact angle &zeta; <b id="dv-dz"></b></label><input id="d-dz" type="range"><div class="hint" id="dh-dz"></div></div>
+      <details class="adv"><summary>Assumptions behind the margins</summary>
+        <div class="ctl" style="margin-top:10px"><label for="a-mu">Wheel-ball friction &mu; <b id="av-mu"></b></label><input id="a-mu" type="range" min="0.3" max="2" step="0.05"></div>
+        <div class="ctl"><label for="a-tilt">Tilt to recover <b id="av-tilt"></b></label><input id="a-tilt" type="range" min="5" max="30" step="1"></div>
+        <div class="ctl"><label for="a-acc">Target acceleration <b id="av-acc"></b></label><input id="a-acc" type="range" min="0.5" max="4" step="0.1"></div>
+        <div class="ctl"><label for="a-vt">Target speed <b id="av-vt"></b></label><input id="a-vt" type="range" min="0.4" max="3" step="0.1"></div>
+        <div class="ctl"><label for="a-T">Total loop delay T <b id="av-T"></b></label><input id="a-T" type="range" min="1" max="100" step="1"></div>
+        <div class="ctl"><label for="a-ms">Sensitivity ceiling Ms <b id="av-ms"></b></label><input id="a-ms" type="range" min="5" max="40" step="1"></div>
+        <button class="pill" id="a-reset">Reset assumptions</button>
+      </details>
+    </div>
+    <div>
+      <div id="status" class="callout" role="status" aria-live="polite"></div>
+      <div class="gauges" id="gauges"></div>
+      <p class="cap" style="font-size:.82rem;color:var(--text-3);margin-top:8px">Bar is a log scale from 0.25 to 16; the white tick marks margin = 1. Green: margin of at least 1.25. Amber: satisfied but under 1.25. Red: violated. The thinnest margin is outlined. Definitions: <code>design_constraints.py</code>.</p>
+      <div class="readout" id="metrics" style="margin-top:14px"></div>
+      <div class="callout warn" id="zetanote"></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ======================= RULES ======================= -->
+<section class="block" id="rules">
+<div class="wrap">
+  <div class="eyebrow">2. Rules of the road</div>
+  <h2>Six hard rules from the model, three that simulation overturned</h2>
+  <p class="lede" style="margin-bottom:1.4em">Condensed from <code>docs/research/design_rules.md</code>. Tags give the evidence level: MODEL (planar-model derivation), SIM (MuJoCo experiment), LIT (literature summaries in <code>docs/research/lit_ballbot_*.md</code>, which carry their own confidence tags and are not re-verified here). Blue numbers are computed live for the design in the explorer.</p>
+  <div class="grid g3" id="rule-cards"></div>
+  <h3 style="margin-top:2.2em">Where simulation contradicted the model</h3>
+  <div class="grid g3" id="refuted-cards"></div>
+  <h3 style="margin-top:2.2em">Guidelines that follow</h3>
+  <div class="table-scroll"><table><thead><tr><th>Choose</th><th>Because</th><th>Evidence</th></tr></thead><tbody id="guide-body"></tbody></table></div>
+  <div class="callout warn" style="margin-top:1.4em"><strong>Not verified on hardware.</strong> The compute-architecture suggestion in the design rules (a real-time MCU inner loop plus an embedded-GPU policy) is a proposal; no Jetson or MCU timing was measured in this repository.</div>
+</div>
+</section>
+
+<!-- ======================= SCATTER ======================= -->
+<section class="block" id="sweep">
+<div class="wrap">
+  <div class="eyebrow">3. Precomputed sweep <span class="chip model" style="margin-left:.6em">MODEL</span></div>
+  <h2>The sweep, <span id="nrows"></span> designs</h2>
+  <p class="lede" style="margin-bottom:1em">Every dot is one design from <code>design_sweep.csv</code> (one-factor-at-a-time plus a COM-height by ball-mass grid). The star is the design currently set in the explorer (computed live, so it also moves along the knobs the sweep did not vary).</p>
+  <div class="lab-ctl" style="display:flex;flex-wrap:wrap;gap:12px 22px;align-items:end">
+    <div class="ctl"><label for="sx" style="display:block">x axis</label><select id="sx" class="sel"></select> <label style="display:inline"><input id="lx" type="checkbox"> log</label></div>
+    <div class="ctl"><label for="sy" style="display:block">y axis</label><select id="sy" class="sel"></select> <label style="display:inline"><input id="ly" type="checkbox"> log</label></div>
+    <div class="ctl"><label for="sf" style="display:block">highlight family</label><select id="sf" class="sel"></select></div>
+  </div>
+  <div class="widget"><div id="scatter"></div><div class="legend" id="scatter-leg"></div></div>
+</div>
+</section>
+
+<!-- ======================= EVIDENCE ======================= -->
+<section class="block" id="evidence">
+<div class="wrap">
+  <div class="eyebrow">4. Simulation evidence <span class="chip sim" style="margin-left:.6em">SIM</span></div>
+  <h2>Zero-shot LQR on each design, next to the model's prediction</h2>
+  <p class="lede" style="margin-bottom:1em">Each design was built as a MuJoCo variant and driven by an LQR that was designed from that design's own model structure, with no tuning on the simulator (<code>scripts/study/eval_design.py</code>). The left block of columns is what the planar model predicts (blue, live); the right block is what simulation did (grey, copied from <code>dz_lqr.csv</code>). They are different kinds of evidence and are never merged into one number.</p>
+  <div class="table-scroll"><table class="simtab" id="simtab" style="min-width:1020px"></table></div>
+  <p style="font-size:.84rem;color:var(--text-3);margin-top:.8em" id="protocol"></p>
+  <div class="grid g3" style="margin-top:2em" id="evid-cards"></div>
+  <h3 style="margin-top:2.2em" id="motor-h">Motor model result</h3>
+  <div class="grid g2" id="motor-cards"></div>
+</div>
+</section>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,78 @@
+/* Page CSS shared by bounds.html, lessons.html and glossary.html. Colour semantics follow DESIGN.md:
+   --model blue = LQR / derived math, --learned violet = PPO, --hybrid teal = interleaved controller,
+   --warn amber and --bad red = limits and failures, --good green = success. The .tldr, .term and .figure
+   components come from site.css and are not restyled here. */
+
+.page-head{padding-top:clamp(40px,7vw,80px);padding-bottom:40px}
+.tagrow{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 .8em}
+.chip.sim{color:var(--text);border-color:var(--text-3)}
+.chip.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 50%,transparent)}
+.src{font-size:.88rem;color:var(--text-3)}
+.cite{font:500 .78rem var(--font-mono);color:var(--text-3);overflow-wrap:anywhere}
+a.cite:hover{color:var(--text-2)}
+
+/* numbered rule list used by the TL;DR boxes */
+.rule-list{margin:0;padding:0 0 0 1.4em;counter-reset:rule}
+.rule-list li{margin:0 0 .45em;color:var(--text-2)}
+.rule-list li b{color:var(--text)}
+.rule-list a{color:var(--hybrid)}
+
+/* a rule or a lesson: one card, one idea */
+.rule{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(18px,3vw,28px);margin:0 0 28px;scroll-margin-top:80px}
+.rule header{display:flex;gap:14px;align-items:flex-start;margin-bottom:.6em}
+.rule .no{flex:0 0 auto;font:600 .9rem var(--font-mono);color:var(--hybrid);background:color-mix(in srgb,var(--hybrid) 14%,transparent);border-radius:8px;padding:.35em .6em;margin-top:.2em}
+.rule.bad .no{color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,transparent)}
+.rule.model .no{color:var(--model);background:color-mix(in srgb,var(--model) 14%,transparent)}
+.rule.learned .no{color:var(--learned);background:color-mix(in srgb,var(--learned) 14%,transparent)}
+.rule h2,.rule h3{margin-bottom:.2em}
+.rule .statement{font-size:1.12rem;color:var(--text);font-weight:500;margin:0 0 1em;max-width:70ch}
+.rule-grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.rule-grid>div{min-width:0}
+.rule-grid h4{font:500 .74rem var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--text-3);margin:0 0 .5em}
+.rule-grid p{font-size:.95rem;margin-bottom:.7em}
+.rule-grid p:last-child{margin-bottom:0}
+.rule-grid ul{margin:0 0 .7em;padding-left:1.1em;font-size:.95rem;color:var(--text-2)}
+.rule-grid li{margin-bottom:.3em}
+
+/* equations: never let a long KaTeX line widen the page */
+.eqn{overflow-x:auto;max-width:100%;padding:6px 0;margin:.4em 0 .8em}
+.eqn .katex-display{margin:.3em 0}
+.katex{font-size:1.02em}
+.eqn-note{font-size:.86rem;color:var(--text-3);margin-top:-.3em}
+
+/* small evidence tables */
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-sm);margin:.6em 0 1em}
+.table-scroll table{min-width:420px;font-size:.86rem}
+.table-scroll td,.table-scroll th{white-space:nowrap}
+td.num,th.num{text-align:right;font-family:var(--font-mono)}
+td.ok{color:var(--good)} td.no{color:var(--bad)}
+
+/* the real-robot takeaway */
+.robot{border-left:3px solid var(--model);background:var(--bg-3);padding:10px 14px;border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+.robot b{color:var(--text)}
+
+/* lessons: what it cost, the rule, the guard */
+.lesson-cost{border-left:3px solid var(--warn)}
+.lesson-rule{border-left:3px solid var(--good)}
+.lesson-guard{border-left:3px solid var(--hybrid)}
+.lesson-cost,.lesson-rule,.lesson-guard{background:var(--bg-3);padding:10px 14px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:.95rem}
+.lesson-cost p:last-child,.lesson-rule p:last-child,.lesson-guard p:last-child{margin-bottom:0}
+
+/* glossary */
+.alpha{display:flex;flex-wrap:wrap;gap:6px;margin:1em 0 1.6em}
+.alpha a{font:500 .8rem var(--font-mono);padding:.3em .65em;border:1px solid var(--line-2);border-radius:99px;color:var(--text-2)}
+.alpha a:hover{color:var(--text);border-color:var(--hybrid);text-decoration:none}
+.gloss{margin:0}
+.gloss .entry{padding:18px 0;border-top:1px solid var(--line);scroll-margin-top:80px}
+.gloss .entry:target{background:color-mix(in srgb,var(--hybrid) 8%,transparent);border-radius:var(--radius-sm);padding-left:12px;padding-right:12px}
+.gloss dt{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:baseline;font:600 1.1rem var(--font-display);color:var(--text)}
+.gloss dt .sym{font:500 .85rem var(--font-mono);color:var(--model)}
+.gloss dt .cat{font:500 .72rem var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-3)}
+.gloss dd{margin:.4em 0 0}
+.gloss dd p{margin:0 0 .4em;font-size:.97rem}
+.gloss dd .where{font-size:.86rem;color:var(--text-3)}
+.gloss dd .where a{margin-right:.6em}
+.letter{font:600 .85rem var(--font-mono);color:var(--hybrid);letter-spacing:.14em;margin:2.2em 0 .4em;scroll-margin-top:80px}
+
+main code{overflow-wrap:anywhere}
+@media (max-width:480px){.rule header{gap:10px}.rule .statement{font-size:1.04rem}}

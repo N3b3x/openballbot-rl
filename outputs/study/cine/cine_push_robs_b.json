@@ -1,0 +1,33 @@
+{
+ "id": "cine_push_robs_b",
+ "title": "Pushes during a square loop",
+ "controller": "robs_b_s0@ki=1.0",
+ "controller_family": "learned",
+ "scenario": "push",
+ "terrain": "flat floor, no relief",
+ "description": "The robot loops a 1.5 m square at 0.5 m/s while pushed in random horizontal directions (30 to 40 N, 0.05 s).",
+ "outcome": "No fall. Mean position error 50.5 cm, max 87.7 cm, final 23.4 cm; max off-ball angle 8.6 deg.",
+ "stats": {
+  "duration_s": 26.0,
+  "fell": false,
+  "fall_t_s": null,
+  "fall_reason": null,
+  "mean_err_cm": 50.5,
+  "max_err_cm": 87.7,
+  "final_err_cm": 23.4,
+  "dist_travelled_m": 11.73,
+  "max_off_ball_deg": 8.6,
+  "max_lean_deg": 8.7,
+  "mean_speed_err_mps": 0.323,
+  "end_to_plan_end_cm": 23.4,
+  "pushes": 6
+ },
+ "duration_s": 29.6,
+ "sim_only": true,
+ "domain_randomisation": false,
+ "slow_motion": 1.0,
+ "pushes": "3:30,7:40,11:40,15:40,19:40,23:40",
+ "config": "configs/env/robs_b.yaml",
+ "sequence": "push",
+ "command": "python scripts/study/render_cinematic.py --job push_robs_b"
+}

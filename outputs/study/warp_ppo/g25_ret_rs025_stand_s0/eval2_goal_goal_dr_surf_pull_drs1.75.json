@@ -1,0 +1,179 @@
+{
+ "run": "g25_ret_rs025_stand_s0",
+ "args": {
+  "run": "g25_ret_rs025_stand_s0",
+  "task": "goal",
+  "speed": 0.6,
+  "n": 16,
+  "dr": true,
+  "surfaces": true,
+  "pull": true,
+  "eval_designs": null,
+  "steps": 800,
+  "tile_seed": 0
+ },
+ "env_settings": {
+  "overrides": {},
+  "push_scale": 1.0,
+  "dr_scale": 1.75,
+  "tiles_flat": false,
+  "no_exit": false,
+  "dr_off": "",
+  "dr_mft": [
+   1.75,
+   1.75,
+   1.75
+  ],
+  "lqr_base": 0.25,
+  "eval_designs": [
+   "nom",
+   "zhigh",
+   "zlow",
+   "kb4",
+   "bal4",
+   "J02",
+   "tau6",
+   "bal025",
+   "kb025",
+   "zeta41",
+   "zeta66"
+  ],
+  "retainer": "0,0,0,100"
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.5397727489471436,
+   "success": 0.46022728085517883,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.259999990463257
+  },
+  "step_up": {
+   "fall": 0.6534091234207153,
+   "success": 0.34659090638160706,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.429999828338623
+  },
+  "step_down": {
+   "fall": 0.5852273106575012,
+   "success": 0.41477274894714355,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.299999952316284
+  },
+  "small_drop": {
+   "fall": 0.5568181872367859,
+   "success": 0.4431818425655365,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.319999933242798
+  },
+  "large_drop": {
+   "fall": 0.7329545617103577,
+   "success": 0.2670454680919647,
+   "fall_at_map_edge": 0.007751937955617905,
+   "median_time_s": 2.299999952316284
+  },
+  "ramp_up": {
+   "fall": 0.5,
+   "success": 0.5,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.4700000286102295
+  },
+  "ramp_down": {
+   "fall": 0.6420454978942871,
+   "success": 0.35227274894714355,
+   "fall_at_map_edge": 0.008849557489156723,
+   "median_time_s": 2.169999837875366
+  },
+  "stairs": {
+   "fall": 0.6647727489471436,
+   "success": 0.33522728085517883,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.379999876022339
+  },
+  "bump": {
+   "fall": 0.7329545617103577,
+   "success": 0.2670454680919647,
+   "fall_at_map_edge": 0.01550387591123581,
+   "median_time_s": 2.3499999046325684
+  },
+  "rough": {
+   "fall": 0.5284091234207153,
+   "success": 0.46022728085517883,
+   "fall_at_map_edge": 0.01075268816202879,
+   "median_time_s": 2.319999933242798
+  }
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.518750011920929,
+   "success": 0.4749999940395355,
+   "fall_at_map_edge": 0.024096384644508362,
+   "median_time_s": 2.359999895095825
+  },
+  "zhigh": {
+   "fall": 0.5,
+   "success": 0.5,
+   "fall_at_map_edge": 0.012500000186264515,
+   "median_time_s": 2.259999990463257
+  },
+  "zlow": {
+   "fall": 0.581250011920929,
+   "success": 0.4124999940395355,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.369999885559082
+  },
+  "kb4": {
+   "fall": 0.53125,
+   "success": 0.46875,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.2100000381469727
+  },
+  "bal4": {
+   "fall": 0.4749999940395355,
+   "success": 0.518750011920929,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.450000047683716
+  },
+  "J02": {
+   "fall": 0.5375000238418579,
+   "success": 0.4625000059604645,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.3899998664855957
+  },
+  "tau6": {
+   "fall": 0.6812500357627869,
+   "success": 0.3187499940395355,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 1.9499999284744263
+  },
+  "bal025": {
+   "fall": 0.96875,
+   "success": 0.03125,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.2200000286102295
+  },
+  "kb025": {
+   "fall": 0.8500000238418579,
+   "success": 0.15000000596046448,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.2699999809265137
+  },
+  "zeta41": {
+   "fall": 0.53125,
+   "success": 0.46875,
+   "fall_at_map_edge": 0.0235294122248888,
+   "median_time_s": 2.259999990463257
+  },
+  "zeta66": {
+   "fall": 0.574999988079071,
+   "success": 0.42500001192092896,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.4600000381469727
+  }
+ },
+ "overall": {
+  "fall": 0.613636314868927,
+  "success": 0.384659081697464,
+  "fall_at_map_edge": 0.004629629664123058,
+  "median_time_s": 2.319999933242798
+ }
+}

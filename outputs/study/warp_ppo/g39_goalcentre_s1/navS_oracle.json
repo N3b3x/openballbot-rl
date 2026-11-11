@@ -1,0 +1,159 @@
+{
+ "run": "g39_goalcentre_s1",
+ "source": "oracle",
+ "position_point": "ball_centre",
+ "motion_ref": true,
+ "mref_kw": null,
+ "sensor": null,
+ "planner": {
+  "kind": "smooth",
+  "aim": "cmd",
+  "replan": 20,
+  "prox": 0.0,
+  "carrot": 0.3,
+  "w_max": 2.0,
+  "a_max": 0.6,
+  "hyst": 1.0,
+  "look": 0.6,
+  "half_w": 0.22,
+  "thr": 0.03,
+  "v_max": 0.3,
+  "mem": 600,
+  "goal_r": 1.2
+ },
+ "steps": 2000,
+ "worlds": 528,
+ "push_scale": 0.0,
+ "pull": false,
+ "retainer": "0,0,0,100",
+ "overall": {
+  "path_ratio": 1.4379507303237915,
+  "heading_rate_rms": 1.209766149520874,
+  "cmd_change_mean": 0.4431714117527008,
+  "fall": 0.04545454680919647,
+  "success": 0.948863685131073,
+  "stuck": 0.005681818351149559,
+  "over_block": 0.0,
+  "median_time_s": 8.279999732971191
+ },
+ "diag": {
+  "escape_events": null,
+  "escape_gave_up": null,
+  "escape_fails_median": null,
+  "stuck_final_goal_dist_median": 0.8530855774879456,
+  "stuck_cmd_zero_frac": 0.0,
+  "stuck_dist_from_start_median": 1.9312711954116821
+ },
+ "by_design": {
+  "nom": {
+   "path_ratio": 1.3787752389907837,
+   "heading_rate_rms": 1.2076165676116943,
+   "cmd_change_mean": 0.4421463906764984,
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 8.260000228881836
+  },
+  "zhigh": {
+   "path_ratio": 1.4544572830200195,
+   "heading_rate_rms": 1.2234749794006348,
+   "cmd_change_mean": 0.4499528110027313,
+   "fall": 0.02083333395421505,
+   "success": 0.9791666865348816,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 8.139999389648438
+  },
+  "zlow": {
+   "path_ratio": 1.4708091020584106,
+   "heading_rate_rms": 1.1879221200942993,
+   "cmd_change_mean": 0.43536633253097534,
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 8.649999618530273
+  },
+  "kb4": {
+   "path_ratio": 1.3286988735198975,
+   "heading_rate_rms": 1.2156363725662231,
+   "cmd_change_mean": 0.4422782361507416,
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 7.599999904632568
+  },
+  "bal4": {
+   "path_ratio": 1.557987093925476,
+   "heading_rate_rms": 1.194847583770752,
+   "cmd_change_mean": 0.44466668367385864,
+   "fall": 0.125,
+   "success": 0.8541666865348816,
+   "stuck": 0.02083333395421505,
+   "over_block": 0.0,
+   "median_time_s": 9.40999984741211
+  },
+  "J02": {
+   "path_ratio": 1.4548990726470947,
+   "heading_rate_rms": 1.2204288244247437,
+   "cmd_change_mean": 0.44545978307724,
+   "fall": 0.0,
+   "success": 0.9583333730697632,
+   "stuck": 0.0416666679084301,
+   "over_block": 0.0,
+   "median_time_s": 9.319999694824219
+  },
+  "tau6": {
+   "path_ratio": 1.4213038682937622,
+   "heading_rate_rms": 1.2625999450683594,
+   "cmd_change_mean": 0.4550435543060303,
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 6.829999923706055
+  },
+  "bal025": {
+   "path_ratio": 1.4715347290039062,
+   "heading_rate_rms": 1.2214136123657227,
+   "cmd_change_mean": 0.44127482175827026,
+   "fall": 0.02083333395421505,
+   "success": 0.9791666865348816,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 8.279999732971191
+  },
+  "kb025": {
+   "path_ratio": 1.548741102218628,
+   "heading_rate_rms": 1.2104870080947876,
+   "cmd_change_mean": 0.44536012411117554,
+   "fall": 0.3125,
+   "success": 0.6875,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 9.229999542236328
+  },
+  "zeta41": {
+   "path_ratio": 1.3427822589874268,
+   "heading_rate_rms": 1.1928324699401855,
+   "cmd_change_mean": 0.43217360973358154,
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 7.909999847412109
+  },
+  "zeta66": {
+   "path_ratio": 1.4489471912384033,
+   "heading_rate_rms": 1.185478687286377,
+   "cmd_change_mean": 0.44224315881729126,
+   "fall": 0.02083333395421505,
+   "success": 0.9791666865348816,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 9.319999694824219
+  }
+ }
+}

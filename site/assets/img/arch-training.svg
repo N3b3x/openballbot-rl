@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 330" class="d-train" role="img" aria-labelledby="dt-t">
+<title id="dt-t">Training pipeline: 4096 simulated worlds on one GPU draw robot designs, randomised parameters, terrain and disturbances; each world's policy observation holds 25 proprioceptive and command values plus a design vector; the critic additionally receives privileged values; PPO updates both for 200 million steps.</title>
+<style>
+.d-train text{font-family:Inter,system-ui,sans-serif;font-size:13px;fill:var(--text,#dfe6f0)}
+.d-train .m{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;fill:var(--text-2,#9aa8bb)}
+.d-train .k{fill:var(--text-3,#8a97ab);font-size:11px}
+.d-train .h{font-size:14px;font-weight:600}
+.d-train .bx{fill:var(--bg-3,#161e2a);stroke-width:1.8}
+.d-train .w{fill:none;stroke:var(--line-2,#5a6b84);stroke-width:1.6}
+</style>
+<defs><marker id="dt-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--line-2,#5a6b84)"/></marker>
+<marker id="dt-al" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--learned,#a78bfa)"/></marker></defs>
+<!-- worlds box -->
+<g data-d="worlds" class="node" tabindex="0" role="button" aria-label="4096 worlds">
+<rect x="14" y="14" width="420" height="300" rx="12" class="bx" style="stroke:var(--warn,#ffb454)"/>
+<text x="28" y="40" class="h">4096 worlds, MuJoCo-Warp, one GPU</text>
+<text x="28" y="58" class="k">every world: its own robot, surface and weather of disturbances</text>
+</g>
+<g data-d="designs" class="node" tabindex="0" role="button" aria-label="Robot designs">
+<rect x="28" y="72" width="190" height="70" rx="8" class="bx" style="stroke:var(--model,#4aa8ff)"/>
+<text x="40" y="94" class="h" style="font-size:13px">11 robot designs</text>
+<text x="40" y="112" class="m">scale, ball mass, ballast,</text><text x="40" y="128" class="m">torque, rotor; own LQR</text>
+</g>
+<g data-d="dr" class="node" tabindex="0" role="button" aria-label="Domain randomisation">
+<rect x="230" y="72" width="190" height="70" rx="8" class="bx" style="stroke:var(--warn,#ffb454)"/>
+<text x="242" y="94" class="h" style="font-size:13px">Randomisation x 1.75</text>
+<text x="242" y="112" class="m">mass, friction, torque,</text><text x="242" y="128" class="m">damping, latency, noise</text>
+</g>
+<g data-d="push" class="node" tabindex="0" role="button" aria-label="Pushes and pulls">
+<rect x="28" y="156" width="190" height="70" rx="8" class="bx" style="stroke:var(--warn,#ffb454)"/>
+<text x="40" y="178" class="h" style="font-size:13px">Pushes and pulls</text>
+<text x="40" y="196" class="m">5 to 20 N for 50 ms</text><text x="40" y="212" class="m">3 to 12 N for 0.5 to 2 s</text>
+</g>
+<g data-d="terrain" class="node" tabindex="0" role="button" aria-label="Terrain tiles">
+<rect x="230" y="156" width="190" height="70" rx="8" class="bx" style="stroke:var(--warn,#ffb454)"/>
+<text x="242" y="178" class="h" style="font-size:13px">Terrain tiles, ten kinds</text>
+<text x="242" y="196" class="m">flat, ramps, rough, steps,</text><text x="242" y="212" class="m">drops, stairs, bumps</text>
+</g>
+<g data-d="task" class="node" tabindex="0" role="button" aria-label="Tasks">
+<rect x="28" y="240" width="392" height="60" rx="8" class="bx" style="stroke:var(--good,#5ee08a)"/>
+<text x="40" y="262" class="h" style="font-size:13px">Tasks: velocity or goal, 100 Hz, 200M steps</text>
+<text x="40" y="282" class="m">fall = tilt &gt; 70 deg or off the ball &gt; 30 deg: penalty</text>
+</g>
+<!-- obs arrows -->
+<path d="M434 110H472" class="w" marker-end="url(#dt-a)"/>
+<path d="M434 220H472" class="w" marker-end="url(#dt-a)"/>
+<!-- policy obs -->
+<g data-d="obs" class="node" tabindex="0" role="button" aria-label="What the policy sees">
+<rect x="474" y="60" width="200" height="100" rx="10" class="bx" style="stroke:var(--learned,#a78bfa)"/>
+<text x="486" y="84" class="h">Policy sees (25 + 6)</text>
+<text x="486" y="104" class="m">orientation, angular rate,</text><text x="486" y="120" class="m">velocity, wheel rates,</text><text x="486" y="136" class="m">last action, cmd, heading,</text><text x="486" y="152" class="m">integral, goal, design (6)</text>
+</g>
+<!-- critic obs -->
+<g data-d="priv" class="node" tabindex="0" role="button" aria-label="What only the critic sees">
+<rect x="474" y="176" width="200" height="124" rx="10" class="bx" style="stroke:var(--learned,#a78bfa);stroke-dasharray:6 4"/>
+<text x="486" y="200" class="h">Critic also sees</text>
+<text x="486" y="220" class="m">floor friction, softness,</text><text x="486" y="236" class="m">mass and torque scales,</text><text x="486" y="252" class="m">wheel damping, height scan</text>
+<text x="486" y="276" class="k">privileged: training only,</text><text x="486" y="290" class="k">never on the robot</text>
+</g>
+<path d="M674 110H712" class="w" marker-end="url(#dt-al)"/>
+<path d="M674 238H712" class="w" marker-end="url(#dt-al)"/>
+<!-- nets -->
+<g data-d="actor" class="node" tabindex="0" role="button" aria-label="Actor">
+<rect x="714" y="74" width="190" height="72" rx="10" class="bx" style="stroke:var(--learned,#a78bfa)"/>
+<text x="726" y="98" class="h">Actor (policy)</text><text x="726" y="118" class="m">MLP 256 x 256 tanh</text><text x="726" y="134" class="m">3 wheel residuals, x 0.25</text>
+</g>
+<g data-d="critic" class="node" tabindex="0" role="button" aria-label="Critic">
+<rect x="714" y="202" width="190" height="72" rx="10" class="bx" style="stroke:var(--learned,#a78bfa)"/>
+<text x="726" y="226" class="h">Critic (value)</text><text x="726" y="246" class="m">MLP 256 x 256 tanh</text><text x="726" y="262" class="m">asymmetric: extra inputs</text>
+</g>
+<path d="M809 146V200" class="w" marker-end="url(#dt-a)"/>
+<text x="818" y="178" class="k">PPO update</text>
+<text x="474" y="40" class="k">The policy never sees map, friction, masses or pushes: it infers them from motion.</text>
+</svg>

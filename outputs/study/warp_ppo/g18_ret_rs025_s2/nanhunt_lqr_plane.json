@@ -1,0 +1,3906 @@
+[
+ {
+  "world": 252,
+  "design": "kb4",
+  "kind": "step_up",
+  "t_s": 0.0,
+  "ncon_before": 3,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.0,
+  "max_abs_qacc_before": 45.55046844482422,
+  "min_dist_before": -0.010494470596313477,
+  "pairs_before": [
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 269,
+  "design": "kb4",
+  "kind": "small_drop",
+  "t_s": 0.0,
+  "ncon_before": 3,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.0,
+  "max_abs_qacc_before": 45.550472259521484,
+  "min_dist_before": -0.010494470596313477,
+  "pairs_before": [
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "the_ball|wheel_mesh_0"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 811,
+  "design": "zeta66",
+  "kind": "step_up",
+  "t_s": 0.63,
+  "ncon_before": 5,
+  "ncon_at_nan": 5,
+  "max_abs_qvel_before": 24.444337844848633,
+  "max_abs_qacc_before": 437.347412109375,
+  "min_dist_before": -0.007572665810585022,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 87,
+  "design": "zhigh",
+  "kind": "flat",
+  "t_s": 0.65,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.07107553631067276,
+  "max_abs_qacc_before": 0.5519365668296814,
+  "min_dist_before": -0.004733279347419739,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 496,
+  "design": "tau6",
+  "kind": "step_down",
+  "t_s": 0.71,
+  "ncon_before": 6,
+  "ncon_at_nan": 4,
+  "max_abs_qvel_before": 9.98616886138916,
+  "max_abs_qacc_before": 1157.1256103515625,
+  "min_dist_before": -0.007569178938865662,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 866,
+  "design": "zeta66",
+  "kind": "bump",
+  "t_s": 0.81,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.08370443433523178,
+  "max_abs_qacc_before": 1.1800466775894165,
+  "min_dist_before": -0.010774895548820496,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 876,
+  "design": "zeta66",
+  "kind": "rough",
+  "t_s": 1.01,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.07257910817861557,
+  "max_abs_qacc_before": 0.2952854037284851,
+  "min_dist_before": -0.0053009092807769775,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 270,
+  "design": "kb4",
+  "kind": "small_drop",
+  "t_s": 1.32,
+  "ncon_before": 6,
+  "ncon_at_nan": 6,
+  "max_abs_qvel_before": 0.043548334389925,
+  "max_abs_qacc_before": 0.18885429203510284,
+  "min_dist_before": -0.006336644291877747,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 130,
+  "design": "zhigh",
+  "kind": "ramp_down",
+  "t_s": 1.34,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.0531546026468277,
+  "max_abs_qacc_before": 0.1578088402748108,
+  "min_dist_before": -0.004720166325569153,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 316,
+  "design": "kb4",
+  "kind": "rough",
+  "t_s": 1.36,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.046674977988004684,
+  "max_abs_qacc_before": 0.10847166925668716,
+  "min_dist_before": -0.0014503300189971924,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 267,
+  "design": "kb4",
+  "kind": "small_drop",
+  "t_s": 1.37,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.038980238139629364,
+  "max_abs_qacc_before": 0.17375479638576508,
+  "min_dist_before": -0.001178547739982605,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 254,
+  "design": "kb4",
+  "kind": "step_up",
+  "t_s": 1.39,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.03924451023340225,
+  "max_abs_qacc_before": 0.17467939853668213,
+  "min_dist_before": -0.0014201551675796509,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 127,
+  "design": "zhigh",
+  "kind": "ramp_up",
+  "t_s": 1.43,
+  "ncon_before": 4,
+  "ncon_at_nan": 4,
+  "max_abs_qvel_before": 0.055745940655469894,
+  "max_abs_qacc_before": 0.14886008203029633,
+  "min_dist_before": -0.01144970953464508,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 245,
+  "design": "kb4",
+  "kind": "flat",
+  "t_s": 1.45,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.058533135801553726,
+  "max_abs_qacc_before": 0.16801992058753967,
+  "min_dist_before": -0.007423952221870422,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 291,
+  "design": "kb4",
+  "kind": "ramp_down",
+  "t_s": 1.45,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.05307893455028534,
+  "max_abs_qacc_before": 0.09657211601734161,
+  "min_dist_before": -0.0014466941356658936,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 156,
+  "design": "zhigh",
+  "kind": "rough",
+  "t_s": 1.48,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.037401232868433,
+  "max_abs_qacc_before": 0.10802794992923737,
+  "min_dist_before": -0.023254811763763428,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 259,
+  "design": "kb4",
+  "kind": "step_down",
+  "t_s": 1.49,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.041470956057310104,
+  "max_abs_qacc_before": 0.31686609983444214,
+  "min_dist_before": -0.0012927502393722534,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 281,
+  "design": "kb4",
+  "kind": "ramp_up",
+  "t_s": 1.49,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.044822823256254196,
+  "max_abs_qacc_before": 0.139431431889534,
+  "min_dist_before": -0.008194506168365479,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 250,
+  "design": "kb4",
+  "kind": "step_up",
+  "t_s": 1.51,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04057270288467407,
+  "max_abs_qacc_before": 0.10058598965406418,
+  "min_dist_before": -0.0013765990734100342,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 258,
+  "design": "kb4",
+  "kind": "step_down",
+  "t_s": 1.52,
+  "ncon_before": 6,
+  "ncon_at_nan": 6,
+  "max_abs_qvel_before": 0.03418557718396187,
+  "max_abs_qacc_before": 0.04452110826969147,
+  "min_dist_before": -0.007876336574554443,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 306,
+  "design": "kb4",
+  "kind": "bump",
+  "t_s": 1.56,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.03817886486649513,
+  "max_abs_qacc_before": 0.3819192945957184,
+  "min_dist_before": -0.007959678769111633,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 295,
+  "design": "kb4",
+  "kind": "ramp_down",
+  "t_s": 1.57,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.037438150495290756,
+  "max_abs_qacc_before": 0.221121683716774,
+  "min_dist_before": -0.0013410747051239014,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 272,
+  "design": "kb4",
+  "kind": "large_drop",
+  "t_s": 1.58,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.039723191410303116,
+  "max_abs_qacc_before": 0.10022489726543427,
+  "min_dist_before": -0.0012506693601608276,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 282,
+  "design": "kb4",
+  "kind": "ramp_up",
+  "t_s": 1.59,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.03284599259495735,
+  "max_abs_qacc_before": 0.3836834728717804,
+  "min_dist_before": -0.0012256205081939697,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 152,
+  "design": "zhigh",
+  "kind": "rough",
+  "t_s": 1.62,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04356696829199791,
+  "max_abs_qacc_before": 0.1153656393289566,
+  "min_dist_before": -0.005148589611053467,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 271,
+  "design": "kb4",
+  "kind": "small_drop",
+  "t_s": 1.64,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04013575613498688,
+  "max_abs_qacc_before": 0.16102094948291779,
+  "min_dist_before": -0.001241922378540039,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 288,
+  "design": "kb4",
+  "kind": "ramp_down",
+  "t_s": 1.72,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.038598060607910156,
+  "max_abs_qacc_before": 0.09390202909708023,
+  "min_dist_before": -0.0014061331748962402,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 247,
+  "design": "kb4",
+  "kind": "flat",
+  "t_s": 1.73,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.042735252529382706,
+  "max_abs_qacc_before": 0.14362354576587677,
+  "min_dist_before": -0.0014021098613739014,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 262,
+  "design": "kb4",
+  "kind": "step_down",
+  "t_s": 1.75,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.05275715887546539,
+  "max_abs_qacc_before": 0.16169510781764984,
+  "min_dist_before": -0.0014928877353668213,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 268,
+  "design": "kb4",
+  "kind": "small_drop",
+  "t_s": 1.76,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.06559954583644867,
+  "max_abs_qacc_before": 0.05444704741239548,
+  "min_dist_before": -0.001405671238899231,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 251,
+  "design": "kb4",
+  "kind": "step_up",
+  "t_s": 1.87,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04073449969291687,
+  "max_abs_qacc_before": 0.4057982861995697,
+  "min_dist_before": -0.001277342438697815,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "arrestor_0|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 115,
+  "design": "zhigh",
+  "kind": "large_drop",
+  "t_s": 1.88,
+  "ncon_before": 4,
+  "ncon_at_nan": 4,
+  "max_abs_qvel_before": 0.05101306363940239,
+  "max_abs_qacc_before": 0.3044048249721527,
+  "min_dist_before": -0.032851070165634155,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 151,
+  "design": "zhigh",
+  "kind": "bump",
+  "t_s": 1.9,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.068377785384655,
+  "max_abs_qacc_before": 0.03608815371990204,
+  "min_dist_before": -0.00465625524520874,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 301,
+  "design": "kb4",
+  "kind": "stairs",
+  "t_s": 1.91,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.05286827310919762,
+  "max_abs_qacc_before": 0.044505525380373,
+  "min_dist_before": -0.0027831196784973145,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 155,
+  "design": "zhigh",
+  "kind": "rough",
+  "t_s": 1.95,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.058266110718250275,
+  "max_abs_qacc_before": 0.5193278193473816,
+  "min_dist_before": -0.02900014817714691,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 308,
+  "design": "kb4",
+  "kind": "bump",
+  "t_s": 1.95,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.03767937421798706,
+  "max_abs_qacc_before": 0.016012001782655716,
+  "min_dist_before": -0.007980510592460632,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 879,
+  "design": "zeta66",
+  "kind": "rough",
+  "t_s": 2.02,
+  "ncon_before": 4,
+  "ncon_at_nan": 4,
+  "max_abs_qvel_before": 0.059752803295850754,
+  "max_abs_qacc_before": 0.14466939866542816,
+  "min_dist_before": -0.03302301466464996,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 264,
+  "design": "kb4",
+  "kind": "small_drop",
+  "t_s": 2.1,
+  "ncon_before": 5,
+  "ncon_at_nan": 5,
+  "max_abs_qvel_before": 0.051506198942661285,
+  "max_abs_qacc_before": 0.13730843365192413,
+  "min_dist_before": -0.001384928822517395,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 146,
+  "design": "zhigh",
+  "kind": "bump",
+  "t_s": 2.13,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.05107545107603073,
+  "max_abs_qacc_before": 0.018764400854706764,
+  "min_dist_before": -0.03152933716773987,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 117,
+  "design": "zhigh",
+  "kind": "large_drop",
+  "t_s": 2.15,
+  "ncon_before": 7,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04666974022984505,
+  "max_abs_qacc_before": 0.14016464352607727,
+  "min_dist_before": -0.0044143348932266235,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 119,
+  "design": "zhigh",
+  "kind": "large_drop",
+  "t_s": 2.16,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.05009058862924576,
+  "max_abs_qacc_before": 0.23209019005298615,
+  "min_dist_before": -0.031612515449523926,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 626,
+  "design": "bal025",
+  "kind": "bump",
+  "t_s": 2.31,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.016633987426757812,
+  "max_abs_qacc_before": 0.021555084735155106,
+  "min_dist_before": -0.009361207485198975,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 871,
+  "design": "zeta66",
+  "kind": "bump",
+  "t_s": 2.37,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.021090980619192123,
+  "max_abs_qacc_before": 0.19080781936645508,
+  "min_dist_before": -0.025760233402252197,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 829,
+  "design": "zeta66",
+  "kind": "small_drop",
+  "t_s": 2.4,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.06411867588758469,
+  "max_abs_qacc_before": 0.1130068227648735,
+  "min_dist_before": -0.01068088412284851,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 841,
+  "design": "zeta66",
+  "kind": "ramp_up",
+  "t_s": 2.4,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.060952965170145035,
+  "max_abs_qacc_before": 0.17353087663650513,
+  "min_dist_before": -0.004995301365852356,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 149,
+  "design": "zhigh",
+  "kind": "bump",
+  "t_s": 2.41,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.055728644132614136,
+  "max_abs_qacc_before": 0.2889854609966278,
+  "min_dist_before": -0.005218639969825745,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 834,
+  "design": "zeta66",
+  "kind": "large_drop",
+  "t_s": 2.41,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.06968308240175247,
+  "max_abs_qacc_before": 0.21448297798633575,
+  "min_dist_before": -0.01085539162158966,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 263,
+  "design": "kb4",
+  "kind": "step_down",
+  "t_s": 2.43,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.03887828812003136,
+  "max_abs_qacc_before": 0.07504309713840485,
+  "min_dist_before": -0.00701652467250824,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 873,
+  "design": "zeta66",
+  "kind": "rough",
+  "t_s": 2.44,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.06393939256668091,
+  "max_abs_qacc_before": 0.17846067249774933,
+  "min_dist_before": -0.004844769835472107,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 298,
+  "design": "kb4",
+  "kind": "stairs",
+  "t_s": 2.47,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04952139034867287,
+  "max_abs_qacc_before": 0.08730226755142212,
+  "min_dist_before": -0.008605003356933594,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "arrestor_2|the_ball"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 815,
+  "design": "zeta66",
+  "kind": "step_up",
+  "t_s": 2.47,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.054705698043107986,
+  "max_abs_qacc_before": 0.2565560042858124,
+  "min_dist_before": -0.00463460385799408,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 114,
+  "design": "zhigh",
+  "kind": "large_drop",
+  "t_s": 2.54,
+  "ncon_before": 7,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.03780123218894005,
+  "max_abs_qacc_before": 0.1358308494091034,
+  "min_dist_before": -0.004463121294975281,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 857,
+  "design": "zeta66",
+  "kind": "stairs",
+  "t_s": 2.56,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.05215579643845558,
+  "max_abs_qacc_before": 0.23130053281784058,
+  "min_dist_before": -0.03218577802181244,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 126,
+  "design": "zhigh",
+  "kind": "ramp_up",
+  "t_s": 2.57,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04386744275689125,
+  "max_abs_qacc_before": 0.19287802278995514,
+  "min_dist_before": -0.011964768171310425,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 859,
+  "design": "zeta66",
+  "kind": "stairs",
+  "t_s": 2.57,
+  "ncon_before": 7,
+  "ncon_at_nan": 7,
+  "max_abs_qvel_before": 0.04777446761727333,
+  "max_abs_qacc_before": 0.0775119960308075,
+  "min_dist_before": -0.004576191306114197,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 574,
+  "design": "bal025",
+  "kind": "step_up",
+  "t_s": 2.6,
+  "ncon_before": 6,
+  "ncon_at_nan": 6,
+  "max_abs_qvel_before": 0.015291258692741394,
+  "max_abs_qacc_before": 0.28611040115356445,
+  "min_dist_before": -0.001792415976524353,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 286,
+  "design": "kb4",
+  "kind": "ramp_up",
+  "t_s": 2.62,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.03621881455183029,
+  "max_abs_qacc_before": 0.04389435797929764,
+  "min_dist_before": -0.008446797728538513,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "the_ball|wheel_mesh_0"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 110,
+  "design": "zhigh",
+  "kind": "small_drop",
+  "t_s": 2.63,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04136200621724129,
+  "max_abs_qacc_before": 0.1928074061870575,
+  "min_dist_before": -0.030666843056678772,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 606,
+  "design": "bal025",
+  "kind": "ramp_up",
+  "t_s": 2.63,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.013990319333970547,
+  "max_abs_qacc_before": 0.24385929107666016,
+  "min_dist_before": -0.012408435344696045,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 637,
+  "design": "bal025",
+  "kind": "rough",
+  "t_s": 2.65,
+  "ncon_before": 6,
+  "ncon_at_nan": 6,
+  "max_abs_qvel_before": 0.016151906922459602,
+  "max_abs_qacc_before": 0.13534866273403168,
+  "min_dist_before": -0.012689664959907532,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 580,
+  "design": "bal025",
+  "kind": "step_down",
+  "t_s": 2.67,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.015116725116968155,
+  "max_abs_qacc_before": 0.11320043355226517,
+  "min_dist_before": -0.003948956727981567,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 243,
+  "design": "kb4",
+  "kind": "flat",
+  "t_s": 2.69,
+  "ncon_before": 6,
+  "ncon_at_nan": 6,
+  "max_abs_qvel_before": 0.034590620547533035,
+  "max_abs_qacc_before": 0.13910618424415588,
+  "min_dist_before": -0.0012221485376358032,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 292,
+  "design": "kb4",
+  "kind": "ramp_down",
+  "t_s": 2.69,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.0421634241938591,
+  "max_abs_qacc_before": 0.02200326696038246,
+  "min_dist_before": -0.0013252943754196167,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 289,
+  "design": "kb4",
+  "kind": "ramp_down",
+  "t_s": 2.71,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.0389874204993248,
+  "max_abs_qacc_before": 0.32936447858810425,
+  "min_dist_before": -0.0012856274843215942,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 253,
+  "design": "kb4",
+  "kind": "step_up",
+  "t_s": 2.76,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.03148515149950981,
+  "max_abs_qacc_before": 0.058472421020269394,
+  "min_dist_before": -0.007945805788040161,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 312,
+  "design": "kb4",
+  "kind": "rough",
+  "t_s": 2.83,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04438517987728119,
+  "max_abs_qacc_before": 0.16234055161476135,
+  "min_dist_before": -0.0012444406747817993,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 284,
+  "design": "kb4",
+  "kind": "ramp_up",
+  "t_s": 2.84,
+  "ncon_before": 6,
+  "ncon_at_nan": 6,
+  "max_abs_qvel_before": 0.03718126565217972,
+  "max_abs_qacc_before": 0.06542176008224487,
+  "min_dist_before": -0.0013196319341659546,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 297,
+  "design": "kb4",
+  "kind": "stairs",
+  "t_s": 2.91,
+  "ncon_before": 5,
+  "ncon_at_nan": 5,
+  "max_abs_qvel_before": 0.039976101368665695,
+  "max_abs_qacc_before": 0.10164522379636765,
+  "min_dist_before": -0.007190331816673279,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 311,
+  "design": "kb4",
+  "kind": "bump",
+  "t_s": 2.92,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.06569600850343704,
+  "max_abs_qacc_before": 0.15009534358978271,
+  "min_dist_before": -0.0030706673860549927,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 630,
+  "design": "bal025",
+  "kind": "bump",
+  "t_s": 2.96,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.014359120279550552,
+  "max_abs_qacc_before": 0.2369234710931778,
+  "min_dist_before": -0.012202143669128418,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 255,
+  "design": "kb4",
+  "kind": "step_up",
+  "t_s": 2.98,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.035784509032964706,
+  "max_abs_qacc_before": 0.04702254757285118,
+  "min_dist_before": -0.0013074129819869995,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 89,
+  "design": "zhigh",
+  "kind": "step_up",
+  "t_s": 3.07,
+  "ncon_before": 7,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.037530869245529175,
+  "max_abs_qacc_before": 0.03742597997188568,
+  "min_dist_before": -0.004392772912979126,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 588,
+  "design": "bal025",
+  "kind": "small_drop",
+  "t_s": 3.07,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.019093366339802742,
+  "max_abs_qacc_before": 0.31500935554504395,
+  "min_dist_before": -0.004331231117248535,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 566,
+  "design": "bal025",
+  "kind": "flat",
+  "t_s": 3.08,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.01611349545419216,
+  "max_abs_qacc_before": 0.3303312659263611,
+  "min_dist_before": -0.002032145857810974,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 279,
+  "design": "kb4",
+  "kind": "large_drop",
+  "t_s": 3.11,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.041815415024757385,
+  "max_abs_qacc_before": 0.045573897659778595,
+  "min_dist_before": -0.00125083327293396,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 299,
+  "design": "kb4",
+  "kind": "stairs",
+  "t_s": 3.11,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.0392550490796566,
+  "max_abs_qacc_before": 0.10577470064163208,
+  "min_dist_before": -0.0014483928680419922,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 90,
+  "design": "zhigh",
+  "kind": "step_up",
+  "t_s": 3.14,
+  "ncon_before": 7,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04396476224064827,
+  "max_abs_qacc_before": 0.1779509037733078,
+  "min_dist_before": -0.00432094931602478,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "arrestor_0|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 570,
+  "design": "bal025",
+  "kind": "step_up",
+  "t_s": 3.14,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.013033079914748669,
+  "max_abs_qacc_before": 0.08725351095199585,
+  "min_dist_before": -0.001846209168434143,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 261,
+  "design": "kb4",
+  "kind": "step_down",
+  "t_s": 3.19,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04735548421740532,
+  "max_abs_qacc_before": 0.06481602042913437,
+  "min_dist_before": -0.003209322690963745,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 307,
+  "design": "kb4",
+  "kind": "bump",
+  "t_s": 3.2,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04006352648139,
+  "max_abs_qacc_before": 0.04657484218478203,
+  "min_dist_before": -0.0013179481029510498,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 99,
+  "design": "zhigh",
+  "kind": "step_down",
+  "t_s": 3.23,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04297750070691109,
+  "max_abs_qacc_before": 0.022976040840148926,
+  "min_dist_before": -0.005050718784332275,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 315,
+  "design": "kb4",
+  "kind": "rough",
+  "t_s": 3.23,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04105610400438309,
+  "max_abs_qacc_before": 0.07893265783786774,
+  "min_dist_before": -0.0014071017503738403,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 266,
+  "design": "kb4",
+  "kind": "small_drop",
+  "t_s": 3.26,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04346773400902748,
+  "max_abs_qacc_before": 0.21777640283107758,
+  "min_dist_before": -0.002885490655899048,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 807,
+  "design": "zeta66",
+  "kind": "flat",
+  "t_s": 3.26,
+  "ncon_before": 6,
+  "ncon_at_nan": 6,
+  "max_abs_qvel_before": 0.025884294882416725,
+  "max_abs_qacc_before": 0.11134298890829086,
+  "min_dist_before": -0.028897583484649658,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 141,
+  "design": "zhigh",
+  "kind": "stairs",
+  "t_s": 3.27,
+  "ncon_before": 4,
+  "ncon_at_nan": 4,
+  "max_abs_qvel_before": 0.0479293167591095,
+  "max_abs_qacc_before": 0.1659761518239975,
+  "min_dist_before": -0.030393406748771667,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "the_ball|wheel_mesh_0"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 290,
+  "design": "kb4",
+  "kind": "ramp_down",
+  "t_s": 3.32,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04162616655230522,
+  "max_abs_qacc_before": 0.014227047562599182,
+  "min_dist_before": -0.0013099908828735352,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 80,
+  "design": "zhigh",
+  "kind": "flat",
+  "t_s": 3.33,
+  "ncon_before": 7,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04718121886253357,
+  "max_abs_qacc_before": 0.08009641617536545,
+  "min_dist_before": -0.0043327659368515015,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 246,
+  "design": "kb4",
+  "kind": "flat",
+  "t_s": 3.34,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.03928336128592491,
+  "max_abs_qacc_before": 0.04152867570519447,
+  "min_dist_before": -0.0013287365436553955,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 593,
+  "design": "bal025",
+  "kind": "large_drop",
+  "t_s": 3.41,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.01584787294268608,
+  "max_abs_qacc_before": 0.05235927551984787,
+  "min_dist_before": -0.0044988542795181274,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 621,
+  "design": "bal025",
+  "kind": "stairs",
+  "t_s": 3.41,
+  "ncon_before": 6,
+  "ncon_at_nan": 6,
+  "max_abs_qvel_before": 0.016732998192310333,
+  "max_abs_qacc_before": 0.1845676153898239,
+  "min_dist_before": -0.012284979224205017,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 317,
+  "design": "kb4",
+  "kind": "rough",
+  "t_s": 3.43,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.034615159034729004,
+  "max_abs_qacc_before": 0.06095648929476738,
+  "min_dist_before": -0.007501468062400818,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 563,
+  "design": "bal025",
+  "kind": "flat",
+  "t_s": 3.44,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.013512051664292812,
+  "max_abs_qacc_before": 0.2504100799560547,
+  "min_dist_before": -0.00887221097946167,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "arrestor_0|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 265,
+  "design": "kb4",
+  "kind": "small_drop",
+  "t_s": 3.46,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.039003632962703705,
+  "max_abs_qacc_before": 0.22631996870040894,
+  "min_dist_before": -0.0012095123529434204,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "arrestor_2|the_ball"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 584,
+  "design": "bal025",
+  "kind": "small_drop",
+  "t_s": 3.49,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.013434374704957008,
+  "max_abs_qacc_before": 0.17907866835594177,
+  "min_dist_before": -0.0018041878938674927,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 800,
+  "design": "zeta66",
+  "kind": "flat",
+  "t_s": 3.5,
+  "ncon_before": 4,
+  "ncon_at_nan": 4,
+  "max_abs_qvel_before": 0.08135532587766647,
+  "max_abs_qacc_before": 0.2018040418624878,
+  "min_dist_before": -0.03153878450393677,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 627,
+  "design": "bal025",
+  "kind": "bump",
+  "t_s": 3.58,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.01332054939121008,
+  "max_abs_qacc_before": 0.15372471511363983,
+  "min_dist_before": -0.0018188059329986572,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 576,
+  "design": "bal025",
+  "kind": "step_down",
+  "t_s": 3.59,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.014379353262484074,
+  "max_abs_qacc_before": 0.09630273282527924,
+  "min_dist_before": -0.0018813163042068481,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 277,
+  "design": "kb4",
+  "kind": "large_drop",
+  "t_s": 3.61,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04528918117284775,
+  "max_abs_qacc_before": 0.10345059633255005,
+  "min_dist_before": -0.0032217949628829956,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 575,
+  "design": "bal025",
+  "kind": "step_up",
+  "t_s": 3.68,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.012743469327688217,
+  "max_abs_qacc_before": 0.09984580427408218,
+  "min_dist_before": -0.009715139865875244,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 578,
+  "design": "bal025",
+  "kind": "step_down",
+  "t_s": 3.7,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.011993885971605778,
+  "max_abs_qacc_before": 0.19047248363494873,
+  "min_dist_before": -0.0017928779125213623,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 242,
+  "design": "kb4",
+  "kind": "flat",
+  "t_s": 3.74,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04074205830693245,
+  "max_abs_qacc_before": 0.03703241050243378,
+  "min_dist_before": -0.001352071762084961,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 133,
+  "design": "zhigh",
+  "kind": "ramp_down",
+  "t_s": 3.76,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04163621366024017,
+  "max_abs_qacc_before": 0.13760724663734436,
+  "min_dist_before": -0.011387050151824951,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 595,
+  "design": "bal025",
+  "kind": "large_drop",
+  "t_s": 3.76,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.015465501695871353,
+  "max_abs_qacc_before": 0.15486383438110352,
+  "min_dist_before": -0.0017514824867248535,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "arrestor_0|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 140,
+  "design": "zhigh",
+  "kind": "stairs",
+  "t_s": 3.77,
+  "ncon_before": 7,
+  "ncon_at_nan": 7,
+  "max_abs_qvel_before": 0.04401608929038048,
+  "max_abs_qacc_before": 0.022545967251062393,
+  "min_dist_before": -0.02710692584514618,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 842,
+  "design": "zeta66",
+  "kind": "ramp_up",
+  "t_s": 3.78,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.0643327534198761,
+  "max_abs_qacc_before": 0.05120304599404335,
+  "min_dist_before": -0.004883691668510437,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 244,
+  "design": "kb4",
+  "kind": "flat",
+  "t_s": 3.8,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.047038692981004715,
+  "max_abs_qacc_before": 0.0913333147764206,
+  "min_dist_before": -0.0013388842344284058,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 147,
+  "design": "zhigh",
+  "kind": "bump",
+  "t_s": 3.82,
+  "ncon_before": 5,
+  "ncon_at_nan": 5,
+  "max_abs_qvel_before": 0.04540179297327995,
+  "max_abs_qacc_before": 0.3092496693134308,
+  "min_dist_before": -0.01075725257396698,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 276,
+  "design": "kb4",
+  "kind": "large_drop",
+  "t_s": 3.82,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.042601585388183594,
+  "max_abs_qacc_before": 0.04760277271270752,
+  "min_dist_before": -0.001299247145652771,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 835,
+  "design": "zeta66",
+  "kind": "large_drop",
+  "t_s": 3.86,
+  "ncon_before": 7,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.041987430304288864,
+  "max_abs_qacc_before": 0.08337770402431488,
+  "min_dist_before": -0.004131510853767395,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 159,
+  "design": "zhigh",
+  "kind": "rough",
+  "t_s": 3.88,
+  "ncon_before": 7,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.05343342944979668,
+  "max_abs_qacc_before": 0.28201934695243835,
+  "min_dist_before": -0.004270896315574646,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 856,
+  "design": "zeta66",
+  "kind": "stairs",
+  "t_s": 3.88,
+  "ncon_before": 7,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.056512847542762756,
+  "max_abs_qacc_before": 0.0378221794962883,
+  "min_dist_before": -0.010155603289604187,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 309,
+  "design": "kb4",
+  "kind": "bump",
+  "t_s": 3.9,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.03786909580230713,
+  "max_abs_qacc_before": 0.06608012318611145,
+  "min_dist_before": -0.0011784881353378296,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 837,
+  "design": "zeta66",
+  "kind": "large_drop",
+  "t_s": 3.92,
+  "ncon_before": 7,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.05184347182512283,
+  "max_abs_qacc_before": 0.053620241582393646,
+  "min_dist_before": -0.004388883709907532,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 589,
+  "design": "bal025",
+  "kind": "small_drop",
+  "t_s": 3.96,
+  "ncon_before": 6,
+  "ncon_at_nan": 6,
+  "max_abs_qvel_before": 0.015871526673436165,
+  "max_abs_qacc_before": 0.23261038959026337,
+  "min_dist_before": -0.001933470368385315,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_2",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_0"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 851,
+  "design": "zeta66",
+  "kind": "ramp_down",
+  "t_s": 3.96,
+  "ncon_before": 4,
+  "ncon_at_nan": 4,
+  "max_abs_qvel_before": 0.07430911809206009,
+  "max_abs_qacc_before": 0.06088978797197342,
+  "min_dist_before": -0.0053123533725738525,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 109,
+  "design": "zhigh",
+  "kind": "small_drop",
+  "t_s": 3.97,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.05078469216823578,
+  "max_abs_qacc_before": 0.1318739950656891,
+  "min_dist_before": -0.004916563630104065,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "the_ball|wheel_mesh_0"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 864,
+  "design": "zeta66",
+  "kind": "bump",
+  "t_s": 3.99,
+  "ncon_before": 7,
+  "ncon_at_nan": 7,
+  "max_abs_qvel_before": 0.053388360887765884,
+  "max_abs_qacc_before": 0.17549006640911102,
+  "min_dist_before": -0.004528909921646118,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 310,
+  "design": "kb4",
+  "kind": "bump",
+  "t_s": 4.02,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.038810454308986664,
+  "max_abs_qacc_before": 0.2105863243341446,
+  "min_dist_before": -0.001212090253829956,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 260,
+  "design": "kb4",
+  "kind": "step_down",
+  "t_s": 4.08,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.044067155569791794,
+  "max_abs_qacc_before": 0.0915442481637001,
+  "min_dist_before": -0.0011855661869049072,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 567,
+  "design": "bal025",
+  "kind": "flat",
+  "t_s": 4.08,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.017549822106957436,
+  "max_abs_qacc_before": 0.2093152403831482,
+  "min_dist_before": -0.0018471628427505493,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 240,
+  "design": "kb4",
+  "kind": "flat",
+  "t_s": 4.09,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.03624115511775017,
+  "max_abs_qacc_before": 0.01630653813481331,
+  "min_dist_before": -0.001195669174194336,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 603,
+  "design": "bal025",
+  "kind": "ramp_up",
+  "t_s": 4.14,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.012154258787631989,
+  "max_abs_qacc_before": 0.04471318796277046,
+  "min_dist_before": -0.009046494960784912,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 610,
+  "design": "bal025",
+  "kind": "ramp_down",
+  "t_s": 4.14,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.013621737249195576,
+  "max_abs_qacc_before": 0.06106920540332794,
+  "min_dist_before": -0.003865540027618408,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 843,
+  "design": "zeta66",
+  "kind": "ramp_up",
+  "t_s": 4.18,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.05250756815075874,
+  "max_abs_qacc_before": 0.009665330871939659,
+  "min_dist_before": -0.004918456077575684,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 597,
+  "design": "bal025",
+  "kind": "large_drop",
+  "t_s": 4.21,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.015406272374093533,
+  "max_abs_qacc_before": 0.025414111092686653,
+  "min_dist_before": -0.0019773542881011963,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 100,
+  "design": "zhigh",
+  "kind": "step_down",
+  "t_s": 4.26,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.058385610580444336,
+  "max_abs_qacc_before": 0.17297111451625824,
+  "min_dist_before": -0.026670098304748535,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 602,
+  "design": "bal025",
+  "kind": "ramp_up",
+  "t_s": 4.27,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.014807342551648617,
+  "max_abs_qacc_before": 0.08912128210067749,
+  "min_dist_before": -0.0019944757223129272,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "arrestor_0|the_ball"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 293,
+  "design": "kb4",
+  "kind": "ramp_down",
+  "t_s": 4.29,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.037401653826236725,
+  "max_abs_qacc_before": 0.3505682051181793,
+  "min_dist_before": -0.001321256160736084,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "arrestor_2|the_ball"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 616,
+  "design": "bal025",
+  "kind": "stairs",
+  "t_s": 4.29,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.013872534036636353,
+  "max_abs_qacc_before": 0.5485667586326599,
+  "min_dist_before": -0.0018726587295532227,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 82,
+  "design": "zhigh",
+  "kind": "flat",
+  "t_s": 4.34,
+  "ncon_before": 4,
+  "ncon_at_nan": 4,
+  "max_abs_qvel_before": 0.04790564626455307,
+  "max_abs_qacc_before": 0.1169968917965889,
+  "min_dist_before": -0.004869639873504639,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 275,
+  "design": "kb4",
+  "kind": "large_drop",
+  "t_s": 4.35,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04426213726401329,
+  "max_abs_qacc_before": 0.015629597008228302,
+  "min_dist_before": -0.0013521909713745117,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 624,
+  "design": "bal025",
+  "kind": "bump",
+  "t_s": 4.37,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.01864025369286537,
+  "max_abs_qacc_before": 0.2682291269302368,
+  "min_dist_before": -0.010351210832595825,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 300,
+  "design": "kb4",
+  "kind": "stairs",
+  "t_s": 4.44,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.03511592745780945,
+  "max_abs_qacc_before": 0.2388913929462433,
+  "min_dist_before": -0.001232936978340149,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 599,
+  "design": "bal025",
+  "kind": "large_drop",
+  "t_s": 4.46,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.014175759628415108,
+  "max_abs_qacc_before": 0.19841349124908447,
+  "min_dist_before": -0.011230826377868652,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 303,
+  "design": "kb4",
+  "kind": "stairs",
+  "t_s": 4.49,
+  "ncon_before": 5,
+  "ncon_at_nan": 5,
+  "max_abs_qvel_before": 0.04084928333759308,
+  "max_abs_qacc_before": 0.0691419169306755,
+  "min_dist_before": -0.006815820932388306,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 601,
+  "design": "bal025",
+  "kind": "ramp_up",
+  "t_s": 4.52,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.013820084743201733,
+  "max_abs_qacc_before": 0.21743342280387878,
+  "min_dist_before": -0.010287165641784668,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 802,
+  "design": "zeta66",
+  "kind": "flat",
+  "t_s": 4.53,
+  "ncon_before": 7,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.02975473739206791,
+  "max_abs_qacc_before": 0.14427542686462402,
+  "min_dist_before": -0.004360318183898926,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 248,
+  "design": "kb4",
+  "kind": "step_up",
+  "t_s": 4.58,
+  "ncon_before": 5,
+  "ncon_at_nan": 5,
+  "max_abs_qvel_before": 0.046370647847652435,
+  "max_abs_qacc_before": 0.21134918928146362,
+  "min_dist_before": -0.007044628262519836,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 583,
+  "design": "bal025",
+  "kind": "step_down",
+  "t_s": 4.66,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.01171094086021185,
+  "max_abs_qacc_before": 0.17155174911022186,
+  "min_dist_before": -0.004458770155906677,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 304,
+  "design": "kb4",
+  "kind": "bump",
+  "t_s": 4.7,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04706086590886116,
+  "max_abs_qacc_before": 0.08781706541776657,
+  "min_dist_before": -0.001369372010231018,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 568,
+  "design": "bal025",
+  "kind": "step_up",
+  "t_s": 4.94,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.014344176277518272,
+  "max_abs_qacc_before": 0.08581043779850006,
+  "min_dist_before": -0.0017589926719665527,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 582,
+  "design": "bal025",
+  "kind": "step_down",
+  "t_s": 4.94,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.014557702466845512,
+  "max_abs_qacc_before": 0.08023755997419357,
+  "min_dist_before": -0.0018286257982254028,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 833,
+  "design": "zeta66",
+  "kind": "large_drop",
+  "t_s": 4.94,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.021007172763347626,
+  "max_abs_qacc_before": 0.12712585926055908,
+  "min_dist_before": -0.026333019137382507,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 283,
+  "design": "kb4",
+  "kind": "ramp_up",
+  "t_s": 4.96,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04311221092939377,
+  "max_abs_qacc_before": 0.1011115163564682,
+  "min_dist_before": -0.001418575644493103,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 825,
+  "design": "zeta66",
+  "kind": "small_drop",
+  "t_s": 4.96,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.14260421693325043,
+  "max_abs_qacc_before": 0.48118287324905396,
+  "min_dist_before": -0.021976977586746216,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 86,
+  "design": "zhigh",
+  "kind": "flat",
+  "t_s": 5.04,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.047392815351486206,
+  "max_abs_qacc_before": 0.04196316748857498,
+  "min_dist_before": -0.00448627769947052,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 874,
+  "design": "zeta66",
+  "kind": "rough",
+  "t_s": 5.08,
+  "ncon_before": 7,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.049466490745544434,
+  "max_abs_qacc_before": 0.0950016900897026,
+  "min_dist_before": -0.009784072637557983,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 285,
+  "design": "kb4",
+  "kind": "ramp_up",
+  "t_s": 5.14,
+  "ncon_before": 5,
+  "ncon_at_nan": 5,
+  "max_abs_qvel_before": 0.04906576871871948,
+  "max_abs_qacc_before": 0.030815143138170242,
+  "min_dist_before": -0.0014561563730239868,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 586,
+  "design": "bal025",
+  "kind": "small_drop",
+  "t_s": 5.21,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.016038574278354645,
+  "max_abs_qacc_before": 0.1678982824087143,
+  "min_dist_before": -0.0019485801458358765,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 135,
+  "design": "zhigh",
+  "kind": "ramp_down",
+  "t_s": 5.26,
+  "ncon_before": 6,
+  "ncon_at_nan": 6,
+  "max_abs_qvel_before": 0.03873626887798309,
+  "max_abs_qacc_before": 0.0306883305311203,
+  "min_dist_before": -0.028276488184928894,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 870,
+  "design": "zeta66",
+  "kind": "bump",
+  "t_s": 5.31,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.06698958575725555,
+  "max_abs_qacc_before": 0.10010325908660889,
+  "min_dist_before": -0.005057439208030701,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 177,
+  "design": "zlow",
+  "kind": "step_down",
+  "t_s": 5.35,
+  "ncon_before": 7,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.05036815628409386,
+  "max_abs_qacc_before": 0.04256784915924072,
+  "min_dist_before": -0.00427621603012085,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 852,
+  "design": "zeta66",
+  "kind": "ramp_down",
+  "t_s": 5.38,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.0420541912317276,
+  "max_abs_qacc_before": 0.25471973419189453,
+  "min_dist_before": -0.004639461636543274,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 600,
+  "design": "bal025",
+  "kind": "ramp_up",
+  "t_s": 5.39,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.013553757220506668,
+  "max_abs_qacc_before": 0.33284980058670044,
+  "min_dist_before": -0.0017262697219848633,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 634,
+  "design": "bal025",
+  "kind": "rough",
+  "t_s": 5.39,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.015858463943004608,
+  "max_abs_qacc_before": 0.2632701098918915,
+  "min_dist_before": -0.001768544316291809,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "arrestor_0|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 613,
+  "design": "bal025",
+  "kind": "ramp_down",
+  "t_s": 5.44,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.01585010439157486,
+  "max_abs_qacc_before": 0.19694587588310242,
+  "min_dist_before": -0.002077922224998474,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 108,
+  "design": "zhigh",
+  "kind": "small_drop",
+  "t_s": 5.49,
+  "ncon_before": 7,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.038703881204128265,
+  "max_abs_qacc_before": 0.05083676427602768,
+  "min_dist_before": -0.004194378852844238,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "the_ball|wheel_mesh_0"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 808,
+  "design": "zeta66",
+  "kind": "step_up",
+  "t_s": 5.53,
+  "ncon_before": 7,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.0520290769636631,
+  "max_abs_qacc_before": 0.13214655220508575,
+  "min_dist_before": -0.004492923617362976,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 569,
+  "design": "bal025",
+  "kind": "step_up",
+  "t_s": 5.54,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.01579114980995655,
+  "max_abs_qacc_before": 0.23222199082374573,
+  "min_dist_before": -0.002042621374130249,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 827,
+  "design": "zeta66",
+  "kind": "small_drop",
+  "t_s": 5.59,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.07824347913265228,
+  "max_abs_qacc_before": 0.10327018052339554,
+  "min_dist_before": -0.004914827644824982,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "arrestor_2|the_ball"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 97,
+  "design": "zhigh",
+  "kind": "step_down",
+  "t_s": 5.65,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04159010946750641,
+  "max_abs_qacc_before": 0.22901485860347748,
+  "min_dist_before": -0.0045232027769088745,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 305,
+  "design": "kb4",
+  "kind": "bump",
+  "t_s": 5.66,
+  "ncon_before": 6,
+  "ncon_at_nan": 6,
+  "max_abs_qvel_before": 0.031227584928274155,
+  "max_abs_qacc_before": 0.018473174422979355,
+  "min_dist_before": -0.00738312304019928,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 591,
+  "design": "bal025",
+  "kind": "small_drop",
+  "t_s": 5.66,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.016523467376828194,
+  "max_abs_qacc_before": 0.09775542467832565,
+  "min_dist_before": -0.001843094825744629,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 256,
+  "design": "kb4",
+  "kind": "step_down",
+  "t_s": 5.72,
+  "ncon_before": 5,
+  "ncon_at_nan": 5,
+  "max_abs_qvel_before": 0.043879587203264236,
+  "max_abs_qacc_before": 0.10146622359752655,
+  "min_dist_before": -0.008862316608428955,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 629,
+  "design": "bal025",
+  "kind": "bump",
+  "t_s": 5.78,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.015415572561323643,
+  "max_abs_qacc_before": 0.20818056166172028,
+  "min_dist_before": -0.00208166241645813,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 862,
+  "design": "zeta66",
+  "kind": "stairs",
+  "t_s": 5.8,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.06596583873033524,
+  "max_abs_qacc_before": 0.1549326628446579,
+  "min_dist_before": -0.0050130486488342285,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 598,
+  "design": "bal025",
+  "kind": "large_drop",
+  "t_s": 5.81,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.01096887793391943,
+  "max_abs_qacc_before": 0.08902471512556076,
+  "min_dist_before": -0.009504467248916626,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 573,
+  "design": "bal025",
+  "kind": "step_up",
+  "t_s": 5.84,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.011621421203017235,
+  "max_abs_qacc_before": 0.23269768059253693,
+  "min_dist_before": -0.0018755346536636353,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 836,
+  "design": "zeta66",
+  "kind": "large_drop",
+  "t_s": 5.9,
+  "ncon_before": 5,
+  "ncon_at_nan": 5,
+  "max_abs_qvel_before": 0.05794724449515343,
+  "max_abs_qacc_before": 0.13112862408161163,
+  "min_dist_before": -0.0044998228549957275,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "the_ball|wheel_mesh_0"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 153,
+  "design": "zhigh",
+  "kind": "rough",
+  "t_s": 5.91,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.049488212913274765,
+  "max_abs_qacc_before": 0.13088810443878174,
+  "min_dist_before": -0.005139634013175964,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 274,
+  "design": "kb4",
+  "kind": "large_drop",
+  "t_s": 5.91,
+  "ncon_before": 5,
+  "ncon_at_nan": 5,
+  "max_abs_qvel_before": 0.0366225503385067,
+  "max_abs_qacc_before": 0.10222677886486053,
+  "min_dist_before": -0.0013405382633209229,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 863,
+  "design": "zeta66",
+  "kind": "stairs",
+  "t_s": 5.91,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.047292452305555344,
+  "max_abs_qacc_before": 0.17726731300354004,
+  "min_dist_before": -0.011094614863395691,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 257,
+  "design": "kb4",
+  "kind": "step_down",
+  "t_s": 5.92,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04289336875081062,
+  "max_abs_qacc_before": 0.03204580768942833,
+  "min_dist_before": -0.006800711154937744,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 241,
+  "design": "kb4",
+  "kind": "flat",
+  "t_s": 6.08,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.036196913570165634,
+  "max_abs_qacc_before": 0.024627599865198135,
+  "min_dist_before": -0.0013066232204437256,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 594,
+  "design": "bal025",
+  "kind": "large_drop",
+  "t_s": 6.16,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.01214226707816124,
+  "max_abs_qacc_before": 0.18996970355510712,
+  "min_dist_before": -0.001906752586364746,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 560,
+  "design": "bal025",
+  "kind": "flat",
+  "t_s": 6.19,
+  "ncon_before": 5,
+  "ncon_at_nan": 5,
+  "max_abs_qvel_before": 0.020659683272242546,
+  "max_abs_qacc_before": 0.4643881320953369,
+  "min_dist_before": -0.00454866886138916,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 623,
+  "design": "bal025",
+  "kind": "stairs",
+  "t_s": 6.26,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.014271940104663372,
+  "max_abs_qacc_before": 0.3349668085575104,
+  "min_dist_before": -0.004095301032066345,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 585,
+  "design": "bal025",
+  "kind": "small_drop",
+  "t_s": 6.28,
+  "ncon_before": 6,
+  "ncon_at_nan": 6,
+  "max_abs_qvel_before": 0.010798158124089241,
+  "max_abs_qacc_before": 0.08977110683917999,
+  "min_dist_before": -0.0018622726202011108,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 548,
+  "design": "tau6",
+  "kind": "bump",
+  "t_s": 6.3,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.046266891062259674,
+  "max_abs_qacc_before": 0.035874053835868835,
+  "min_dist_before": -0.0044115036725997925,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 562,
+  "design": "bal025",
+  "kind": "flat",
+  "t_s": 6.5,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.011773302219808102,
+  "max_abs_qacc_before": 0.12918104231357574,
+  "min_dist_before": -0.0017377734184265137,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 826,
+  "design": "zeta66",
+  "kind": "small_drop",
+  "t_s": 6.55,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.13357631862163544,
+  "max_abs_qacc_before": 0.10503833740949631,
+  "min_dist_before": -0.0322842001914978,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 278,
+  "design": "kb4",
+  "kind": "large_drop",
+  "t_s": 6.56,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04008359834551811,
+  "max_abs_qacc_before": 0.008524756878614426,
+  "min_dist_before": -0.007632002234458923,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 625,
+  "design": "bal025",
+  "kind": "bump",
+  "t_s": 6.63,
+  "ncon_before": 6,
+  "ncon_at_nan": 6,
+  "max_abs_qvel_before": 0.017193684354424477,
+  "max_abs_qacc_before": 0.07200615853071213,
+  "min_dist_before": -0.0019710958003997803,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 485,
+  "design": "tau6",
+  "kind": "flat",
+  "t_s": 7.04,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.056030213832855225,
+  "max_abs_qacc_before": 0.09854830801486969,
+  "min_dist_before": -0.01127675175666809,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 561,
+  "design": "bal025",
+  "kind": "flat",
+  "t_s": 7.27,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.011366990394890308,
+  "max_abs_qacc_before": 0.11734583228826523,
+  "min_dist_before": -0.008925959467887878,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 801,
+  "design": "zeta66",
+  "kind": "flat",
+  "t_s": 7.34,
+  "ncon_before": 4,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.05132631957530975,
+  "max_abs_qacc_before": 0.09592368453741074,
+  "min_dist_before": -0.011025816202163696,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 607,
+  "design": "bal025",
+  "kind": "ramp_up",
+  "t_s": 7.48,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.01994829811155796,
+  "max_abs_qacc_before": 0.18067198991775513,
+  "min_dist_before": -0.002095431089401245,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 638,
+  "design": "bal025",
+  "kind": "rough",
+  "t_s": 7.52,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.01334363967180252,
+  "max_abs_qacc_before": 0.08639039099216461,
+  "min_dist_before": -0.004270091652870178,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 294,
+  "design": "kb4",
+  "kind": "ramp_down",
+  "t_s": 8.44,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.06039178743958473,
+  "max_abs_qacc_before": 0.18395182490348816,
+  "min_dist_before": -0.003113389015197754,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_2",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 577,
+  "design": "bal025",
+  "kind": "step_down",
+  "t_s": 8.44,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.01610363833606243,
+  "max_abs_qacc_before": 0.20003974437713623,
+  "min_dist_before": -0.0018342286348342896,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 56,
+  "design": "nom",
+  "kind": "stairs",
+  "t_s": 8.46,
+  "ncon_before": 5,
+  "ncon_at_nan": 5,
+  "max_abs_qvel_before": 0.04528207704424858,
+  "max_abs_qacc_before": 0.047189049422740936,
+  "min_dist_before": -0.024280235171318054,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 118,
+  "design": "zhigh",
+  "kind": "large_drop",
+  "t_s": 8.48,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04289507120847702,
+  "max_abs_qacc_before": 0.07639250159263611,
+  "min_dist_before": -0.004677534103393555,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 287,
+  "design": "kb4",
+  "kind": "ramp_up",
+  "t_s": 8.58,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04410090669989586,
+  "max_abs_qacc_before": 0.05393078178167343,
+  "min_dist_before": -0.007750123739242554,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 302,
+  "design": "kb4",
+  "kind": "stairs",
+  "t_s": 8.74,
+  "ncon_before": 5,
+  "ncon_at_nan": 5,
+  "max_abs_qvel_before": 0.0450480692088604,
+  "max_abs_qacc_before": 0.0419115349650383,
+  "min_dist_before": -0.001245543360710144,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 296,
+  "design": "kb4",
+  "kind": "stairs",
+  "t_s": 8.81,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.04144199192523956,
+  "max_abs_qacc_before": 0.013878632336854935,
+  "min_dist_before": -0.008245885372161865,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 481,
+  "design": "tau6",
+  "kind": "flat",
+  "t_s": 8.97,
+  "ncon_before": 6,
+  "ncon_at_nan": 6,
+  "max_abs_qvel_before": 0.034752290695905685,
+  "max_abs_qacc_before": 0.04501701518893242,
+  "min_dist_before": -0.004425957798957825,
+  "pairs_before": [
+   "terrain|the_ball",
+   "the_ball|wheel_mesh_2",
+   "arrestor_0|the_ball",
+   "arrestor_1|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 96,
+  "design": "zhigh",
+  "kind": "step_down",
+  "t_s": 9.08,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.036315616220235825,
+  "max_abs_qacc_before": 0.07409107685089111,
+  "min_dist_before": -0.004412233829498291,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 314,
+  "design": "kb4",
+  "kind": "rough",
+  "t_s": 9.19,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.0363176129758358,
+  "max_abs_qacc_before": 0.05276884883642197,
+  "min_dist_before": -0.0012973546981811523,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 785,
+  "design": "zeta41",
+  "kind": "bump",
+  "t_s": 9.42,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.02400534600019455,
+  "max_abs_qacc_before": 0.22225148975849152,
+  "min_dist_before": -0.011126376688480377,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "arrestor_1|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 614,
+  "design": "bal025",
+  "kind": "ramp_down",
+  "t_s": 9.45,
+  "ncon_before": 6,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.01645839400589466,
+  "max_abs_qacc_before": 0.057272233068943024,
+  "min_dist_before": -0.001890718936920166,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_0|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ },
+ {
+  "world": 249,
+  "design": "kb4",
+  "kind": "step_up",
+  "t_s": 9.75,
+  "ncon_before": 5,
+  "ncon_at_nan": 0,
+  "max_abs_qvel_before": 0.034422408789396286,
+  "max_abs_qacc_before": 0.10308460891246796,
+  "min_dist_before": -0.0058936625719070435,
+  "pairs_before": [
+   "terrain|the_ball",
+   "arrestor_2|the_ball",
+   "the_ball|wheel_mesh_0",
+   "the_ball|wheel_mesh_1",
+   "the_ball|wheel_mesh_2"
+  ],
+  "tilt_before": 0.0
+ }
+]

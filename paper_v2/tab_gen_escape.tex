@@ -1,0 +1,11 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Blind navigation with a contact escape layer (S109, S115). Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error; wheel-ball free-rolling friction 0.01. Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 528 per row (48 per design, 11 designs). Seeds: one controller seed per pair of rows, frozen. Protocol: blocks map as Table 39 but no terrain sensing at all, 40 s episodes; escape layer experiments/warp\_ppo/escape.py through eval\_nav.py --source bump: stall detection (under 30 percent of the commanded speed for 1 s, no 0.1 m approach in 4 s, or tilt above 15 deg), a 0.3 m obstacle segment marked 0.2 m ahead, 1 s back-up at 0.15 m/s, re-plan, give up after 6 failures; files outputs/study/warp\_ppo/RUN/navS\_{blind,bump\_v15}\_40s.json.}\label{tab:gen_escape}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{p{5cm}ccccc}\toprule
+Controller & Reached goal & Fell & Stuck & Rolled onto a block & Median time to goal\\\midrule
+blind, straight at the goal previous recommendation g26 s1, no layer & 0.078 & 0.922 & 0.000 & 0.75 & 6.5 s\\
+blind + contact escape (stall detection, obstacle memory, back up, re-plan), 0.15 m/s previous recommendation g26 s1, no layer & 0.547 & 0.237 & 0.216 & 0.55 & 14.7 s\\
+blind, straight at the goal recommended g34 s0, motion layer & 0.017 & 0.983 & 0.000 & 0.81 & 6.0 s\\
+blind + contact escape (stall detection, obstacle memory, back up, re-plan), 0.15 m/s recommended g34 s0, motion layer & 0.634 & 0.261 & 0.104 & 0.44 & 12.1 s\\
+\bottomrule\end{tabular}}
+\end{table*}

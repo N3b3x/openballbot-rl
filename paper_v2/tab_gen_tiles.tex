@@ -1,0 +1,17 @@
+\begin{table}[t]\centering\footnotesize
+\caption{Terrain tile library (geometry only; map 24\,m, 3\,m tiles, truncation outside a 2.9\,m square).}\label{tab:gen_tiles}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{llp{4.2cm}c}\toprule
+Terrain kind & Severity range & Profile & Tiles of 64\\\midrule
+flat & none & no feature & 7\\
+step up & 1 to 6 cm & single raised step 0.6 m from the centre on each axis & 7\\
+step down & 1 to 6 cm & robot stands on a plateau, floor drops by the severity & 7\\
+small drop & 3 to 8 cm & drop of 3 to 8 cm & 7\\
+large drop & 10 to 20 cm & drop of 10 to 20 cm & 6\\
+ramp up & 3 to 12 deg & slope over 1.0 m starting 0.5 m from the centre & 6\\
+ramp down & 3 to 12 deg & descending slope over 1.0 m & 6\\
+stairs & 1 to 4 cm & 2 to 3 treads of 0.4 m, riser = severity & 6\\
+bump & 1 to 5 cm & slab 0.3 m wide, 0.6 m from the centre & 6\\
+rough & 0.5 to 3 cm & smooth two-octave noise outside a flat 0.5 m start zone & 6\\
+\bottomrule\end{tabular}}
+\end{table}

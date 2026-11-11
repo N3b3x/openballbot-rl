@@ -1,0 +1,103 @@
+{
+ "run": "g6_trk4_s0",
+ "args": {
+  "run": "g6_trk4_s0",
+  "task": "vel",
+  "speed": 0.9,
+  "n": 32,
+  "dr": false,
+  "surfaces": false,
+  "pull": false,
+  "eval_designs": "nom,nom",
+  "steps": 800,
+  "tile_seed": 0
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.125,
+   "success": 0.0,
+   "track_err": 0.4481014311313629,
+   "late_err": 0.3999955356121063,
+   "late_speed_ratio": 0.5615628361701965
+  },
+  "step_up": {
+   "fall": 0.109375,
+   "success": 0.0,
+   "track_err": 0.45820942521095276,
+   "late_err": 0.41488194465637207,
+   "late_speed_ratio": 0.5441906452178955
+  },
+  "step_down": {
+   "fall": 0.03125,
+   "success": 0.0,
+   "track_err": 0.45279085636138916,
+   "late_err": 0.40789881348609924,
+   "late_speed_ratio": 0.5529286861419678
+  },
+  "small_drop": {
+   "fall": 0.15625,
+   "success": 0.0,
+   "track_err": 0.4519486725330353,
+   "late_err": 0.40453287959098816,
+   "late_speed_ratio": 0.5572278499603271
+  },
+  "large_drop": {
+   "fall": 0.078125,
+   "success": 0.0,
+   "track_err": 0.4352332353591919,
+   "late_err": 0.38696250319480896,
+   "late_speed_ratio": 0.5751833319664001
+  },
+  "ramp_up": {
+   "fall": 0.15625,
+   "success": 0.0,
+   "track_err": 0.46125221252441406,
+   "late_err": 0.4166847765445709,
+   "late_speed_ratio": 0.542682409286499
+  },
+  "ramp_down": {
+   "fall": 0.125,
+   "success": 0.0,
+   "track_err": 0.44166818261146545,
+   "late_err": 0.39292988181114197,
+   "late_speed_ratio": 0.5696569681167603
+  },
+  "stairs": {
+   "fall": 0.125,
+   "success": 0.0,
+   "track_err": 0.4571883976459503,
+   "late_err": 0.41241276264190674,
+   "late_speed_ratio": 0.5475314259529114
+  },
+  "bump": {
+   "fall": 0.21875,
+   "success": 0.0,
+   "track_err": 0.443432480096817,
+   "late_err": 0.3940095007419586,
+   "late_speed_ratio": 0.5682673454284668
+  },
+  "rough": {
+   "fall": 0.0625,
+   "success": 0.0,
+   "track_err": 0.4432445168495178,
+   "late_err": 0.39723747968673706,
+   "late_speed_ratio": 0.5648114681243896
+  }
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.125,
+   "success": 0.0,
+   "track_err": 0.4483116865158081,
+   "late_err": 0.4017634093761444,
+   "late_speed_ratio": 0.5594794750213623
+  }
+ },
+ "overall": {
+  "fall": 0.11874999850988388,
+  "success": 0.0,
+  "track_err": 0.4492782950401306,
+  "late_err": 0.40272244811058044,
+  "late_speed_ratio": 0.558438241481781
+ }
+}

@@ -1,0 +1,201 @@
+{
+ "run": "g18_ret_rs025_s1",
+ "args": {
+  "run": "g18_ret_rs025_s1",
+  "task": "vel",
+  "speed": 0.0,
+  "n": 32,
+  "dr": true,
+  "surfaces": true,
+  "pull": false,
+  "eval_designs": null,
+  "steps": 2000,
+  "tile_seed": 0
+ },
+ "env_settings": {
+  "overrides": {},
+  "push_scale": 0.0,
+  "dr_scale": 1.0,
+  "tiles_flat": true,
+  "no_exit": true,
+  "dr_off": "",
+  "dr_mft": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "lqr_base": 0.25,
+  "eval_designs": [
+   "nom",
+   "zhigh",
+   "zlow",
+   "kb4",
+   "bal4",
+   "J02",
+   "tau6",
+   "bal025",
+   "kb025",
+   "zeta41",
+   "zeta66"
+  ],
+  "retainer": "0,0,0,100"
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.05681818351149559,
+   "success": 0.0,
+   "track_err": 0.021419070661067963,
+   "late_err": 0.020890766754746437,
+   "late_speed_ratio": 0.0
+  },
+  "step_up": {
+   "fall": 0.07954545319080353,
+   "success": 0.0,
+   "track_err": 0.02186954952776432,
+   "late_err": 0.0213069636374712,
+   "late_speed_ratio": 0.0
+  },
+  "step_down": {
+   "fall": 0.06534091383218765,
+   "success": 0.0,
+   "track_err": 0.021553127095103264,
+   "late_err": 0.021076148375868797,
+   "late_speed_ratio": 0.0
+  },
+  "small_drop": {
+   "fall": 0.08238636702299118,
+   "success": 0.0,
+   "track_err": 0.021098585799336433,
+   "late_err": 0.0204734168946743,
+   "late_speed_ratio": 0.0
+  },
+  "large_drop": {
+   "fall": 0.07102272659540176,
+   "success": 0.0,
+   "track_err": 0.021507546305656433,
+   "late_err": 0.020943351089954376,
+   "late_speed_ratio": 0.0
+  },
+  "ramp_up": {
+   "fall": 0.07386364042758942,
+   "success": 0.0,
+   "track_err": 0.02189849317073822,
+   "late_err": 0.021319180727005005,
+   "late_speed_ratio": 0.0
+  },
+  "ramp_down": {
+   "fall": 0.039772726595401764,
+   "success": 0.0,
+   "track_err": 0.020677605643868446,
+   "late_err": 0.01999962329864502,
+   "late_speed_ratio": 0.0
+  },
+  "stairs": {
+   "fall": 0.04545454680919647,
+   "success": 0.0,
+   "track_err": 0.020749617367982864,
+   "late_err": 0.020228253677487373,
+   "late_speed_ratio": 0.0
+  },
+  "bump": {
+   "fall": 0.06818182021379471,
+   "success": 0.0,
+   "track_err": 0.021449701860547066,
+   "late_err": 0.02083328180015087,
+   "late_speed_ratio": 0.0
+  },
+  "rough": {
+   "fall": 0.059659093618392944,
+   "success": 0.0,
+   "track_err": 0.02097168006002903,
+   "late_err": 0.020369814708828926,
+   "late_speed_ratio": 0.0
+  }
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.0031250000465661287,
+   "success": 0.0,
+   "track_err": 0.023095088079571724,
+   "late_err": 0.022748775780200958,
+   "late_speed_ratio": 0.0
+  },
+  "zhigh": {
+   "fall": 0.04374999925494194,
+   "success": 0.0,
+   "track_err": 0.014455990865826607,
+   "late_err": 0.013823159039020538,
+   "late_speed_ratio": 0.0
+  },
+  "zlow": {
+   "fall": 0.0,
+   "success": 0.0,
+   "track_err": 0.026550766080617905,
+   "late_err": 0.026049964129924774,
+   "late_speed_ratio": 0.0
+  },
+  "kb4": {
+   "fall": 0.20937500894069672,
+   "success": 0.0,
+   "track_err": 0.013556478545069695,
+   "late_err": 0.012403039261698723,
+   "late_speed_ratio": 0.0
+  },
+  "bal4": {
+   "fall": 0.04374999925494194,
+   "success": 0.0,
+   "track_err": 0.025025464594364166,
+   "late_err": 0.024664482101798058,
+   "late_speed_ratio": 0.0
+  },
+  "J02": {
+   "fall": 0.0,
+   "success": 0.0,
+   "track_err": 0.023388581350445747,
+   "late_err": 0.02303677424788475,
+   "late_speed_ratio": 0.0
+  },
+  "tau6": {
+   "fall": 0.02812500111758709,
+   "success": 0.0,
+   "track_err": 0.012665037997066975,
+   "late_err": 0.012228674255311489,
+   "late_speed_ratio": 0.0
+  },
+  "bal025": {
+   "fall": 0.00937500037252903,
+   "success": 0.0,
+   "track_err": 0.01693137176334858,
+   "late_err": 0.015930576249957085,
+   "late_speed_ratio": 0.0
+  },
+  "kb025": {
+   "fall": 0.24375000596046448,
+   "success": 0.0,
+   "track_err": 0.03421700745820999,
+   "late_err": 0.033479370176792145,
+   "late_speed_ratio": 0.0
+  },
+  "zeta41": {
+   "fall": 0.0,
+   "success": 0.0,
+   "track_err": 0.02046693116426468,
+   "late_err": 0.020042655989527702,
+   "late_speed_ratio": 0.0
+  },
+  "zeta66": {
+   "fall": 0.125,
+   "success": 0.0,
+   "track_err": 0.025316812098026276,
+   "late_err": 0.024897392839193344,
+   "late_speed_ratio": 0.0
+  }
+ },
+ "overall": {
+  "fall": 0.06420454382896423,
+  "success": 0.0,
+  "track_err": 0.021318020299077034,
+  "late_err": 0.020742345601320267,
+  "late_speed_ratio": 0.0
+ }
+}

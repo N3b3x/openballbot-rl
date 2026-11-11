@@ -1,0 +1,33 @@
+{
+ "id": "cine_tour_flat_robs_c",
+ "title": "Velocity tour on a flat floor",
+ "controller": "robs_c_s0@ki=1.0",
+ "controller_family": "learned",
+ "scenario": "tour_flat",
+ "terrain": "flat floor, no relief",
+ "description": "Chase camera follows a scripted tour of velocity commands (forward, sideways, diagonal, turning) on a flat floor.",
+ "outcome": "No fall. Mean position error 41.1 cm, max 93.0 cm, final 7.8 cm; max off-ball angle 12.9 deg.",
+ "stats": {
+  "duration_s": 24.5,
+  "fell": false,
+  "fall_t_s": null,
+  "fall_reason": null,
+  "mean_err_cm": 41.1,
+  "max_err_cm": 93.0,
+  "final_err_cm": 7.8,
+  "dist_travelled_m": 11.14,
+  "max_off_ball_deg": 12.9,
+  "max_lean_deg": 13.5,
+  "mean_speed_err_mps": 0.283,
+  "end_to_plan_end_cm": 7.8,
+  "pushes": 0
+ },
+ "duration_s": 28.1,
+ "sim_only": true,
+ "domain_randomisation": false,
+ "slow_motion": 1.0,
+ "pushes": "",
+ "config": "configs/env/robs_c.yaml",
+ "sequence": "tour",
+ "command": "python scripts/study/render_cinematic.py --job tour_flat_robs_c"
+}

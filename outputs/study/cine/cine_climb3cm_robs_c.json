@@ -1,0 +1,33 @@
+{
+ "id": "cine_climb3cm_robs_c",
+ "title": "Crossing a 3 cm step",
+ "controller": "robs_c_s0@ki=1.0",
+ "controller_family": "learned",
+ "scenario": "climb3cm",
+ "terrain": "3 cm step at y = 1 m",
+ "description": "Side view: the same approach at 3 cm; the robot loses the ball at the step (shown at 0.5x slow motion).",
+ "outcome": "Fell at t = 3.88 s (left the ball). Mean position error 38.0 cm, max 76.9 cm, final 75.8 cm; max off-ball angle 30.8 deg.",
+ "stats": {
+  "duration_s": 3.89,
+  "fell": true,
+  "fall_t_s": 3.88,
+  "fall_reason": "left the ball",
+  "mean_err_cm": 38.0,
+  "max_err_cm": 76.9,
+  "final_err_cm": 75.8,
+  "dist_travelled_m": 1.37,
+  "max_off_ball_deg": 30.8,
+  "max_lean_deg": 33.7,
+  "mean_speed_err_mps": 0.235,
+  "end_to_plan_end_cm": 117.6,
+  "pushes": 0
+ },
+ "duration_s": 16.6,
+ "sim_only": true,
+ "domain_randomisation": false,
+ "slow_motion": 0.3,
+ "pushes": "",
+ "config": "configs/env/robs_c.yaml",
+ "sequence": "climb",
+ "command": "python scripts/study/render_cinematic.py --job climb3cm_robs_c"
+}

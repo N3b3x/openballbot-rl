@@ -1,0 +1,11 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Depth sensor on top of the recommended controller (retainer), corrected engine. Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on (flat column: off). Observation noise: on (flat column: off). Worlds per cell: 176 per terrain kind (1760 per goal or tile cell); 64 per flat cell. Seeds: one seed for the depth arm, three for the blind recommended controller. Protocol: eval\_battery.py with the 100 deg arrestors in training and evaluation; the depth arm also uses edge-focused starts.}\label{tab:gen_percarm2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccc}\toprule
+Policy & Goal success undisturbed, DR 1 / 1.75 / 2.5 & Goal success pushes + pulls, DR 1 / 1.75 / 2.5 & Tile velocity falls undisturbed / disturbed (DR 1) & Step-up falls (velocity task) & Flat achieved / command\\\midrule
+recommended + depth sensor (18x14) + edge starts g20\_ret\_rs025\_depth\_s0, seed 0 & 0.74 / 0.69 / 0.63 & 0.43 / 0.38 / 0.31 & 0.35 / 0.54 & 0.55 & 0.96 to 0.99\\
+recommended, blind g18\_ret\_rs025\_s0, seed 0 & 0.71 / 0.68 / 0.60 & 0.42 / 0.36 / 0.29 & 0.34 / 0.55 & 0.61 & 0.99 to 1.01\\
+recommended, blind g18\_ret\_rs025\_s1, seed 1 & 0.76 / 0.72 / 0.66 & 0.43 / 0.39 / 0.32 & 0.35 / 0.56 & 0.62 & 0.98 to 1.00\\
+recommended, blind g18\_ret\_rs025\_s2, seed 2 & 0.76 / 0.71 / 0.63 & 0.44 / 0.41 / 0.32 & 0.36 / 0.55 & n/a & 0.90 to 0.99\\
+\bottomrule\end{tabular}}
+\end{table*}

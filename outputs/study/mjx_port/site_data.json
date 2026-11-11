@@ -1,0 +1,231 @@
+{
+ "title": "MuJoCo CPU vs MuJoCo-Warp GPU: physics fidelity check",
+ "generated_by": "experiments/mjx_port",
+ "clips": [
+  {
+   "id": "mjx_settle",
+   "title": "Free fall onto the ball, open loop",
+   "description": "Robot dropped 1 cm onto the ball, zero wheel torque. The upright pose is unstable: both engines topple, timing depends on rounding.",
+   "engines": [
+    "MuJoCo 3.17 CPU (float64, ContactFrameStepper)",
+    "MuJoCo-Warp 3.17 GPU (float32, contact-frame kernel)"
+   ],
+   "scenario": "settle",
+   "parameters": {
+    "design": "dz_nom",
+    "integrator": "implicitfast",
+    "dt_s": 0.002,
+    "action_repeat": 5,
+    "controller": "open loop",
+    "speed_factor": 1.0
+   },
+   "outcome": "Both engines topple (open-loop unstable plant); first 0.6 s agree (early tilt RMS error ~1.9 deg), later timing differs.",
+   "fell": {
+    "cpu": false,
+    "warp": true
+   },
+   "file": "outputs/study/mjx_port/videos/mjx_settle.mp4",
+   "poster": "outputs/study/mjx_port/videos/mjx_settle.jpg",
+   "size_mb": 0.19,
+   "note": "Simulation only. No hardware claims."
+  },
+  {
+   "id": "mjx_torque_step",
+   "title": "Open-loop wheel-torque step",
+   "description": "2 N m on wheel 0 for 0.3 s (t = 0.5 to 0.8 s), no feedback. Forced response matches; later tilt diverges (unstable plant). Half speed.",
+   "engines": [
+    "MuJoCo 3.17 CPU (float64, ContactFrameStepper)",
+    "MuJoCo-Warp 3.17 GPU (float32, contact-frame kernel)"
+   ],
+   "scenario": "torque_step",
+   "parameters": {
+    "design": "dz_nom",
+    "integrator": "implicitfast",
+    "dt_s": 0.002,
+    "action_repeat": 5,
+    "controller": "open loop",
+    "speed_factor": 0.5
+   },
+   "outcome": "Forced ball-speed response agrees to 5% of peak over the 0.3 s pulse; later tilt diverges as the plant is unstable.",
+   "fell": {
+    "cpu": false,
+    "warp": false
+   },
+   "file": "outputs/study/mjx_port/videos/mjx_torque_step.mp4",
+   "poster": "outputs/study/mjx_port/videos/mjx_torque_step.jpg",
+   "size_mb": 0.18,
+   "note": "Simulation only. No hardware claims."
+  },
+  {
+   "id": "mjx_lqr_0.4",
+   "title": "LQR tracking 0.4 m/s",
+   "description": "Model-based LQR (dz_nom gains), command 0.4 m/s along +x.",
+   "engines": [
+    "MuJoCo 3.17 CPU (float64, ContactFrameStepper)",
+    "MuJoCo-Warp 3.17 GPU (float32, contact-frame kernel)"
+   ],
+   "scenario": "lqr_0.4",
+   "parameters": {
+    "design": "dz_nom",
+    "integrator": "implicitfast",
+    "dt_s": 0.002,
+    "action_repeat": 5,
+    "controller": "LQR (dz_nom gains)",
+    "speed_factor": 1.0
+   },
+   "outcome": "Both track 0.4 m/s with no fall; speed ratio 0.99 (CPU) vs 0.98 (Warp).",
+   "fell": {
+    "cpu": false,
+    "warp": false
+   },
+   "file": "outputs/study/mjx_port/videos/mjx_lqr_0.4.mp4",
+   "poster": "outputs/study/mjx_port/videos/mjx_lqr_0.4.jpg",
+   "size_mb": 0.42,
+   "note": "Simulation only. No hardware claims."
+  },
+  {
+   "id": "mjx_lqr_0.8",
+   "title": "LQR tracking 0.8 m/s",
+   "description": "Model-based LQR (dz_nom gains), command 0.8 m/s along +x.",
+   "engines": [
+    "MuJoCo 3.17 CPU (float64, ContactFrameStepper)",
+    "MuJoCo-Warp 3.17 GPU (float32, contact-frame kernel)"
+   ],
+   "scenario": "lqr_0.8",
+   "parameters": {
+    "design": "dz_nom",
+    "integrator": "implicitfast",
+    "dt_s": 0.002,
+    "action_repeat": 5,
+    "controller": "LQR (dz_nom gains)",
+    "speed_factor": 1.0
+   },
+   "outcome": "Both track 0.8 m/s with no fall; speed ratio 1.03 (CPU) vs 1.04 (Warp).",
+   "fell": {
+    "cpu": false,
+    "warp": false
+   },
+   "file": "outputs/study/mjx_port/videos/mjx_lqr_0.8.mp4",
+   "poster": "outputs/study/mjx_port/videos/mjx_lqr_0.8.jpg",
+   "size_mb": 0.48,
+   "note": "Simulation only. No hardware claims."
+  },
+  {
+   "id": "mjx_push_survive",
+   "title": "Push: both engines recover",
+   "description": "1x body weight (39 N), 50 ms, direction 248 deg, while driving 0.4 m/s along +y. Half speed.",
+   "engines": [
+    "MuJoCo 3.17 CPU (float64, ContactFrameStepper)",
+    "MuJoCo-Warp 3.17 GPU (float32, contact-frame kernel)"
+   ],
+   "scenario": "push_survive",
+   "parameters": {
+    "design": "dz_nom",
+    "integrator": "implicitfast",
+    "dt_s": 0.002,
+    "action_repeat": 5,
+    "controller": "LQR (dz_nom gains)",
+    "speed_factor": 0.5
+   },
+   "outcome": "Both recover from a 1x body-weight, 50 ms push in this direction.",
+   "fell": {
+    "cpu": false,
+    "warp": false
+   },
+   "file": "outputs/study/mjx_port/videos/mjx_push_survive.mp4",
+   "poster": "outputs/study/mjx_port/videos/mjx_push_survive.jpg",
+   "size_mb": 0.27,
+   "note": "Simulation only. No hardware claims."
+  },
+  {
+   "id": "mjx_push_fall",
+   "title": "Push: both engines lose the ball",
+   "description": "1x body weight (39 N), 50 ms, direction 0 deg, while driving 0.4 m/s along +y. Half speed.",
+   "engines": [
+    "MuJoCo 3.17 CPU (float64, ContactFrameStepper)",
+    "MuJoCo-Warp 3.17 GPU (float32, contact-frame kernel)"
+   ],
+   "scenario": "push_fall",
+   "parameters": {
+    "design": "dz_nom",
+    "integrator": "implicitfast",
+    "dt_s": 0.002,
+    "action_repeat": 5,
+    "controller": "LQR (dz_nom gains)",
+    "speed_factor": 0.5
+   },
+   "outcome": "Both lose the ball after a 1x body-weight, 50 ms push in this direction.",
+   "fell": {
+    "cpu": true,
+    "warp": true
+   },
+   "file": "outputs/study/mjx_port/videos/mjx_push_fall.mp4",
+   "poster": "outputs/study/mjx_port/videos/mjx_push_fall.jpg",
+   "size_mb": 0.42,
+   "note": "Simulation only. No hardware claims."
+  },
+  {
+   "id": "mjx_push_disagree",
+   "title": "Push at the edge: engines disagree",
+   "description": "1x body weight, 50 ms, direction 90 deg: in the sweep run CPU falls, Warp recovers; in this render CPU falls, Warp falls. Borderline case (GPU run is not bit-reproducible). Half speed.",
+   "engines": [
+    "MuJoCo 3.17 CPU (float64, ContactFrameStepper)",
+    "MuJoCo-Warp 3.17 GPU (float32, contact-frame kernel)"
+   ],
+   "scenario": "push_disagree",
+   "parameters": {
+    "design": "dz_nom",
+    "integrator": "implicitfast",
+    "dt_s": 0.002,
+    "action_repeat": 5,
+    "controller": "LQR (dz_nom gains)",
+    "speed_factor": 0.5
+   },
+   "outcome": "Borderline push direction: in the 16-direction sweep CPU falls and Warp recovers (14 vs 12-13 of 16 directions fall in total); in this render both fall. The GPU run is not bit-reproducible, so the outcome of edge cases varies between runs.",
+   "fell": {
+    "cpu": true,
+    "warp": true
+   },
+   "file": "outputs/study/mjx_port/videos/mjx_push_disagree.mp4",
+   "poster": "outputs/study/mjx_port/videos/mjx_push_disagree.jpg",
+   "size_mb": 0.41,
+   "note": "Simulation only. No hardware claims."
+  }
+ ],
+ "tables": {
+  "per_design_cpu_vs_warp": "outputs/study/mjx_port/sweep_cpu_vs_warp_wide.csv",
+  "per_design_results": "outputs/study/mjx_port/sweep_results_all.csv",
+  "per_design_parity": "outputs/study/mjx_port/sweep_parity_all.csv",
+  "nominal_parity": "outputs/study/mjx_port/compare_nom.csv"
+ },
+ "throughput": {
+  "warp": {
+   "1": {
+    "control_steps_per_s": 281.13025607387164,
+    "physics_steps_per_s": 1405.6512803693583,
+    "ms_per_control_step_batch": 3.5570700000971556,
+    "finite_frac": 1.0,
+    "nacon_mean": 6.0
+   },
+   "256": {
+    "control_steps_per_s": 59175.04441285668,
+    "physics_steps_per_s": 295875.2220642834,
+    "ms_per_control_step_batch": 4.3261479993816465,
+    "finite_frac": 1.0,
+    "nacon_mean": 4.92578125
+   },
+   "4096": {
+    "control_steps_per_s": 355335.70700453577,
+    "physics_steps_per_s": 1776678.5350226788,
+    "ms_per_control_step_batch": 11.527127500157803,
+    "finite_frac": 1.0,
+    "nacon_mean": 4.88671875
+   }
+  },
+  "cpu": {
+   "control_steps_per_s": 1364.146429990566,
+   "physics_steps_per_s": 6820.73214995283,
+   "stock_mj_step_control_steps_per_s": 2393.4297171779613
+  }
+ }
+}

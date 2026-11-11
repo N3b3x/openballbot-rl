@@ -1,0 +1,57 @@
+{
+ "run": "wpgen_none_s0",
+ "speed": 0.6,
+ "dr": false,
+ "kinds": {
+  "flat": {
+   "fall": 0.0625,
+   "crossed": 0.9375,
+   "stayed": 0.0
+  },
+  "step_up": {
+   "fall": 0.515625,
+   "crossed": 0.484375,
+   "stayed": 0.0
+  },
+  "step_down": {
+   "fall": 0.125,
+   "crossed": 0.875,
+   "stayed": 0.0
+  },
+  "small_drop": {
+   "fall": 0.34375,
+   "crossed": 0.65625,
+   "stayed": 0.0
+  },
+  "large_drop": {
+   "fall": 0.59375,
+   "crossed": 0.390625,
+   "stayed": 0.015625
+  },
+  "ramp_up": {
+   "fall": 0.046875,
+   "crossed": 0.75,
+   "stayed": 0.203125
+  },
+  "ramp_down": {
+   "fall": 0.359375,
+   "crossed": 0.640625,
+   "stayed": 0.0
+  },
+  "stairs": {
+   "fall": 0.484375,
+   "crossed": 0.421875,
+   "stayed": 0.09375
+  },
+  "bump": {
+   "fall": 0.765625,
+   "crossed": 0.21875,
+   "stayed": 0.015625
+  },
+  "rough": {
+   "fall": 0.140625,
+   "crossed": 0.796875,
+   "stayed": 0.0625
+  }
+ }
+}
