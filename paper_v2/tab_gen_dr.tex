@@ -1,0 +1,19 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Domain randomisation ranges (configs/env/dz\_nom.yaml and train\_dev.py).}\label{tab:gen_dr}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{p{2.6cm}p{6cm}p{2.4cm}p{3.6cm}}\toprule
+Quantity & Range & When & Notes\\\midrule
+Robot design & one of 11 designs, uniform & per episode & Table C\\
+Base mass and ball mass & each times (1 plus uniform plus or minus 0.15) & per episode & independent draws\\
+Wheel-ball transverse friction & times (1 plus uniform plus or minus 0.20) & per episode & the cross-roller direction of the anisotropic pair\\
+Wheel damping & uniform 0.07 to 0.15 N m s times the design's nominal damping over 0.1 & per episode, each wheel & master scale widens the spread around 0.1\\
+Torque scale & 1 plus uniform plus or minus 0.15 & per episode & applied to the commanded torque\\
+Action latency & with probability 0.2 the previous action is applied instead & per control step & probability capped at 0.6 when scaled\\
+Observation noise & Gaussian, sigma 0.01 (orientation 0.25 sigma, angular velocity 2 sigma, linear velocity 1 sigma) & per control step & slots 0 to 8 only\\
+Pushes & horizontal force 5 to 20 N (times the design push factor), random direction, 5 control steps (50 ms) & every 2 to 4 s & factor = push range of the design over 20 N\\
+Pulls & horizontal force 3 to 12 N, random direction, 0.5 to 2 s & every 4 to 10 s & only in runs with pulls on; not scaled per design\\
+Floor material & one of 7 classes; friction times (1 plus uniform plus or minus 0.15) & per episode & Table B\\
+Terrain tile and start & uniform over 64 tiles; start offset uniform plus or minus 0.3 m; start yaw uniform over a full turn & per episode & Table A\\
+Master scale (wide runs) & multiplies mass, friction, torque, damping spread, latency probability and noise ranges; 1 to 1.75 over the first half of training & per iteration & does not scale pushes or pulls\\
+\bottomrule\end{tabular}}
+\end{table*}

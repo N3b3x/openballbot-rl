@@ -51,6 +51,8 @@ from ballbot_gym.core.config import get_component_config
 from ballbot_gym.sensors import RGBDInputs, StampedImPair
 from ballbot_gym.utils.helpers import warnings_stdout_off, sample_direction_uniform
 from ballbot_gym.utils.logging import save_episode_logs
+from ballbot_gym.utils.contact_frame import ContactFrameStepper
+from ballbot_gym.sensors.tof import ToFArray
 from ballbot_gym.envs.observation_spaces import create_observation_space
 
 # Default data type for all arrays (float32 for efficiency and compatibility)
@@ -209,6 +211,8 @@ class BBotSimulation(gym.Env):
             env_config = {}
         env_settings = env_config.get("env", {})
         camera_settings = env_config.get("camera", {})
+        if camera_settings.get("enabled", True) is False:
+            disable_cameras = True  # proprioception-only ablation
         logging_settings = env_config.get("logging", {})
         
         # Override log_options with config if provided
@@ -220,7 +224,75 @@ class BBotSimulation(gym.Env):
         self.xml_path = xml_path
         self.max_ep_steps = env_settings.get("max_ep_steps", max_ep_steps if max_ep_steps is not None else 4000)
         self.max_allowed_tilt = env_settings.get("max_allowed_tilt", 20.0)  # degrees
+        # robot must stay on the ball: angle of base-above-ball-centre line from vertical (None = no check)
+        self.max_ball_offset_deg = env_settings.get("max_ball_offset_deg", None)
+        self.lean_coef = env_settings.get("lean_coef", 0.0)
+        # domain randomisation + disturbances (None = nominal). Keys (all optional):
+        #   mass: +-frac on base and ball mass   friction: +-frac on wheel-ball pair friction
+        #   damping: [lo, hi] wheel damping       torque: +-frac motor torque scale
+        #   latency_p: prob. an action is applied one step late   obs_noise: std scale (vel 1x, gyro 2x, orient 0.25x)
+        #   push_force: [lo, hi] N horizontal push on the base   push_every: [lo, hi] s   push_dur: s
+        self.dr = env_settings.get("dr", None)
+        self.init_yaw_random = env_settings.get("init_yaw_random", False)
+        self.obs_vint = env_settings.get("obs_vint", False)   # add integrated velocity error to observations
+        # command-direction cone and minimum speed (e.g. step-climbing training toward +y)
+        self.cmd_ang_range = tuple(env_settings.get("cmd_ang_range", [0.0, 2 * np.pi]))
+        self.cmd_vmin = env_settings.get("cmd_vmin", 0.0)
+        self._vint = np.zeros(2)
+        # residual control: action = LQR(model-based) action + residual_scale * policy action
+        self.residual_lqr = env_settings.get("residual_lqr", False)
+        self._env_settings_lqr_json = env_settings.get("lqr_model_json")   # per-morphology LQR model (design studies)
+        # hybrid controller: the policy outputs 3 wheel actions + 1 gate logit; applied = (1-g) a_LQR + g a_pi
+        self.hybrid_gate = env_settings.get("hybrid_gate", False)
+        self.gate_init = float(env_settings.get("gate_init", 0.1))    # (not used by env; documentation of the zero-init bias)
+        self._morph_pool = env_settings.get("morph_pool") or []        # list of design dicts (xml/json/tau/damp/armature/ctx)
+        self._morph_ctx = np.array(env_settings.get("morph_ctx", [0, 0, 0, 0]), dtype=np.float32)
+        self._morph_idx = None
+        self._obs_morph = bool(self._morph_pool) or ("morph_ctx" in env_settings)
+        self._lqr_act = np.zeros(3, dtype=np.float32)
+        self._env_settings_all = env_settings
+        self._motor = env_settings.get("motor")     # {omega_nl, tau_stall, fc, lag}: realistic actuator model (off by default)
+        self._tau_act = np.zeros(3)
+        self.residual_scale = env_settings.get("residual_scale", 0.3)
+        self._lqr = None
+        self._last_obs = None
+        self.ball_offset_coef = env_settings.get("ball_offset_coef", 0.0)   # soft penalty on (offset/limit)^2
+        self.action_rate_coef = env_settings.get("action_rate_coef", 0.0)  # <= 0, penalty on |a_t - a_t-1|^2
         self.max_wheel_velocity = env_settings.get("max_wheel_velocity", 10.0)  # rad/s
+        # Physics steps per policy decision (1 = 500 Hz control as in the paper)
+        self.action_repeat = int(env_settings.get("action_repeat", 1))
+        # Goal distance along the target direction [m]. Reaching it ends the episode as a
+        # success (time-limit style truncation so PPO bootstraps the value). None = disabled.
+        self.goal_progress = env_settings.get("goal_progress", None)
+        # Waypoint task (H3). goal_mode: None | "relative" (obs = goal - position, closed loop)
+        # | "direction" (obs = unit direction to the goal at reset, open loop).
+        self.goal_mode = env_settings.get("goal_mode", None)
+        self.goal_radius = float(env_settings.get("goal_radius", 0.3))
+        self.goal_dist_range = tuple(env_settings.get("goal_dist_range", (2.0, 3.0)))
+        self.goal_bearing_deg = float(env_settings.get("goal_bearing_deg", 60.0))
+        self.goal_xy = np.array([0.0, 3.0])
+        self.goal_dir0 = np.array([0.0, 1.0])
+        # Velocity-command mode: obs["cmd"] = [vx, vy, wz] (world frame, m/s and rad/s), resampled every
+        # cmd_resample_steps decisions; reward = exp tracking of planar velocity and yaw rate.
+        self.command_mode = bool(env_settings.get("command_mode", False))
+        self.cmd_vmax = float(env_settings.get("cmd_vmax", 1.0))
+        self.cmd_wmax = float(env_settings.get("cmd_wmax", 2.0))
+        self.cmd_resample_steps = int(env_settings.get("cmd_resample_steps", 200))
+        self.cmd_zero_prob = float(env_settings.get("cmd_zero_prob", 0.1))
+        self.cmd_sigma_v = float(env_settings.get("cmd_sigma_v", 0.25))
+        self.cmd_sigma_w = float(env_settings.get("cmd_sigma_w", 0.5))
+        self.cmd_reward = env_settings.get("cmd_reward", "exp")  # "exp" | "dot"
+        self.cmd_fixed = env_settings.get("cmd_fixed")  # optional fixed [vx, vy, wz] for evaluation
+        self.wheel_damping = env_settings.get("wheel_damping")  # override joint damping [N m s/rad]
+        self.obs_vel_clip = float(env_settings.get("obs_vel_clip", 2.0))
+        self.cmd = np.zeros(3)
+        self.cmd_err_hist = []
+        # Re-align omniwheel contact frames in Python (needed for stock, unpatched MuJoCo)
+        self.fix_wheel_contacts = bool(env_settings.get("fix_wheel_contacts", True))
+        # Optional depth corruption for the perception-robustness study (H2)
+        self.depth_noise_std = float(camera_settings.get("depth_noise_std", 0.0))
+        self.depth_dropout = float(camera_settings.get("depth_dropout", 0.0))
+        self.depth_occlusion = float(camera_settings.get("depth_occlusion", 0.0))
         self.camera_frame_rate = camera_settings.get("frame_rate", 90)  # Hz
         self.depth_only = depth_only
         
@@ -229,12 +301,14 @@ class BBotSimulation(gym.Env):
         self.reward_scale = reward_config_dict.get("scale", 0.01)  # Default: /100
         self.action_reg_coef = reward_config_dict.get("action_reg_coef", -0.0001)
         self.survival_bonus = reward_config_dict.get("survival_bonus", 0.02)
+        self.fall_penalty = float(reward_config_dict.get("fall_penalty", 0.0))
+        self.reward_cap = reward_config_dict.get("cap", None)  # max raw directional speed [m/s]
 
         # Define action space: 3D continuous actions for three omniwheels
         # Actions are normalized to [-1, 1] and scaled internally to [-10, 10] rad/s
         self.action_space = gym.spaces.Box(-1.0,
                                            1.0,
-                                           shape=(3, ),
+                                           shape=(4 if env_settings.get("hybrid_gate", False) else 3, ),
                                            dtype=_default_dtype)
 
         # Determine number of channels: 1 for depth-only, 4 for RGB-D (RGB + depth)
@@ -255,11 +329,46 @@ class BBotSimulation(gym.Env):
             disable_cameras=disable_cameras
         )
 
+        if self.goal_mode:
+            spaces = dict(self.observation_space.spaces)
+            spaces["goal"] = gym.spaces.Box(-1.5, 1.5, shape=(2, ), dtype=_default_dtype)
+            self.observation_space = gym.spaces.Dict(spaces)
+        if self.command_mode:
+            spaces = dict(self.observation_space.spaces)
+            spaces["cmd"] = gym.spaces.Box(-5.0, 5.0, shape=(3, ), dtype=_default_dtype)
+            spaces["heading"] = gym.spaces.Box(-1.0, 1.0, shape=(2, ), dtype=_default_dtype)
+            if self.obs_vint:
+                spaces["vint"] = gym.spaces.Box(-1.0, 1.0, shape=(2, ), dtype=_default_dtype)
+            if self.hybrid_gate:
+                spaces["lqr_act"] = gym.spaces.Box(-1.0, 1.0, shape=(3, ), dtype=_default_dtype)
+            if self._obs_morph:
+                spaces["morph"] = gym.spaces.Box(-5.0, 5.0, shape=(4, ), dtype=_default_dtype)
+            self.observation_space = gym.spaces.Dict(spaces)
+
+        # Optional multizone ToF sensors (env_config["tof"] = list of sensor dicts) and the privileged
+        # height scan for teacher policies (env_config["height_scan"] = {"x": [lo, hi, n], "y": [lo, hi, n]}).
+        self._tof_cfg = env_config.get("tof") or []
+        self._scan_cfg = env_config.get("height_scan")
+        self._tof_extra_noise = float(env_settings.get("tof_extra_noise", 0.0))
+        self._tof_extra_dropout = float(env_settings.get("tof_extra_dropout", 0.0))
+
         # Load MuJoCo model and create simulation data structure
         # The model contains all physical properties (masses, inertias, geometries, etc.)
         # The data structure holds the current simulation state (positions, velocities, etc.)
-        self.model = mujoco.MjModel.from_xml_path(self.xml_path)
-        self.data = mujoco.MjData(self.model)
+        if env_settings.get("xml_path"):                      # morphology variants (design studies)
+            self.xml_path = str(env_settings["xml_path"])
+        self._integrator = env_settings.get("integrator", "rk4")   # "rk4" (model default) or "implicitfast" (~3x faster)
+        self._wheel_armature = env_settings.get("wheel_armature")
+        self._load_model()
+        self._tq_scale, self._prev_act, self._push_t, self._push_left, self._push_f = 1.0, None, 0, 0, np.zeros(3)
+        self._tof = ToFArray(self.model, self._tof_cfg) if self._tof_cfg else None
+        spaces = dict(self.observation_space.spaces)
+        if self._tof is not None:
+            spaces["tof"] = gym.spaces.Box(0.0, 1.0, shape=(self._tof.size,), dtype=_default_dtype)
+        if self._scan_cfg:
+            n_scan = int(self._scan_cfg["x"][2]) * int(self._scan_cfg["y"][2])
+            spaces["height_scan"] = gym.spaces.Box(-1.0, 1.0, shape=(n_scan,), dtype=_default_dtype)
+        self.observation_space = gym.spaces.Dict(spaces)
 
         # Initialize RGB-D camera system if enabled
         # Cameras are updated at a lower frequency than physics (see camera_frame_rate)
@@ -509,8 +618,20 @@ class BBotSimulation(gym.Env):
             r_seed = terrain_config_dict["seed"]
             self.last_r_seed = r_seed
         
+        # Optional per-episode difficulty: amplitude ~ U(lo, hi) (Perlin only)
+        extra = {}
+        amp_range = terrain_config_dict.get("amplitude_range")
+        if amp_range:
+            self.last_amplitude = float(self._np_random.uniform(*amp_range))
+            extra["amplitude"] = self.last_amplitude
+
+        # Generic per-episode parameter ranges, e.g. {"step_height_m": [0.0, 0.04]}
+        for name, (lo, hi) in (terrain_config_dict.get("ranges") or {}).items():
+            extra[name] = float(self._np_random.uniform(lo, hi))
+        self.last_terrain_params = dict(extra)
+
         # Generate terrain with seed
-        self.model.hfield_data = terrain_gen(nrows, seed=r_seed)
+        self.model.hfield_data = terrain_gen(nrows, seed=r_seed, **extra)
 
         # Update viewer if active (so terrain is visible)
         if self.passive_viewer is not None:
@@ -564,6 +685,64 @@ class BBotSimulation(gym.Env):
 
         return init_robot_height_offset
 
+    def _load_model(self):
+        """(Re)build model, data and stepper from self.xml_path and the current actuator/damping/armature settings."""
+        self.model = mujoco.MjModel.from_xml_path(self.xml_path)
+        self.data = mujoco.MjData(self.model)
+        if self._integrator == "implicitfast":
+            self.model.opt.integrator = mujoco.mjtIntegrator.mjINT_IMPLICITFAST
+        self._stepper = ContactFrameStepper(self.model, fix_frames=self.fix_wheel_contacts)
+        # The actuators are torque motors: "max_wheel_velocity" scales the commanded torque [N m]
+        # (the XML hard-codes +-10), so widen the control range when asking for more torque.
+        self.model.actuator_ctrlrange[:] = np.array([-1.0, 1.0]) * max(self.max_wheel_velocity, 1e-6)
+        if self._wheel_armature is not None:   # rotor inertia override (drive design studies)
+            for k in range(3):
+                self.model.dof_armature[self.model.joint(f"wheel_joint_{k}").dofadr[0]] = float(self._wheel_armature)
+        if self.wheel_damping is not None:
+            for k in range(3):
+                self.model.dof_damping[self.model.joint(f"wheel_joint_{k}").dofadr[0]] = float(self.wheel_damping)
+        self._nom = dict(mass=self.model.body_mass.copy(), damping=self.model.dof_damping.copy(),
+                         pair_friction=self.model.pair_friction.copy())
+        self._lqr = None
+        self._wheel_dofs = np.array([self.model.joint(f"wheel_joint_{k}").dofadr[0] for k in range(3)])
+
+    def _pick_morphology(self):
+        """Morphology randomisation: draw a design from the pool at reset and rebuild the model when it changes."""
+        i = int(self._np_random.integers(len(self._morph_pool)))
+        if i == self._morph_idx:
+            return
+        sp = self._morph_pool[i]
+        self._morph_idx = i
+        self.xml_path = str(sp["xml"])
+        self.max_wheel_velocity = float(sp["tau"])
+        self.wheel_damping = float(sp["damp"])
+        self._wheel_armature = float(sp["armature"])
+        self._env_settings_lqr_json = sp.get("json")
+        self._morph_ctx = np.array(sp["ctx"], dtype=np.float32)
+        self._load_model()
+
+    def _randomize(self):
+        """Sample physical parameters for this episode around the nominal model (domain randomisation)."""
+        r, dr, nom, m = self._np_random, self.dr, self._nom, self.model
+        m.body_mass[:] = nom["mass"]
+        if dr.get("mass"):
+            for b in ("base", "ball"):
+                i = m.body(b).id
+                m.body_mass[i] = nom["mass"][i] * (1 + r.uniform(-dr["mass"], dr["mass"]))
+        m.pair_friction[:] = nom["pair_friction"]
+        if dr.get("friction"):
+            m.pair_friction[:, 1] = nom["pair_friction"][:, 1] * (1 + r.uniform(-dr["friction"], dr["friction"]))
+        m.dof_damping[:] = nom["damping"]
+        if dr.get("damping"):
+            for k in range(3):
+                # the range is specified for the nominal robot (centre 0.1 N m s/rad); scale it with this design's nominal damping
+                a = m.joint(f"wheel_joint_{k}").dofadr[0]
+                m.dof_damping[a] = r.uniform(*dr["damping"]) * nom["damping"][a] / 0.1
+        self._tq_scale = 1 + r.uniform(-dr.get("torque", 0.0), dr.get("torque", 0.0))
+        self._prev_act = None
+        self._push_left = 0
+        self._push_t = int(r.uniform(*dr.get("push_every", [2.0, 4.0])) * 100)
+
     def reset(self, seed=None, goal: str = "random", **kwargs):
         """
         Reset the environment to an initial state for a new episode.
@@ -598,11 +777,26 @@ class BBotSimulation(gym.Env):
             # Initialize if not already done (e.g., in eval mode)
             self._np_random = self.np_random
 
+        if self._morph_pool:
+            self._pick_morphology()
         # Reset goal direction and reward function
         self._reset_goal_and_reward_objs()
+        if self.command_mode:
+            self._sample_cmd()
+        if self.goal_mode:
+            phi = np.radians(self._np_random.uniform(-self.goal_bearing_deg, self.goal_bearing_deg))
+            dist = self._np_random.uniform(*self.goal_dist_range)
+            self.goal_dir0 = np.array([np.sin(phi), np.cos(phi)])
+            self.goal_xy = dist * self.goal_dir0
+
+        if self.dr:
+            self._randomize()
 
         # Reset episode counters
         self.step_counter = 0
+        self._prev_cmd = None
+        self._vint = np.zeros(2)
+        self._tau_act = np.zeros(3)
         self.prev_data_time = 0
 
         # Generate new terrain and get initial height offset
@@ -615,6 +809,9 @@ class BBotSimulation(gym.Env):
         # This positions the robot on the terrain surface
         self.data.joint("base_free_joint").qpos[2] += init_robot_height_offset
         self.data.joint("ball_free_joint").qpos[2] += init_robot_height_offset
+        if self.init_yaw_random:   # uniform starting heading so world-frame commands are trained at every yaw
+            yaw0 = self._np_random.uniform(-np.pi, np.pi)
+            self.data.joint("base_free_joint").qpos[3:7] = [np.cos(yaw0 / 2), 0.0, 0.0, np.sin(yaw0 / 2)]
         
         # Forward kinematics: compute positions, velocities, etc.
         mujoco.mj_forward(self.model, self.data)
@@ -668,6 +865,7 @@ class BBotSimulation(gym.Env):
                 print(f"Creating log_dir {self.log_dir}")
             os.mkdir(self.log_dir)
 
+        self._last_obs = obs
         return obs, info
 
     def _save_logs(self):
@@ -697,6 +895,62 @@ class BBotSimulation(gym.Env):
             num_episodes=self.num_episodes,
             eval_env=self.eval_env
         )
+
+    def _corrupt_depth(self, img):
+        """Apply optional noise / dropout / occlusion to the depth channel (last channel)."""
+        if not (self.depth_noise_std or self.depth_dropout or self.depth_occlusion):
+            return img
+        rng = self._np_random
+        depth = img[..., -1]
+        if self.depth_noise_std:
+            depth = depth + rng.normal(0.0, self.depth_noise_std, depth.shape)
+        if self.depth_dropout:
+            depth = np.where(rng.random(depth.shape) < self.depth_dropout, 1.0, depth)
+        if self.depth_occlusion:
+            h, w = depth.shape
+            frac = np.sqrt(self.depth_occlusion)
+            bh, bw = max(1, int(h * frac)), max(1, int(w * frac))
+            y0 = int(rng.integers(0, h - bh + 1))
+            x0 = int(rng.integers(0, w - bw + 1))
+            depth[y0:y0 + bh, x0:x0 + bw] = 0.0  # near-range occluder
+        img[..., -1] = np.clip(depth, 0.0, 1.0)
+        return img
+
+    def _yaw(self):
+        w, x, y, z = self.data.xquat[self.model.body("base").id]
+        return float(np.arctan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z)))
+
+    def _heading_sincos(self):
+        yaw = self._yaw()
+        return np.array([np.sin(yaw), np.cos(yaw)])
+
+    def _sample_cmd(self):
+        if self.cmd_fixed is not None:
+            self.cmd = np.asarray(self.cmd_fixed, dtype=float)
+            return
+        rng = self._np_random
+        if rng.random() < self.cmd_zero_prob:
+            self.cmd = np.zeros(3)
+            return
+        sp = rng.uniform(self.cmd_vmin, self.cmd_vmax)
+        ang = rng.uniform(*self.cmd_ang_range)          # world-frame direction; pi/2 = +y
+        self.cmd = np.array([sp * np.cos(ang), sp * np.sin(ang), rng.uniform(-self.cmd_wmax, self.cmd_wmax)])
+
+    def _height_scan(self, position):
+        """Terrain heights [m] relative to the terrain under the robot, on a grid around/ahead of it
+        (privileged information for teacher policies), clipped to +-10 cm and scaled to [-1, 1]."""
+        n = self.model.hfield_nrow.item()
+        half = self.model.hfield_size[0, 0]
+        z = self.model.hfield_data.reshape(n, n) * self.model.hfield_size[0, 2]
+
+        def idx(v):
+            return np.clip(np.round((v + half) / (2 * half) * (n - 1)).astype(int), 0, n - 1)
+
+        xs = np.linspace(*self._scan_cfg["x"][:2], int(self._scan_cfg["x"][2])) + position[0]
+        ys = np.linspace(*self._scan_cfg["y"][:2], int(self._scan_cfg["y"][2])) + position[1]
+        ref = z[idx(np.array(position[1])), idx(np.array(position[0]))]
+        h = z[np.ix_(idx(ys), idx(xs))].T  # hfield rows = y, cols = x; scan is [x, y]
+        return np.clip((h - ref).ravel() / 0.1, -1.0, 1.0).astype(_default_dtype)
 
     def _get_obs(self, last_ctrl):
         """
@@ -749,8 +1003,10 @@ class BBotSimulation(gym.Env):
             # See docstring for detailed explanation of frame rate logic
             if self.prev_im_pair.im_0 is None or delta_time >= 1.0 / self.camera_frame_rate:
                 # Render new images from both cameras
-                rgbd_0 = self.rgbd_inputs(self.data, "cam_0").astype(_default_dtype)
-                rgbd_1 = self.rgbd_inputs(self.data, "cam_1").astype(_default_dtype)
+                rgbd_0 = self._corrupt_depth(
+                    self.rgbd_inputs(self.data, "cam_0").astype(_default_dtype))
+                rgbd_1 = self._corrupt_depth(
+                    self.rgbd_inputs(self.data, "cam_1").astype(_default_dtype))
                 
                 # Log images if enabled
                 if self.log_options["cams"]:
@@ -792,12 +1048,14 @@ class BBotSimulation(gym.Env):
         # data.cvel provides 6D velocity: [linear_vel (3D), angular_vel (3D)]
         # This is more accurate than finite difference and doesn't require state storage
         cvel = self.data.cvel[body_id]
-        linear_vel = cvel[:3].copy().astype(_default_dtype)  # Linear velocity in world frame [m/s]
-        angular_vel = cvel[3:].copy().astype(_default_dtype)  # Angular velocity in world frame [rad/s]
+        # MuJoCo's cvel is (rotational:3, translational:3). The original code had the two
+        # halves swapped, so the "directional" reward was paying for angular velocity.
+        angular_vel = cvel[:3].copy().astype(_default_dtype)  # Angular velocity in world frame [rad/s]
+        linear_vel = cvel[3:].copy().astype(_default_dtype)  # Linear velocity in world frame [m/s]
         
         # Clip velocities to reasonable ranges for observations
-        vel = np.clip(linear_vel, a_min=-2.0, a_max=2.0)
-        angular_vel = np.clip(angular_vel, a_min=-2.0, a_max=2.0)
+        vel = np.clip(linear_vel, a_min=-self.obs_vel_clip, a_max=self.obs_vel_clip)
+        angular_vel = np.clip(angular_vel, a_min=-self.obs_vel_clip, a_max=self.obs_vel_clip)
 
         # ========== CONSTRUCT OBSERVATION DICTIONARY ==========
         if self.disable_cameras:
@@ -826,6 +1084,30 @@ class BBotSimulation(gym.Env):
                 ]).astype(_default_dtype),
             }
 
+        if self._tof is not None:
+            obs["tof"] = self._tof(self.data, self._np_random, self._tof_extra_noise, self._tof_extra_dropout)
+        if self._scan_cfg:
+            obs["height_scan"] = self._height_scan(position)
+
+        if self.command_mode:
+            obs["cmd"] = self.cmd.astype(_default_dtype)
+            obs["heading"] = self._heading_sincos().astype(_default_dtype)
+            if self.obs_vint:
+                # integral of the planar velocity error (integral-action state for the policy), clipped
+                self._vint = np.clip(self._vint + (self.cmd[:2] - obs["vel"][:2]) * 0.01, -1.0, 1.0)
+                obs["vint"] = self._vint.astype(_default_dtype)
+            if self.hybrid_gate:
+                obs["lqr_act"] = self._lqr_act.astype(_default_dtype)
+            if self._obs_morph:
+                obs["morph"] = self._morph_ctx.astype(_default_dtype)
+
+        if self.goal_mode:
+            if self.goal_mode == "relative":
+                g = np.clip((self.goal_xy - position[:2]) / 3.0, -1.5, 1.5)
+            else:
+                g = self.goal_dir0
+            obs["goal"] = np.asarray(g, dtype=_default_dtype)
+
         return obs
 
     def _get_info(self):
@@ -847,7 +1129,8 @@ class BBotSimulation(gym.Env):
             "success": False,  # Currently unused (could indicate goal reached)
             "failure": False,   # Set to True in step() if robot falls
             "step_counter": self.step_counter,  # Current step in episode
-            "pos2d": position[:-1]  # 2D position [x, y] (exclude height z)
+            "pos2d": position[:-1],  # 2D position [x, y] (exclude height z)
+            "progress": float(np.dot(position[:-1], getattr(self, "goal_2d", [0.0, 1.0]))),
         }
         return info
 
@@ -900,7 +1183,29 @@ class BBotSimulation(gym.Env):
 
         # Scale actions from [-1, 1] to [-max_wheel_velocity, max_wheel_velocity] rad/s
         # This is the actual wheel velocity command
-        ctrl = omniwheel_commands * self.max_wheel_velocity
+        if self.residual_lqr or self.hybrid_gate:
+            if self._lqr is None:
+                from ballbot_gym.controllers.lqr import LQRPolicy
+                _mj = self._env_settings_lqr_json
+                self._lqr = LQRPolicy(self, model_json=_mj) if _mj else LQRPolicy(self)
+            o = dict(self._last_obs)
+            o["cmd"] = np.asarray(self.cmd, dtype=float)     # current command (may be set externally)
+            base_act, _ = self._lqr.predict(o)
+            base_act = np.asarray(base_act, dtype=float)
+            self._lqr_act = np.clip(base_act, -1, 1).astype(np.float32)
+            if self.hybrid_gate:
+                oc = np.asarray(omniwheel_commands, dtype=float)
+                g = 0.5 * (1.0 + np.clip(oc[3], -1.0, 1.0))
+                self._gate = float(g)
+                omniwheel_commands = np.clip((1.0 - g) * base_act + g * oc[:3], -1.0, 1.0)
+            else:
+                omniwheel_commands = np.clip(base_act + self.residual_scale * np.asarray(omniwheel_commands), -1.0, 1.0)
+        applied = omniwheel_commands
+        if self.dr:
+            if self._prev_act is not None and self._np_random.random() < self.dr.get("latency_p", 0.0):
+                applied = self._prev_act          # this action arrives one control step late
+            self._prev_act = np.array(omniwheel_commands, copy=True)
+        ctrl = applied * self.max_wheel_velocity * self._tq_scale
         ctrl = np.clip(ctrl, a_min=-self.max_wheel_velocity, a_max=self.max_wheel_velocity)  # Safety: prevent extreme commands
 
         # Apply control commands (negative for correct coordinate system)
@@ -908,8 +1213,28 @@ class BBotSimulation(gym.Env):
         
         # Step physics simulation forward
         # Suppress warnings about objective convexity (benign MuJoCo warnings)
-        with warnings_stdout_off():
-            mujoco.mj_step(self.model, self.data)
+        if self.dr and self.dr.get("push_force"):
+            self._push_t -= 1
+            if self._push_t <= 0 and self._push_left <= 0:
+                ang = self._np_random.uniform(0, 2 * np.pi)
+                self._push_f = self._np_random.uniform(*self.dr["push_force"]) * np.array([np.cos(ang), np.sin(ang), 0.0])
+                self._push_left = max(1, int(round(self.dr.get("push_dur", 0.05) * 100)))
+                self._push_t = int(self._np_random.uniform(*self.dr.get("push_every", [2.0, 4.0])) * 100)
+            if self._push_left > 0:
+                self.data.xfrc_applied[self.model.body("base").id, :3] = self._push_f
+                self._push_left -= 1
+        mm = self._motor
+        for _ in range(self.action_repeat):
+            if mm:
+                # realistic actuator: first-order current lag, torque-speed curve (back-EMF), Coulomb friction
+                w = self.data.qvel[self._wheel_dofs]
+                cmd = -ctrl
+                self._tau_act += (cmd - self._tau_act) * (self.model.opt.timestep / (mm.get("lag", 0.002) + self.model.opt.timestep))
+                tlim = mm.get("tau_stall", self.max_wheel_velocity) * np.clip(1.0 - np.abs(w) / mm.get("omega_nl", 1e9), 0.0, 1.0)
+                tau = np.where(self._tau_act * w > 0, np.clip(self._tau_act, -tlim, tlim), self._tau_act)
+                tau = tau - mm.get("fc", 0.0) * np.tanh(w / 0.1)
+                self.data.ctrl[:] = np.clip(tau, -self.max_wheel_velocity, self.max_wheel_velocity)
+            self._stepper.step(self.data)
 
         # Reset applied forces (MuJoCo applies forces until explicitly reset)
         # This prevents forces from accumulating across steps
@@ -917,6 +1242,10 @@ class BBotSimulation(gym.Env):
 
         # Get current observation and info
         obs = self._get_obs(omniwheel_commands.astype(_default_dtype))
+        if self.dr and self.dr.get("obs_noise"):
+            sd = float(self.dr["obs_noise"])
+            for k, f in (("vel", 1.0), ("angular_vel", 2.0), ("orientation", 0.25)):
+                obs[k] = (obs[k] + self._np_random.normal(0, sd * f, size=obs[k].shape)).astype(obs[k].dtype)
         info = self._get_info()
         terminated = False
         truncated = False  # Not used (reserved for time limits)
@@ -926,15 +1255,89 @@ class BBotSimulation(gym.Env):
         # 1. Directional reward: velocity component in target direction
         # This encourages movement toward the goal direction
         # Scaled by reward_scale (default: 0.01 = /100) to keep rewards in reasonable range
-        reward = self.reward_obj(obs) * self.reward_scale
+        if self.command_mode:
+            if self.step_counter > 0 and self.step_counter % self.cmd_resample_steps == 0:
+                self._sample_cmd()
+                obs["cmd"] = self.cmd.astype(_default_dtype)
+            ev = float(np.linalg.norm(obs["vel"][:2] - self.cmd[:2]))
+            ew = float(obs["angular_vel"][2] - self.cmd[2])
+            # dense linear terms give a gradient far from the command (standing still no longer plateaus),
+            # exponential terms reward precision near it
+            if self.cmd_reward == "err":
+                # zero baseline at standing (cn - |v - c|), positive slope all the way to the command, plus a
+                # precision bonus near it; overshoot is penalised symmetrically
+                v = obs["vel"][:2].astype(float)
+                c = self.cmd[:2]
+                cn = float(np.linalg.norm(c))
+                e = float(np.linalg.norm(v - c))
+                u = c / cn if cn > 0.05 else np.zeros(2)
+                p = float(v @ u) if cn > 0.05 else 0.0
+                wz, cw = float(obs["angular_vel"][2]), float(self.cmd[2])
+                ew_ = abs(wz - cw)
+                raw_reward = (cn - e) + 0.5 * np.exp(-e ** 2 / 0.25 ** 2) + 0.5 * (abs(cw) - ew_) + 0.25 * np.exp(-ew_ ** 2 / 0.5 ** 2)
+                if self.lean_coef and cn > 0.05:
+                    _g = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, "the_ball")
+                    _rel = self.data.xpos[self.model.body("base").id] - self.data.geom_xpos[_g]
+                    lean = float(_rel[:2] @ u) / max(float(_rel[2]), 1e-3)
+                    raw_reward += self.lean_coef * (1.0 - min(max(p / cn, 0.0), 1.0)) * float(np.clip(lean / 0.3, -1.0, 1.0))
+            elif self.cmd_reward == "dot":
+                # zero-baseline projection reward (standing still earns 0), as in the directional task
+                v = obs["vel"][:2].astype(float)
+                c = self.cmd[:2]
+                cn = float(np.linalg.norm(c))
+                if cn > 0.05:
+                    u = c / cn
+                    p = float(v @ u)
+                    raw_t = min(p, cn) - 0.5 * float(np.linalg.norm(v - p * u))
+                else:
+                    raw_t = -float(np.linalg.norm(v))
+                wz, cw = float(obs["angular_vel"][2]), float(self.cmd[2])
+                raw_w = min(np.sign(cw) * wz, abs(cw)) if abs(cw) > 0.05 else -0.5 * abs(wz)
+                raw_reward = raw_t + 0.5 * raw_w
+                if self.lean_coef and cn > 0.05:
+                    # teach acceleration: reward leaning the base ahead of the ball along the command while below
+                    # the commanded speed (fades out as the speed is reached, where steady lean is zero)
+                    _g = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, "the_ball")
+                    _rel = self.data.xpos[self.model.body("base").id] - self.data.geom_xpos[_g]
+                    lean = float(_rel[:2] @ u) / max(float(_rel[2]), 1e-3)
+                    raw_reward += self.lean_coef * (1.0 - min(max(p / cn, 0.0), 1.0)) * float(np.clip(lean / 0.3, -1.0, 1.0))
+            else:
+                raw_reward = float((1.0 - ev / self.cmd_vmax) + (1.0 - abs(ew) / max(self.cmd_wmax, 1.0))
+                                   + 0.5 * np.exp(-ev ** 2 / self.cmd_sigma_v ** 2)
+                                   + 0.5 * np.exp(-ew ** 2 / self.cmd_sigma_w ** 2))
+            info["vel_err"], info["yaw_err"] = ev, ew
+            info["speed"] = float(np.linalg.norm(obs["vel"][:2]))
+            info["yaw_rate"] = float(obs["angular_vel"][2])
+            info["cmd"] = self.cmd.copy()
+        elif self.goal_mode:
+            if self.goal_mode == "relative":
+                vec = self.goal_xy - info["pos2d"]
+                heading = vec / (np.linalg.norm(vec) + 1e-6)
+            else:
+                heading = self.goal_dir0
+            raw_reward = float(np.dot(obs["vel"][:2], heading))
+        else:
+            raw_reward = self.reward_obj(obs)
+        if self.reward_cap is not None:
+            raw_reward = min(raw_reward, self.reward_cap)  # cap speed reward: no incentive to lunge
+        reward = raw_reward * self.reward_scale * self.action_repeat
         self.reward_term_1_hist.append(reward)
 
         # 2. Action regularization: penalize large actions
         # This encourages energy-efficient control and smooth motions
         # The L2 norm squared gives quadratic penalty
-        action_regularization = self.action_reg_coef * (np.linalg.norm(omniwheel_commands)**2)
+        action_regularization = (self.action_reg_coef * self.action_repeat *
+                                 (np.linalg.norm(omniwheel_commands)**2))
         self.reward_term_2_hist.append(action_regularization)
         reward += action_regularization
+
+        # 2b. Smoothness: penalize change between consecutive commands (squared L2)
+        cmd_now = np.asarray(omniwheel_commands, dtype=float).ravel()
+        prev = getattr(self, "_prev_cmd", None)
+        act_rate = 0.0 if prev is None else float(np.sum((cmd_now - prev) ** 2))
+        self._prev_cmd = cmd_now
+        info["act_rate"] = act_rate
+        reward += self.action_rate_coef * self.action_repeat * act_rate
 
         # Update passive viewer if enabled (for visualization)
         if self.passive_viewer:
@@ -981,8 +1384,8 @@ class BBotSimulation(gym.Env):
         # Check if episode exceeded maximum steps
         if self.step_counter >= self.max_ep_steps:
             if self.verbose:
-                print(f"terminated. Cause: {self.step_counter} >= {self.max_ep_steps}")
-            terminated = True
+                print(f"truncated. Cause: {self.step_counter} >= {self.max_ep_steps}")
+            truncated = True  # time limit (bootstrapped by SB3 via TimeLimit.truncated)
 
         # Check if robot has fallen (tilted too much)
         # Compute angle between robot's up-axis and gravity vector
@@ -1005,8 +1408,16 @@ class BBotSimulation(gym.Env):
             up_axis_local.dot(-gravity_local)
         ).item() * 180 / np.pi
 
-        if angle_in_degrees > self.max_allowed_tilt:
-            # Robot has fallen: terminate episode
+        ball_gid = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, "the_ball")
+        rel = self.data.xpos[self.model.body("base").id] - self.data.geom_xpos[ball_gid]
+        off_ball_deg = float(np.degrees(np.arctan2(np.hypot(rel[0], rel[1]), max(rel[2], 1e-6))))
+        info["off_ball_deg"] = off_ball_deg
+        off_ball = self.max_ball_offset_deg is not None and off_ball_deg > self.max_ball_offset_deg
+        if self.max_ball_offset_deg and self.ball_offset_coef:
+            reward -= self.ball_offset_coef * self.action_repeat * (off_ball_deg / self.max_ball_offset_deg) ** 2
+
+        if angle_in_degrees > self.max_allowed_tilt or off_ball:
+            # Robot has fallen (or left the ball): terminate episode
             if self.verbose:
                 print(
                     f"failure after {self.step_counter} steps. "
@@ -1015,16 +1426,28 @@ class BBotSimulation(gym.Env):
             info["success"] = False
             info["failure"] = True
             terminated = True
+            reward -= self.fall_penalty
         else:
             # Robot is still upright: add survival bonus
-            reward += self.survival_bonus
+            reward += self.survival_bonus * self.action_repeat
 
         # Accumulate episode return (for logging/analysis)
         gamma = 1.0  # Discount factor (not used algorithmically, but tracked)
         self.G_tau += (gamma**self.step_counter) * reward
         
         # Save logs if episode ended
-        if terminated:
+        if self.goal_mode:
+            info["goal_dist"] = float(np.linalg.norm(self.goal_xy - info["pos2d"]))
+            if not info["failure"] and info["goal_dist"] <= self.goal_radius:
+                info["success"] = True
+                truncated = True
+        if (self.goal_progress is not None and not info["failure"]
+                and info["progress"] >= self.goal_progress):
+            info["success"] = True
+            truncated = True
+        truncated = truncated and not terminated
+
+        if terminated or truncated:
             if self.verbose:
                 print(colored(
                     f"Episode ended. Return: {self.G_tau:.2f}, Steps: {self.step_counter}",
@@ -1033,6 +1456,7 @@ class BBotSimulation(gym.Env):
                 ))
             self._save_logs()
 
+        self._last_obs = obs
         return obs, reward, terminated, truncated, info
 
     def close(self):

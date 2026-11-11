@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- head:common -->
+<script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}</script>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<!-- /head:common -->
+<title>Videos | Ballbot control research</title>
+<meta name="description" content="Chaptered simulation clips of the corrected-engine ballbot study: why the robot fell and what the ball arrestors change, the recommended controller, obstacle size against speed, and terrain-aware navigation with a perfect map or a time-of-flight sensor. Every clip is a single simulated run.">
+<!-- og -->
+<link rel="canonical" href="https://n3b3x.github.io/openballbot-rl/videos.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ballbot control research">
+<meta property="og:title" content="Videos | Ballbot control research">
+<meta property="og:description" content="Chaptered simulation clips of the corrected-engine ballbot study: why the robot fell and what the ball arrestors change, the recommended controller, obstacle size against speed, and terrain-aware navigation with a perfect map or a time-of-flight sensor. Every clip is a single simulated run.">
+<meta property="og:url" content="https://n3b3x.github.io/openballbot-rl/videos.html">
+<meta property="og:image" content="https://n3b3x.github.io/openballbot-rl/assets/img/social-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A simulated ballbot: a cylindrical robot balanced on a basketball-textured ball, with the title of the study.">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /og -->
+<link rel="stylesheet" href="assets/css/site.css">
+<script type="module" src="assets/js/layout.js"></script>
+<style>
+.chapnav a:focus-visible{outline:2px solid var(--focus)}
+.vhero{padding:clamp(40px,7vw,80px) 0 18px}
+.vhero h1{max-width:20ch}
+.howto{display:grid;gap:14px 22px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:18px 0 0;font-size:.9rem;color:var(--text-2)}
+.howto b{color:var(--text)}
+.howto i.sw{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:middle;margin-right:6px}
+.chapnav{position:sticky;top:58px;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:10px 0}
+.chapnav .wrap{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chapnav a{display:inline-flex;gap:.5em;align-items:center;font:500 .76rem var(--font-mono);padding:.35em .85em;border-radius:99px;border:1px solid var(--line-2);color:var(--text-2)}
+.chapnav a:hover{color:var(--text);border-color:var(--hybrid);text-decoration:none}
+.chapnav a b{color:var(--link);font-weight:500}
+.chap{padding:clamp(40px,6vw,72px) 0 10px;border-top:1px solid var(--line);scroll-margin-top:110px}
+.chap h2{margin:.2em 0 .4em;max-width:26ch}
+.chap .intro{max-width:72ch;color:var(--text-2);font-size:1.02rem;line-height:1.6}
+.chap .intro b{color:var(--text)}
+.pair{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));margin:26px 0 0;position:relative}
+.pair .ph2{grid-column:1/-1;display:flex;gap:12px;align-items:center;flex-wrap:wrap;font:400 .8rem var(--font-mono);color:var(--text-3)}
+.solo{margin:26px 0 0;display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr))}
+.clip{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;min-width:0;scroll-margin-top:120px}
+.clip.fall{border-color:color-mix(in srgb,var(--bad) 40%,var(--line))}
+.clip.ok{border-color:color-mix(in srgb,var(--good) 35%,var(--line))}
+.player{position:relative;aspect-ratio:16/9;background:#000}
+.player video,.player img{width:100%;height:100%;display:block;object-fit:cover}
+.player video{object-fit:contain}
+.ph{all:unset;cursor:pointer;display:block;width:100%;height:100%;position:relative}
+.ph:focus-visible{outline:3px solid var(--hybrid);outline-offset:-3px}
+.ph .play{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(transparent 55%,rgba(0,0,0,.5))}
+.ph .play i{width:58px;height:58px;border-radius:50%;background:rgba(10,14,20,.72);border:1.5px solid rgba(255,255,255,.75);display:grid;place-items:center;transition:transform .2s,background .2s}
+.ph .play i::after{content:"";border-left:17px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:5px}
+.ph:hover .play i{transform:scale(1.08);background:rgba(46,230,196,.35)}
+.tag{position:absolute;right:10px;bottom:10px;font:500 .72rem var(--font-mono);color:#fff;background:rgba(0,0,0,.62);padding:.2em .6em;border-radius:6px}
+.tag.bad{color:#ffb0b0}.tag.good{color:#b5f5c9}
+.txt{padding:16px 18px 18px;display:flex;flex-direction:column;gap:10px;flex:1}
+.txt h3{font:600 1.08rem/1.3 var(--font-display);margin:0}
+.txt .lead{margin:0;font-size:.93rem;line-height:1.55;color:var(--text-2)}
+.setup{display:grid;grid-template-columns:max-content 1fr;gap:3px 12px;margin:0;font-size:.8rem;border-top:1px solid var(--line);padding-top:10px}
+.setup dt{font:500 .68rem var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);padding-top:2px}
+.setup dd{margin:0;color:var(--text-2);font-family:var(--font-mono);font-size:.78rem;overflow-wrap:anywhere}
+.setup dd.on{color:var(--good)}.setup dd.off{color:var(--warn)}
+.watch{margin:0;font-size:.88rem;line-height:1.6;color:var(--text-2)}
+.watch b{color:var(--text)}
+.watch .t{font:500 .74rem var(--font-mono);color:var(--hybrid);background:color-mix(in srgb,var(--hybrid) 12%,transparent);padding:.1em .45em;border-radius:5px;white-space:nowrap}
+.watch .t.bad{color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+.chip.model{color:var(--model)}.chip.learned{color:var(--learned)}.chip.hybrid{color:var(--hybrid)}
+button.both{all:unset;cursor:pointer;font:500 .78rem var(--font-mono);padding:.45em 1em;border-radius:99px;border:1px solid var(--hybrid);color:var(--hybrid)}
+button.both:hover,button.both:focus-visible{background:color-mix(in srgb,var(--hybrid) 14%,transparent);outline:none}
+button.both:focus-visible{outline:2px solid var(--hybrid);outline-offset:2px}
+.note{margin:28px 0 0;font-size:.82rem;color:var(--text-3);max-width:78ch;line-height:1.55}
+.note code{font-size:.78rem}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.end{padding:50px 0 80px}
+@media (max-width:700px){.chapnav{position:static}.txt{padding:14px 14px 16px}.setup{grid-template-columns:1fr}.setup dt{margin-top:4px}}
+@media (prefers-reduced-motion:reduce){.ph .play i{transition:none}}
+</style>
+</head>
+<body>
+<!-- nojs --><noscript><nav class="nojs" aria-label="Main (JavaScript is off)"><a href="index.html">Overview</a><a href="learn/index.html">Learn</a><a href="generalist.html">Results</a><a href="videos.html">Videos</a><a href="design.html">Design guidelines</a><a href="deploy.html">ROS 2</a><a href="math.html">Physics</a><a href="architecture.html">Controller</a><a href="reproduce.html">Reproduce</a><a href="glossary.html">Glossary</a></nav></noscript><!-- /nojs -->
+<main>
+<header class="vhero wrap">
+  <p class="eyebrow">Videos</p>
+  <h1>Watch it balance, and watch it fall</h1>
+  <p class="lede">Thirty-three clips from the corrected engine, in six chapters that follow the study: why the robot fell and what three small rollers changed, the controller recommended at the time and its known weakness, why obstacle size and not speed decides a fall, how the ball radius sets the step a robot can climb, what seeing the terrain buys when the obstacle can be avoided, and the motion-layer controller (g34), compared with g40.</p>
+  <p class="badge-sim">Simulation only &middot; every clip is one simulated run, not a statistic</p>
+  <div class="howto" aria-label="How to read a clip">
+    <div><b>The scene.</b> MuJoCo-Warp GPU physics rendered with the MuJoCo renderer on a checkerboard floor. The robot is a green cylinder on an orange ball; the red sphere is the goal marker. Terrain features are drawn in the floor.</div>
+    <div><b>The paths.</b> <i class="sw" style="background:#2ec4ff"></i>cyan is the commanded path, <i class="sw" style="background:#5ee08a"></i>green is the path actually driven. When the green line leaves the cyan line the controller is not keeping up.</div>
+    <div><b>The HUD.</b> Top left: time, achieved speed, commanded speed and body tilt. The tilt is the number to watch before a fall; the title bar states the policy, design, task and whether the ball arrestors are fitted.</div>
+    <div><b>Clip length.</b> A clip ends at its set length (8, 12 or 20 s) or at the fall; the HUD time is simulation time, so a half-speed clip shows fewer seconds than it lasts. The rates quoted next to each clip come from the evaluation tables, not from the clip. Clips named c8_* carry the randomisation flag in their metadata (off in all of them); older clips do not record it.</div>
+  </div>
+</header>
+
+<nav class="chapnav" aria-label="Chapters"><div class="wrap">
+  <a href="#why"><b>1</b> Why it fell, and the arrestors</a>
+  <a href="#rec"><b>2</b> The recommended controller</a>
+  <a href="#size"><b>3</b> Obstacle size, not speed</a>
+  <a href="#ball"><b>4</b> Ball size sets the step size</a>
+  <a href="#nav"><b>5</b> Terrain-aware navigation</a>
+  <a href="#motion"><b>6</b> Motion layer and adaptive authority</a>
+</div></nav>
+
+<!-- ============================================================ chapter 1 -->
+<section class="chap" id="why"><div class="wrap">
+  <p class="eyebrow">Chapter 1</p>
+  <h2>Why it fell, and the arrestors</h2>
+  <p class="intro">Before this chapter the robot reached its goal about 0.58 of the time. The fall diagnosis (S79) found that the motors were almost never the limit (torque saturation below 1 percent) and the body rarely tipped past 70 degrees: in <b>95 percent of falls the body derailed off the ball</b>, at a median tilt of about 15 degrees, because nothing but gravity and three wheel contacts held the two together. Three passive 8 mm rollers mounted at 100 degrees polar angle, touching the ball only at the loaded seat, were added in the model. Given to the policy below <b>without any retraining</b> they lift goal success from 0.57 to 0.75 undisturbed and from 0.28 to 0.45 with pushes and pulls (S79). The pairs below are the same policy in the same world, arrestors off and on.</p>
+
+  <div class="pair" data-pair>
+    <article class="clip fall" id="c2_flat_nocage">
+      <div class="player" data-src="videos/c2_flat_nocage.mp4" data-poster="videos/c2_flat_nocage.jpg" data-title="Flat ground, arrestors off: the body slides off the ball">
+        <button type="button" class="ph" aria-label="Play: flat ground, arrestors off, the body slides off the ball"><img src="videos/c2_flat_nocage.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot on a flat checkerboard tile next to the red goal marker, HUD at 2.4 s showing 0.99 m/s against a 0.12 m/s command"><span class="play" aria-hidden="true"><i></i></span><span class="tag bad">4.8 s &middot; falls</span></button>
+      </div>
+      <div class="txt">
+        <h3>Flat ground, arrestors off: the body slides off the ball</h3>
+        <p class="lead">Nothing is in the way, and the robot still falls. It rushes the goal marker, overshoots, and while correcting the body loses its seat on the ball.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.5</span> g12_dr175_s0, trained at randomisation scale 1.75</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>goal 1.1 m away, flat tile</dd><dt>Arrestors</dt><dd class="off">off</dd><dt>Clip</dt><dd>single run, 4.8 s, ends in a fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">0 to 2 s</span> the straight run at the red marker. <span class="t">2.4 s</span> the HUD reads 0.99 m/s against a command of 0.12 m/s: it has arrived too fast and is braking hard. <span class="t bad">4.8 s</span> the fall. The study's diagnosis says falls like this one are derails, not tip-overs (S79).</p>
+      </div>
+    </article>
+    <article class="clip ok" id="c2_flat_cage100">
+      <div class="player" data-src="videos/c2_flat_cage100.mp4" data-poster="videos/c2_flat_cage100.jpg" data-title="Same policy, same world, arrestors on: it stays up">
+        <button type="button" class="ph" aria-label="Play: same policy, same world, arrestors on, it stays up"><img src="videos/c2_flat_cage100.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the same robot beside the red goal marker at 4.0 s, tilt 2.5 degrees, still upright"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">8.0 s &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>Same policy, same world, arrestors on: it stays up</h3>
+        <p class="lead">The only change is three rollers that carry no load until the body starts to lift. The same braking manoeuvre that ended the previous clip is now survivable.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.5</span> g12_dr175_s0, never trained with arrestors</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>goal 1.1 m away, flat tile</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount, added at evaluation only</dd><dt>Clip</dt><dd>single run, 8.0 s, no fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">0 to 3 s</span> the same rush and the same overshoot. <span class="t">4.0 s</span> the HUD shows 0.28 m/s against a 0.70 m/s command and only 2.5 degrees of tilt: it is settling, not fighting. <span class="t">8.0 s</span> the clip ends upright. Across 1760 worlds this zero-shot change moved goal success from 0.57 to 0.75 (S79).</p>
+      </div>
+    </article>
+    <div class="ph2"><button type="button" class="both">Play both together</button><span>Same policy, same world and seed; the two clips start from the same frame.</span></div>
+  </div>
+
+  <div class="pair" data-pair>
+    <article class="clip" id="c8_derail_slow_nocage">
+      <div class="player" data-src="videos/c8_derail_slow_nocage.mp4" data-poster="videos/c8_derail_slow_nocage.jpg" data-title="The same run at half speed, arrestors off: the approach to the goal, frame by frame">
+        <button type="button" class="ph" aria-label="Play: the same run at half speed, arrestors off"><img src="videos/c8_derail_slow_nocage.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot leaning beside the red goal marker at 3.0 s, 0.68 m/s against a 0.75 m/s command, tilt 6.7 degrees, no arrestors"><span class="play" aria-hidden="true"><i></i></span><span class="tag">6.0 s at half speed</span></button>
+      </div>
+      <div class="txt">
+        <h3>The same run at half speed, arrestors off: the approach to the goal, frame by frame</h3>
+        <p class="lead">The flat-tile goal run of the pair above, rendered with every physics frame (stride 1) so it plays at half speed. The clip covers the opening seconds of the run and stops before the fall that the full-speed clip shows at 4.8 s.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.5</span> g12_dr175_s0</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>goal 1.1 m away, flat tile</dd><dt>Arrestors</dt><dd class="off">off (metadata: arrestors false, dr false, stride 1)</dd><dt>Clip</dt><dd>single run, 6.0 s of video at half speed, no fall inside the clip</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">HUD 0 to 3 s</span> the lean during the acceleration toward the marker. <span class="t">HUD 3.0 s</span> the poster frame: 0.68 m/s against a 0.75 m/s command and 6.7 degrees of tilt beside the red marker. Compare the ball-to-body seat with the clip on the right at the same HUD time; the metadata records no fall inside this clip.</p>
+      </div>
+    </article>
+    <article class="clip ok" id="c8_derail_slow_cage">
+      <div class="player" data-src="videos/c8_derail_slow_cage.mp4" data-poster="videos/c8_derail_slow_cage.jpg" data-title="The same run at half speed, arrestors on">
+        <button type="button" class="ph" aria-label="Play: the same run at half speed, arrestors on"><img src="videos/c8_derail_slow_cage.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the same robot beside the red goal marker at 3.0 s, 0.67 m/s against a 0.74 m/s command, tilt 6.6 degrees, arrestors on"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">6.0 s at half speed &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>The same run at half speed, arrestors on</h3>
+        <p class="lead">Identical start, identical commands, rollers fitted. At the poster frame the two robots are within 0.01 m/s and 0.1 degrees of each other, which is the point: the arrestors change nothing until the body starts to lift.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.5</span> g12_dr175_s0, never trained with arrestors</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>goal 1.1 m away, flat tile</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount (metadata: arrestors true, dr false, stride 1)</dd><dt>Clip</dt><dd>single run, 6.0 s of video at half speed, no fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">HUD 3.0 s</span> 0.67 m/s against 0.74 m/s, tilt 6.6 degrees: the same state as the clip on the left. <span class="t">throughout</span> the three small arrestor spheres on the base, just above the ball's equator, carrying no load while the robot is seated (S79: seated arrestors carry no force, so roller friction does not change the result).</p>
+      </div>
+    </article>
+    <div class="ph2"><button type="button" class="both">Play both together</button><span>Half-speed renders of the first pair; both clips are 6.0 s long.</span></div>
+  </div>
+
+  <div class="pair" data-pair>
+    <article class="clip fall" id="c2_step_up_nocage">
+      <div class="player" data-src="videos/c2_step_up_nocage.mp4" data-poster="videos/c2_step_up_nocage.jpg" data-title="A 2.3 cm step, arrestors off: down in under three seconds">
+        <button type="button" class="ph" aria-label="Play: a 2.3 cm step, arrestors off, down in under three seconds"><img src="videos/c2_step_up_nocage.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot approaching a raised step on the checkerboard at 1.4 s, tilt 6.0 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag bad">2.9 s &middot; falls</span></button>
+      </div>
+      <div class="txt">
+        <h3>A 2.3 cm step, arrestors off: down in under three seconds</h3>
+        <p class="lead">The goal lies past a raised floor 2.3 cm high, just under the traction limit of the 9 cm ball. The robot is still accelerating when it meets the edge.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.5</span> g12_dr175_s0</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>goal 1.1 m away, step up 2.3 cm</dd><dt>Arrestors</dt><dd class="off">off</dd><dt>Clip</dt><dd>single run, 2.9 s, ends in a fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">1.4 s</span> the HUD reads 0.61 m/s against a 1.20 m/s command with 6.0 degrees of tilt: it is leaning into the acceleration as the step arrives. <span class="t bad">2.9 s</span> the fall at the edge. Step-up goals succeeded in 0.31 to 0.39 of worlds for this recipe without arrestors (data/study.json, goal by kind).</p>
+      </div>
+    </article>
+    <article class="clip fall" id="c2_step_up_cage100">
+      <div class="player" data-src="videos/c2_step_up_cage100.mp4" data-poster="videos/c2_step_up_cage100.jpg" data-title="Same step, arrestors on: over the edge, past the goal, then a fall">
+        <button type="button" class="ph" aria-label="Play: same step, arrestors on, over the edge, past the goal, then a fall"><img src="videos/c2_step_up_cage100.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot beside the red goal marker beyond the step at 2.7 s, doing 0.98 m/s against a 0.15 m/s command"><span class="play" aria-hidden="true"><i></i></span><span class="tag bad">5.5 s &middot; falls</span></button>
+      </div>
+      <div class="txt">
+        <h3>Same step, arrestors on: over the edge, past the goal, then a fall</h3>
+        <p class="lead">The arrestors get it over the step and to the marker, which the previous clip never reached. They do not make it a careful driver: it overshoots at speed and falls almost three seconds later than before.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.5</span> g12_dr175_s0</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>goal 1.1 m away, step up 2.3 cm</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount, added at evaluation only</dd><dt>Clip</dt><dd>single run, 5.5 s, ends in a fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">1 to 2.5 s</span> the ball rides over the edge that stopped the previous clip. <span class="t">2.7 s</span> at the marker the HUD reads 0.98 m/s against a 0.15 m/s command, 3.0 degrees of tilt. <span class="t bad">5.5 s</span> the fall, during the recovery after the overshoot. The retainer removes the derail; it does not remove every fall.</p>
+      </div>
+    </article>
+    <div class="ph2"><button type="button" class="both">Play both together</button><span>The second clip runs 2.6 s longer; the first stays on its last frame.</span></div>
+  </div>
+
+  <div class="pair" data-pair>
+    <article class="clip fall" id="c3_step_up_pure_nocage">
+      <div class="player" data-src="videos/c3_step_up_pure_nocage.mp4" data-poster="videos/c3_step_up_pure_nocage.jpg" data-title="Pure learning without arrestors meets the same step">
+        <button type="button" class="ph" aria-label="Play: pure learning without arrestors meets the same step"><img src="videos/c3_step_up_pure_nocage.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the pure-learning robot approaching the step at 1.4 s, 0.64 m/s against a 1.20 m/s command"><span class="play" aria-hidden="true"><i></i></span><span class="tag bad">2.8 s &middot; falls</span></button>
+      </div>
+      <div class="txt">
+        <h3>Pure learning without arrestors meets the same step</h3>
+        <p class="lead">No LQR inside this controller: the network drives the wheels directly. It approaches the step at the same speed as the residual controller and ends the same way.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip learned">pure learning</span> g12_pure_s0, trained without arrestors</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>goal 1.1 m away, step up 2.3 cm</dd><dt>Arrestors</dt><dd class="off">off</dd><dt>Clip</dt><dd>single run, 2.8 s, ends in a fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">1.4 s</span> 0.64 m/s against a 1.20 m/s command, tilt 2.4 degrees: it leans less than the residual controller did at the same moment. <span class="t bad">2.8 s</span> the fall at the edge all the same. Without arrestors pure learning reached the goal in 0.44 to 0.51 of worlds and tracked speed at only 0.54 to 0.66 of the command (S80).</p>
+      </div>
+    </article>
+    <article class="clip ok" id="c3_step_up_pure_cage">
+      <div class="player" data-src="videos/c3_step_up_pure_cage.mp4" data-poster="videos/c3_step_up_pure_cage.jpg" data-title="Pure learning trained with arrestors: over the step and parked on the goal">
+        <button type="button" class="ph" aria-label="Play: pure learning trained with arrestors, over the step and parked on the goal"><img src="videos/c3_step_up_pure_cage.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot standing on the red goal marker beyond the step at 4.0 s, speed 0.03 m/s, tilt 1.2 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">8.0 s &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>Pure learning trained with arrestors: over the step and parked on the goal</h3>
+        <p class="lead">A different policy from the clip on the left, trained from the start with the rollers fitted. It crosses the step, stops on the marker and stands still for the rest of the clip.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip learned">pure learning</span> g16_pure_ret100_s1, trained with arrestors</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>goal 1.1 m away, step up 2.3 cm</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount, trained with</dd><dt>Clip</dt><dd>single run, 8.0 s, no fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">0 to 3 s</span> the approach and the crossing. <span class="t">4.0 s</span> the HUD reads 0.03 m/s, command 0.00 m/s, tilt 1.2 degrees: parked on the marker. <span class="t">8.0 s</span> still standing. For pure learning the training matters: arrestors added only at evaluation gave 0.54 goal success, training with them 0.70 (S81).</p>
+      </div>
+    </article>
+    <div class="ph2"><button type="button" class="both">Play both together</button><span>Two different policies in the same world; the left clip ends at its fall.</span></div>
+  </div>
+</div></section>
+
+<!-- ============================================================ chapter 2 -->
+<section class="chap" id="rec"><div class="wrap">
+  <p class="eyebrow">Chapter 2</p>
+  <h2>The recommended controller</h2>
+  <p class="intro">With the arrestors in place the question became how much the learned part should be allowed to override the LQR. The answer from the authority sweep (S82, S83) is <b>0.25</b>: the applied action is the LQR action plus a quarter of the policy's action, clipped. That keeps speed tracking exact (achieved 0.99 to 1.01 of the command) and goal success at 0.71 to 0.76 undisturbed and 0.42 to 0.44 with pushes and pulls, on three seeds. One clip of it doing its job, and one honest clip of where it does not.</p>
+
+  <div class="solo">
+    <article class="clip ok" id="c4_step_up_rs025_cage">
+      <div class="player" data-src="videos/c4_step_up_rs025_cage.mp4" data-poster="videos/c4_step_up_rs025_cage.jpg" data-title="The recommended controller takes a 2.3 cm step toward its goal">
+        <button type="button" class="ph" aria-label="Play: the recommended controller takes a 2.3 cm step toward its goal"><img src="videos/c4_step_up_rs025_cage.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot at the step edge at 4.0 s, 0.13 m/s against a 0.76 m/s command, tilt 5.2 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">8.0 s &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>The recommended controller takes a 2.3 cm step toward its goal</h3>
+        <p class="lead">Same step height as chapter 1, now with the controller we recommend. It slows at the edge rather than charging it, and it is still upright when the clip ends.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.25</span> g18_ret_rs025_s1, the recommended controller</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>goal 1.1 m away, step up 2.3 cm</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount, trained with</dd><dt>Clip</dt><dd>single run, 8.0 s, no fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">0 to 3 s</span> the approach: compare the speed reading with the 1.20 m/s commands of chapter 1. <span class="t">4.0 s</span> at the edge the HUD reads 0.13 m/s against a 0.76 m/s command, tilt 5.2 degrees: the LQR is holding balance while the ball works up the riser. <span class="t">8.0 s</span> upright at the end. Over 176 step-up worlds this policy reaches the goal 0.56 of the time (data/study.json, goal by kind); a 2.3 cm step is right at the ball's traction limit, see chapter 3.</p>
+      </div>
+    </article>
+    <article class="clip fall" id="c4_ramp_vel06_rs025_cage">
+      <div class="player" data-src="videos/c4_ramp_vel06_rs025_cage.mp4" data-poster="videos/c4_ramp_vel06_rs025_cage.jpg" data-title="Known weakness: 0.6 m/s up an 11 degree ramp, it lags the command and falls">
+        <button type="button" class="ph" aria-label="Play: known weakness, 0.6 m/s up an 11 degree ramp, it lags the command and falls"><img src="videos/c4_ramp_vel06_rs025_cage.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot on an 11 degree ramp at 2.8 s, 0.40 m/s against a 0.60 m/s command, tilt 4.2 degrees, the green path falling behind the cyan one"><span class="play" aria-hidden="true"><i></i></span><span class="tag bad">5.6 s &middot; falls</span></button>
+      </div>
+      <div class="txt">
+        <h3>Known weakness: 0.6 m/s up an 11 degree ramp, it lags the command and falls</h3>
+        <p class="lead">The same controller asked to hold 0.6 m/s up the steepest ramp on the map, twice the speed of the evaluation protocol. The achieved speed never catches the command and the fall comes on the slope.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.25</span> g18_ret_rs025_s1</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>velocity 0.6 m/s, ramp up 11.2 deg</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount</dd><dt>Clip</dt><dd>single run, 5.6 s, ends in a fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">0 to 2 s</span> the green actual path separating from the cyan commanded path as the slope begins. <span class="t">2.8 s</span> the HUD reads 0.40 m/s against 0.60 m/s, tilt 4.2 degrees: the lag the study log records for this clip (S83). <span class="t bad">5.6 s</span> the fall. This is a single run at twice the evaluated speed; at the protocol's 0.3 m/s the same controller falls on up-ramps in only 0.12 to 0.14 of worlds (S83 addendum).</p>
+      </div>
+    </article>
+  </div>
+</div></section>
+
+<!-- ============================================================ chapter 3 -->
+<section class="chap" id="size"><div class="wrap">
+  <p class="eyebrow">Chapter 3</p>
+  <h2>Obstacle size, not speed</h2>
+  <p class="intro">A first analysis suggested that slowing down would get the robot over obstacles; it was withdrawn when 8 s episodes turned out to be too short for slow robots to reach the feature at all (S86, S87). With 20 s episodes the fall rate is the same at 0.1, 0.2 and 0.3 m/s, and what decides it is size: up-steps and bumps above about 2.4 cm, a quarter of the ball radius, fail 90 to 95 percent of the time. A driven ball can only climb an edge while friction can supply the tangential force, which gives <b>h_max = r (1 - cos(arctan mu))</b>, about 0.29 r: 2.6 cm for this 9 cm ball (S88). The two clips below bracket that limit with the same controller and the same 0.3 m/s command.</p>
+
+  <div class="pair" data-pair>
+    <article class="clip ok" id="c5_step_0.015_rs025">
+      <div class="player" data-src="videos/c5_step_0.015_rs025.mp4" data-poster="videos/c5_step_0.015_rs025.jpg" data-title="A 1.5 cm step at 0.3 m/s: below the traction limit">
+        <button type="button" class="ph" aria-label="Play: a 1.5 cm step at 0.3 m/s, below the traction limit"><img src="videos/c5_step_0.015_rs025.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot at a low step at 4.0 s, 0.06 m/s against a 0.30 m/s command, tilt 3.0 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">8.0 s &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>A 1.5 cm step at 0.3 m/s: below the traction limit</h3>
+        <p class="lead">A riser well under the 2.6 cm the model allows. The robot slows at the edge, the body stays nearly level, and it is upright at the end of the clip.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.25</span> g18_ret_rs025_s1, the recommended controller</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>velocity 0.3 m/s, step up 1.5 cm</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount</dd><dt>Clip</dt><dd>single run, 8.0 s, no fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">0 to 3 s</span> the approach at the commanded 0.3 m/s. <span class="t">4.0 s</span> at the riser the HUD reads 0.06 m/s and 3.0 degrees of tilt: slowed, but level. <span class="t">4 to 8 s</span> whether the ball rides over the edge and the green path continues on the upper floor. On the smaller half of the step-up range (1.1 to 2.3 cm) this controller falls in 0.40 of worlds (S87).</p>
+      </div>
+    </article>
+    <article class="clip ok" id="c5_step_0.05_rs025">
+      <div class="player" data-src="videos/c5_step_0.05_rs025.mp4" data-poster="videos/c5_step_0.05_rs025.jpg" data-title="A 5.0 cm step at the same speed: the ball cannot climb it">
+        <button type="button" class="ph" aria-label="Play: a 5.0 cm step at the same speed, the ball cannot climb it"><img src="videos/c5_step_0.05_rs025.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot stopped against a tall step at 4.0 s, 0.03 m/s against a 0.30 m/s command, tilt 8.8 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">8.0 s &middot; no fall in 8 s</span></button>
+      </div>
+      <div class="txt">
+        <h3>A 5.0 cm step at the same speed: the ball cannot climb it</h3>
+        <p class="lead">Nearly twice the traction limit. The ball stops against the riser and the body leans into it, trying to push through with a force friction cannot deliver; it is still balancing, and still stuck, when the clip ends.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.25</span> g18_ret_rs025_s1</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>velocity 0.3 m/s, step up 5.0 cm</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount</dd><dt>Clip</dt><dd>single run, 8.0 s, no fall inside the clip</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">0 to 3 s</span> the same approach as the clip on the left. <span class="t">4.0 s</span> the HUD reads 0.03 m/s against the 0.30 m/s command and 8.8 degrees of tilt, three times the lean of the 1.5 cm clip at the same moment. <span class="t">4 to 8 s</span> the ball does not rise; the lean is the controller asking for thrust the floor cannot give. Over 20 s episodes the larger half of the step-up range (2.3 to 5.9 cm) ends in a fall 0.95 of the time and is crossed in 0.02 (S87, S88).</p>
+      </div>
+    </article>
+    <div class="ph2"><button type="button" class="both">Play both together</button><span>Same controller, same command, same clip length; only the step height differs. Compare the tilt readings.</span></div>
+  </div>
+
+  <p class="intro" style="margin-top:34px">Pure learning with the arrestors falls far less on large obstacles than the LQR residual (step ups 0.69 against 0.98 on the larger half of the range), yet it crosses them no more often (0.02 for both). The 20 s clips below show why: it stops short and balances, a refusal it learned blind, by feel (S88 addendum).</p>
+
+  <div class="pair" data-pair>
+    <article class="clip ok" id="c8_step45_pure">
+      <div class="player" data-src="videos/c8_step45_pure.mp4" data-poster="videos/c8_step45_pure.jpg" data-title="Pure learning at a 5 cm step: stops short and balances for 20 s">
+        <button type="button" class="ph" aria-label="Play: pure learning at a 5 cm step, stops short and balances for 20 s"><img src="videos/c8_step45_pure.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the pure-learning robot standing still short of a tall step at 10 s, speed 0.00 m/s, tilt 13.4 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">20.0 s &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>Pure learning at a 5 cm step: stops short and balances for 20 s</h3>
+        <p class="lead">Asked to hold 0.3 m/s into a step it cannot climb, the network does not push. It stops in front of the riser and stands there, leaning, for the whole 20 s clip.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip learned">pure learning</span> g16_pure_ret100_s1, trained with arrestors</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>velocity 0.3 m/s, step up 5.0 cm</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount (metadata: dr false, stride 2, speed 0.3)</dd><dt>Clip</dt><dd>single run, 20.0 s, no fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">0 to 4 s</span> the approach and the stop. <span class="t">10.0 s</span> the HUD reads 0.00 m/s against the 0.30 m/s command and 13.4 degrees of tilt: it holds a steady lean without moving. <span class="t">20.0 s</span> still upright, still short of the step. Falls on the larger half of the step-up range: 0.69 for this policy, crossed 0.02 (S88 addendum).</p>
+      </div>
+    </article>
+    <article class="clip fall" id="c8_step45_residual">
+      <div class="player" data-src="videos/c8_step45_residual.mp4" data-poster="videos/c8_step45_residual.jpg" data-title="The LQR residual at the same step: leans in and falls at 8.6 s">
+        <button type="button" class="ph" aria-label="Play: the LQR residual at the same step, leans in and falls at 8.6 s"><img src="videos/c8_step45_residual.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the recommended controller's robot stopped against a tall step at 4.3 s, 0.02 m/s, tilt 11.2 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag bad">8.6 s &middot; falls</span></button>
+      </div>
+      <div class="txt">
+        <h3>The LQR residual at the same step: leans in and falls at 8.6 s</h3>
+        <p class="lead">The recommended controller keeps trying to deliver the commanded speed. The ball stays pinned at the riser, the lean grows, and the run ends in a fall. Neither controller climbs the step.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.25</span> g18_ret_rs025_s1, the recommended controller</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>velocity 0.3 m/s, step up 5.0 cm</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount (metadata: dr false, stride 2, speed 0.3)</dd><dt>Clip</dt><dd>single run, 8.6 s, ends in a fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">4.3 s</span> the HUD reads 0.02 m/s and 11.2 degrees of tilt with the ball against the riser. <span class="t">4 to 8 s</span> the lean that does not relax. <span class="t bad">8.6 s</span> the fall. Falls on the larger half of the step-up range: 0.98 for this policy, crossed 0.02 (S88 addendum).</p>
+      </div>
+    </article>
+    <div class="ph2"><button type="button" class="both">Play both together</button><span>Same step, same command; the right clip ends at its fall, the left runs to 20 s.</span></div>
+  </div>
+</div></section>
+
+<!-- ============================================================ chapter 4 -->
+<section class="chap" id="ball"><div class="wrap">
+  <p class="eyebrow">Chapter 4</p>
+  <h2>Ball size sets the step size</h2>
+  <p class="intro">The traction model says the largest climbable step scales with the ball: <b>h_max about 0.29 r</b>, so 2.0 cm for a 6.75 cm ball, 2.6 cm for 9 cm, 3.9 cm for 13.5 cm and 5.2 cm for 18 cm. To test it with one controller, the recommended recipe was trained on the 11 designs plus the robot at 0.75, 1.5 and 2 times nominal size (policy g24_scale_rs025_s0, commands Froude-scaled). Over 640 worlds per kind and size, the 2.3 to 5.9 cm step band is fatal for the 6.75 cm ball (1.00), mostly fatal for 9 cm (0.95) and survivable for 13.5 and 18 cm (0.69, 0.58) (S95). The first pair puts the smallest and the largest trained robot in front of the same 5 cm step; the three clips after it give each robot a step near its own limit. Full tables: <a href="generalist.html#ballsize">generalist study, chapter 9</a>.</p>
+
+  <div class="pair" data-pair>
+    <article class="clip fall" id="c7_step4cm_s075">
+      <div class="player" data-src="videos/c7_step4cm_s075.mp4" data-poster="videos/c7_step4cm_s075.jpg" data-title="The 0.75x robot (6.75 cm ball) at a 5 cm step: stalls and falls at 6.6 s">
+        <button type="button" class="ph" aria-label="Play: the 0.75x robot at a 5 cm step, stalls and falls at 6.6 s"><img src="videos/c7_step4cm_s075.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the small robot driving toward a tall step at 3.3 s, 0.27 m/s against a 0.26 m/s command, tilt 2.1 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag bad">6.6 s &middot; falls</span></button>
+      </div>
+      <div class="txt">
+        <h3>The 0.75x robot (6.75 cm ball) at a 5 cm step: stalls and falls at 6.6 s</h3>
+        <p class="lead">A step two and a half times this ball's traction limit. The approach is clean and on speed; the riser is simply too tall for the ball to pivot over.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.25</span> g24_scale_rs025_s0, trained on 14 designs</dd><dt>Design</dt><dd>s0.75, all lengths at 0.75x (6.75 cm ball), predicted limit 2.0 cm</dd><dt>Task</dt><dd>velocity 0.3 m/s Froude-scaled (0.26 m/s), step up 5.0 cm</dd><dt>Arrestors</dt><dd class="on">on, re-fitted to the scaled model (dr not recorded in this clip's metadata)</dd><dt>Clip</dt><dd>single run, 6.6 s, ends in a fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">3.3 s</span> the HUD reads 0.27 m/s against a 0.26 m/s command and 2.1 degrees of tilt: exact tracking on the flat. <span class="t">4 to 6 s</span> the stall at the riser. <span class="t bad">6.6 s</span> the fall. For this ball the 2.3 to 5.9 cm step band fails 1.00 of the time (S95).</p>
+      </div>
+    </article>
+    <article class="clip ok" id="c7_step4cm_s2">
+      <div class="player" data-src="videos/c7_step4cm_s2.mp4" data-poster="videos/c7_step4cm_s2.jpg" data-title="The 2x robot (18 cm ball) at the same 5 cm step: crosses">
+        <button type="button" class="ph" aria-label="Play: the 2x robot at the same 5 cm step, crosses"><img src="videos/c7_step4cm_s2.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the large robot at the step edge at 4.0 s, 0.23 m/s against a 0.42 m/s command, tilt 0.7 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">8.0 s &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>The 2x robot (18 cm ball) at the same 5 cm step: crosses</h3>
+        <p class="lead">Same controller, same absolute step, a ball twice the nominal radius. The 5 cm riser is just inside this ball's 5.2 cm limit, and the robot rolls over it with the body almost level.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.25</span> g24_scale_rs025_s0</dd><dt>Design</dt><dd>s2.0, all lengths at 2x (18 cm ball), predicted limit 5.2 cm</dd><dt>Task</dt><dd>velocity 0.3 m/s Froude-scaled (0.42 m/s), step up 5.0 cm</dd><dt>Arrestors</dt><dd class="on">on, re-fitted to the scaled model (dr not recorded in this clip's metadata)</dd><dt>Clip</dt><dd>single run, 8.0 s, no fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">4.0 s</span> the HUD reads 0.23 m/s against 0.42 m/s and only 0.7 degrees of tilt as the ball meets the edge: it slows but does not lean. <span class="t">4 to 8 s</span> the crossing and the green path continuing on the upper floor. For this ball the 2.3 to 5.9 cm band fails 0.58 of the time; in 0.5 cm bins the fall rate reaches 0.5 only at 3 to 3.5 cm because floor friction is randomised per world (S95 addendum).</p>
+      </div>
+    </article>
+    <div class="ph2"><button type="button" class="both">Play both together</button><span>Same step height, same controller; the robots differ by a factor 2.67 in ball radius. The left clip ends at its fall.</span></div>
+  </div>
+
+  <p class="intro" style="margin-top:34px">Three robots, each given a step close to its own predicted limit: 2.3 cm for the 0.75x robot (limit 2.0 cm, so slightly above it), 3.0 cm for the 1.5x robot (limit 3.9 cm) and 5.0 cm for the 2x robot (limit 5.2 cm). All three clips are 12 s and none ends in a fall; at the 6 s poster frame all three are nearly stopped at the riser with the body leaning, so watch the second half of each clip for whether the ball gets over.</p>
+
+  <div class="solo">
+    <article class="clip ok" id="c8_scale_s075_atlimit">
+      <div class="player" data-src="videos/c8_scale_s075_atlimit.mp4" data-poster="videos/c8_scale_s075_atlimit.jpg" data-title="0.75x robot, 2.3 cm step: just above its 2.0 cm limit">
+        <button type="button" class="ph" aria-label="Play: 0.75x robot, 2.3 cm step, just above its 2.0 cm limit"><img src="videos/c8_scale_s075_atlimit.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the small robot at a low step at 6.0 s, 0.04 m/s against a 0.26 m/s command, tilt 11.8 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">12.0 s &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>0.75x robot, 2.3 cm step: just above its 2.0 cm limit</h3>
+        <p class="lead">The step that is routine for the nominal ball is a hard case for the 6.75 cm one. The robot reaches the riser and leans hard against it; whether it gets over is decided after the poster frame.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.25</span> g24_scale_rs025_s0</dd><dt>Design</dt><dd>s0.75 (6.75 cm ball), predicted limit 2.0 cm</dd><dt>Task</dt><dd>velocity 0.3 m/s Froude-scaled (0.26 m/s), step up 2.3 cm</dd><dt>Arrestors</dt><dd class="on">on (metadata: dr false, stride 2, speed 0.3)</dd><dt>Clip</dt><dd>single run, 12.0 s, no fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">6.0 s</span> the HUD reads 0.04 m/s against 0.26 m/s and 11.8 degrees of tilt at the riser. <span class="t">6 to 12 s</span> whether the ball climbs or the robot stays pinned; it does not fall inside the clip. In 1 cm bins this ball falls 0.83 of the time on 2 to 3 cm steps (S95 addendum).</p>
+      </div>
+    </article>
+    <article class="clip ok" id="c8_scale_s15_atlimit">
+      <div class="player" data-src="videos/c8_scale_s15_atlimit.mp4" data-poster="videos/c8_scale_s15_atlimit.jpg" data-title="1.5x robot, 3.0 cm step: below its 3.9 cm limit">
+        <button type="button" class="ph" aria-label="Play: 1.5x robot, 3.0 cm step, below its 3.9 cm limit"><img src="videos/c8_scale_s15_atlimit.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the 1.5x robot at a step at 6.0 s, 0.07 m/s against a 0.37 m/s command, tilt 8.1 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">12.0 s &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>1.5x robot, 3.0 cm step: below its 3.9 cm limit</h3>
+        <p class="lead">A 3 cm riser would stop the nominal ball; for the 13.5 cm ball it sits inside the predicted limit. The robot slows at the edge with a moderate lean.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.25</span> g24_scale_rs025_s0</dd><dt>Design</dt><dd>s1.5 (13.5 cm ball), predicted limit 3.9 cm</dd><dt>Task</dt><dd>velocity 0.3 m/s Froude-scaled (0.37 m/s), step up 3.0 cm</dd><dt>Arrestors</dt><dd class="on">on (metadata: dr false, stride 2, speed 0.3)</dd><dt>Clip</dt><dd>single run, 12.0 s, no fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">6.0 s</span> the HUD reads 0.07 m/s against 0.37 m/s and 8.1 degrees of tilt. <span class="t">6 to 12 s</span> the second half of the attempt. In 1 cm bins this ball falls 0.56 of the time on 3 to 4 cm steps, against 0.89 for the 9 cm ball (S95 addendum).</p>
+      </div>
+    </article>
+    <article class="clip ok" id="c8_scale_s2_atlimit">
+      <div class="player" data-src="videos/c8_scale_s2_atlimit.mp4" data-poster="videos/c8_scale_s2_atlimit.jpg" data-title="2x robot, 5.0 cm step: at its 5.2 cm limit, 12 s">
+        <button type="button" class="ph" aria-label="Play: 2x robot, 5.0 cm step, at its 5.2 cm limit, 12 seconds"><img src="videos/c8_scale_s2_atlimit.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the large robot at a step at 6.0 s, 0.01 m/s against a 0.42 m/s command, tilt 5.9 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">12.0 s &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>2x robot, 5.0 cm step: at its 5.2 cm limit, 12 s</h3>
+        <p class="lead">A longer take of the largest robot at the 5 cm step, a different world from the 8 s clip above. At the poster frame it has stopped at the riser with a small lean.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.25</span> g24_scale_rs025_s0</dd><dt>Design</dt><dd>s2.0 (18 cm ball), predicted limit 5.2 cm</dd><dt>Task</dt><dd>velocity 0.3 m/s Froude-scaled (0.42 m/s), step up 5.0 cm</dd><dt>Arrestors</dt><dd class="on">on (metadata: dr false, stride 2, speed 0.3)</dd><dt>Clip</dt><dd>single run, 12.0 s, no fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">6.0 s</span> the HUD reads 0.01 m/s against 0.42 m/s and 5.9 degrees of tilt. <span class="t">6 to 12 s</span> whether the ball gets over this time; it does not fall inside the clip. In 0.5 cm bins this ball falls 0.78 of the time on 4.5 to 5 cm steps (S95 addendum), so a 5 cm step is a coin toss weighted against it, not a sure crossing.</p>
+      </div>
+    </article>
+  </div>
+</div></section>
+
+<!-- ============================================================ chapter 5 -->
+<section class="chap" id="nav"><div class="wrap">
+  <p class="eyebrow">Chapter 5</p>
+  <h2>Terrain-aware navigation</h2>
+  <p class="intro">If the small ball cannot climb an 8 cm block, the only option is to go around it. On a map where every start is boxed in by 8 cm blocks (S89), the balance controller is frozen and a planner above it feeds the velocity commands. What changes between the three clips is only where the obstacle information comes from: nowhere, a perfect height map, or a simulated <b>18 x 14 zone time-of-flight sensor</b> on a gimballed head mount, 25 degrees down. Across 528 worlds goal success is 0.09, 0.91 and 0.85 respectively (S89).</p>
+
+  <div class="solo">
+    <article class="clip fall" id="c6_nav_blind">
+      <div class="player" data-src="videos/c6_nav_blind.mp4" data-poster="videos/c6_nav_blind.jpg" data-title="Blind: straight at the goal, onto the block, and over">
+        <button type="button" class="ph" aria-label="Play: blind, straight at the goal, onto the block, and over"><img src="videos/c6_nav_blind.jpg" loading="lazy" width="1280" height="720" alt="Poster frame from above: the robot stalled on an 8 cm block between it and the red goal marker at 2.8 s, tilt 11.3 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag bad">5.5 s &middot; falls</span></button>
+      </div>
+      <div class="txt">
+        <h3>Blind: straight at the goal, onto the block, and over</h3>
+        <p class="lead">With no terrain information the command is a straight line to the marker, and the straight line crosses a block. The ball mounts it part way, the body tilts, and the clip ends on the floor.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.25</span> g18_ret_rs025_s1, frozen</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>navigation, goal 1.2 m away behind an 8 cm block; no obstacle information</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount</dd><dt>Clip</dt><dd>single run, 5.5 s, ends in a fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">0 to 2 s</span> the cyan command pointing straight through the block. <span class="t">2.8 s</span> the HUD reads 0.02 m/s and 11.3 degrees of tilt: stopped on the block edge and leaning. <span class="t bad">5.5 s</span> the fall. Blind, 0.91 of worlds fall and 0.74 roll onto a block (S89).</p>
+      </div>
+    </article>
+    <article class="clip ok" id="c6_nav_oracle">
+      <div class="player" data-src="videos/c6_nav_oracle.mp4" data-poster="videos/c6_nav_oracle.jpg" data-title="Perfect height map: the planner curves around the block end">
+        <button type="button" class="ph" aria-label="Play: perfect height map, the planner curves around the block end"><img src="videos/c6_nav_oracle.jpg" loading="lazy" width="1280" height="720" alt="Poster frame from above: the robot following a curved cyan command around the end of a block toward the red marker at 3.1 s, tilt 1.6 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">6.1 s &middot; reaches the goal</span></button>
+      </div>
+      <div class="txt">
+        <h3>Perfect height map: the planner curves around the block end</h3>
+        <p class="lead">Same start, same goal, same controller. A wavefront planner on the true height map recomputes a distance field every 0.2 s and steers for the block's end instead of its face.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.25</span> g18_ret_rs025_s1, frozen; wavefront planner on the privileged map</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>navigation, goal 1.2 m away behind an 8 cm block</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount</dd><dt>Clip</dt><dd>single run, 6.1 s, no fall, ends at the goal</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">0 to 2 s</span> the cyan command bending away from the block before the robot reaches it. <span class="t">3.1 s</span> the HUD reads 0.32 m/s against a 0.30 m/s command and 1.6 degrees of tilt: an easy drive. <span class="t">6.1 s</span> the marker, where the clip ends. Over 528 worlds the perfect map reaches the goal 0.91 of the time; the remaining 0.09 are the controller's own base rate of falls (S89).</p>
+      </div>
+    </article>
+  </div>
+
+  <p class="intro" style="margin-top:34px">With a real sensor the first planner reached the goal in 0.85 of worlds but commanded a heading rate of about 14 rad/s. The smooth follower (S90) brings that to about 1.8 rad/s; with the sensor aimed at the planner's target heading instead of the current command it reaches the goal in 0.78 of worlds. The pair below is the before and after.</p>
+
+  <div class="pair" data-pair>
+    <article class="clip ok" id="c6_nav_tof18">
+      <div class="player" data-src="videos/c6_nav_tof18.mp4" data-poster="videos/c6_nav_tof18.jpg" data-title="A real sensor: the ToF map fills in, the robot hesitates, then arrives">
+        <button type="button" class="ph" aria-label="Play: a real sensor, the time-of-flight map fills in, the robot hesitates, then arrives"><img src="videos/c6_nav_tof18.jpg" loading="lazy" width="1280" height="720" alt="Poster frame from above: the robot beside a block at 8.3 s with a zig-zag cyan command and small cyan obstacle marks where the sensor has seen block edges"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">16.5 s &middot; reaches the goal</span></button>
+      </div>
+      <div class="txt">
+        <h3>A real sensor: the ToF map fills in, the robot hesitates, then arrives</h3>
+        <p class="lead">The planner now sees only what a noisy 18 x 14 time-of-flight sensor has returned so far. Blocks appear in its memory piece by piece, so the path is replanned often and the robot waits more than it drives.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.25</span> g18_ret_rs025_s1, frozen; wavefront planner on the sensor's memory map</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>navigation, goal 1.2 m away behind an 8 cm block; ToF 18 x 14 zones, 55 x 42 deg field of view, head mount, pitch -25 deg, 0.5 percent range noise, 2 percent dropout</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount</dd><dt>Clip</dt><dd>single run, 16.5 s, no fall, ends at the goal</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">0 to 5 s</span> the small cyan marks appearing where the sensor has seen a block edge. <span class="t">8.3 s</span> the HUD reads 0.20 m/s against 0.30 m/s and the cyan command zig-zags: this planner picks the best of 24 neighbours every step, with a commanded heading rate of about 14 rad/s (S90), which the later smooth follower cut to 1.8. <span class="t">16.5 s</span> the marker. With this sensor 0.85 of worlds arrive, within six points of the perfect map (S89).</p>
+      </div>
+    </article>
+    <article class="clip ok" id="c8_nav_tof18_smooth">
+      <div class="player" data-src="videos/c8_nav_tof18_smooth.mp4" data-poster="videos/c8_nav_tof18_smooth.jpg" data-title="After: the smooth follower with the sensor aimed at the plan, goal at 12.4 s">
+        <button type="button" class="ph" aria-label="Play: after, the smooth follower with the sensor aimed at the plan, goal at 12.4 s"><img src="videos/c8_nav_tof18_smooth.jpg" loading="lazy" width="1280" height="720" alt="Poster frame from above: the robot following a smoothly curving cyan command past a block toward the red marker at 6.2 s, tilt 1.3 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">12.4 s &middot; reaches the goal</span></button>
+      </div>
+      <div class="txt">
+        <h3>After: the smooth follower with the sensor aimed at the plan, goal at 12.4 s</h3>
+        <p class="lead">Same sensor, same controller, same kind of course. The planner now steers toward a carrot point 0.3 m down its distance field with the heading turning at most 2 rad/s, and the head gimbal points the sensor where the plan is going rather than where the robot is going.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.25</span> g18_ret_rs025_s1, frozen; smooth follower on the sensor's memory map, sensor aimed at the planner target</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>navigation, goal 1.2 m away behind an 8 cm block; ToF 18 x 14 zones, head mount, pitch -25 deg</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount</dd><dt>Clip</dt><dd>single run, 12.4 s, no fall, ends at the goal (this clip has no JSON sidecar; length from the file)</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">0 to 6 s</span> the cyan command drawn as a curve, not a zig-zag; compare with the clip on the left at the same time. <span class="t">6.2 s</span> the HUD reads 0.21 m/s against a 0.12 m/s command and 1.3 degrees of tilt as it rounds the block. <span class="t">12.4 s</span> the marker, four seconds earlier than the jerky planner's run. Commanded heading-rate RMS about 1.8 rad/s against about 14; goal success 0.78 against 0.85 over 528 worlds, the price of rate-limited turns near block corners (S90).</p>
+      </div>
+    </article>
+    <div class="ph2"><button type="button" class="both">Play both together</button><span>Before and after smoothing; different worlds, same sensor and controller. The right clip ends at its goal.</span></div>
+  </div>
+
+  <p class="note">All clips: MuJoCo-Warp float32 GPU physics on the corrected engine (S69 onward), rendered one world at a time with the MuJoCo renderer by <code>experiments/warp_ppo/render_policy.py</code> (chapters 1 to 4) and <code>render_nav.py</code> (chapter 5); 1280 x 720, H.264. Clip metadata (run, terrain kind, severity, task, design, outcome, length) is in <code>outputs/study/warp_ppo/videos/&lt;name&gt;.json</code>; the c8_* sidecars also record the randomisation flag (dr false in every one), arrestors, frame stride and commanded speed, while older clips and the c7 pair do not record whether randomisation was active. The navigation clips c6_* and c8_nav_tof18_smooth have no sidecar. One world is an anecdote: the rates quoted beside each clip come from <a href="data/study.json">data/study.json</a> and the study log entries cited, and the full tables are in the <a href="generalist.html">generalist study</a>. Clips from before the engine correction are not shown.</p>
+</div></section>
+<!-- ============================================================ chapter 6 -->
+<section class="chap" id="motion"><div class="wrap">
+  <p class="eyebrow">Chapter 6</p>
+  <h2>Motion layer and adaptive authority (g34, and g40 for comparison)</h2>
+  <p class="intro">The clips in this chapter use the controller recommended from S113 to S120: the LQR plus a learned residual whose authority switches between 0.15 and 0.3, trained and run with a <b>motion layer</b> that smooths commands, brakes into the goal and holds position (checkpoint <code>g34_mref_rsad_db_s0</code>, S112 and S113). Randomisation and sensor noise are on in every clip. Since this chapter was written the recommendation has moved to <a href="generalist.html#goalcentre">g39</a> (goal logic on the true ball centre, S121), and the last pair of clips below compares g34 with g40, the same recipe plus a 240 ms memory. Across 528 worlds the g34 controller reaches 0.877 of goals behind a block with the ToF sensor and wobbles about a quarter less than the previous one (S114); its full tables are in <a href="generalist.html#motion">chapter 10b of the results</a>.</p>
+
+  <div class="pair" data-pair>
+    <article class="clip ok" id="c12_nav_with_layer">
+      <div class="player" data-src="videos/c12_nav_with_layer.mp4" data-poster="videos/c12_nav_with_layer.jpg" data-title="ToF navigation with the motion layer: a smoother path, 11.6 s on this route">
+        <button type="button" class="ph" aria-label="Play: ToF navigation with the motion layer, 11.6 seconds on this route"><img src="videos/c12_nav_with_layer.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot among low blocks at 5.8 s, cyan command and green path curving gently, 0.21 m/s against a 0.27 m/s command, tilt 2.3 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">11.6 s &middot; reaches the goal</span></button>
+      </div>
+      <div class="txt">
+        <h3>With the motion layer: a smoother path, 11.6 s on this route</h3>
+        <p class="lead">The planner's command passes through the motion layer before it reaches the balance controller. The path curves gently around the blocks; on this route the robot also takes longer.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.15 / 0.3</span> g34_mref_rsad_db_s0, frozen; smooth follower on the ToF memory map, motion layer on</dd><dt>Design</dt><dd>zhigh (ballast raised)</dd><dt>Task</dt><dd>navigation, goal 1.2 m away behind an 8 cm block; ToF 18 x 14 zones, head mount, pitch -25 deg, aimed at the planner target; DR on, noise on</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount</dd><dt>Clip</dt><dd>single run (recorded world 3 of eval_nav.py), 11.6 s, no fall; the recording stops when the goal is reached</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">0 to 6 s</span> the green path following the cyan command in wide, smooth curves. <span class="t">5.8 s</span> the HUD reads 0.21 m/s against 0.27 m/s and 2.3 degrees of tilt. <span class="t">11.6 s</span> the goal. Over 528 worlds the layer cuts the heading-rate RMS from 1.79 to 1.31 rad/s on this checkpoint and costs about 0.3 s of median time per route; this route's 3 s difference is not typical (S114 addendum).</p>
+      </div>
+    </article>
+    <article class="clip ok" id="c12_nav_without_layer">
+      <div class="player" data-src="videos/c12_nav_without_layer.mp4" data-poster="videos/c12_nav_without_layer.jpg" data-title="The same route without the motion layer: 8.5 s, a more wobbly path">
+        <button type="button" class="ph" aria-label="Play: the same route without the motion layer, 8.5 seconds, a more wobbly path"><img src="videos/c12_nav_without_layer.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot near the red goal marker at 4.2 s, with a wavy green path behind it, 0.16 m/s against a 0.30 m/s command, tilt 1.8 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">8.5 s &middot; reaches the goal</span></button>
+      </div>
+      <div class="txt">
+        <h3>The same route without the motion layer: 8.5 s, a more wobbly path</h3>
+        <p class="lead">Same checkpoint, world, sensor and planner; the planner's command goes to the controller raw (NO_MREF=1). The robot is faster on this route, and its path weaves more.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.15 / 0.3</span> g34_mref_rsad_db_s0, frozen; smooth follower on the ToF memory map, motion layer off</dd><dt>Design</dt><dd>zhigh (ballast raised)</dd><dt>Task</dt><dd>navigation, as the left clip; DR on, noise on</dd><dt>Arrestors</dt><dd class="on">on, 100 deg mount</dd><dt>Clip</dt><dd>single run (recorded world 3), 8.5 s, no fall; the recording stops when the goal is reached</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">0 to 4 s</span> the green path swinging from side to side of the cyan command. <span class="t">4.2 s</span> the HUD reads 0.16 m/s against 0.30 m/s and 1.8 degrees of tilt. <span class="t">8.5 s</span> the goal, about 3 s sooner than with the layer on this route. Goal success with and without the layer is the same over 528 worlds (0.877 and 0.881); what the layer buys is smoother motion (S114 addendum).</p>
+      </div>
+    </article>
+    <div class="ph2"><button type="button" class="both">Play both together</button><span>Same checkpoint, same world and route; only the motion layer differs. One route, not a statistic.</span></div>
+  </div>
+
+  <div class="pair" data-pair>
+    <article class="clip ok" id="c13_push_pull_hold">
+      <div class="player" data-src="videos/c13_push_pull_hold.mp4" data-poster="videos/c13_push_pull_hold.jpg" data-title="Holding a goal while being pushed and pulled">
+        <button type="button" class="ph" aria-label="Play: holding a goal while being pushed and pulled"><img src="videos/c13_push_pull_hold.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot holding position on a flat tile at 6.0 s, 0.01 m/s, tilt 1.9 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">12.0 s &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>g34: holding a goal while being pushed and pulled</h3>
+        <p class="lead">The robot drives to a goal on flat ground and holds it while short pushes and sustained pulls act on the body. A red arrow draws the applied force (3 cm per newton).</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.15 / 0.3</span> g34_mref_rsad_db_s0, motion layer on</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>goal hold on a flat tile; short pushes (the clip title gives up to 25 N) plus sustained 3 to 12 N pulls for 0.5 to 2 s; DR on, noise on</dd><dt>Arrestors</dt><dd class="on">on (metadata: dr true, stride 2)</dd><dt>Clip</dt><dd>single run, 12.0 s, no fall; a typical clip: in four quick runs three survived 12 s</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">any time</span> the red arrow: short pushes are absorbed with little motion, while a sustained pull makes the robot lean and drift before it comes back. <span class="t">6.0 s</span> the HUD reads 0.01 m/s and 1.9 degrees of tilt. Over 352 worlds on a flat map, short pushes alone change nothing (falls 0.078 against 0.074 without) and pulls up to about 3 N are absorbed, but 0.36 fall at the full 3 to 12 N (S116 and its addendum).</p>
+      </div>
+    </article>
+    <article class="clip ok" id="c14_g40_push_pull_hold">
+      <div class="player" data-src="videos/c14_g40_push_pull_hold.mp4" data-poster="videos/c14_g40_push_pull_hold.jpg" data-title="Holding a goal while being pushed and pulled">
+        <button type="button" class="ph" aria-label="Play: holding a goal while being pushed and pulled"><img src="videos/c14_g40_push_pull_hold.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot holding position on a flat tile at 6.0 s, 0.03 m/s, tilt 2.0 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">12.0 s &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>g40: the same hold, 240 ms memory and true-centre goal</h3>
+        <p class="lead">The same world, seed and disturbances as the g34 clip beside it, with the g40 controller: the robot settles on the goal with almost no command reversals. <b>g40 is shown for comparison; the recommendation is g39</b> (S121), because the longer memory makes planner-driven navigation worse under pushes.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.15 / 0.3</span> g40_hist24_gc_s0 (240 ms history, goal logic on the true ball centre), motion layer on</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>goal hold on a flat tile; short pushes (the clip title gives up to 25 N) plus sustained 3 to 12 N pulls for 0.5 to 2 s; DR on, noise on</dd><dt>Arrestors</dt><dd class="on">on (metadata: dr true, stride 2)</dd><dt>Clip</dt><dd>single run, 12.0 s, no fall; same seed as the g34 clip</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">6.0 s</span> the HUD reads 0.03 m/s and 2.0 degrees of tilt while holding, against 0.01 m/s and 1.9 degrees for g34. <span class="t">8.5 s</span> a hard push tilts the body to about 23 degrees and it recovers; g34 is pushed to about 21 degrees at the same moment. Over three seeds and 528 worlds the goal test gives a hold error of 4.9 to 6.2 cm for g40 against 11 to 14 cm for g34, and 0.01 to 0.06 reversals against 0.5 to 1.1 (S118, S120). One world each: the tables, not these clips, carry the comparison.</p>
+      </div>
+    </article>
+    <div class="ph2"><button type="button" class="both">Play both together</button><span>Same seed and world, same disturbances; g34 (previous recommendation) against g40. Not the recommendation: that is g39. One world each, not a statistic.</span></div>
+  </div>
+
+  <div class="solo">
+    <article class="clip ok" id="c11_goal_hold_nom">
+      <div class="player" data-src="videos/c11_goal_hold_nom.mp4" data-poster="videos/c11_goal_hold_nom.jpg" data-title="Drive 1 m, brake, hold still">
+        <button type="button" class="ph" aria-label="Play: drive 1 metre, brake, hold still"><img src="videos/c11_goal_hold_nom.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot braking beside the red goal marker at 5.0 s, 0.06 m/s against a 0.21 m/s command, tilt 6.9 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">10.0 s &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>Drive 1 m, brake, hold still</h3>
+        <p class="lead">The motion layer ramps the command up, brakes on a profile into the goal and then holds position: the arrival behaviour the previous controller lacked, when an overshoot flipped the command and the robot hunted around the goal (S105).</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.15 / 0.3</span> g34_mref_rsad_db_s0, motion layer on</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>goal on a flat tile, no pushes; DR on, noise on</dd><dt>Arrestors</dt><dd class="on">on (metadata: dr true, stride 2)</dd><dt>Clip</dt><dd>single run, 10.0 s, no fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">5.0 s</span> the HUD reads 0.06 m/s against 0.21 m/s and 6.9 degrees of tilt beside the marker: braking. <span class="t">9.9 s</span> 0.02 m/s with a zero command and 1.3 degrees of tilt: holding. Over three seeds and 528 worlds each, this recipe makes 0.48 to 0.86 command reversals per world at the goal and holds at 0.052 to 0.065 m/s RMS (S113).</p>
+      </div>
+    </article>
+  </div>
+
+  <p class="intro" style="margin-top:34px">Terrain crossings, one feature per clip, including the limit. Each tile has a flat pad at its centre, the feature starts about 0.55 to 0.65 m out, and further, harder features follow on the same tile. The clips therefore end after the feature they show: earlier 8 s renders kept driving into the next, harder feature and fell there, which said nothing about the first one (S113 note, corrected). Because they end there, they do not show what happens next.</p>
+  <div class="solo">
+    <article class="clip ok" id="c11_step15_nom">
+      <div class="player" data-src="videos/c11_step15_nom.mp4" data-poster="videos/c11_step15_nom.jpg" data-title="A 1.5 cm step at 0.3 m/s: below the traction limit, crosses">
+        <button type="button" class="ph" aria-label="Play: a 1.5 cm step at 0.3 m/s, below the traction limit, crosses"><img src="videos/c11_step15_nom.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot approaching a low step at 3.2 s, 0.30 m/s against a 0.30 m/s command, tilt 3.2 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">6.5 s &middot; crosses</span></button>
+      </div>
+      <div class="txt">
+        <h3>A 1.5 cm step at 0.3 m/s: below the traction limit, crosses</h3>
+        <p class="lead">A step well under the nominal ball's predicted 2.6 cm limit. The robot slows and leans at the riser, gets the ball up and drives on.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.15 / 0.3</span> g34_mref_rsad_db_s0</dd><dt>Design</dt><dd>nominal (9 cm ball), predicted limit 2.6 cm</dd><dt>Task</dt><dd>velocity 0.3 m/s, step up 1.5 cm; DR on, noise on</dd><dt>Arrestors</dt><dd class="on">on (metadata: dr true, stride 2, speed 0.3)</dd><dt>Clip</dt><dd>single run, 6.5 s, no fall; typical: of three random seeds rendered, two crossed and one fell</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">3.2 s</span> the HUD reads 0.30 m/s and 3.2 degrees of tilt on the approach. <span class="t">4.8 s</span> 0.08 m/s and 13.3 degrees at the riser: the moment of the climb. <span class="t">6.4 s</span> 0.53 m/s and 6.0 degrees, over the step and catching up with the command. Even this small step is not a sure crossing.</p>
+      </div>
+    </article>
+    <article class="clip fall" id="c11_step3cm_nom">
+      <div class="player" data-src="videos/c11_step3cm_nom.mp4" data-poster="videos/c11_step3cm_nom.jpg" data-title="The limit: a 3 cm step at 0.5 m/s, stalls at the riser and falls">
+        <button type="button" class="ph" aria-label="Play: the limit, a 3 cm step at 0.5 m/s, stalls at the riser and falls"><img src="videos/c11_step3cm_nom.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot approaching a step at 1.9 s, 0.47 m/s against a 0.50 m/s command, tilt 4.6 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag bad">3.75 s &middot; falls</span></button>
+      </div>
+      <div class="txt">
+        <h3>The limit: a 3 cm step at 0.5 m/s, stalls at the riser and falls</h3>
+        <p class="lead">A 3.0 cm step, above the nominal ball's predicted 2.6 cm limit, 0.65 m from the tile centre. The ball cannot get up the riser, the robot stalls against it and falls. This is the failure the traction limit predicts, shown as one clip.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.15 / 0.3</span> g34_mref_rsad_db_s0</dd><dt>Design</dt><dd>nominal (9 cm ball), predicted limit 2.6 cm</dd><dt>Task</dt><dd>velocity 0.5 m/s, step up 3.0 cm; DR on, noise on</dd><dt>Arrestors</dt><dd class="on">on (metadata: dr true, stride 2, speed 0.5)</dd><dt>Clip</dt><dd>single run, 3.75 s, ends in a fall</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">1.9 s</span> the HUD reads 0.47 m/s against 0.50 m/s on the approach. <span class="t bad">3.0 s</span> 0.22 m/s and 7.4 degrees: stalled at the riser. <span class="t bad">3.75 s</span> the fall. Step-ups of this size cost about 4 in 10 robots in the battery (S113 note), and nothing climbs a step above 4 cm at any speed (S107). Steps above the limit are a ball-size problem, not a controller one.</p>
+      </div>
+    </article>
+    <article class="clip ok" id="c11_ramp_zhigh">
+      <div class="player" data-src="videos/c11_ramp_zhigh.mp4" data-poster="videos/c11_ramp_zhigh.jpg" data-title="0.6 m/s up an 11 degree ramp, higher centre of mass: the full climb">
+        <button type="button" class="ph" aria-label="Play: 0.6 m/s up an 11 degree ramp, higher centre of mass, the full climb"><img src="videos/c11_ramp_zhigh.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot on an 11 degree ramp at 2.1 s, 0.65 m/s against a 0.60 m/s command, tilt 2.2 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">4.3 s &middot; at the top, no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>0.6 m/s up an 11 degree ramp, higher centre of mass: the full climb</h3>
+        <p class="lead">The ramp on which an earlier controller (g18) lagged and fell in chapter 2, at the same command, here on the design with its ballast raised. The robot climbs the whole 18 cm rise close to the commanded speed; the clip ends at the top, before the 33 cm drop-off behind the ramp.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.15 / 0.3</span> g34_mref_rsad_db_s0</dd><dt>Design</dt><dd>zhigh (ballast raised: centre of mass about 1.9 times higher)</dd><dt>Task</dt><dd>velocity 0.6 m/s, ramp up 11.2 deg; DR on, noise on</dd><dt>Arrestors</dt><dd class="on">on (metadata: dr true, stride 2, speed 0.6)</dd><dt>Clip</dt><dd>single run, 4.3 s, no fall, ends at the top of the ramp</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">2.1 s</span> the HUD reads 0.65 m/s against 0.60 m/s and 2.2 degrees of tilt on the slope. <span class="t">4.2 s</span> 0.55 m/s and 5.9 degrees at the crest. A different design and world from the chapter 2 clip, so this is an illustration, not a before-and-after measurement.</p>
+      </div>
+    </article>
+    <article class="clip ok" id="c11_stepdown_kb4">
+      <div class="player" data-src="videos/c11_stepdown_kb4.mp4" data-poster="videos/c11_stepdown_kb4.jpg" data-title="A 2.6 cm step down at 0.5 m/s, heavy-ball design">
+        <button type="button" class="ph" aria-label="Play: a 2.6 cm step down at 0.5 m/s, heavy-ball design"><img src="videos/c11_stepdown_kb4.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot driving toward a step down at 1.7 s, 0.47 m/s against a 0.50 m/s command, tilt 3.3 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">3.4 s &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>A 2.6 cm step down at 0.5 m/s, heavy-ball design</h3>
+        <p class="lead">The design with four times the ball mass drives off a 2.6 cm step and carries on cleanly.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.15 / 0.3</span> g34_mref_rsad_db_s0</dd><dt>Design</dt><dd>kb4 (heavy ball, 4 x ball mass)</dd><dt>Task</dt><dd>velocity 0.5 m/s, step down 2.6 cm; DR on, noise on</dd><dt>Arrestors</dt><dd class="on">on (metadata: dr true, stride 2, speed 0.5)</dd><dt>Clip</dt><dd>single run, 3.4 s, no fall, ends after the step</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">1.7 s</span> the HUD reads 0.47 m/s against 0.50 m/s and 3.3 degrees on the approach. <span class="t">3.3 s</span> 0.57 m/s and 0.6 degrees, down and driving on.</p>
+      </div>
+    </article>
+    <article class="clip fall" id="c11_stairs_nom">
+      <div class="player" data-src="videos/c11_stairs_nom.mp4" data-poster="videos/c11_stairs_nom.jpg" data-title="Stairs at 0.4 m/s: falls at 4.1 s">
+        <button type="button" class="ph" aria-label="Play: stairs at 0.4 m/s, falls at 4.1 seconds"><img src="videos/c11_stairs_nom.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot at the foot of a flight of low stairs at 2.0 s, 0.40 m/s against a 0.40 m/s command, tilt 3.2 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag bad">4.1 s &middot; falls</span></button>
+      </div>
+      <div class="txt">
+        <h3>Stairs at 0.4 m/s: falls at 4.1 s</h3>
+        <p class="lead">Stairs with 3.2 cm risers, above the nominal ball's limit. The robot slows at a riser, tilts and falls. Kept because failures are part of the record.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.15 / 0.3</span> g34_mref_rsad_db_s0</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>velocity 0.4 m/s, stairs, riser 3.2 cm; DR on, noise on</dd><dt>Arrestors</dt><dd class="on">on (metadata: dr true, stride 2, speed 0.4)</dd><dt>Clip</dt><dd>single run, 4.1 s, ends in a fall on the stairs</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">2.0 s</span> the HUD reads 0.40 m/s at 3.2 degrees of tilt on the approach. <span class="t bad">3.6 s</span> 0.08 m/s and 23.4 degrees of tilt on the riser. <span class="t bad">4.1 s</span> the fall. For the previous controller about half of all robots fell on the stairs tiles at any speed from 0.1 to 0.9 m/s (S107).</p>
+      </div>
+    </article>
+  </div>
+
+  <p class="note">Chapter 6 clips: MuJoCo-Warp float32 GPU physics, rendered one world at a time with the MuJoCo renderer by <code>experiments/warp_ppo/render_policy.py</code> (c11, c13) and <code>render_nav.py</code> (c12, from the recordings <code>rec_tof_ref_3</code> and <code>rec_tof_raw_3</code> of <code>eval_nav.py</code>); 1280 x 720, H.264. The c11, c13 and c14 sidecars record randomisation on (dr true), arrestors, frame stride and commanded speed; the c12 pair has no sidecar, and its design, length and outcome come from the recordings. The rates quoted come from the study log entries cited and the tables in <a href="generalist.html#motion">chapter 10b</a>.</p>
+</div></section>
+<div class="end"></div>
+</main>
+
+<script type="module">
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+function mount(player, { autoplay = true, muted = false } = {}) {
+  if (player.querySelector('video')) return player.querySelector('video');
+  const v = document.createElement('video');
+  v.controls = true; v.playsInline = true; v.preload = 'metadata'; v.muted = muted;
+  v.poster = player.dataset.poster; v.src = player.dataset.src; v.setAttribute('aria-label', player.dataset.title);
+  player.replaceChildren(v);
+  if (autoplay) v.play().catch(() => {});
+  return v;
+}
+$$('.player .ph').forEach((b) => b.addEventListener('click', () => mount(b.closest('.player'))));
+$$('[data-pair]').forEach((pair) => {
+  const btn = pair.querySelector('button.both');
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const vids = $$('.player', pair).map((p) => mount(p, { autoplay: false, muted: true }));
+    vids.forEach((v) => { v.pause(); v.currentTime = 0; });
+    Promise.all(vids.map((v) => new Promise((res) => (v.readyState >= 1 ? res() : v.addEventListener('loadedmetadata', res, { once: true })))))
+      .then(() => vids.forEach((v) => v.play().catch(() => {})));
+    btn.textContent = 'Replay both together';
+  });
+});
+if (location.hash) { const el = document.getElementById(decodeURIComponent(location.hash.slice(1))); if (el) el.scrollIntoView(); }
+</script>
+</body>
+</html>

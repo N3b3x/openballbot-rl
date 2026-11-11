@@ -1,0 +1,160 @@
+{
+ "run": "g23_nav_rs025_s0",
+ "source": "sensor",
+ "sensor": {
+  "res": "18x14",
+  "fov": "55,42",
+  "pitch": -25.0,
+  "up": 0.15,
+  "mount": "head",
+  "noise": 0.005
+ },
+ "planner": {
+  "kind": "smooth",
+  "aim": "cmd",
+  "replan": 20,
+  "prox": 0.0,
+  "carrot": 0.3,
+  "w_max": 2.0,
+  "a_max": 0.6,
+  "hyst": 1.0,
+  "look": 0.6,
+  "half_w": 0.22,
+  "thr": 0.03,
+  "v_max": 0.3,
+  "mem": 600,
+  "goal_r": 1.2
+ },
+ "steps": 2000,
+ "worlds": 528,
+ "push_scale": 1.0,
+ "pull": true,
+ "retainer": "0,0,0,100",
+ "overall": {
+  "path_ratio": 2.240581512451172,
+  "heading_rate_rms": 1.7794264554977417,
+  "cmd_change_mean": 0.4811359941959381,
+  "fall": 0.5265151858329773,
+  "success": 0.4337121248245239,
+  "stuck": 0.039772726595401764,
+  "over_block": 0.17992424964904785,
+  "median_time_s": 9.859999656677246
+ },
+ "diag": {
+  "stuck_final_goal_dist_median": 0.6841047406196594,
+  "stuck_cmd_zero_frac": 0.0,
+  "stuck_dist_from_start_median": 1.1256977319717407
+ },
+ "by_design": {
+  "nom": {
+   "path_ratio": 2.357539653778076,
+   "heading_rate_rms": 1.7691397666931152,
+   "cmd_change_mean": 0.496850848197937,
+   "fall": 0.2708333432674408,
+   "success": 0.6666666865348816,
+   "stuck": 0.0625,
+   "over_block": 0.1666666716337204,
+   "median_time_s": 9.809999465942383
+  },
+  "zhigh": {
+   "path_ratio": 2.2317330837249756,
+   "heading_rate_rms": 1.7587946653366089,
+   "cmd_change_mean": 0.4788280427455902,
+   "fall": 0.5833333730697632,
+   "success": 0.4166666865348816,
+   "stuck": 0.0,
+   "over_block": 0.3333333432674408,
+   "median_time_s": 7.739999771118164
+  },
+  "zlow": {
+   "path_ratio": 2.11592960357666,
+   "heading_rate_rms": 1.777336835861206,
+   "cmd_change_mean": 0.5074270367622375,
+   "fall": 0.5,
+   "success": 0.5,
+   "stuck": 0.0,
+   "over_block": 0.0833333358168602,
+   "median_time_s": 9.619999885559082
+  },
+  "kb4": {
+   "path_ratio": 2.0967559814453125,
+   "heading_rate_rms": 1.7965409755706787,
+   "cmd_change_mean": 0.47901615500450134,
+   "fall": 0.6041666865348816,
+   "success": 0.3958333432674408,
+   "stuck": 0.0,
+   "over_block": 0.125,
+   "median_time_s": 9.84999942779541
+  },
+  "bal4": {
+   "path_ratio": 2.0091798305511475,
+   "heading_rate_rms": 1.7883636951446533,
+   "cmd_change_mean": 0.4733109176158905,
+   "fall": 0.1875,
+   "success": 0.6041666865348816,
+   "stuck": 0.2083333432674408,
+   "over_block": 0.2083333432674408,
+   "median_time_s": 11.1899995803833
+  },
+  "J02": {
+   "path_ratio": 2.303175687789917,
+   "heading_rate_rms": 1.737311601638794,
+   "cmd_change_mean": 0.46442756056785583,
+   "fall": 0.5416666865348816,
+   "success": 0.4166666865348816,
+   "stuck": 0.0416666679084301,
+   "over_block": 0.1875,
+   "median_time_s": 9.260000228881836
+  },
+  "tau6": {
+   "path_ratio": 2.2323482036590576,
+   "heading_rate_rms": 1.8298856019973755,
+   "cmd_change_mean": 0.48012155294418335,
+   "fall": 0.5416666865348816,
+   "success": 0.4583333432674408,
+   "stuck": 0.0,
+   "over_block": 0.1875,
+   "median_time_s": 7.569999694824219
+  },
+  "bal025": {
+   "path_ratio": 2.240581512451172,
+   "heading_rate_rms": 1.7726324796676636,
+   "cmd_change_mean": 0.5143182277679443,
+   "fall": 0.9583333730697632,
+   "success": 0.0416666679084301,
+   "stuck": 0.0,
+   "over_block": 0.0833333358168602,
+   "median_time_s": 7.399999618530273
+  },
+  "kb025": {
+   "path_ratio": 3.181985855102539,
+   "heading_rate_rms": 1.8120713233947754,
+   "cmd_change_mean": 0.4571274518966675,
+   "fall": 0.7083333730697632,
+   "success": 0.2708333432674408,
+   "stuck": 0.02083333395421505,
+   "over_block": 0.1458333432674408,
+   "median_time_s": 10.800000190734863
+  },
+  "zeta41": {
+   "path_ratio": 2.1710236072540283,
+   "heading_rate_rms": 1.7902511358261108,
+   "cmd_change_mean": 0.4907284379005432,
+   "fall": 0.3958333432674408,
+   "success": 0.6041666865348816,
+   "stuck": 0.0,
+   "over_block": 0.2916666865348816,
+   "median_time_s": 9.90999984741211
+  },
+  "zeta66": {
+   "path_ratio": 2.2646548748016357,
+   "heading_rate_rms": 1.7427018880844116,
+   "cmd_change_mean": 0.45500704646110535,
+   "fall": 0.5,
+   "success": 0.3958333432674408,
+   "stuck": 0.1041666716337204,
+   "over_block": 0.1666666716337204,
+   "median_time_s": 12.109999656677246
+  }
+ }
+}

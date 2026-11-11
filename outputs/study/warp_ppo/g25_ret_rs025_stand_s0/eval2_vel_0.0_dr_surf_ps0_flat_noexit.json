@@ -1,0 +1,223 @@
+{
+ "run": "g25_ret_rs025_stand_s0",
+ "args": {
+  "run": "g25_ret_rs025_stand_s0",
+  "task": "vel",
+  "speed": 0.0,
+  "n": 32,
+  "dr": true,
+  "surfaces": true,
+  "pull": false,
+  "eval_designs": null,
+  "steps": 2000,
+  "tile_seed": 0
+ },
+ "env_settings": {
+  "overrides": {},
+  "push_scale": 0.0,
+  "dr_scale": null,
+  "tiles_flat": true,
+  "no_exit": true,
+  "dr_off": "",
+  "dr_mft": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "lqr_base": 0.25,
+  "eval_designs": [
+   "nom",
+   "zhigh",
+   "zlow",
+   "kb4",
+   "bal4",
+   "J02",
+   "tau6",
+   "bal025",
+   "kb025",
+   "zeta41",
+   "zeta66"
+  ],
+  "retainer": "0,0,0,100"
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.11363636702299118,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.020390130579471588,
+   "late_err": 0.019311044365167618,
+   "late_speed_ratio": 0.0
+  },
+  "step_up": {
+   "fall": 0.12215909361839294,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.020807333290576935,
+   "late_err": 0.019573276862502098,
+   "late_speed_ratio": 0.0
+  },
+  "step_down": {
+   "fall": 0.10511364042758942,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.01992720365524292,
+   "late_err": 0.01882065273821354,
+   "late_speed_ratio": 0.0
+  },
+  "small_drop": {
+   "fall": 0.10511364042758942,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.020293062552809715,
+   "late_err": 0.019165638834238052,
+   "late_speed_ratio": 0.0
+  },
+  "large_drop": {
+   "fall": 0.08522727340459824,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.01999320089817047,
+   "late_err": 0.0186797883361578,
+   "late_speed_ratio": 0.0
+  },
+  "ramp_up": {
+   "fall": 0.11363636702299118,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.020550858229398727,
+   "late_err": 0.019373109564185143,
+   "late_speed_ratio": 0.0
+  },
+  "ramp_down": {
+   "fall": 0.11079546064138412,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.019407710060477257,
+   "late_err": 0.01809021271765232,
+   "late_speed_ratio": 0.0
+  },
+  "stairs": {
+   "fall": 0.09943182021379471,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.019771909341216087,
+   "late_err": 0.018762504681944847,
+   "late_speed_ratio": 0.0
+  },
+  "bump": {
+   "fall": 0.09943182021379471,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.01970023289322853,
+   "late_err": 0.018583526834845543,
+   "late_speed_ratio": 0.0
+  },
+  "rough": {
+   "fall": 0.08806818723678589,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.02103991061449051,
+   "late_err": 0.02005937322974205,
+   "late_speed_ratio": 0.0
+  }
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.00937500037252903,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.01910003088414669,
+   "late_err": 0.0182229932397604,
+   "late_speed_ratio": 0.0
+  },
+  "zhigh": {
+   "fall": 0.07187499850988388,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.013166074641048908,
+   "late_err": 0.01207391731441021,
+   "late_speed_ratio": 0.0
+  },
+  "zlow": {
+   "fall": 0.0031250000465661287,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.024001186713576317,
+   "late_err": 0.023127520456910133,
+   "late_speed_ratio": 0.0
+  },
+  "kb4": {
+   "fall": 0.3031249940395355,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.01715436391532421,
+   "late_err": 0.016333991661667824,
+   "late_speed_ratio": 0.0
+  },
+  "bal4": {
+   "fall": 0.05937499925494194,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.022298069670796394,
+   "late_err": 0.021341437473893166,
+   "late_speed_ratio": 0.0
+  },
+  "J02": {
+   "fall": 0.02812500111758709,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.02676239050924778,
+   "late_err": 0.025043725967407227,
+   "late_speed_ratio": 0.0
+  },
+  "tau6": {
+   "fall": 0.012500000186264515,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.011968095786869526,
+   "late_err": 0.011185272596776485,
+   "late_speed_ratio": 0.0
+  },
+  "bal025": {
+   "fall": 0.17812500894069672,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.016013605520129204,
+   "late_err": 0.01443484891206026,
+   "late_speed_ratio": 0.0
+  },
+  "kb025": {
+   "fall": 0.33125001192092896,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.03590213507413864,
+   "late_err": 0.03376783803105354,
+   "late_speed_ratio": 0.0
+  },
+  "zeta41": {
+   "fall": 0.0031250000465661287,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.016431603580713272,
+   "late_err": 0.015682978555560112,
+   "late_speed_ratio": 0.0
+  },
+  "zeta66": {
+   "fall": 0.14687500894069672,
+   "success": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.022567857056856155,
+   "late_err": 0.021551329642534256,
+   "late_speed_ratio": 0.0
+  }
+ },
+ "overall": {
+  "fall": 0.1042613610625267,
+  "success": 0.0,
+  "fall_at_map_edge": 0.0,
+  "track_err": 0.020188484340906143,
+  "late_err": 0.019042933359742165,
+  "late_speed_ratio": 0.0
+ }
+}

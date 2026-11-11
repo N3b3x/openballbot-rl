@@ -1,0 +1,10 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{A terrain-aware speed layer with 40\,s episodes. Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error; wheel-ball free-rolling friction 0.01 (the policy's own training value, recorded in each file). Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 176 per terrain kind (1760 per row). Seeds: one policy (g26\_ret\_rs025\_mu01\_s1, a recommended checkpoint), one evaluation seed. Protocol: velocity task at 0.3 m/s on the tiles, undisturbed, arrestors on, 40 s episodes so that a slowed robot still reaches its feature, tile seed 0; governor.py slow mode, which lowers the commanded speed to 0.05 m/s within 0.25 m of a rise above 2.4 cm or a drop above 8 cm, read from the perfect height map or from the ToF estimate; files gov\_vel03\_ps0\_{none,oracle\_v005,tof18\_v005}\_40s.json. An earlier 15 s version of this test (S100 to S102) let slowed robots run out of time before their feature and is superseded.}\label{tab:gen_gov_mu01}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{p{0.26\linewidth}cccccccc}\toprule
+Speed layer (g26 seed 1) & Falls, all tiles & step up & bump & stairs & large drop & flat & Tile exit reached & Progress\\\midrule
+no speed layer & 0.38 & 0.62 & 0.79 & 0.56 & 0.72 & 0.11 & 0.62 & 1.35 m\\
+perfect height map, slow to 0.05 m/s near a discontinuity (upper bound) & 0.33 & 0.61 & 0.72 & 0.43 & 0.74 & 0.07 & 0.58 & 1.31 m\\
+ToF sensor (18 x 14 zones) through a learned height estimator, slow to 0.05 m/s & 0.35 & 0.61 & 0.78 & 0.47 & 0.77 & 0.09 & 0.54 & 1.28 m\\
+\bottomrule\end{tabular}}
+\end{table*}

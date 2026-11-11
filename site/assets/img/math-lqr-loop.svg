@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" class="d-lqr" role="img" aria-labelledby="dq-t">
+<title id="dq-t">Block diagram of the LQR layer: a velocity command passes through a reference governor and a slow velocity integral to become a rolling-rate reference; the LQR compares it with the measured state and outputs a plane torque; the yaw loop adds a third torque; the transmission maps all three to wheel torques which drive the robot, whose measured state feeds back.</title>
+<style>
+.d-lqr text{font-family:Inter,system-ui,sans-serif;font-size:13px;fill:var(--text,#dfe6f0)}
+.d-lqr .m{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;fill:var(--text-2,#9aa8bb)}
+.d-lqr .k{fill:var(--text-3,#8a97ab);font-size:11px}
+.d-lqr .box{fill:var(--bg-3,#161e2a);stroke:var(--model,#4aa8ff);stroke-width:1.8}
+.d-lqr .nbox{fill:var(--bg-3,#161e2a);stroke:var(--line-2,#5a6b84);stroke-width:1.5}
+.d-lqr .w{fill:none;stroke:var(--line-2,#5a6b84);stroke-width:1.6}
+.d-lqr .wm{fill:none;stroke:var(--model,#4aa8ff);stroke-width:1.8}
+</style>
+<defs><marker id="dq-ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--model,#4aa8ff)"/></marker>
+<marker id="dq-arn" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--line-2,#5a6b84)"/></marker></defs>
+<!-- command in -->
+<text x="10" y="64" class="m">cmd v, omega</text>
+<path d="M10 72H60" class="wm" marker-end="url(#dq-ar)"/>
+<!-- governor -->
+<rect x="62" y="40" width="118" height="64" rx="10" class="box"/>
+<text x="76" y="64">Governor</text><text x="76" y="82" class="m">|dv/dt| &lt;= 0.5 m/s²</text><text x="76" y="96" class="k">v_ref chases cmd</text>
+<path d="M180 72H228" class="wm" marker-end="url(#dq-ar)"/><text x="184" y="64" class="m">v_ref</text>
+<!-- integral -->
+<rect x="230" y="40" width="130" height="64" rx="10" class="box"/>
+<text x="244" y="64">Velocity integral</text><text x="244" y="82" class="m">xi += (v_ref - v) dt</text><text x="244" y="96" class="k">clip ±2, k_i = 1</text>
+<path d="M360 72H408" class="wm" marker-end="url(#dq-ar)"/><text x="364" y="64" class="m">phidot_ref</text>
+<!-- LQR -->
+<rect x="410" y="30" width="150" height="84" rx="10" class="box"/>
+<text x="424" y="56">LQR, per plane</text><text x="424" y="74" class="m">tau = -K s</text><text x="424" y="90" class="m">s = (0, theta, phidot - phidot_ref, thetadot)</text><text x="424" y="106" class="k">K from Q, R at dt = 10 ms</text>
+<!-- yaw -->
+<rect x="410" y="134" width="150" height="50" rx="10" class="box"/>
+<text x="424" y="156">Yaw loop</text><text x="424" y="174" class="m">tau_z = -k_yaw (omega_cmd - omega_z), k_yaw 5</text>
+<path d="M10 159H408" class="w" marker-end="url(#dq-arn)"/><text x="12" y="152" class="m">omega_cmd</text>
+<!-- transmission -->
+<path d="M560 72H608" class="wm" marker-end="url(#dq-ar)"/><path d="M560 159H584V84" class="wm"/>
+<rect x="610" y="40" width="140" height="64" rx="10" class="box"/>
+<text x="624" y="64">Transmission</text><text x="624" y="82" class="m">tau_w = W^-T R^T T</text><text x="624" y="96" class="k">three wheel torques, clipped</text>
+<!-- plant -->
+<path d="M680 104V128" class="w" marker-end="url(#dq-arn)"/>
+<rect x="590" y="130" width="160" height="56" rx="10" class="nbox"/>
+<text x="604" y="152">Robot (simulation)</text><text x="604" y="170" class="k">MuJoCo-Warp, 100 Hz decisions</text>
+<!-- feedback -->
+<path d="M590 158H300V104" class="w" marker-end="url(#dq-arn)"/>
+<path d="M480 158V114" class="w" marker-end="url(#dq-arn)"/>
+<text x="306" y="150" class="m">measured: tilt theta, rates thetadot, ball rate phidot, body velocity v, yaw rate</text>
+<!-- legend -->
+<rect x="10" y="222" width="740" height="64" rx="10" style="fill:none;stroke:var(--line,#3a4756);stroke-dasharray:4 4"/>
+<text x="24" y="246" class="k">Blue blocks are derived from the planar model (model-based). The same law runs on every robot design with that design's own K.</text>
+<text x="24" y="266" class="k">Source: experiments/warp_ppo/lqr_gpu.py (GpuLQR.act, design_tables) and ballbot_gym/controllers/lqr.py.</text>
+</svg>

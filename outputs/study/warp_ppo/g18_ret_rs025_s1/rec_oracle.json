@@ -1,0 +1,111 @@
+{
+ "run": "g18_ret_rs025_s1",
+ "source": "oracle",
+ "sensor": null,
+ "planner": {
+  "kind": "wave",
+  "hyst": 1.0,
+  "look": 0.6,
+  "half_w": 0.22,
+  "thr": 0.03,
+  "v_max": 0.3,
+  "mem": 600,
+  "goal_r": 1.2
+ },
+ "steps": 2000,
+ "worlds": 22,
+ "push_scale": 0.0,
+ "pull": false,
+ "retainer": "0,0,0,100",
+ "overall": {
+  "fall": 0.04545454680919647,
+  "success": 0.9545454978942871,
+  "stuck": 0.0,
+  "over_block": 0.0,
+  "median_time_s": 7.299999713897705
+ },
+ "diag": {
+  "stuck_final_goal_dist_median": null,
+  "stuck_cmd_zero_frac": null,
+  "stuck_dist_from_start_median": null
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 6.099999904632568
+  },
+  "zhigh": {
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 7.299999713897705
+  },
+  "zlow": {
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 7.329999923706055
+  },
+  "kb4": {
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 6.710000038146973
+  },
+  "bal4": {
+   "fall": 0.5,
+   "success": 0.5,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 11.300000190734863
+  },
+  "J02": {
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 5.809999942779541
+  },
+  "tau6": {
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 5.920000076293945
+  },
+  "bal025": {
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 6.329999923706055
+  },
+  "kb025": {
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 9.899999618530273
+  },
+  "zeta41": {
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 7.440000057220459
+  },
+  "zeta66": {
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 5.779999732971191
+  }
+ }
+}

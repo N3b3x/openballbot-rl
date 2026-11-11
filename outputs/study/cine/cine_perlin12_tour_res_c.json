@@ -1,0 +1,33 @@
+{
+ "id": "cine_perlin12_tour_res_c",
+ "title": "Tour on 12 cm Perlin terrain",
+ "controller": "res_c_s0",
+ "controller_family": "hybrid",
+ "scenario": "perlin12_tour",
+ "terrain": "Perlin floor, 12 cm amplitude",
+ "description": "The same controller on a rougher Perlin floor (12 cm amplitude).",
+ "outcome": "No fall. Mean position error 43.9 cm, max 121.8 cm, final 40.2 cm; max off-ball angle 18.0 deg.",
+ "stats": {
+  "duration_s": 24.5,
+  "fell": false,
+  "fall_t_s": null,
+  "fall_reason": null,
+  "mean_err_cm": 43.9,
+  "max_err_cm": 121.8,
+  "final_err_cm": 40.2,
+  "dist_travelled_m": 11.91,
+  "max_off_ball_deg": 18.0,
+  "max_lean_deg": 18.3,
+  "mean_speed_err_mps": 0.421,
+  "end_to_plan_end_cm": 40.2,
+  "pushes": 0
+ },
+ "duration_s": 28.1,
+ "sim_only": true,
+ "domain_randomisation": false,
+ "slow_motion": 1.0,
+ "pushes": "",
+ "config": "configs/env/res_c.yaml",
+ "sequence": "tour",
+ "command": "python scripts/study/render_cinematic.py --job perlin12_tour_res_c"
+}

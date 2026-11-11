@@ -1,0 +1,17 @@
+\textbf{Setup.} Two training seeds per variant, 1M decisions each (about 2.8 simulated hours at 100\,Hz), trained on seeds $<10^4$ with $A\sim U(0.02,0.14)$. Evaluation: 30 held-out terrains (seeds $\ge 10^5$) at each of four amplitudes per policy, deterministic actions, 8\,s episodes. Because the policies learned slow, careful driving (0.12--0.22\,m/s, comparable to the $\approx$0.15\,m/s implied by the baseline's reported return), \emph{success} is defined as reaching 1\,m of progress along the target direction without a fall. Fig.~\ref{fig:train} shows the learning curves and Table~\ref{tab:h1} the held-out results.
+
+\begin{figure}[t]
+\centering\includegraphics[width=\columnwidth]{figures/training_curves.png}
+\caption{Training curves (mean over parallel environments). The drop in episode length after 0.5M decisions for some runs reflects episodes ending early on a fall or on reaching the 2\,m training goal.}\label{fig:train}
+\end{figure}
+
+\input{tab_h1.tex}
+
+\begin{figure}[t]
+\centering\includegraphics[width=\columnwidth]{figures/h1_success_fall.png}
+\caption{H1: success and fall rate versus terrain amplitude (95\% Wilson intervals, pooled over two training seeds).}\label{fig:h1}
+\end{figure}
+
+\textbf{Result.} Pooled over the held-out terrains, the proprioception$+$depth policies reach the 1\,m goal more often than proprioception-only (paired difference $+0.27$, 95\% CI $[0.20,0.33]$, Wilcoxon $p<0.001$; Table~\ref{tab:tests}), but they also fall \emph{more} often ($+0.11$, CI $[0.06,0.17]$), mainly on the steepest terrain ($A{=}0.18$: 68\% vs.\ 27\% falls). The per-run breakdown shows that the pooled success gain is driven by a single slow policy: proprioception-only seed~0 succeeds on 85\% of episodes (depth seeds: 80\% and 76\%), whereas proprioception-only seed~1 learned a much slower gait (0.11\,m/s) and succeeds on only 18\%. Per-run mean falls are 11\%/7\% (proprio) vs.\ 16\%/24\% (depth). Hence H1 is \textbf{not supported}: with equal training budget, adding the frozen depth features did not reduce falls and did not give a reliable success benefit; the two-seed pooled test is dominated by seed variance and should be read as such.
+
+\input{tab_tests.tex}

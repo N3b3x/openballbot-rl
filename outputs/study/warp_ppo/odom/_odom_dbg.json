@@ -1,0 +1,65 @@
+{
+ "cal": "_odom_nodr",
+ "C": [
+  [
+   -0.12689154872346878,
+   -0.37869325605553844,
+   -0.035375938299254145
+  ],
+  [
+   0.22065332329424867,
+   -0.09446641674950096,
+   -0.13177866114738965
+  ],
+  [
+   0.13510571373192995,
+   0.1340953255649254,
+   0.12545310193085696
+  ]
+ ],
+ "models": {
+  "ideal (true rates, no noise)": {
+   "cpr": 0,
+   "bias_g": 0,
+   "rw_g": 0,
+   "noise_g": 0,
+   "bias_a": 0,
+   "noise_a": 0,
+   "r_err": 0.0
+  },
+  "realistic MEMS IMU + 4096-count encoders": {
+   "cpr": 4096,
+   "bias_g": 0.005,
+   "rw_g": 0.0005,
+   "noise_g": 0.003,
+   "bias_a": 0.03,
+   "noise_a": 0.05,
+   "r_err": 0.0
+  },
+  "realistic + ball radius 2 percent off": {
+   "cpr": 4096,
+   "bias_g": 0.005,
+   "rw_g": 0.0005,
+   "noise_g": 0.003,
+   "bias_a": 0.03,
+   "noise_a": 0.05,
+   "r_err": 0.02
+  },
+  "realistic, uncalibrated (planar model W)": {
+   "cpr": 4096,
+   "bias_g": 0.005,
+   "rw_g": 0.0005,
+   "noise_g": 0.003,
+   "bias_a": 0.03,
+   "noise_a": 0.05,
+   "r_err": 0.0,
+   "uncal": true
+  }
+ },
+ "results": {
+  "_odom_nodr | ideal (true rates, no noise)": {},
+  "_odom_nodr | realistic MEMS IMU + 4096-count encoders": {},
+  "_odom_nodr | realistic + ball radius 2 percent off": {},
+  "_odom_nodr | realistic, uncalibrated (planar model W)": {}
+ }
+}

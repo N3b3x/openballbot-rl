@@ -1,0 +1,150 @@
+{
+ "run": "g18_ret_rs025_s1",
+ "source": "oracle",
+ "sensor": null,
+ "planner": {
+  "kind": "smooth",
+  "carrot": 0.3,
+  "w_max": 2.0,
+  "a_max": 0.6,
+  "hyst": 1.0,
+  "look": 0.6,
+  "half_w": 0.22,
+  "thr": 0.03,
+  "v_max": 0.3,
+  "mem": 600,
+  "goal_r": 1.2
+ },
+ "steps": 2000,
+ "worlds": 528,
+ "push_scale": 1.0,
+ "pull": true,
+ "retainer": "0,0,0,100",
+ "overall": {
+  "path_ratio": 2.2196662425994873,
+  "heading_rate_rms": 1.7047666311264038,
+  "cmd_change_mean": 0.5406492948532104,
+  "fall": 0.4431818425655365,
+  "success": 0.5454545617103577,
+  "stuck": 0.011363636702299118,
+  "over_block": 0.19886364042758942,
+  "median_time_s": 8.010000228881836
+ },
+ "diag": {
+  "stuck_final_goal_dist_median": 0.6034055948257446,
+  "stuck_cmd_zero_frac": 0.0,
+  "stuck_dist_from_start_median": 1.702987551689148
+ },
+ "by_design": {
+  "nom": {
+   "path_ratio": 2.2283031940460205,
+   "heading_rate_rms": 1.692665934562683,
+   "cmd_change_mean": 0.5401527285575867,
+   "fall": 0.3541666865348816,
+   "success": 0.6041666865348816,
+   "stuck": 0.0416666679084301,
+   "over_block": 0.2916666865348816,
+   "median_time_s": 8.420000076293945
+  },
+  "zhigh": {
+   "path_ratio": 2.3626036643981934,
+   "heading_rate_rms": 1.7040205001831055,
+   "cmd_change_mean": 0.531997561454773,
+   "fall": 0.4166666865348816,
+   "success": 0.5833333730697632,
+   "stuck": 0.0,
+   "over_block": 0.3541666865348816,
+   "median_time_s": 8.470000267028809
+  },
+  "zlow": {
+   "path_ratio": 2.4170689582824707,
+   "heading_rate_rms": 1.6342175006866455,
+   "cmd_change_mean": 0.5013189315795898,
+   "fall": 0.4166666865348816,
+   "success": 0.5416666865348816,
+   "stuck": 0.0416666679084301,
+   "over_block": 0.1875,
+   "median_time_s": 8.800000190734863
+  },
+  "kb4": {
+   "path_ratio": 2.0883705615997314,
+   "heading_rate_rms": 1.7361341714859009,
+   "cmd_change_mean": 0.5451629757881165,
+   "fall": 0.5208333730697632,
+   "success": 0.4791666865348816,
+   "stuck": 0.0,
+   "over_block": 0.2916666865348816,
+   "median_time_s": 6.739999771118164
+  },
+  "bal4": {
+   "path_ratio": 2.0569655895233154,
+   "heading_rate_rms": 1.7089128494262695,
+   "cmd_change_mean": 0.553853452205658,
+   "fall": 0.1041666716337204,
+   "success": 0.8958333730697632,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 9.619999885559082
+  },
+  "J02": {
+   "path_ratio": 2.5348775386810303,
+   "heading_rate_rms": 1.7094676494598389,
+   "cmd_change_mean": 0.5381658673286438,
+   "fall": 0.3125,
+   "success": 0.6458333730697632,
+   "stuck": 0.0416666679084301,
+   "over_block": 0.2916666865348816,
+   "median_time_s": 9.389999389648438
+  },
+  "tau6": {
+   "path_ratio": 2.0923686027526855,
+   "heading_rate_rms": 1.7605611085891724,
+   "cmd_change_mean": 0.5761839747428894,
+   "fall": 0.375,
+   "success": 0.625,
+   "stuck": 0.0,
+   "over_block": 0.1875,
+   "median_time_s": 6.329999923706055
+  },
+  "bal025": {
+   "path_ratio": 2.0698349475860596,
+   "heading_rate_rms": 1.5608848333358765,
+   "cmd_change_mean": 0.45379459857940674,
+   "fall": 0.9583333730697632,
+   "success": 0.0416666679084301,
+   "stuck": 0.0,
+   "over_block": 0.125,
+   "median_time_s": 4.949999809265137
+  },
+  "kb025": {
+   "path_ratio": 2.47859787940979,
+   "heading_rate_rms": 1.7490425109863281,
+   "cmd_change_mean": 0.5617489218711853,
+   "fall": 0.7291666865348816,
+   "success": 0.2708333432674408,
+   "stuck": 0.0,
+   "over_block": 0.1041666716337204,
+   "median_time_s": 7.859999656677246
+  },
+  "zeta41": {
+   "path_ratio": 2.203247547149658,
+   "heading_rate_rms": 1.7373242378234863,
+   "cmd_change_mean": 0.5584383606910706,
+   "fall": 0.2708333432674408,
+   "success": 0.7291666865348816,
+   "stuck": 0.0,
+   "over_block": 0.1666666716337204,
+   "median_time_s": 7.230000019073486
+  },
+  "zeta66": {
+   "path_ratio": 2.182129144668579,
+   "heading_rate_rms": 1.654017686843872,
+   "cmd_change_mean": 0.5011992454528809,
+   "fall": 0.4166666865348816,
+   "success": 0.5833333730697632,
+   "stuck": 0.0,
+   "over_block": 0.1875,
+   "median_time_s": 8.029999732971191
+  }
+ }
+}

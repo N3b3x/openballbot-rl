@@ -1,0 +1,57 @@
+{
+ "run": "wpab_base_s0",
+ "speed": 0.6,
+ "dr": true,
+ "kinds": {
+  "flat": {
+   "fall": 0.171875,
+   "crossed": 0.796875,
+   "stayed": 0.03125
+  },
+  "step_up": {
+   "fall": 0.515625,
+   "crossed": 0.34375,
+   "stayed": 0.140625
+  },
+  "step_down": {
+   "fall": 0.328125,
+   "crossed": 0.640625,
+   "stayed": 0.03125
+  },
+  "small_drop": {
+   "fall": 0.46875,
+   "crossed": 0.5,
+   "stayed": 0.03125
+  },
+  "large_drop": {
+   "fall": 0.8125,
+   "crossed": 0.171875,
+   "stayed": 0.015625
+  },
+  "ramp_up": {
+   "fall": 0.1875,
+   "crossed": 0.4375,
+   "stayed": 0.375
+  },
+  "ramp_down": {
+   "fall": 0.25,
+   "crossed": 0.71875,
+   "stayed": 0.03125
+  },
+  "stairs": {
+   "fall": 0.640625,
+   "crossed": 0.203125,
+   "stayed": 0.15625
+  },
+  "bump": {
+   "fall": 0.796875,
+   "crossed": 0.09375,
+   "stayed": 0.109375
+  },
+  "rough": {
+   "fall": 0.328125,
+   "crossed": 0.609375,
+   "stayed": 0.0625
+  }
+ }
+}

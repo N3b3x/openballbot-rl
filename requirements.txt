@@ -1,3 +1,6 @@
+# LEGACY SB3 path only (ballbot_gym CPU environment, ballbot_rl training, the CPU study tools of S0 to S20), inherited from the
+# upstream OpenBallBot-RL. The current GPU pipeline (experiments/warp_ppo) uses a separate study venv with mujoco 3.17.0,
+# mujoco-warp 3.17.0, warp-lang 1.19.0 and a CUDA build of torch; see "Quick start" in Readme.md.
 gymnasium[other]  # Includes MoviePy for video recording
 moviepy>=1.0.3  # Explicit dependency for video recording (VecVideoRecorder)
 matplotlib

@@ -1,0 +1,33 @@
+{
+ "id": "cine_climb2cm_robs_c",
+ "title": "Crossing a 2 cm step",
+ "controller": "robs_c_s0@ki=1.0",
+ "controller_family": "learned",
+ "scenario": "climb2cm",
+ "terrain": "2 cm step at y = 1 m",
+ "description": "Side view: the robot drives at 0.7 m/s onto a 2 cm raised floor (shown at 0.5x slow motion).",
+ "outcome": "No fall. Mean position error 43.2 cm, max 78.4 cm, final 25.9 cm; max off-ball angle 6.7 deg.",
+ "stats": {
+  "duration_s": 6.5,
+  "fell": false,
+  "fall_t_s": null,
+  "fall_reason": null,
+  "mean_err_cm": 43.2,
+  "max_err_cm": 78.4,
+  "final_err_cm": 25.9,
+  "dist_travelled_m": 2.53,
+  "max_off_ball_deg": 6.7,
+  "max_lean_deg": 6.9,
+  "mean_speed_err_mps": 0.253,
+  "end_to_plan_end_cm": 25.9,
+  "pushes": 0
+ },
+ "duration_s": 25.3,
+ "sim_only": true,
+ "domain_randomisation": false,
+ "slow_motion": 0.3,
+ "pushes": "",
+ "config": "configs/env/robs_c.yaml",
+ "sequence": "climb",
+ "command": "python scripts/study/render_cinematic.py --job climb2cm_robs_c"
+}

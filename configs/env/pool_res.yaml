@@ -1,0 +1,197 @@
+camera:
+  enabled: false
+  disable_rgb: true
+  frame_rate: 90
+  height: 64
+  width: 64
+env:
+  max_allowed_tilt: 70
+  max_ball_offset_deg: 30
+  action_rate_coef: -0.02
+  lean_coef: 0.5
+  ball_offset_coef: 0.05
+  max_ep_steps: 800
+  action_repeat: 5
+  max_wheel_velocity: 30.0
+  fix_wheel_contacts: true
+  command_mode: true
+  cmd_resample_steps: 300
+  cmd_zero_prob: 0.1
+  wheel_damping: 0.1
+  cmd_vmax: 1.2
+  cmd_wmax: 1.0
+  obs_vel_clip: 8.0
+  cmd_reward: err
+  dr:
+    mass: 0.15
+    friction: 0.2
+    damping:
+    - 0.07
+    - 0.15
+    torque: 0.15
+    latency_p: 0.2
+    obs_noise: 0.01
+    push_force:
+    - 5.0
+    - 20.0
+    push_every:
+    - 2.0
+    - 4.0
+    push_dur: 0.05
+  init_yaw_random: true
+  integrator: implicitfast
+  obs_vint: true
+  morph_pool:
+  - xml: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m0.xml
+    json: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m0.json
+    tau: 30.0
+    damp: 0.1
+    armature: 0.005
+    ctx:
+    - 0.0
+    - 0.0013
+    - 0.0022
+    - -0.0038
+    name: d_nominal
+  - xml: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m1.xml
+    json: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m1.json
+    tau: 9.4921875
+    damp: 0.04871392896287468
+    armature: 0.0011865234375
+    ctx:
+    - -0.415
+    - 0.0013
+    - 0.0022
+    - -0.0038
+    name: d_s0.75
+  - xml: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m2.xml
+    json: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m2.json
+    tau: 151.875
+    damp: 0.27556759606310754
+    armature: 0.03796875
+    ctx:
+    - 0.585
+    - 0.0013
+    - 0.0022
+    - -0.0038
+    name: d_s1.5
+  - xml: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m3.xml
+    json: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m3.json
+    tau: 30.0
+    damp: 0.1
+    armature: 0.005
+    ctx:
+    - 0.0
+    - 0.0013
+    - -0.9575
+    - 0.345
+    name: d_zb-0.05
+  - xml: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m4.xml
+    json: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m4.json
+    tau: 30.0
+    damp: 0.1
+    armature: 0.005
+    ctx:
+    - 0.0
+    - 0.0013
+    - 1.8108
+    - -0.4245
+    name: d_zb0.1
+  - xml: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m5.xml
+    json: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m5.json
+    tau: 30.0
+    damp: 0.1
+    armature: 0.005
+    ctx:
+    - 0.0
+    - -1.2029
+    - 0.0022
+    - -0.0038
+    name: d_kball4
+  - xml: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m6.xml
+    json: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m6.json
+    tau: 30.0
+    damp: 0.1
+    armature: 0.005
+    ctx:
+    - 0.0
+    - -0.6008
+    - 0.0022
+    - -0.0038
+    name: d_kball2
+  - xml: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m7.xml
+    json: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m7.json
+    tau: 30.0
+    damp: 0.1
+    armature: 0.005
+    ctx:
+    - 0.0
+    - -0.4648
+    - 0.1378
+    - 0.4226
+    name: d_kbal0.5
+  - xml: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m8.xml
+    json: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m8.json
+    tau: 30.0
+    damp: 0.1
+    armature: 0.005
+    ctx:
+    - 0.0
+    - 0.5264
+    - -0.0845
+    - -0.5026
+    name: d_kbal2
+  - xml: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m9.xml
+    json: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m9.json
+    tau: 6.0
+    damp: 0.1
+    armature: 0.005
+    ctx:
+    - 0.0
+    - 0.0013
+    - 0.0022
+    - -1.4017
+    name: d_tau6
+  - xml: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m10.xml
+    json: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m10.json
+    tau: 30.0
+    damp: 0.1
+    armature: 0.02
+    ctx:
+    - 0.0
+    - 0.0013
+    - 0.0022
+    - -0.0038
+    name: d_J0.02
+  - xml: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m11.xml
+    json: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m11.json
+    tau: 30.0
+    damp: 0.1
+    armature: 0.002
+    ctx:
+    - 0.0
+    - 0.0013
+    - 0.0022
+    - -0.0038
+    name: d_J0.002
+  xml_path: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m0.xml
+  wheel_armature: 0.005
+  lqr_model_json: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\pool_res_m0.json
+  residual_lqr: true
+  residual_scale: 0.1
+logging:
+  cams: false
+  reward_terms: false
+reward:
+  type: directional
+  config:
+    action_reg_coef: -0.0001
+    scale: 0.5
+    survival_bonus: 0.02
+    fall_penalty: 2.0
+    target_direction:
+    - 0.0
+    - 1.0
+terrain:
+  type: flat
+  config: {}

@@ -1,0 +1,9 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Smooth follower against the jerky wavefront planner (privileged map). Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error; earlier measurement: controller g18\_ret\_rs025\_s1 trained and evaluated at wheel-ball free-rolling friction 0.001 (the recommended checkpoint at 0.01 is in Table 37). Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 528 per row (48 per design, 11 designs). Seeds: one controller seed (g18\_ret\_rs025\_s1, frozen). Protocol: blocks map, undisturbed, 20 s, privileged height map; the smooth follower (nav.py) tracks a carrot point 0.3 m down the same distance field, turns the commanded heading at most 2 rad/s, lowers speed with heading error and changes it at most 0.6 m/s$^2$. A dagger marks a value from the study log (the S89 file has no heading-rate field).}\label{tab:gen_smooth}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccc}\toprule
+Planner (privileged height map) & Reached goal & Falls & Stuck & Rolled onto a block & Commanded heading-rate RMS [rad/s]\\\midrule
+S89 wavefront, best neighbour every step & 0.91 & 0.09 & 0.00 & 0.00 & 14.4$^\dagger$\\
+smooth follower (carrot 0.3 m, turn rate at most 2 rad/s) & 0.86 & 0.14 & 0.00 & 0.04 & 1.7\\
+\bottomrule\end{tabular}}
+\end{table*}

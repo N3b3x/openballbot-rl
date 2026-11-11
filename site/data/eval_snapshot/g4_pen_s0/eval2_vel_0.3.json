@@ -1,0 +1,103 @@
+{
+ "run": "g4_pen_s0",
+ "args": {
+  "run": "g4_pen_s0",
+  "task": "vel",
+  "speed": 0.3,
+  "n": 32,
+  "dr": false,
+  "surfaces": false,
+  "pull": false,
+  "eval_designs": "nom,nom",
+  "steps": 800,
+  "tile_seed": 0
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.0,
+   "success": 0.125,
+   "track_err": 0.1490934193134308,
+   "late_err": 0.12739674746990204,
+   "late_speed_ratio": 0.5919339060783386
+  },
+  "step_up": {
+   "fall": 0.203125,
+   "success": 0.0,
+   "track_err": 0.2173372507095337,
+   "late_err": NaN,
+   "late_speed_ratio": NaN
+  },
+  "step_down": {
+   "fall": 0.046875,
+   "success": 0.125,
+   "track_err": 0.1465744972229004,
+   "late_err": NaN,
+   "late_speed_ratio": NaN
+  },
+  "small_drop": {
+   "fall": 0.03125,
+   "success": 0.1875,
+   "track_err": 0.14678145945072174,
+   "late_err": 0.12526458501815796,
+   "late_speed_ratio": 0.6499670147895813
+  },
+  "large_drop": {
+   "fall": 0.453125,
+   "success": 0.109375,
+   "track_err": 0.15642967820167542,
+   "late_err": NaN,
+   "late_speed_ratio": NaN
+  },
+  "ramp_up": {
+   "fall": 0.0625,
+   "success": 0.0,
+   "track_err": 0.21616286039352417,
+   "late_err": NaN,
+   "late_speed_ratio": NaN
+  },
+  "ramp_down": {
+   "fall": 0.125,
+   "success": 0.453125,
+   "track_err": 0.15765893459320068,
+   "late_err": 0.13770157098770142,
+   "late_speed_ratio": 0.8785667419433594
+  },
+  "stairs": {
+   "fall": 0.09375,
+   "success": 0.0,
+   "track_err": 0.22974753379821777,
+   "late_err": NaN,
+   "late_speed_ratio": NaN
+  },
+  "bump": {
+   "fall": 0.109375,
+   "success": 0.0,
+   "track_err": 0.21823087334632874,
+   "late_err": NaN,
+   "late_speed_ratio": NaN
+  },
+  "rough": {
+   "fall": 0.0625,
+   "success": 0.03125,
+   "track_err": 0.1816641390323639,
+   "late_err": NaN,
+   "late_speed_ratio": NaN
+  }
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.109375,
+   "success": 0.10000000149011612,
+   "track_err": 0.18313857913017273,
+   "late_err": NaN,
+   "late_speed_ratio": NaN
+  }
+ },
+ "overall": {
+  "fall": 0.11874999850988388,
+  "success": 0.10312499850988388,
+  "track_err": 0.18237480521202087,
+  "late_err": NaN,
+  "late_speed_ratio": NaN
+ }
+}

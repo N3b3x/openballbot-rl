@@ -1,0 +1,1 @@
+train_dev.py --name ggen_hist8dc_s1 --nworld 4096 --steps 300e6 --tiles --surfaces --pull --goal-p 0.4 --designs nom,s0.5,zhigh,zlow,kb4,bal4,J02,tau6,bal025,kb025,J0005,zeta41,zeta66 --width 512 --layers 3 --seed 1 --hist 8 --asym --design-cond

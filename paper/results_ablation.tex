@@ -1,0 +1,13 @@
+Table~\ref{tab:abl} shows what each repair changes on flat ground with identical PPO settings (proprioception only, 0.3M decisions, deterministic evaluation episode of 8\,s). The released-code row is the best prior replication (10M physics steps at 500\,Hz). Removing the friction fix leaves the robot unable to balance (it falls after 0.36\,s), whereas with the fix the policy balances for the whole episode. The velocity bug did not prevent balancing but removed any drive to move: the policy stood still (net displacement $-0.016$\,m), while the corrected reward gave $1.24$\,m in the same time and budget (an earlier, otherwise identical configuration without the fall penalty).
+
+\begin{table*}[t]
+\centering\caption{Effect of the repairs on flat ground (single seed).}\label{tab:abl}
+\scriptsize\begin{tabular}{lccc}\toprule
+Setup & Steps survived (of 800) & Fell & Net progress [m]\\ \midrule
+Prior replication (released code)$^\dagger$ & 378 of 4000 (train mean) & yes & --\\
+Stock friction frames, velocity fixed & 36 & yes & 0.00\\
+Friction fix, velocity bug (swapped \texttt{cvel}) & 800 & no & $-0.02$\\
+Friction fix, velocity fixed (all repairs) & 800 & no & 0.27--1.24$^\ddagger$\\ \bottomrule
+\end{tabular}\\[2pt]
+{\scriptsize $^\dagger$ training-time mean episode length at 500\,Hz. $^\ddagger$ 1.24\,m without the fall penalty and $\gamma{=}0.995$ at 0.3M decisions; 0.27\,m with the final setting ($\gamma{=}0.999$, fall penalty 10) at the same budget, which trades early speed for stability.}
+\end{table*}

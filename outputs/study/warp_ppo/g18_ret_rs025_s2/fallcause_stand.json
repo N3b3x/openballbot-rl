@@ -1,0 +1,172 @@
+{
+ "run": "g18_ret_rs025_s2",
+ "worlds": 1760,
+ "falls": 898,
+ "fall_rate": 0.5102272727272728,
+ "success": 0.0,
+ "push_scale": 0.0,
+ "pull": false,
+ "lqr_only": false,
+ "tilt_at_unseat_deg": {
+  "p10": 3.4681994915008545,
+  "median": 6.835436820983887,
+  "p90": 12.992484092712402
+ },
+ "survivors_max_tilt_median": 3.2870590686798096,
+ "survivors_max_tilt_p90": 6.296732425689697,
+ "first_event": {
+  "unseated_first": 0.09020044543429843,
+  "tipped_first": 0.0,
+  "neither": 0.9097995545657016
+ },
+ "terminated_by": {
+  "offset_only": 0.821826280623608,
+  "tilt": 0.0
+ },
+ "unseat_lead_steps_median": 46.0,
+ "at_fall": {
+  "mis_median": 999.0,
+  "max_mis_median": 180.0,
+  "max_dgap_median_cm": 100.0,
+  "sat_frac_last_1s_mean": 0.0009725315612740815,
+  "pull_active_frac": 0.0,
+  "pull_frac_last_1s_mean": 0.0,
+  "push_within_0p5s_frac": 0.16703786191536749,
+  "push_within_1s_frac": 0.3151447661469933
+ },
+ "survivors_max_mis_median": 0.5898349285125732,
+ "survivors_max_dgap_median_cm": 0.2489641308784485,
+ "by_kind": {
+  "flat": {
+   "fall": 0.5681818127632141,
+   "unseated_first": 0.09
+  },
+  "step_up": {
+   "fall": 0.4886363744735718,
+   "unseated_first": 0.06976744186046512
+  },
+  "step_down": {
+   "fall": 0.5056818127632141,
+   "unseated_first": 0.10112359550561797
+  },
+  "small_drop": {
+   "fall": 0.5454545617103577,
+   "unseated_first": 0.08333333333333333
+  },
+  "large_drop": {
+   "fall": 0.5056818127632141,
+   "unseated_first": 0.07865168539325842
+  },
+  "ramp_up": {
+   "fall": 0.5227273106575012,
+   "unseated_first": 0.13043478260869565
+  },
+  "ramp_down": {
+   "fall": 0.5113636255264282,
+   "unseated_first": 0.05555555555555555
+  },
+  "stairs": {
+   "fall": 0.5113636255264282,
+   "unseated_first": 0.1
+  },
+  "bump": {
+   "fall": 0.4545454680919647,
+   "unseated_first": 0.1
+  },
+  "rough": {
+   "fall": 0.4886363744735718,
+   "unseated_first": 0.09302325581395349
+  }
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.5875000357627869,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 7.909999847412109,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 4.07621431350708
+  },
+  "zhigh": {
+   "fall": 0.699999988079071,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 6.929999828338623,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 3.0358328819274902
+  },
+  "zlow": {
+   "fall": 0.48125001788139343,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 8.109999656677246,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 4.505152225494385
+  },
+  "kb4": {
+   "fall": 1.0,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 4.059999942779541,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": null
+  },
+  "bal4": {
+   "fall": 0.1875,
+   "unseated_first": 0.9333333333333333,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 6.069999694824219,
+   "sat_frac_last_1s_mean": 0.00711111119017005,
+   "survivors_max_tilt_median": 4.464447975158691
+  },
+  "J02": {
+   "fall": 0.10625000298023224,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 6.519999980926514,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 2.5396008491516113
+  },
+  "tau6": {
+   "fall": 0.012500000186264515,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 14.59999942779541,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 2.1357004642486572
+  },
+  "bal025": {
+   "fall": 0.887499988079071,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 4.539999961853027,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 2.2593209743499756
+  },
+  "kb025": {
+   "fall": 0.33125001192092896,
+   "unseated_first": 1.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 0.7999999523162842,
+   "sat_frac_last_1s_mean": 0.012452829629182816,
+   "survivors_max_tilt_median": 6.297499179840088
+  },
+  "zeta41": {
+   "fall": 0.550000011920929,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 7.489999771118164,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 2.790778160095215
+  },
+  "zeta66": {
+   "fall": 0.768750011920929,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 6.480000019073486,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 4.863088130950928
+  }
+ },
+ "stand": true
+}

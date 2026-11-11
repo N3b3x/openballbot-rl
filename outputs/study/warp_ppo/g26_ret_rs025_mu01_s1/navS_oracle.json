@@ -1,0 +1,153 @@
+{
+ "run": "g26_ret_rs025_mu01_s1",
+ "source": "oracle",
+ "sensor": null,
+ "planner": {
+  "kind": "smooth",
+  "aim": "cmd",
+  "replan": 20,
+  "prox": 0.0,
+  "carrot": 0.3,
+  "w_max": 2.0,
+  "a_max": 0.6,
+  "hyst": 1.0,
+  "look": 0.6,
+  "half_w": 0.22,
+  "thr": 0.03,
+  "v_max": 0.3,
+  "mem": 600,
+  "goal_r": 1.2
+ },
+ "steps": 2000,
+ "worlds": 528,
+ "push_scale": 0.0,
+ "pull": false,
+ "retainer": "0,0,0,100",
+ "overall": {
+  "path_ratio": 1.831696629524231,
+  "heading_rate_rms": 1.6925581693649292,
+  "cmd_change_mean": 0.5492300987243652,
+  "fall": 0.07196970283985138,
+  "success": 0.886363685131073,
+  "stuck": 0.0416666679084301,
+  "over_block": 0.007575757801532745,
+  "median_time_s": 9.479999542236328
+ },
+ "diag": {
+  "stuck_final_goal_dist_median": 0.8744801878929138,
+  "stuck_cmd_zero_frac": 0.0,
+  "stuck_dist_from_start_median": 1.9309252500534058
+ },
+ "by_design": {
+  "nom": {
+   "path_ratio": 1.8277308940887451,
+   "heading_rate_rms": 1.6844594478607178,
+   "cmd_change_mean": 0.5451384782791138,
+   "fall": 0.02083333395421505,
+   "success": 0.9166666865348816,
+   "stuck": 0.0625,
+   "over_block": 0.0,
+   "median_time_s": 10.219999313354492
+  },
+  "zhigh": {
+   "path_ratio": 1.8262954950332642,
+   "heading_rate_rms": 1.7190524339675903,
+   "cmd_change_mean": 0.5576798319816589,
+   "fall": 0.0416666679084301,
+   "success": 0.9583333730697632,
+   "stuck": 0.0,
+   "over_block": 0.02083333395421505,
+   "median_time_s": 9.199999809265137
+  },
+  "zlow": {
+   "path_ratio": 1.9095828533172607,
+   "heading_rate_rms": 1.6710431575775146,
+   "cmd_change_mean": 0.5391600131988525,
+   "fall": 0.0,
+   "success": 0.9375,
+   "stuck": 0.0625,
+   "over_block": 0.0,
+   "median_time_s": 10.34000015258789
+  },
+  "kb4": {
+   "path_ratio": 1.7466100454330444,
+   "heading_rate_rms": 1.705786108970642,
+   "cmd_change_mean": 0.551203727722168,
+   "fall": 0.02083333395421505,
+   "success": 0.9166666865348816,
+   "stuck": 0.0625,
+   "over_block": 0.0,
+   "median_time_s": 9.09000015258789
+  },
+  "bal4": {
+   "path_ratio": 1.7925246953964233,
+   "heading_rate_rms": 1.6808050870895386,
+   "cmd_change_mean": 0.5480406880378723,
+   "fall": 0.1458333432674408,
+   "success": 0.75,
+   "stuck": 0.1041666716337204,
+   "over_block": 0.0,
+   "median_time_s": 9.609999656677246
+  },
+  "J02": {
+   "path_ratio": 1.7649987936019897,
+   "heading_rate_rms": 1.6840400695800781,
+   "cmd_change_mean": 0.5445785522460938,
+   "fall": 0.0,
+   "success": 0.9375,
+   "stuck": 0.0625,
+   "over_block": 0.0,
+   "median_time_s": 9.789999961853027
+  },
+  "tau6": {
+   "path_ratio": 1.8592405319213867,
+   "heading_rate_rms": 1.7510967254638672,
+   "cmd_change_mean": 0.5757283568382263,
+   "fall": 0.02083333395421505,
+   "success": 0.9791666865348816,
+   "stuck": 0.0,
+   "over_block": 0.0416666679084301,
+   "median_time_s": 7.089999675750732
+  },
+  "bal025": {
+   "path_ratio": 1.7725510597229004,
+   "heading_rate_rms": 1.6986336708068848,
+   "cmd_change_mean": 0.5459888577461243,
+   "fall": 0.02083333395421505,
+   "success": 0.9791666865348816,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 9.719999313354492
+  },
+  "kb025": {
+   "path_ratio": 2.2186062335968018,
+   "heading_rate_rms": 1.717911720275879,
+   "cmd_change_mean": 0.5677163004875183,
+   "fall": 0.5,
+   "success": 0.5,
+   "stuck": 0.0,
+   "over_block": 0.02083333395421505,
+   "median_time_s": 9.019999504089355
+  },
+  "zeta41": {
+   "path_ratio": 1.8947550058364868,
+   "heading_rate_rms": 1.7048487663269043,
+   "cmd_change_mean": 0.5578966736793518,
+   "fall": 0.02083333395421505,
+   "success": 0.9791666865348816,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 10.239999771118164
+  },
+  "zeta66": {
+   "path_ratio": 1.7966420650482178,
+   "heading_rate_rms": 1.6315597295761108,
+   "cmd_change_mean": 0.5135486721992493,
+   "fall": 0.0,
+   "success": 0.8958333730697632,
+   "stuck": 0.1041666716337204,
+   "over_block": 0.0,
+   "median_time_s": 10.800000190734863
+  }
+ }
+}

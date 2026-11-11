@@ -1,0 +1,49 @@
+/* Components of the design-guidelines and ROS 2 pages (design.html, deploy.html). Tokens only; theme-aware. */
+
+/* reference robot: schematic next to a spec list */
+.specgrid{display:grid;gap:clamp(16px,4vw,40px);grid-template-columns:minmax(0,340px) minmax(0,1fr);align-items:center;margin-top:1.4em}
+.specfig{margin:0}
+.specfig svg{max-width:340px;margin-inline:auto}
+.specs{margin:0;display:grid;gap:10px}
+.specs>div{display:grid;grid-template-columns:150px 1fr;gap:12px;align-items:baseline;padding:12px 14px;background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius-sm)}
+.specs dt{display:flex;gap:.5em;align-items:center;font:600 .78rem var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--text-3)}
+.specs dt .ico{color:var(--link)}
+.specs dd{margin:0;color:var(--text)}
+@media (max-width:760px){.specgrid{grid-template-columns:1fr}.specs>div{grid-template-columns:1fr;gap:2px}}
+
+/* numbered rule list */
+.rules{list-style:none;margin:1.6em 0 0;padding:0;display:grid;gap:14px;counter-reset:rule}
+.rule{counter-increment:rule;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:start;padding:20px;background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-1);position:relative}
+.rule::before{content:counter(rule);position:absolute;left:-10px;top:-10px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--bg);border:1px solid var(--line-2);font:600 .8rem var(--font-mono);color:var(--text-2)}
+.rule h3{font-size:1.12rem;margin-bottom:.4em}
+.rule p{margin:0 0 .6em}
+.rule>.chip{align-self:start}
+@media (max-width:640px){.rule{grid-template-columns:1fr}.rule::before{left:12px;top:-12px}.rule>.chip{justify-self:start}}
+
+/* inline bar strip: <div class="bars"><span><b>label</b><i>value</i></span>...</div>, --v = share 0..1 set by the page script */
+.bars{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:8px;margin:.4em 0 .2em}
+.bars>span{position:relative;display:flex;flex-direction:column;justify-content:flex-end;height:84px;padding:6px 8px;border-radius:8px;background:var(--bg-3);overflow:hidden;font-size:.74rem}
+.bars>span::before{content:"";position:absolute;left:0;right:0;bottom:0;height:calc(max(var(--v,0),.004) * 100%);background:linear-gradient(180deg,color-mix(in srgb,var(--bad) 85%,transparent),color-mix(in srgb,var(--bad) 45%,transparent));transition:height .6s var(--ease)}
+.bars>span.nom{box-shadow:inset 0 0 0 1.5px var(--hybrid)}
+.bars b,.bars i{position:relative;z-index:1}
+.bars b{font:500 .72rem var(--font-mono);color:var(--text-2)}
+.bars i{font:600 .95rem var(--font-mono);font-style:normal;color:var(--text)}
+.bars .v{font-size:inherit}
+
+/* ROS 2 architecture */
+.arch .box{fill:var(--bg-2);stroke:var(--line-2);stroke-width:1.5}
+.arch .box.model{stroke:var(--model);fill:color-mix(in srgb,var(--model) 10%,var(--bg-2))}
+.arch .box.learned{stroke:var(--learned);fill:color-mix(in srgb,var(--learned) 10%,var(--bg-2))}
+.arch .box.hybrid{stroke:var(--hybrid);fill:color-mix(in srgb,var(--hybrid) 10%,var(--bg-2))}
+.arch .box.warn{stroke:var(--warn);fill:color-mix(in srgb,var(--warn) 10%,var(--bg-2))}
+.arch .frame{fill:color-mix(in srgb,var(--bg-3) 50%,transparent);stroke:var(--line-2);stroke-dasharray:6 5}
+.arch .a{fill:none;stroke:var(--text-3);stroke-width:1.6}
+.figure>.media .arch{min-width:820px}
+
+.card .itile{margin-bottom:.8em}
+.more-link{display:inline-flex;gap:.4em;align-items:center;font:500 .85rem var(--font-sans);color:var(--link)}
+.more-link .ico{width:1em;height:1em;transition:transform var(--dur) var(--ease)}
+a.card:hover .more-link .ico{transform:translateX(3px)}
+.safety{margin-top:1.6em}
+pre.cmd{position:relative;background:var(--bg-3);border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px 16px;overflow-x:auto;margin:.8em 0 1.2em;color:var(--text);line-height:1.55}
+pre.cmd code{background:none;padding:0;white-space:pre}

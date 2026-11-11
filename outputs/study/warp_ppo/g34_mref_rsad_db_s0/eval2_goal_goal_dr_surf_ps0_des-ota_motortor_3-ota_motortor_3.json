@@ -1,0 +1,123 @@
+{
+ "run": "g34_mref_rsad_db_s0",
+ "args": {
+  "run": "g34_mref_rsad_db_s0",
+  "task": "goal",
+  "speed": 0.6,
+  "n": 128,
+  "dr": true,
+  "surfaces": true,
+  "pull": false,
+  "eval_designs": "ota_motortor_3,ota_motortor_3",
+  "steps": 800,
+  "tile_seed": 0
+ },
+ "env_settings": {
+  "overrides": {},
+  "push_scale": 0.0,
+  "dr_scale": null,
+  "tiles_flat": false,
+  "no_exit": false,
+  "dr_off": "",
+  "dr_mft": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "lqr_base": 0.25,
+  "eval_designs": [
+   "ota_motortor_3",
+   "ota_motortor_3"
+  ],
+  "retainer": "0,0,0,100",
+  "pair_mu1": 0.01
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.50390625,
+   "success": 0.49609375,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.023255813866853714,
+   "median_time_s": 2.240000009536743
+  },
+  "step_up": {
+   "fall": 0.64453125,
+   "success": 0.35546875,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.2899999618530273
+  },
+  "step_down": {
+   "fall": 0.47265625,
+   "success": 0.52734375,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.01652892492711544,
+   "median_time_s": 2.259999990463257
+  },
+  "small_drop": {
+   "fall": 0.51953125,
+   "success": 0.48046875,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.015037594363093376,
+   "median_time_s": 2.259999990463257
+  },
+  "large_drop": {
+   "fall": 0.56640625,
+   "success": 0.43359375,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.2699999809265137
+  },
+  "ramp_up": {
+   "fall": 0.51953125,
+   "success": 0.48046875,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.3299999237060547
+  },
+  "ramp_down": {
+   "fall": 0.5078125,
+   "success": 0.4921875,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.015384615398943424,
+   "median_time_s": 2.190000057220459
+  },
+  "stairs": {
+   "fall": 0.5859375,
+   "success": 0.4140625,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.006666666828095913,
+   "median_time_s": 2.299999952316284
+  },
+  "bump": {
+   "fall": 0.640625,
+   "success": 0.359375,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.006097560748457909,
+   "median_time_s": 2.319999933242798
+  },
+  "rough": {
+   "fall": 0.46875,
+   "success": 0.53125,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.259999990463257
+  }
+ },
+ "by_design": {
+  "ota_motortor_3": {
+   "fall": 0.5335937738418579,
+   "success": 0.4664062559604645,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.011713030748069286,
+   "median_time_s": 2.2699999809265137
+  }
+ },
+ "overall": {
+  "fall": 0.54296875,
+  "success": 0.45703125,
+  "nonfinite": 0.0,
+  "fall_at_map_edge": 0.007913668639957905,
+  "median_time_s": 2.259999990463257
+ }
+}

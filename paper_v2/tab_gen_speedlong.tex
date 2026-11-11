@@ -1,0 +1,10 @@
+\begin{table}[t]\centering\footnotesize
+\caption{Falls against commanded speed (20\,s episodes). Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 176 per terrain kind (1760 per row). Seeds: one policy (g18\_ret\_rs025\_s1, seed 1). Protocol: velocity task on the tiles, undisturbed, arrestors on, 20 s episodes so that every robot reaches the terrain feature (eval\_governor.py with no governor); fall rate per kind.}\label{tab:gen_speedlong}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcccccc}\toprule
+Commanded speed & All tiles & step up & bump & large drop & stairs & flat\\\midrule
+0.1 m/s & 0.42 & 0.64 & 0.64 & 0.80 & 0.55 & 0.15\\
+0.2 m/s & 0.41 & 0.66 & 0.80 & 0.73 & 0.56 & 0.08\\
+0.3 m/s & 0.37 & 0.64 & 0.74 & 0.66 & 0.52 & 0.10\\
+\bottomrule\end{tabular}}
+\end{table}

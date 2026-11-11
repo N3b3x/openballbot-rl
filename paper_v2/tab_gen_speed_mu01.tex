@@ -1,0 +1,12 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Falls against commanded speed on the corrected contact model (friction 0.01; 20\,s episodes). Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error; wheel-ball free-rolling friction 0.01 (S98), policy trained at 0.001. Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 176 per terrain kind (1760 per row). Seeds: one policy (g18\_ret\_rs025\_s1, seed 1). Protocol: the Table 14 protocol: velocity task on the tiles, undisturbed, arrestors on, 20 s episodes so that every robot reaches its feature (eval\_governor.py with no governor; files speed\_mu01\_*.json); fall rate per kind; the last column repeats Table 14 at 0.001.}\label{tab:gen_speed_mu01}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccccc}\toprule
+Commanded speed & All tiles & step up & bump & large drop & stairs & flat & All tiles at 0.001 (Table 14, superseded)\\\midrule
+0.1 m/s & 0.28 & 0.46 & 0.54 & 0.74 & 0.43 & 0.06 & 0.42\\
+0.2 m/s & 0.34 & 0.61 & 0.73 & 0.72 & 0.48 & 0.05 & 0.41\\
+0.3 m/s & 0.35 & 0.62 & 0.74 & 0.66 & 0.49 & 0.06 & 0.37\\
+0.6 m/s & 0.40 & 0.54 & 0.66 & 0.77 & 0.51 & 0.11 & not run\\
+0.9 m/s & 0.51 & 0.62 & 0.66 & 0.83 & 0.62 & 0.23 & not run\\
+\bottomrule\end{tabular}}
+\end{table*}

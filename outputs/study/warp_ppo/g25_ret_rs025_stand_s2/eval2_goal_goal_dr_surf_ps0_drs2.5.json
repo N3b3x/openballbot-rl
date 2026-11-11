@@ -1,0 +1,179 @@
+{
+ "run": "g25_ret_rs025_stand_s2",
+ "args": {
+  "run": "g25_ret_rs025_stand_s2",
+  "task": "goal",
+  "speed": 0.6,
+  "n": 16,
+  "dr": true,
+  "surfaces": true,
+  "pull": false,
+  "eval_designs": null,
+  "steps": 800,
+  "tile_seed": 0
+ },
+ "env_settings": {
+  "overrides": {},
+  "push_scale": 0.0,
+  "dr_scale": 2.5,
+  "tiles_flat": false,
+  "no_exit": false,
+  "dr_off": "",
+  "dr_mft": [
+   2.5,
+   2.5,
+   2.5
+  ],
+  "lqr_base": 0.25,
+  "eval_designs": [
+   "nom",
+   "zhigh",
+   "zlow",
+   "kb4",
+   "bal4",
+   "J02",
+   "tau6",
+   "bal025",
+   "kb025",
+   "zeta41",
+   "zeta66"
+  ],
+  "retainer": "0,0,0,100"
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.28409090638160706,
+   "success": 0.7159091234207153,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.4600000381469727
+  },
+  "step_up": {
+   "fall": 0.6079545617103577,
+   "success": 0.3920454680919647,
+   "fall_at_map_edge": 0.009345794096589088,
+   "median_time_s": 2.509999990463257
+  },
+  "step_down": {
+   "fall": 0.2670454680919647,
+   "success": 0.7329545617103577,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.4099998474121094
+  },
+  "small_drop": {
+   "fall": 0.28977274894714355,
+   "success": 0.7102273106575012,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.3899998664855957
+  },
+  "large_drop": {
+   "fall": 0.5113636255264282,
+   "success": 0.4886363744735718,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.3299999237060547
+  },
+  "ramp_up": {
+   "fall": 0.3693181872367859,
+   "success": 0.6306818127632141,
+   "fall_at_map_edge": 0.015384615398943424,
+   "median_time_s": 2.759999990463257
+  },
+  "ramp_down": {
+   "fall": 0.2443181872367859,
+   "success": 0.7556818127632141,
+   "fall_at_map_edge": 0.023255813866853714,
+   "median_time_s": 2.3299999237060547
+  },
+  "stairs": {
+   "fall": 0.5568181872367859,
+   "success": 0.4431818425655365,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.549999952316284
+  },
+  "bump": {
+   "fall": 0.6477273106575012,
+   "success": 0.35227274894714355,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.509999990463257
+  },
+  "rough": {
+   "fall": 0.3125,
+   "success": 0.6875,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.4600000381469727
+  }
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.34375,
+   "success": 0.65625,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.4800000190734863
+  },
+  "zhigh": {
+   "fall": 0.26250001788139343,
+   "success": 0.737500011920929,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.3899998664855957
+  },
+  "zlow": {
+   "fall": 0.46875,
+   "success": 0.53125,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.5
+  },
+  "kb4": {
+   "fall": 0.25,
+   "success": 0.75,
+   "fall_at_map_edge": 0.05000000074505806,
+   "median_time_s": 2.429999828338623
+  },
+  "bal4": {
+   "fall": 0.574999988079071,
+   "success": 0.42500001192092896,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.490000009536743
+  },
+  "J02": {
+   "fall": 0.26250001788139343,
+   "success": 0.737500011920929,
+   "fall_at_map_edge": 0.02380952425301075,
+   "median_time_s": 2.5299999713897705
+  },
+  "tau6": {
+   "fall": 0.5687500238418579,
+   "success": 0.4312500059604645,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.009999990463257
+  },
+  "bal025": {
+   "fall": 0.24375000596046448,
+   "success": 0.7562500238418579,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.429999828338623
+  },
+  "kb025": {
+   "fall": 0.71875,
+   "success": 0.28125,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.3899998664855957
+  },
+  "zeta41": {
+   "fall": 0.35625001788139343,
+   "success": 0.643750011920929,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.379999876022339
+  },
+  "zeta66": {
+   "fall": 0.45000001788139343,
+   "success": 0.550000011920929,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.629999876022339
+  }
+ },
+ "overall": {
+  "fall": 0.40909090638160706,
+  "success": 0.5909090638160706,
+  "fall_at_map_edge": 0.004166666883975267,
+  "median_time_s": 2.440000057220459
+ }
+}

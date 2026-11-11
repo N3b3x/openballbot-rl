@@ -1,0 +1,164 @@
+{
+ "run": "g34_mref_rsad_db_s0",
+ "source": "sensor",
+ "motion_ref": true,
+ "sensor": {
+  "res": "18x14",
+  "fov": "55,42",
+  "pitch": -25.0,
+  "up": 0.15,
+  "mount": "head",
+  "noise": 0.005
+ },
+ "planner": {
+  "kind": "smooth",
+  "aim": "target",
+  "replan": 20,
+  "prox": 0.0,
+  "carrot": 0.3,
+  "w_max": 2.0,
+  "a_max": 0.6,
+  "hyst": 1.0,
+  "look": 0.6,
+  "half_w": 0.22,
+  "thr": 0.03,
+  "v_max": 0.3,
+  "mem": 600,
+  "goal_r": 1.2
+ },
+ "steps": 2000,
+ "worlds": 528,
+ "push_scale": 0.0,
+ "pull": false,
+ "retainer": "0,0,0,100",
+ "overall": {
+  "path_ratio": 1.880548357963562,
+  "heading_rate_rms": 1.305806279182434,
+  "cmd_change_mean": 0.39964941143989563,
+  "fall": 0.07954545319080353,
+  "success": 0.876893937587738,
+  "stuck": 0.043560609221458435,
+  "over_block": 0.06818182021379471,
+  "median_time_s": 9.220000267028809
+ },
+ "diag": {
+  "escape_events": null,
+  "escape_gave_up": null,
+  "escape_fails_median": null,
+  "stuck_final_goal_dist_median": 0.8480333685874939,
+  "stuck_cmd_zero_frac": 0.17391304671764374,
+  "stuck_dist_from_start_median": 0.7273257970809937
+ },
+ "by_design": {
+  "nom": {
+   "path_ratio": 1.887871503829956,
+   "heading_rate_rms": 1.3295419216156006,
+   "cmd_change_mean": 0.40195950865745544,
+   "fall": 0.0833333358168602,
+   "success": 0.875,
+   "stuck": 0.0416666679084301,
+   "over_block": 0.0833333358168602,
+   "median_time_s": 10.260000228881836
+  },
+  "zhigh": {
+   "path_ratio": 1.9107226133346558,
+   "heading_rate_rms": 1.3160043954849243,
+   "cmd_change_mean": 0.4014163315296173,
+   "fall": 0.125,
+   "success": 0.8541666865348816,
+   "stuck": 0.02083333395421505,
+   "over_block": 0.1875,
+   "median_time_s": 8.729999542236328
+  },
+  "zlow": {
+   "path_ratio": 1.9197134971618652,
+   "heading_rate_rms": 1.2957371473312378,
+   "cmd_change_mean": 0.39883121848106384,
+   "fall": 0.0,
+   "success": 0.9583333730697632,
+   "stuck": 0.0416666679084301,
+   "over_block": 0.02083333395421505,
+   "median_time_s": 9.630000114440918
+  },
+  "kb4": {
+   "path_ratio": 1.7484679222106934,
+   "heading_rate_rms": 1.2879791259765625,
+   "cmd_change_mean": 0.40335291624069214,
+   "fall": 0.02083333395421505,
+   "success": 0.9583333730697632,
+   "stuck": 0.02083333395421505,
+   "over_block": 0.0,
+   "median_time_s": 8.25
+  },
+  "bal4": {
+   "path_ratio": 1.8844867944717407,
+   "heading_rate_rms": 1.2946017980575562,
+   "cmd_change_mean": 0.40583667159080505,
+   "fall": 0.1458333432674408,
+   "success": 0.6875,
+   "stuck": 0.1666666716337204,
+   "over_block": 0.0416666679084301,
+   "median_time_s": 9.239999771118164
+  },
+  "J02": {
+   "path_ratio": 1.8212345838546753,
+   "heading_rate_rms": 1.2835391759872437,
+   "cmd_change_mean": 0.38749459385871887,
+   "fall": 0.0,
+   "success": 0.9375,
+   "stuck": 0.0625,
+   "over_block": 0.0625,
+   "median_time_s": 9.260000228881836
+  },
+  "tau6": {
+   "path_ratio": 1.759591817855835,
+   "heading_rate_rms": 1.3284181356430054,
+   "cmd_change_mean": 0.4071327745914459,
+   "fall": 0.02083333395421505,
+   "success": 0.9791666865348816,
+   "stuck": 0.0,
+   "over_block": 0.1041666716337204,
+   "median_time_s": 7.639999866485596
+  },
+  "bal025": {
+   "path_ratio": 1.8396012783050537,
+   "heading_rate_rms": 1.3063859939575195,
+   "cmd_change_mean": 0.3950828015804291,
+   "fall": 0.0416666679084301,
+   "success": 0.9583333730697632,
+   "stuck": 0.0,
+   "over_block": 0.02083333395421505,
+   "median_time_s": 8.479999542236328
+  },
+  "kb025": {
+   "path_ratio": 1.9832115173339844,
+   "heading_rate_rms": 1.321988821029663,
+   "cmd_change_mean": 0.40138110518455505,
+   "fall": 0.3958333432674408,
+   "success": 0.5416666865348816,
+   "stuck": 0.0625,
+   "over_block": 0.125,
+   "median_time_s": 9.789999961853027
+  },
+  "zeta41": {
+   "path_ratio": 1.8821868896484375,
+   "heading_rate_rms": 1.3077435493469238,
+   "cmd_change_mean": 0.40224266052246094,
+   "fall": 0.02083333395421505,
+   "success": 0.9583333730697632,
+   "stuck": 0.02083333395421505,
+   "over_block": 0.0625,
+   "median_time_s": 9.539999961853027
+  },
+  "zeta66": {
+   "path_ratio": 1.9440886974334717,
+   "heading_rate_rms": 1.297910451889038,
+   "cmd_change_mean": 0.39375245571136475,
+   "fall": 0.02083333395421505,
+   "success": 0.9375,
+   "stuck": 0.0416666679084301,
+   "over_block": 0.0416666679084301,
+   "median_time_s": 10.579999923706055
+  }
+ }
+}

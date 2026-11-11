@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- head:common -->
+<script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}</script>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<!-- /head:common -->
+<title>Literature: ballbot control, learning and hardware</title>
+<meta name="description" content="A filterable catalogue of ballbot papers, projects and related work, with the confidence the survey reports assign, what we take from each, and what we could not verify.">
+<!-- og -->
+<link rel="canonical" href="https://n3b3x.github.io/openballbot-rl/literature.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ballbot control research">
+<meta property="og:title" content="Literature: ballbot control, learning and hardware">
+<meta property="og:description" content="A filterable catalogue of ballbot papers, projects and related work, with the confidence the survey reports assign, what we take from each, and what we could not verify.">
+<meta property="og:url" content="https://n3b3x.github.io/openballbot-rl/literature.html">
+<meta property="og:image" content="https://n3b3x.github.io/openballbot-rl/assets/img/social-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A simulated ballbot: a cylindrical robot balanced on a basketball-textured ball, with the title of the study.">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /og -->
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/story.css">
+<script type="module" src="assets/js/layout.js"></script>
+</head>
+<body>
+<!-- nojs --><noscript><nav class="nojs" aria-label="Main (JavaScript is off)"><a href="index.html">Overview</a><a href="learn/index.html">Learn</a><a href="generalist.html">Results</a><a href="videos.html">Videos</a><a href="design.html">Design guidelines</a><a href="deploy.html">ROS 2</a><a href="math.html">Physics</a><a href="architecture.html">Controller</a><a href="reproduce.html">Reproduce</a><a href="glossary.html">Glossary</a></nav></noscript><!-- /nojs -->
+<main>
+<header class="page-hero wrap">
+  <div class="eyebrow">Literature</div>
+  <h1>What the field knows about ballbots, and how sure we are</h1>
+  <p class="lede">A catalogue built from three survey reports in <code>docs/research/</code>: classical control, learning and simulation, hardware and open source. Confidence tags are exactly as the reports mark them. Entries with no URL in a report have no link here, and entries whose year the reports do not give are listed as year n/a and left off the timeline.</p>
+  <div class="callout warn"><strong>Read the confidence tags.</strong> The reports were compiled from web searches and page fetches in one pass. Many entries were seen only as abstracts, search snippets or citations in other papers, and the sweep is not exhaustive. Verify before citing.</div>
+</header>
+
+<section class="wrap" aria-labelledby="tlh">
+  <h2 id="tlh" style="font-size:1.4rem">The field on a timeline</h2>
+  <p class="lede" style="font-size:1rem">Each dot is a catalogue entry placed by year and primary type. Select a dot to jump to its card.</p>
+  <div class="timeline-wrap"><svg id="timeline" viewBox="0 0 960 300" role="img" aria-label="Timeline of ballbot literature from 2005 to 2026 by type"></svg></div>
+  <div class="tl-tip" id="tip" aria-live="polite">Hover or focus a dot for details.</div>
+  <div class="legend-row" id="tlLegend"></div>
+</section>
+
+<section class="block" id="catalogue"><div class="wrap">
+  <div class="eyebrow">Catalogue</div>
+  <h2>Papers, projects and platforms</h2>
+  <div class="lit-tools">
+    <input id="q" type="search" placeholder="Search title, group, takeaway..." aria-label="Search the catalogue">
+    <select id="sort" aria-label="Sort"><option value="y1">Year, oldest first</option><option value="y2">Year, newest first</option><option value="a">Title A-Z</option></select>
+    <button class="btn" id="view" aria-pressed="false">Table view</button>
+  </div>
+  <div class="chipbar" id="typeBar"><span class="lab">Type</span></div>
+  <div class="chipbar" id="confBar"><span class="lab">Confidence</span></div>
+  <div class="chipbar" id="srcBar"><span class="lab">Report</span></div>
+  <div class="legend-row"><span><span class="cf V">verified</span> abstract or page fetched and read</span><span><span class="cf S">snippet</span> search snippet or secondary summary</span><span><span class="cf M">memory</span> cited from memory, not re-fetched</span><span><span class="cf U">untagged</span> the classical and hardware reports do not use tags; their own caveat is shown on the card</span></div>
+  <div class="lit-count" id="count" aria-live="polite"></div>
+  <div class="paper-grid" id="grid"></div>
+  <div class="table-view tablewrap"><table id="tbl"><thead><tr><th>Year</th><th>Entry</th><th>Type</th><th>Confidence</th><th>What we take from it</th></tr></thead><tbody></tbody></table></div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <div class="eyebrow">Positioning</div>
+  <h2>Where we stand and our possible edge</h2>
+  <div class="panels">
+    <div class="card panel"><h3>Where we stand</h3><ul>
+      <li>Ballbot RL is thin. The two real works are Salehi (2025, uneven terrain, simulation only, open code, the base of this repo) and asRoBallet (accepted RSS 2026, zero-shot sim-to-real on hardware, no released code found). The rest is small: a DDPG assist, fall-damage arms, iLQG refinement.</li>
+      <li>We overlap both: Perlin terrain and depth or ToF like Salehi; velocity tracking and robustness randomisation like asRoBallet; residual-on-LQR like Zhou 2021 and Hybrid LMC.</li>
+      <li>Our simulation-only 0.75 m/s tracking is inside the range Kugle tested (1 m/s) and below Rezero's claimed 2 to 3.5 m/s, which is itself unverified and conflicting between sources.</li>
+      <li>Our 50 N push recovery has no directly comparable published number; CMU and BallIP report only qualitative push tolerance.</li></ul></div>
+    <div class="card panel"><h3>Our possible edge, with the caveats the reports attach</h3><ul>
+      <li><strong>Hybrid gated LQR/PPO with a morphology pool:</strong> no precedent found. Nearest are Hybrid LMC (residual, one morphology) and mixture-of-experts RL for legged robots. One search pass, so claim cautiously.</li>
+      <li><strong>Parametric design-space study of ballbots with learned controllers:</strong> none found; co-design work is legged or generic.</li>
+      <li><strong>ToF multizone sensing plus a height-scan teacher on a ballbot:</strong> none found.</li>
+      <li><strong>Quantified traction-limited step climbing (2 to 3 cm):</strong> not found for ballbots (Ascento climbs 15 cm, with legs).</li>
+      <li><strong>Reproducibility:</strong> asRoBallet has no released code; this repo plus Salehi's Apache-2.0 base gives open baselines.</li>
+      <li><strong>Honest counterpoint:</strong> asRoBallet beats LQR strongly under shifted conditions, so our hybrid must beat pure PPO as well as pure LQR. And we have simulation only: no sim-to-real claim.</li></ul></div>
+  </div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <div class="eyebrow">Honesty</div>
+  <h2>What we could not verify</h2>
+  <div class="panels">
+    <div class="card panel"><h3>Conflicts and corrections found while surveying</h3><ul>
+      <li>Rezero top speed: 3.5 m/s per IEEE Spectrum, about 2 m/s at 20 degrees per Pham 2024. Conflicting; treat as unverified.</li>
+      <li>BallIP mass: 7.5 kg (IEEE Spectrum) vs 12.5 kg (Robots Guide). Not resolved.</li>
+      <li>The base repo's author is Achkan Salehi (independent researcher); nothing links it to JHU. "Johannes et al." is actually Johannink et al.</li>
+      <li>"Inkwell/Hollis Insect", a CMU "0.6 m/s" figure and a "Pratt" ballbot paper in the original brief could not be matched to any real source and are not cited.</li>
+      <li>Our body-to-ball mass ratio is 23. The survey found no source near that: BallIP is about 2 to 3, the literature roughly 2 to 12.</li></ul></div>
+    <div class="card panel"><h3>Not read, or not found</h3><ul>
+      <li>Several key PDFs were unreadable to the surveyor: Fankhauser thesis, Pham 2024, Watson 2018, CMU ICRA 2006, Nagarajan 2014, Xiao 2023 and dissertation, Kugle thesis, MBBR 2015. Numbers for them are from abstracts or secondary sources.</li>
+      <li>Rezero mass and ball size, CMU ball mass, Kugle ball diameter and motors, MiaPURE ball and motors: not found.</li>
+      <li>No Disney ballbot paper, no Isaac Sim or Unity ballbot model, no ballbot RL step-climbing paper, no published study of omniwheel roller-count versus fidelity.</li>
+      <li>Torque-to-weight design rules: no source states one; any ratio on this site is derived by us.</li>
+      <li>All 2026 arXiv identifiers and all entries tagged memory need checking. The asRoBallet numbers came through a summariser of the HTML version and should be checked against the PDF.</li>
+      <li>Genesis speed claims are unverified.</li></ul></div>
+  </div>
+  <p class="lede" style="font-size:.95rem;margin-top:20px">Sources: <code>docs/research/lit_ballbot_classical.md</code>, <code>lit_ballbot_learning.md</code>, <code>lit_ballbot_hardware.md</code>. How these tests played out on our robot: <a href="story.html#ch11">the journey, chapter 11</a>.</p>
+</div></section>
+</main>
+
+<script type="module">
+/* Catalogue data. Fields: y year, t primary type, ts all types, n title, w who/group, c confidence (V,S,M,U), cn note,
+   k what we take, L links [label,url] taken from the reports, s source report. arXiv links are built from arXiv IDs the reports state. */
+const ax = (id) => ['arXiv:' + id, 'https://arxiv.org/abs/' + id];
+const D = [
+// ---------- classical ----------
+{y:2005,t:'hardware',ts:['hardware','classical'],n:'One is Enough!',w:'Lauwers, Kantor, Hollis (CMU), ISRR',c:'U',cn:'Only the abstract-level description was verified.',k:'The origin: a ball driven by rollers, first balancing and point-to-point results.',L:[['CMU page','https://www.ri.cmu.edu/publications/one-is-enough']],s:'classical'},
+{y:2006,t:'hardware',ts:['hardware','classical'],n:'A dynamically stable single-wheeled mobile robot with inverse mouse-ball drive',w:'Lauwers, Kantor, Hollis (CMU), ICRA',c:'U',cn:'Figures quoted from secondary sources; controller, rate and top speed not verified.',k:'Omnidirectional balancing without turning first; the inverse mouse-ball idea behind every later ballbot.',L:[['CMU page','https://ri.cmu.edu/?p=9475']],s:'classical'},
+{y:2008,t:'classical',ts:['classical','hardware'],n:'BallIP: robot balancing on a ball (ICCAS 2008, ICRA 2009, JRM 2010)',w:'Kumagai, Ochiai (Tohoku Gakuin Univ.)',c:'U',cn:'Speed and control rate not verified.',k:'Use ball acceleration as the control input: claimed robust to inertia error and decouples the axes. A passive compliant mode accepts pushes.',L:[['J. Robotics and Mechatronics 2010','https://www.fujipress.jp/jrm/rb/robot002200030348']],s:'classical'},
+{y:2009,t:'classical',ts:['classical'],n:'State transition, balancing, station keeping, and yaw control',w:'Nagarajan, Mampetta, Kantor, Hollis (CMU), ICRA',c:'U',cn:'Title taken from a Wikipedia reference list; not opened. Numbers not verified.',k:'Getting up from the legs to balance, station keeping, yaw.',L:[],s:'classical'},
+{y:2009,t:'classical',ts:['classical'],n:'Trajectory planning and control of a dynamically stable single spherical wheeled mobile robot',w:'Nagarajan, Kantor, Hollis (CMU), ICRA',c:'U',cn:'Listing only; numbers not verified.',k:'Trajectory planning with planar, decoupled models.',L:[['CMU listing','https://www.ri.cmu.edu/?p=10213']],s:'classical'},
+{y:2009,t:'classical',ts:['classical'],n:'Human-robot physical interaction with dynamically stable mobile robots',w:'Nagarajan, Kantor, Hollis (CMU)',c:'U',cn:'Quantitative push limits not verified.',k:'The ballbot is compliant to pushes. Our 50 N recovery metric has no published counterpart.',L:[],s:'classical'},
+{y:2010,t:'classical',ts:['classical'],n:'Dynamic constraint-based optimal shape trajectory planner for shape-accelerated underactuated balancing systems',w:'Nagarajan (CMU), RSS',c:'U',cn:'Numbers not verified.',k:'Lean deliberately to generate acceleration; for the non-minimum-phase zero, precompute the initial counter-lean.',L:[['RSS paper','https://m.roboticsproceedings.org/rss06/p31.html']],s:'classical'},
+{y:2010,t:'classical',ts:['classical'],n:'Hybrid control for navigation of shape-accelerated underactuated balancing systems',w:'Nagarajan, Kantor, Hollis (CMU), CDC',c:'U',cn:'Simulation of a 3-D ballbot; no numbers read.',k:'Sequential composition of controllers: an older cousin of switching between LQR and a learned policy.',L:[['CMU page','https://ri.cmu.edu/publications/hybrid-control-for-navigation-of-shape-accelerated-underactuated-balancing-systems-2']],s:'classical'},
+{y:2010,t:'classical',ts:['classical','hardware'],n:'Modeling and Control of a Ballbot (Rezero)',w:'Fankhauser, Gwerder (ETH ASL), bachelor thesis',c:'U',cn:'Text could not be read; claims are from the abstract. Speed 3.5 m/s (IEEE Spectrum) conflicts with about 2 m/s (Pham 2024).',k:'Argues a 3-D model beats planar decomposition. Our planar model is likely fine below about 1 m/s; a test against full 3-D dynamics would show where decoupling fails.',L:[['IEEE Spectrum on Rezero','https://spectrum.ieee.org/automaton/robotics/diy/project-rezero-ball-balancing-elegance']],s:'classical'},
+{y:2012,t:'classical',ts:['classical'],n:'Planning in high-dimensional shape space for a single-wheeled balancing mobile robot with arms',w:'Nagarajan, Kim, Hollis (CMU), ICRA',c:'U',cn:'Arm details from Wikipedia.',k:'Weight matrix chooses among redundant shape trajectories.',L:[['CMU page','https://ri.cmu.edu/?p=7474']],s:'classical'},
+{y:2013,t:'classical',ts:['classical'],n:'Integrated motion planning and control for graceful balancing mobile robots',w:'Nagarajan, Kantor, Hollis (CMU), IJRR',c:'U',cn:'Numbers not verified.',k:'A palette of motion policies, a goal-rooted policy tree and a hybrid supervisor: the same layered idea we use.',L:[['CMU page','https://ri.cmu.edu/?p=122036']],s:'classical'},
+{y:2013,t:'classical',ts:['classical'],n:'Shape space planner for shape-accelerated balancing mobile robots',w:'Nagarajan (CMU), IJRR',c:'U',cn:'Journal version of earlier shape-planning papers.',k:'Move the ballbot using body lean, arm angles, or both.',L:[['CMU page','https://www.ri.cmu.edu/publications/shape-space-planner-for-shape-accelerated-balancing-mobile-robots']],s:'classical'},
+{y:2014,t:'classical',ts:['classical','hardware'],n:'The ballbot: An omnidirectional balancing mobile robot',w:'Nagarajan, Kantor, Hollis (CMU), IJRR 33(6)',c:'U',cn:'Abstract only; masses, speeds and tilt limits for this version not verified.',k:'The formal dynamics and control reference: four-wheel inverse mouse-ball drive, unlimited yaw, retractable legs.',L:[['CMU page','https://ri.cmu.edu/publications/the-ballbot-an-omnidirectional-balancing-mobile-robot']],s:'classical'},
+{y:null,t:'classical',ts:['classical'],n:'Fast and Graceful Balancing Mobile Robots',w:'Nagarajan, PhD thesis (CMU)',c:'U',cn:'Event page only.',k:'Combines shape planning with sequential composition; navigation with disturbances and dynamic obstacles.',L:[['Event page','https://www.ri.cmu.edu/event/fast-and-graceful-balancing-mobile-robots']],s:'classical'},
+{y:2015,t:'hardware',ts:['hardware','classical'],n:'Micro Ball Balancing Robot (MBBR)',w:'Yang, Sihite, Friesen, Bewley (UCSD), IROS',c:'U',cn:'Ball size and mass not found; snippet-level.',k:'Midlatitude omniwheels, contact about 60 to 70 degrees from the pole, to raise normal force in a small robot. Supports our contact-angle test.',L:[['eScholarship','https://escholarship.org/uc/item/2cd979dq']],s:'hardware'},
+{y:2018,t:'classical',ts:['classical'],n:'Balancing and transferring control of a ball segway using a double-loop approach',w:'Pham, Kim, Kim, Lee, IEEE Control Systems Magazine',c:'U',cn:'Copy not parsed; numbers not verified.',k:'Outer-loop LQR plus inner PI: the cascade structure we also use.',L:[['Copy of the paper','https://njcpe.github.io/pdfs/ele503paper.pdf']],s:'classical'},
+{y:2018,t:'classical',ts:['classical','hardware'],n:'Omnidirectional balancing platform with collinear mecanum drive',w:'Watson, Gladwin, Prescott (Sheffield), IECON',c:'U',cn:'Not a ballbot; PDF unreadable to the surveyor.',k:'Yaw torque of a ballbot is capped by ball-floor friction: a likely coupling failure mode.',L:[['Paper','https://eprints.whiterose.ac.uk/132164/1/Watson%202018%20Design%20OmniDirectional.pdf']],s:'classical'},
+{y:2019,t:'classical',ts:['classical','opensource'],n:'Kugle: Modelling and Control of a Ball-balancing Robot',w:'Jespersen (Aalborg Univ.), MSc thesis',c:'U',cn:'Rates from the GitHub README; ball diameter and motors not found. Code is MIT-licensed.',k:'Cascade: sliding-mode balance, velocity LQR, ACADO MPC; 200 Hz loop; 1 m/s and 1 rad/s tested. A quaternion model was unnecessary in the normal range.',L:[['Thesis page','https://projekter.aau.dk/kugle-modelling-and-control-of-a-ball-balancing-robot-4450f15c.html'],['Kugle-MATLAB','https://github.com/mindThomas/Kugle-MATLAB']],s:'classical'},
+{y:2019,t:'classical',ts:['classical'],n:'Mouse type ballbot identification and control using convex-concave optimization',w:'Puychaison et al., CACS',c:'U',cn:'Cited via another paper; not opened.',k:'Identification route for a mouse-type ballbot.',L:[],s:'classical'},
+{y:2020,t:'classical',ts:['classical'],n:'Sliding mode on a linearised ballbot, compared with LQR',w:'Lal, Codrean, Busoniu, IFAC',c:'U',cn:'Abstract level only.',k:'A robustness baseline under model mismatch.',L:[['IFAC paper','https://ifatwww.et.uni-magdeburg.de/ifac2020/media/pdfs/1224.pdf']],s:'classical'},
+{y:2021,t:'classical',ts:['classical'],n:'Adaptive backstepping with hierarchical sliding mode for a ridable ballbot',w:'Do, Lee, IEEE Trans. SMC',c:'U',cn:'From a search snippet; aggregator source, not verified.',k:'Handles input constraints and mismatched uncertainty.',L:[],s:'classical'},
+{y:2022,t:'classical',ts:['classical'],n:'Parameter identification and LQR/MPC balancing control of a ballbot',w:'Studt, Zhavzharov, Abbas, ECC',c:'U',cn:'No abstract retrieved. DOI 10.23919/ECC55457.2022.9837996.',k:'Identification plus LQR and MPC on a hobby-class robot.',L:[],s:'classical'},
+{y:2024,t:'classical',ts:['classical','hardware'],n:'Closed-loop identification and tracking control of a ballbot',w:'Fischer, Karachalios, Zhavzharov, Abbas',c:'U',cn:'Hardware numbers read in the report; code release not stated. Model fit only 68% (tilt) and 46% (velocity).',k:'Classical baselines on hardware are conservative: tilt limit 3 degrees, velocity 15 cm/s, settling about 10 s on a 20 cm step.',L:[ax('2404.14845')],s:'classical'},
+{y:2024,t:'classical',ts:['classical'],n:'Parameter refinement of a ballbot and predictive control with LPV embedding',w:'Karachalios, Abbas',c:'U',cn:'Simulation, parameters from an earlier paper.',k:'LPV-MPC with tilt and rate as scheduling; QP solve about 6 to 9 ms.',L:[ax('2402.12092')],s:'classical'},
+{y:2024,t:'classical',ts:['classical'],n:'Analysis of the parametric configuration impact on BallBot control performance',w:'Pham, Thai, Dang, Vo, Int. J. Mech. Syst. Dyn.',c:'U',cn:'PDF not parsed; numbers not retrieved.',k:'LQR sweep: body mass matters noticeably, ball diameter relatively little. Closest to our design-space study, but LQR-only and in simulation.',L:[['Journal page','https://journal.hep.com.cn/ijmsd/EN/10.1002/msd2.12133']],s:'classical'},
+{y:2025,t:'classical',ts:['classical'],n:'Control-barrier-function MPC for ballbot obstacle avoidance with tilt limits',w:'Pham et al., IEEE Access',c:'U',cn:'Search snippet only.',k:'Constraint-aware MPC: a stronger classical baseline to compare against.',L:[],s:'classical'},
+// ---------- learning ----------
+{y:2019,t:'rl',ts:['rl'],n:'Residual Reinforcement Learning for Robot Control',w:'Johannink et al. (Siemens, Berkeley), ICRA 2019',c:'V',cn:'Verified via search.',k:'A feedback controller handles the easy part; RL learns the residual. Bound the residual magnitude.',L:[ax('1812.03201')],s:'learning'},
+{y:2018,t:'rl',ts:['rl'],n:'Residual Policy Learning',w:'Silver, Allen, Tenenbaum, Kaelbling',c:'V',cn:'Verified via search.',k:'Zero-initialise the residual output so training starts at the base controller. We do exactly this (res_c).',L:[ax('1812.06298')],s:'learning'},
+{y:2018,t:'rl',ts:['rl'],n:'Sim-to-Real Transfer of Robotic Control with Dynamics Randomization',w:'Peng, Andrychowicz, Zaremba, Abbeel, ICRA',c:'S',cn:'Tagged [S/M] in the report: snippet or memory.',k:'Randomise dynamics in training for zero-shot transfer.',L:[ax('1710.06537'),['Project page','https://xbpeng.github.io/projects/SimToReal/index.html']],s:'learning'},
+{y:2017,t:'rl',ts:['rl'],n:'Domain Randomization for Transferring Deep Neural Networks from Simulation to the Real World',w:'Tobin et al., IROS',c:'M',cn:'Cited from memory, not re-fetched.',k:'Original visual randomisation idea.',L:[],s:'learning'},
+{y:2019,t:'rl',ts:['rl'],n:'Learning agile and dynamic motor skills for legged robots',w:'Hwangbo et al., Science Robotics',c:'S',cn:'Seen in snippets.',k:'A learned actuator network beats an ideal actuator model: relevant to our realistic motor test.',L:[ax('1901.08652')],s:'learning'},
+{y:2019,t:'rl',ts:['rl'],n:'Solving Rubik\'s Cube with a Robot Hand (Automatic Domain Randomization)',w:'OpenAI et al.',c:'S',cn:'Snippet.',k:'Widen randomisation ranges as the policy succeeds.',L:[ax('1910.07113')],s:'learning'},
+{y:2019,t:'rl',ts:['rl'],n:'Jointly Learning to Construct and Control Agents using Deep RL',w:'Schaff, Yunis, Chakrabarti, Walter, ICRA',c:'S',cn:'Snippet.',k:'A distribution over designs with one shared policy: the cheapest path for our morphology pool.',L:[ax('1801.01432')],s:'learning'},
+{y:2019,t:'rl',ts:['rl'],n:'Data-efficient Co-Adaptation of Morphology and Behaviour with Deep RL',w:'Luck, Ben Amor, CoRL',c:'S',cn:'Snippet.',k:'Latent-conditioned policy: feeding the normalised design vector to actor and critic is the minimal approach.',L:[ax('1911.06832')],s:'learning'},
+{y:2020,t:'rl',ts:['rl'],n:'Data-efficient Domain Randomization with Bayesian Optimization (BayRn)',w:'Muratore et al. (TU Darmstadt)',c:'S',cn:'Snippet; tested on a Furuta pendulum, code released.',k:'Domain randomisation parameters can be tuned with data efficiency.',L:[ax('2003.02471')],s:'learning'},
+{y:2020,t:'rl',ts:['rl'],n:'Learning quadrupedal locomotion over challenging terrain',w:'Lee, Hwangbo, Wellhausen, Koltun, Hutter, Science Robotics',c:'S',cn:'Snippet.',k:'Privileged teacher, proprioceptive student: the recipe for our height-scan teacher and ToF student.',L:[ax('2010.11251')],s:'learning'},
+{y:2021,t:'rl',ts:['rl'],n:'RMA: Rapid Motor Adaptation',w:'Kumar et al., RSS',c:'M',cn:'From memory.',k:'Privileged environment encoder teacher with an adaptation-module student.',L:[],s:'learning'},
+{y:2021,t:'rl',ts:['rl'],n:'Learning Ball-balancing Robot Through Deep Reinforcement Learning',w:'Zhou, Lin, Wang, Zhang (ICCCR 2021 per Salehi)',c:'V',cn:'Venue and year uncertain (arXiv Aug 2022). Simulation only, no code found, no numbers in abstract.',k:'A conventional controller plus a DDPG agent for recovery from large tilts: the closest prior art to our residual-on-LQR design.',L:[ax('2208.10142')],s:'learning'},
+{y:2021,t:'rl',ts:['rl'],n:'Brax',w:'Freeman et al., NeurIPS D&B',c:'S',cn:'Snippet.',k:'JAX simulator with built-in PPO; spring joints need careful tuning.',L:[ax('2106.13281')],s:'learning'},
+{y:2021,t:'sim',ts:['sim','rl'],n:'Isaac Gym',w:'Makoviychuk et al. (NVIDIA)',c:'S',cn:'Snippet.',k:'Claims 2-3 orders of magnitude over CPU simulators; a GPU port would need our contact-frame friction fix reimplemented.',L:[ax('2108.10470')],s:'learning'},
+{y:2021,t:'rl',ts:['rl'],n:'Distilled Domain Randomization (DiDoR)',w:'(authors not listed in the report)',c:'S',cn:'Snippet.',k:'Return variance rose with overly aggressive randomisation: wide ranges can hurt. We narrowed damping for this reason.',L:[ax('2112.03149')],s:'learning'},
+{y:2022,t:'rl',ts:['rl'],n:'Hybrid LMC: Hybrid Learning and Model-based Control for Wheeled Humanoid Robot via Ensemble Deep RL',w:'Baek, Purushottam, Ramos',c:'V',cn:'Verified for the abstract; IROS 2022 acceptance unconfirmed; no numbers, no code.',k:'LQR plus an ensemble of SAC policies in MuJoCo; the LQR stabilises early training. Very close in spirit to our residual.',L:[ax('2204.03159')],s:'learning'},
+{y:2022,t:'rl',ts:['rl'],n:'Learning robust perceptive locomotion for quadrupedal robots in the wild',w:'Miki et al., Science Robotics',c:'M',cn:'From memory.',k:'Elevation map with a belief encoder; teacher-student with a noisy map.',L:[],s:'learning'},
+{y:2022,t:'rl',ts:['rl'],n:'MetaMorph: Learning Universal Controllers with Transformers',w:'Gupta, Fan, Ganguli, Fei-Fei, ICLR',c:'V',cn:'Verified via search.',k:'Pretraining across many morphologies gives zero-shot transfer. Overkill for us, since our designs share a topology.',L:[ax('2203.11931'),['Code','https://github.com/agrimgupta92/metamorph']],s:'learning'},
+{y:2022,t:'rl',ts:['rl'],n:'C^2: Co-design of Robots via Concurrent Networks Coupling Online and Offline RL',w:'Chen et al.',c:'V',cn:'Abstract read; no numbers, no code.',k:'Co-design validated on a physical four-legged robot; none of these cover wheeled or ballbot morphologies.',L:[ax('2209.06579')],s:'learning'},
+{y:2022,t:'rl',ts:['rl'],n:'Constrained stochastic optimal control with learned importance sampling: a path integral approach',w:'Carius, Ranftl, Farshidian, Hutter, IJRR',c:'S',cn:'Via the Salehi citation list; not fetched.',k:'Uses a ballbot on uneven terrain as a benchmark; a model-based and learned hybrid baseline idea.',L:[],s:'learning'},
+{y:2014,t:'rl',ts:['rl','classical'],n:'Learning of Closed-Loop Motion Control',w:'Farshidian, Neunert, Buchli, IROS',c:'S',cn:'Via the asRoBallet citation list; not fetched.',k:'RL refinement of an iLQG controller on the ETH Rezero ballbot, started from the model-based solution.',L:[],s:'learning'},
+{y:2024,t:'rl',ts:['rl'],n:'A Reinforcement Learning Method to Minimize the Damage on a Falling Ballbot',w:'Buzzetti, Zappetti, Iacca, ERF',c:'S',cn:'Via the asRoBallet citation list; not fetched.',k:'PPO on arms only to reduce fall damage; simulation only.',L:[],s:'learning'},
+{y:2019,t:'rl',ts:['rl','hardware'],n:'Ascento: A Two-Wheeled Jumping Robot',w:'Klemm et al., ICRA',c:'S',cn:'Snippet.',k:'LQR stabilisation and driving: the model-based baseline RL later replaced.',L:[ax('2005.11435')],s:'learning'},
+{y:2024,t:'rl',ts:['rl','hardware'],n:'Reinforcement Learning for Blind Stair Climbing with Legged and Wheeled-Legged Robots',w:'Chamorro, Klemm, de la Iglesia Valls, Pal, Siegwart',c:'V',cn:'Venue (ICRA 2024) from a snippet; success rates not retrieved; no code found.',k:'Position-based formulation with a stair-mode flag: an idea for our 2 to 3 cm climbing.',L:[ax('2402.06143'),['Video','https://youtu.be/Ec6ar8BVJh4']],s:'learning'},
+{y:2024,t:'rl',ts:['rl','hardware'],n:'Learning robust autonomous navigation and locomotion for wheeled-legged robots',w:'Lee, Bjelonic, Reske, Wellhausen, Miki, Hutter, Science Robotics',c:'V',cn:'Verified via search; code not found.',k:'Model-free RL with privileged learning blends walking and driving.',L:[ax('2405.01792')],s:'learning'},
+{y:2025,t:'rl',ts:['rl','sim','opensource'],n:'Reinforcement Learning for Ballbot Navigation in Uneven Terrain',w:'Achkan Salehi (OpenBallBot-RL)',c:'V',cn:'Abstract and page read. Simulation only, no sim-to-real, weak PID baseline. Apache-2.0.',k:'The base of this repo: MuJoCo ballbot, PPO, depth cameras, Perlin terrain, about 0.5 m/s toward the goal.',L:[ax('2505.18417'),['Code','https://github.com/salehiac/OpenBallBot-RL']],s:'learning'},
+{y:2025,t:'sim',ts:['sim','rl'],n:'MuJoCo Playground',w:'Zakka et al.',c:'V',cn:'Read.',k:'GPU throughput numbers and per-environment XML tweaks. (An older note in this repo credits it with the anisotropic-friction patch; the surveys did not verify that, so it is not repeated here.)',L:[ax('2502.08844'),['Site','https://playground.mujoco.org/']],s:'learning'},
+{y:null,t:'sim',ts:['sim'],n:'MJX and MuJoCo Warp documentation',w:'Google DeepMind',c:'V',cn:'Docs read. Hardware mapping of the MJX throughput numbers is by listed order, not explicit.',k:'MJX can be up to 10x slower than CPU MuJoCo on one scene; Warp does not support noslip. Our CPU multiprocessing choice stands.',L:[['MJX docs','https://mujoco.readthedocs.io/en/stable/mjx.html'],['MuJoCo Warp','https://github.com/google-deepmind/mujoco_warp']],s:'learning'},
+{y:2025,t:'rl',ts:['rl'],n:'SAC-MoE: mixture-of-experts SAC actor with a learned router',w:'(authors not listed in the report)',c:'S',cn:'Snippet only.',k:'Nearest relative of a gate between experts; use load balancing and entropy regularisers on the gate.',L:[ax('2511.12361')],s:'learning'},
+{y:2021,t:'rl',ts:['rl'],n:'MPC-Net with a mixture-of-experts network',w:'Carius et al.',c:'S',cn:'Snippet only.',k:'Imitation of MPC with mixture of experts for multi-modal gaits.',L:[ax('2103.14331')],s:'learning'},
+{y:2026,t:'rl',ts:['rl','hardware'],n:'asRoBallet: friction-aware RL for underactuated spherical dynamics',w:'Wan, Huang, Wu et al., accepted RSS 2026',c:'V',cn:'Fetched through a summariser of the HTML version; check numbers against the PDF. No code found; the hardware survey notes a release "to be released" at a site it did not verify.',k:'The only sim-to-real ballbot RL paper found. In simulation PPO beats LQR (velocity MAE 4.0 vs 7.7 cm/s). Torque-mode actuators train; velocity mode does not. Randomise floor friction 0.6 to 1.2 and motor friction.',L:[ax('2604.24916'),['HTML version','https://arxiv.org/html/2604.24916']],s:'learning'},
+// ---------- hardware / open source ----------
+{y:2010,t:'hardware',ts:['hardware'],n:'ETH Zurich Rezero',w:'ETH Zurich',c:'U',cn:'Closed source as far as found. Mass, height and ball diameter not found; speed figures conflict between sources.',k:'160 Hz loop, lean up to 17 degrees, three omniwheels with arrestors opposite each wheel; wheel-motor friction about 42 mN m. Character-oriented, Disney-supported.',L:[['IEEE Spectrum','https://spectrum.ieee.org/project-rezero-ball-balancing-elegance'],['Robohub','https://robohub.org/designed-to-mingle-rezero-ballbots-smooth-moves-can-handle-a-crowd']],s:'hardware'},
+{y:2010,t:'hardware',ts:['hardware'],n:'BallIP hardware',w:'Kumagai, Ochiai (Tohoku Gakuin Univ.)',c:'U',cn:'Mass conflicts between sources (7.5 vs 12.5 kg); not resolved.',k:'20 cm bowling ball of 3.6 kg with a rubber coating, three omniwheels. The documented body-to-ball ratio is about 2 to 3, ours is 23.',L:[['IEEE Spectrum','https://spectrum.ieee.org/042910-a-robot-that-balances-on-a-ball'],['Robots Guide','https://robotsguide.com/robots/ballip']],s:'hardware'},
+{y:2023,t:'hardware',ts:['hardware','classical'],n:'MiaPURE: a riding ballbot with off-the-shelf drivetrain',w:'Xiao, Hsiao-Wecksler (UIUC), IROS 2023',c:'U',cn:'Abstract only; ball size and motors not found.',k:'Carries 60 kg, 2.3 m/s, stops from 1.4 m/s in 2 s; notes high stiction from elastomer transmissions.',L:[ax('2304.02887')],s:'hardware'},
+{y:2022,t:'hardware',ts:['hardware','classical'],n:'Personal unique rolling experience: design, modeling, and control of a riding ballbot',w:'Xiao (UIUC), dissertation',c:'S',cn:'Page returned 403; known from a search snippet. Results not read.',k:'Contains a design optimisation of 3- and 4-omniwheel drivetrains; the closest published design-optimisation framing. Worth reading in full.',L:[['Repository record','https://www.ideals.illinois.edu/items/126838']],s:'hardware'},
+{y:null,t:'hardware',ts:['hardware','opensource'],n:'Paul, a ball-balancing robot',w:'Jochen Alt (hobby)',c:'U',cn:'Licence not stated; ball size and mass not found.',k:'Manual PID beat academic tuning; a loose IMU wire caused a violent fall; about 100 Hz loop. Lessons are about boring failures.',L:[['GitHub','https://github.com/jochenalt/Paul'],['Hackaday','https://hackaday.io/project/20045-paul']],s:'hardware'},
+{y:null,t:'hardware',ts:['hardware','opensource'],n:'Ball Balancing Robot (portfolio project)',w:'algarv',c:'U',cn:'Licence not checked.',k:'Balanced about 2 s; failures were slow IMU reads, accelerometer-only spikes and motor power interference. A larger ball reduces required lean.',L:[['Portfolio','https://algarv.github.io/Portfolio/BallBot'],['GitHub','https://github.com/algarv/Ball_Balancing_Robot']],s:'hardware'},
+{y:null,t:'sim',ts:['sim','opensource'],n:'RMI-NITT Ballbot',w:'RMI-NITT',c:'U',cn:'Seen via a search summary only.',k:'Old ROS Kinetic and Gazebo model.',L:[['GitHub','https://github.com/RMI-NITT/Ballbot']],s:'hardware'},
+{y:null,t:'hardware',ts:['hardware'],n:'US Patent 10,189,342: Ball-balancing robot and drive assembly therefor',w:'Assignee not confirmed',c:'S',cn:'Page returned 403; content from search snippets.',k:'Wheel normal force N = m g / (3 cos theta): lowering the wheels towards 70 degrees raises traction, and scaling down cuts normal force as length cubed. Matches our traction-limited climbing.',L:[['Patent page','https://patents.justia.com/patent/10189342']],s:'hardware'},
+{y:null,t:'hardware',ts:['hardware'],n:'Disney Research "ball walker"',w:'Disney Research',c:'U',cn:'A biped on a rolling ball, not a ballbot. No Disney ballbot hardware found.',k:'Listed to rule it out: it is not a ballbot reference.',L:[['Page','https://la.disneyresearch.com/?p=9116']],s:'hardware'},
+];
+const TYPES = {classical:'Classical control',rl:'RL / learning',hardware:'Hardware',opensource:'Open source',sim:'Simulation'};
+const CONF = {V:'verified',S:'snippet',M:'memory',U:'untagged'};
+const SRC = {classical:'classical report',learning:'learning report',hardware:'hardware report'};
+D.forEach((d, i) => { d.id = 'p' + i; });
+const st = { q:'', types:new Set(), confs:new Set(), srcs:new Set(), sort:'y1', table:false };
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function bar(id, map, set, key) {
+  const host = $(id);
+  Object.entries(map).forEach(([k, label]) => {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.type = 'button'; b.setAttribute('aria-pressed', 'false'); b.textContent = label;
+    b.onclick = () => { set.has(k) ? set.delete(k) : set.add(k); b.setAttribute('aria-pressed', set.has(k)); render(); };
+    host.append(b);
+  });
+}
+bar('#typeBar', TYPES, st.types); bar('#confBar', CONF, st.confs); bar('#srcBar', SRC, st.srcs);
+
+const tcol = { classical:'var(--model)', rl:'var(--learned)', hardware:'var(--text-2)', opensource:'var(--text-2)', sim:'var(--text-3)' };
+function filtered() {
+  const q = st.q.toLowerCase();
+  let r = D.filter((d) =>
+    (!st.types.size || d.ts.some((t) => st.types.has(t))) && (!st.confs.size || st.confs.has(d.c)) && (!st.srcs.size || st.srcs.has(d.s)) &&
+    (!q || (d.n + ' ' + d.w + ' ' + d.k + ' ' + d.cn).toLowerCase().includes(q)));
+  r = r.slice().sort(st.sort === 'a' ? (a, b) => a.n.localeCompare(b.n) : st.sort === 'y2' ? (a, b) => (b.y ?? 0) - (a.y ?? 0) || a.n.localeCompare(b.n) : (a, b) => (a.y ?? 9999) - (b.y ?? 9999) || a.n.localeCompare(b.n));
+  return r;
+}
+function card(d) {
+  const links = d.L.length ? `<div class="links">${d.L.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l)} &#8599;</a>`).join('')}</div>` : '';
+  return `<article class="card paper" id="${d.id}"><div class="py"><span>${d.y ?? 'year n/a'}</span><span class="cf ${d.c}" title="${CONF[d.c]}">${CONF[d.c]}</span>${d.ts.map((t) => `<span class="tp">${TYPES[t]}</span>`).join('')}</div>
+  <h3>${esc(d.n)}</h3><div class="grp">${esc(d.w)}</div><p class="take"><b>We take:</b> ${esc(d.k)}</p><p class="cn">${esc(d.cn)}</p>${links}</article>`;
+}
+function render() {
+  const r = filtered();
+  $('#count').textContent = `${r.length} of ${D.length} entries`;
+  $('#grid').innerHTML = r.length ? r.map(card).join('') : '<p>Nothing matches these filters.</p>';
+  $('#tbl tbody').innerHTML = r.map((d) => `<tr><td>${d.y ?? 'n/a'}</td><td><strong>${esc(d.n)}</strong><br><span class="grp">${esc(d.w)}</span>${d.L.length ? '<br>' + d.L.map(([l, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l)}</a>`).join(' &middot; ') : ''}</td><td>${d.ts.map((t) => TYPES[t]).join(', ')}</td><td><span class="cf ${d.c}">${CONF[d.c]}</span><br><span class="cn">${esc(d.cn)}</span></td><td>${esc(d.k)}</td></tr>`).join('');
+  const ids = new Set(r.map((d) => d.id));
+  document.querySelectorAll('#timeline .dot').forEach((c) => c.classList.toggle('dim', !ids.has(c.dataset.id)));
+}
+$('#q').addEventListener('input', (e) => { st.q = e.target.value; render(); });
+$('#sort').addEventListener('change', (e) => { st.sort = e.target.value; render(); });
+$('#view').addEventListener('click', (e) => { st.table = !st.table; document.getElementById('catalogue').classList.toggle('show-table', st.table); e.target.textContent = st.table ? 'Card view' : 'Table view'; e.target.setAttribute('aria-pressed', st.table); });
+
+/* ---------- timeline ---------- */
+const lanes = ['classical', 'rl', 'hardware', 'opensource', 'sim'];
+const X0 = 70, X1 = 930, Y0 = 2004, Y1 = 2027, LH = 48, TOP = 28;
+const xs = (y) => X0 + (y - Y0) / (Y1 - Y0) * (X1 - X0);
+let svg = '';
+for (let y = 2005; y <= 2026; y += 3) svg += `<line class="lane" x1="${xs(y)}" x2="${xs(y)}" y1="${TOP - 8}" y2="${TOP + lanes.length * LH - 8}"/><text x="${xs(y) - 12}" y="${TOP + lanes.length * LH + 14}">${y}</text>`;
+lanes.forEach((l, i) => { svg += `<line class="lane" x1="${X0}" x2="${X1}" y1="${TOP + i * LH + 16}" y2="${TOP + i * LH + 16}"/><text x="4" y="${TOP + i * LH + 20}" style="fill:${tcol[l]}">${TYPES[l].split(' /')[0]}</text>`; });
+const slot = {};
+D.filter((d) => d.y != null).forEach((d) => {
+  const k = d.t + d.y; const n = slot[k] = (slot[k] || 0) + 1;
+  const cx = xs(d.y) + ((n - 1) % 3 - 1) * 9, cy = TOP + lanes.indexOf(d.t) * LH + 16 - Math.floor((n - 1) / 3) * 14 + 0;
+  const shape = d.t === 'hardware' ? `<rect class="dot" tabindex="0" role="button" aria-label="${esc(d.n)}, ${d.y}" data-id="${d.id}" x="${cx - 5}" y="${cy - 5}" width="10" height="10" fill="${tcol[d.t]}"/>`
+    : d.t === 'opensource' ? `<path class="dot" tabindex="0" role="button" aria-label="${esc(d.n)}, ${d.y}" data-id="${d.id}" d="M${cx} ${cy - 6} L${cx + 6} ${cy + 5} L${cx - 6} ${cy + 5}z" fill="${tcol[d.t]}"/>`
+    : `<circle class="dot" tabindex="0" role="button" aria-label="${esc(d.n)}, ${d.y}" data-id="${d.id}" cx="${cx}" cy="${cy}" r="6" fill="${tcol[d.t]}" ${d.t === 'sim' ? 'fill-opacity=".55"' : ''}/>`;
+  svg += shape;
+});
+$('#timeline').innerHTML = svg;
+$('#tlLegend').innerHTML = lanes.map((l) => `<span><svg width="12" height="12" aria-hidden="true">${l === 'hardware' ? `<rect x="1" y="1" width="10" height="10" fill="${tcol[l]}"/>` : l === 'opensource' ? `<path d="M6 1L11 11H1z" fill="${tcol[l]}"/>` : `<circle cx="6" cy="6" r="5" fill="${tcol[l]}"/>`}</svg>${TYPES[l]}</span>`).join('') + '<span>Dots take the lane of the entry\'s primary type. Early catalogue entries cluster around CMU.</span>';
+const tip = $('#tip');
+const showTip = (e) => { const d = D.find((x) => x.id === e.target.dataset.id); if (d) tip.innerHTML = `<strong>${d.y}: ${esc(d.n)}</strong> (${esc(d.w)}), ${CONF[d.c]}`; };
+document.querySelectorAll('#timeline .dot').forEach((c) => {
+  c.addEventListener('mouseenter', showTip); c.addEventListener('focus', showTip);
+  const go = () => {
+    st.q = ''; $('#q').value = ''; st.types.clear(); st.confs.clear(); st.srcs.clear();
+    document.querySelectorAll('.chipbar .chip').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+    if (st.table) $('#view').click();
+    render();
+    const t = document.getElementById(c.dataset.id); if (t) { t.scrollIntoView({ behavior: 'smooth', block: 'center' }); t.classList.add('flash'); setTimeout(() => t.classList.remove('flash'), 2200); }
+  };
+  c.addEventListener('click', go); c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+});
+render();
+</script>
+</body>
+</html>

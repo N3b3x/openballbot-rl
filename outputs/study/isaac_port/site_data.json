@@ -1,0 +1,313 @@
+{
+ "title": "MuJoCo CPU vs NVIDIA PhysX (Isaac Sim 6.2): can the ballbot be ported?",
+ "generated_by": "experiments/isaac_port",
+ "note": "Simulation only. No hardware claims. PhysX has no anisotropic friction; the PhysX model uses a ring of passive rollers per wheel as an emulation (see REPORT.md).",
+ "clips": [
+  {
+   "id": "isaac_nom_settle",
+   "title": "LQR hold, robot dropped 2 cm onto the ball",
+   "description": "Robot and ball dropped 2 cm from the settled pose with the LQR holding zero command. Compares the ball and wheel contact transient and the contact forces.",
+   "engines": [
+    "MuJoCo 3.13 CPU (ContactFrameStepper)",
+    "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+   ],
+   "scenario": "settle",
+   "parameters": {
+    "design": "dz_nom",
+    "dt_s": 0.002,
+    "control_hz": 100,
+    "controller": "LQR (design gains)"
+   },
+   "outcome": "MuJoCo: stays upright, mean speed 0.00 m/s (cmd 0.00), max tilt 1.3 deg, mean wheel-ball normal force 17.6 N; PhysX: stays upright, mean speed 0.00 m/s (cmd 0.00), max tilt 0.4 deg, mean wheel-ball normal force 18.5 N",
+   "fell": {
+    "mujoco": false,
+    "physx": false
+   },
+   "file": "outputs/study/isaac_port/videos/nom_settle.mp4",
+   "poster": "outputs/study/isaac_port/videos/nom_settle.jpg",
+   "size_mb": 0.23,
+   "note": "Simulation only. No hardware claims."
+  },
+  {
+   "id": "isaac_nom_pulse",
+   "title": "Open-loop torque pulse, 0.5 Nm on wheels 0 and 2 for 0.1 s (0.3x speed)",
+   "description": "No feedback: 0.5 Nm on wheels 0 and 2 for 0.1 s after 0.1 s of rest. The unstable plant is only comparable for the first 0.3 s; ball and body response is the check.",
+   "engines": [
+    "MuJoCo 3.13 CPU (ContactFrameStepper)",
+    "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+   ],
+   "scenario": "torque_step",
+   "parameters": {
+    "design": "dz_nom",
+    "dt_s": 0.002,
+    "control_hz": 100,
+    "controller": "open loop"
+   },
+   "outcome": "MuJoCo: stays upright, mean speed 0.05 m/s (cmd 0.00), max tilt 13.7 deg, mean wheel-ball normal force 17.5 N; PhysX: stays upright, mean speed 0.07 m/s (cmd 0.00), max tilt 14.9 deg, mean wheel-ball normal force 18.3 N",
+   "fell": {
+    "mujoco": false,
+    "physx": false
+   },
+   "file": "outputs/study/isaac_port/videos/nom_pulse.mp4",
+   "poster": "outputs/study/isaac_port/videos/nom_pulse.jpg",
+   "size_mb": 0.2,
+   "note": "Simulation only. No hardware claims."
+  },
+  {
+   "id": "isaac_nom_track04",
+   "title": "LQR, 0.4 scaled speed",
+   "description": "LQR (nominal gains) tracking 0.4 of the scaled speed along +x for 5 s.",
+   "engines": [
+    "MuJoCo 3.13 CPU (ContactFrameStepper)",
+    "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+   ],
+   "scenario": "lqr_0.4",
+   "parameters": {
+    "design": "dz_nom",
+    "dt_s": 0.002,
+    "control_hz": 100,
+    "controller": "LQR (design gains)"
+   },
+   "outcome": "MuJoCo: stays upright, mean speed 0.40 m/s (cmd 0.40), max tilt 9.8 deg, mean wheel-ball normal force 17.8 N; PhysX: stays upright, mean speed 0.40 m/s (cmd 0.40), max tilt 8.5 deg, mean wheel-ball normal force 18.8 N",
+   "fell": {
+    "mujoco": false,
+    "physx": false
+   },
+   "file": "outputs/study/isaac_port/videos/nom_track04.mp4",
+   "poster": "outputs/study/isaac_port/videos/nom_track04.jpg",
+   "size_mb": 1.2,
+   "note": "Simulation only. No hardware claims."
+  },
+  {
+   "id": "isaac_nom_track08",
+   "title": "LQR, 0.8 scaled speed",
+   "description": "LQR tracking 0.8 of the scaled speed along +x for 5 s.",
+   "engines": [
+    "MuJoCo 3.13 CPU (ContactFrameStepper)",
+    "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+   ],
+   "scenario": "lqr_0.8",
+   "parameters": {
+    "design": "dz_nom",
+    "dt_s": 0.002,
+    "control_hz": 100,
+    "controller": "LQR (design gains)"
+   },
+   "outcome": "MuJoCo: stays upright, mean speed 0.79 m/s (cmd 0.80), max tilt 10.0 deg, mean wheel-ball normal force 18.0 N; PhysX: stays upright, mean speed 0.80 m/s (cmd 0.80), max tilt 8.8 deg, mean wheel-ball normal force 20.5 N",
+   "fell": {
+    "mujoco": false,
+    "physx": false
+   },
+   "file": "outputs/study/isaac_port/videos/nom_track08.mp4",
+   "poster": "outputs/study/isaac_port/videos/nom_track08.jpg",
+   "size_mb": 1.39,
+   "note": "Simulation only. No hardware claims."
+  },
+  {
+   "id": "isaac_nom_push",
+   "title": "LQR, 1x body-weight 50 ms push at 1.5 s",
+   "description": "One horizontal 50 ms push of 1x total weight (35 degrees from +x) while driving at 0.4 scaled speed.",
+   "engines": [
+    "MuJoCo 3.13 CPU (ContactFrameStepper)",
+    "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+   ],
+   "scenario": "push_1x",
+   "parameters": {
+    "design": "dz_nom",
+    "dt_s": 0.002,
+    "control_hz": 100,
+    "controller": "LQR (design gains)"
+   },
+   "outcome": "MuJoCo: fell at 2.24 s, mean wheel-ball normal force 18.9 N; PhysX: fell at 1.89 s, mean wheel-ball normal force 20.4 N",
+   "fell": {
+    "mujoco": true,
+    "physx": true
+   },
+   "file": "outputs/study/isaac_port/videos/nom_push.mp4",
+   "poster": "outputs/study/isaac_port/videos/nom_push.jpg",
+   "size_mb": 0.78,
+   "note": "Simulation only. No hardware claims."
+  },
+  {
+   "id": "isaac_zeta66_push",
+   "title": "Contact zenith 66 deg, same 1x push",
+   "description": "Design variant with the wheels at 66 degrees zenith (more upright contact) under the same push.",
+   "engines": [
+    "MuJoCo 3.13 CPU (ContactFrameStepper)",
+    "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+   ],
+   "scenario": "push_1x_zeta66",
+   "parameters": {
+    "design": "dz_zeta66",
+    "dt_s": 0.002,
+    "control_hz": 100,
+    "controller": "LQR (design gains)"
+   },
+   "outcome": "MuJoCo: stays upright, mean speed 0.38 m/s (cmd 0.40), max tilt 15.5 deg, mean wheel-ball normal force 25.1 N; PhysX: stays upright, mean speed 0.39 m/s (cmd 0.40), max tilt 15.8 deg, mean wheel-ball normal force 26.0 N",
+   "fell": {
+    "mujoco": false,
+    "physx": false
+   },
+   "file": "outputs/study/isaac_port/videos/zeta66_push.mp4",
+   "poster": "outputs/study/isaac_port/videos/zeta66_push.jpg",
+   "size_mb": 1.08,
+   "note": "Simulation only. No hardware claims."
+  },
+  {
+   "id": "isaac_zeta41_push",
+   "title": "Contact zenith 41 deg, same 1x push",
+   "description": "Design variant with the wheels at 41 degrees zenith under the same push (known to fall more often in MuJoCo).",
+   "engines": [
+    "MuJoCo 3.13 CPU (ContactFrameStepper)",
+    "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+   ],
+   "scenario": "push_1x_zeta41",
+   "parameters": {
+    "design": "dz_zeta41",
+    "dt_s": 0.002,
+    "control_hz": 100,
+    "controller": "LQR (design gains)"
+   },
+   "outcome": "MuJoCo: fell at 1.87 s, mean wheel-ball normal force 15.6 N; PhysX: fell at 1.93 s, mean wheel-ball normal force 18.2 N",
+   "fell": {
+    "mujoco": true,
+    "physx": true
+   },
+   "file": "outputs/study/isaac_port/videos/zeta41_push.mp4",
+   "poster": "outputs/study/isaac_port/videos/zeta41_push.jpg",
+   "size_mb": 0.73,
+   "note": "Simulation only. No hardware claims."
+  },
+  {
+   "id": "isaac_zeta41_track08",
+   "title": "Contact zenith 41 deg, 0.8 scaled speed",
+   "description": "Zenith 41 degree design at 0.8 scaled speed; MuJoCo with the same LQR loses balance.",
+   "engines": [
+    "MuJoCo 3.13 CPU (ContactFrameStepper)",
+    "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+   ],
+   "scenario": "lqr_0.8_zeta41",
+   "parameters": {
+    "design": "dz_zeta41",
+    "dt_s": 0.002,
+    "control_hz": 100,
+    "controller": "LQR (design gains)"
+   },
+   "outcome": "MuJoCo: fell at 2.65 s, mean wheel-ball normal force 16.2 N; PhysX: stays upright, mean speed 0.79 m/s (cmd 0.80), max tilt 8.4 deg, mean wheel-ball normal force 21.3 N",
+   "fell": {
+    "mujoco": true,
+    "physx": false
+   },
+   "file": "outputs/study/isaac_port/videos/zeta41_track08.mp4",
+   "poster": "outputs/study/isaac_port/videos/zeta41_track08.jpg",
+   "size_mb": 1.19,
+   "note": "Simulation only. No hardware claims."
+  },
+  {
+   "id": "isaac_naive_track04",
+   "title": "PhysX naive import (isotropic capsule wheels), 0.4 scaled speed",
+   "description": "What a plain MJCF to PhysX conversion gives: capsule wheels with one isotropic friction coefficient (the anisotropic <pair friction> cannot be represented). Failure case.",
+   "engines": [
+    "MuJoCo 3.13 CPU (ContactFrameStepper)",
+    "PhysX 5 (Isaac Sim 6.2), naive import"
+   ],
+   "scenario": "naive_import_lqr_0.4",
+   "parameters": {
+    "design": "dz_nom",
+    "dt_s": 0.002,
+    "control_hz": 100,
+    "controller": "LQR (design gains)"
+   },
+   "outcome": "MuJoCo: stays upright, mean speed 0.40 m/s (cmd 0.40), max tilt 9.8 deg, mean wheel-ball normal force 17.8 N; PhysX naive: fell at 0.39 s, mean wheel-ball normal force nan N",
+   "fell": {
+    "mujoco": false,
+    "physx": true
+   },
+   "file": "outputs/study/isaac_port/videos/naive_track04.mp4",
+   "poster": "outputs/study/isaac_port/videos/naive_track04.jpg",
+   "size_mb": 0.87,
+   "note": "Simulation only. No hardware claims."
+  }
+ ],
+ "tables": {
+  "per_design_mujoco_vs_physx": "outputs/study/isaac_port/comparison_px_r.csv",
+  "per_design_mujoco_reduced_protocol": "outputs/study/isaac_port/sweep_mj_r.csv",
+  "per_design_physx_reduced_protocol": "outputs/study/isaac_port/sweep_px_r.csv",
+  "per_design_mujoco_full_protocol": "outputs/study/isaac_port/sweep_mj.csv",
+  "nominal_recordings_detail": "outputs/study/isaac_port/nominal_detail_recordings.csv"
+ },
+ "throughput": {
+  "mujoco_cpu_1proc": {
+   "contact_frame_stepper(env default)": {
+    "control_steps_per_s": 1535.3659259218587,
+    "physics_steps_per_s": 7676.829629609293
+   },
+   "mj_step_plain(no contact-frame fix)": {
+    "control_steps_per_s": 1627.229847325556,
+    "physics_steps_per_s": 8136.149236627781
+   }
+  },
+  "physx_gpu_small": [
+   {
+    "N": 1,
+    "device": "gpu",
+    "build_s": 0.0,
+    "start_s": 1.328977108001709,
+    "links_per_env": 52,
+    "sim_only_envsteps_per_s": 29.432615983327143,
+    "sim_only_phys_step_ms": 33.975912999594584,
+    "closed_loop_envsteps_per_s": 29.151002982032633,
+    "closed_loop_ctrl_ms": 171.52068500290625
+   },
+   {
+    "N": 64,
+    "device": "gpu",
+    "build_s": 0.0481722354888916,
+    "start_s": 2.577845335006714,
+    "links_per_env": 52,
+    "sim_only_envsteps_per_s": 1845.2520590497427,
+    "sim_only_phys_step_ms": 34.683608500054106,
+    "closed_loop_envsteps_per_s": 1720.6103784789345,
+    "closed_loop_ctrl_ms": 185.9805124986451
+   }
+  ],
+  "physx_gpu_mid": [
+   {
+    "N": 256,
+    "device": "gpu",
+    "build_s": 0.19451165199279785,
+    "start_s": 8.548955202102661,
+    "links_per_env": 52,
+    "sim_only_envsteps_per_s": 7300.728886738432,
+    "sim_only_phys_step_ms": 35.06499199895188,
+    "closed_loop_envsteps_per_s": 7001.691400642648,
+    "closed_loop_ctrl_ms": 182.8129700035788
+   },
+   {
+    "N": 1024,
+    "device": "gpu",
+    "build_s": 0.7058589458465576,
+    "start_s": 34.93387484550476,
+    "links_per_env": 52,
+    "sim_only_envsteps_per_s": 25888.87518907296,
+    "sim_only_phys_step_ms": 39.553668999578804,
+    "closed_loop_envsteps_per_s": 24041.784622262236,
+    "closed_loop_ctrl_ms": 212.9625599947758
+   }
+  ],
+  "physx_gpu_4096": [
+   {
+    "N": 4096,
+    "device": "gpu",
+    "build_s": 101.30938673019409,
+    "start_s": 143.48323249816895,
+    "links_per_env": 52,
+    "sim_only_envsteps_per_s": 69670.39270743741,
+    "sim_only_phys_step_ms": 58.79111399874091,
+    "closed_loop_envsteps_per_s": 76646.50291736239,
+    "closed_loop_ctrl_ms": 267.20071001909673
+   }
+  ]
+ },
+ "report": "experiments/isaac_port/REPORT.md"
+}

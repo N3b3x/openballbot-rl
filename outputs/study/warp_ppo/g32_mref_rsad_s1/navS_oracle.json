@@ -1,0 +1,157 @@
+{
+ "run": "g32_mref_rsad_s1",
+ "source": "oracle",
+ "motion_ref": true,
+ "sensor": null,
+ "planner": {
+  "kind": "smooth",
+  "aim": "cmd",
+  "replan": 20,
+  "prox": 0.0,
+  "carrot": 0.3,
+  "w_max": 2.0,
+  "a_max": 0.6,
+  "hyst": 1.0,
+  "look": 0.6,
+  "half_w": 0.22,
+  "thr": 0.03,
+  "v_max": 0.3,
+  "mem": 600,
+  "goal_r": 1.2
+ },
+ "steps": 2000,
+ "worlds": 528,
+ "push_scale": 0.0,
+ "pull": false,
+ "retainer": "0,0,0,100",
+ "overall": {
+  "path_ratio": 1.8843399286270142,
+  "heading_rate_rms": 1.234690546989441,
+  "cmd_change_mean": 0.4345082640647888,
+  "fall": 0.06439393758773804,
+  "success": 0.9261363744735718,
+  "stuck": 0.009469697251915932,
+  "over_block": 0.024621212854981422,
+  "median_time_s": 8.619999885559082
+ },
+ "diag": {
+  "escape_events": null,
+  "escape_gave_up": null,
+  "escape_fails_median": null,
+  "stuck_final_goal_dist_median": 0.8103833794593811,
+  "stuck_cmd_zero_frac": 0.0,
+  "stuck_dist_from_start_median": 1.9668779373168945
+ },
+ "by_design": {
+  "nom": {
+   "path_ratio": 1.8997961282730103,
+   "heading_rate_rms": 1.226945161819458,
+   "cmd_change_mean": 0.4269884526729584,
+   "fall": 0.0,
+   "success": 0.9791666865348816,
+   "stuck": 0.02083333395421505,
+   "over_block": 0.0,
+   "median_time_s": 9.15999984741211
+  },
+  "zhigh": {
+   "path_ratio": 1.9517874717712402,
+   "heading_rate_rms": 1.257580041885376,
+   "cmd_change_mean": 0.4413932263851166,
+   "fall": 0.0416666679084301,
+   "success": 0.9583333730697632,
+   "stuck": 0.0,
+   "over_block": 0.0416666679084301,
+   "median_time_s": 8.109999656677246
+  },
+  "zlow": {
+   "path_ratio": 1.898191213607788,
+   "heading_rate_rms": 1.229698896408081,
+   "cmd_change_mean": 0.4286288619041443,
+   "fall": 0.0,
+   "success": 0.9791666865348816,
+   "stuck": 0.02083333395421505,
+   "over_block": 0.0416666679084301,
+   "median_time_s": 8.880000114440918
+  },
+  "kb4": {
+   "path_ratio": 1.801506757736206,
+   "heading_rate_rms": 1.2417296171188354,
+   "cmd_change_mean": 0.4398852288722992,
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 8.34999942779541
+  },
+  "bal4": {
+   "path_ratio": 1.8111845254898071,
+   "heading_rate_rms": 1.2179571390151978,
+   "cmd_change_mean": 0.4258106052875519,
+   "fall": 0.1666666716337204,
+   "success": 0.8125,
+   "stuck": 0.02083333395421505,
+   "over_block": 0.02083333395421505,
+   "median_time_s": 9.469999313354492
+  },
+  "J02": {
+   "path_ratio": 1.8713669776916504,
+   "heading_rate_rms": 1.2149832248687744,
+   "cmd_change_mean": 0.42860177159309387,
+   "fall": 0.02083333395421505,
+   "success": 0.9583333730697632,
+   "stuck": 0.02083333395421505,
+   "over_block": 0.0416666679084301,
+   "median_time_s": 9.220000267028809
+  },
+  "tau6": {
+   "path_ratio": 1.8555399179458618,
+   "heading_rate_rms": 1.2465710639953613,
+   "cmd_change_mean": 0.4364635944366455,
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0625,
+   "median_time_s": 7.12999963760376
+  },
+  "bal025": {
+   "path_ratio": 1.84475839138031,
+   "heading_rate_rms": 1.2565349340438843,
+   "cmd_change_mean": 0.43825167417526245,
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.02083333395421505,
+   "median_time_s": 7.980000019073486
+  },
+  "kb025": {
+   "path_ratio": 2.075723171234131,
+   "heading_rate_rms": 1.234968662261963,
+   "cmd_change_mean": 0.44836369156837463,
+   "fall": 0.4375,
+   "success": 0.5625,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 8.329999923706055
+  },
+  "zeta41": {
+   "path_ratio": 1.9016956090927124,
+   "heading_rate_rms": 1.2399309873580933,
+   "cmd_change_mean": 0.439702570438385,
+   "fall": 0.02083333395421505,
+   "success": 0.9583333730697632,
+   "stuck": 0.02083333395421505,
+   "over_block": 0.02083333395421505,
+   "median_time_s": 8.739999771118164
+  },
+  "zeta66": {
+   "path_ratio": 1.8755927085876465,
+   "heading_rate_rms": 1.2232017517089844,
+   "cmd_change_mean": 0.42981240153312683,
+   "fall": 0.02083333395421505,
+   "success": 0.9791666865348816,
+   "stuck": 0.0,
+   "over_block": 0.02083333395421505,
+   "median_time_s": 10.15999984741211
+  }
+ }
+}

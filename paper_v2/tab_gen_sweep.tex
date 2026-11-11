@@ -1,0 +1,14 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Arrestor mount-angle sweep (zero-shot), corrected engine. Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 1760 per cell (176 per terrain kind). Seeds: one policy (g12\_dr175\_s0, seed 0), trained without arrestors (zero-shot). Protocol: goal task of Table 2 with frictionless arrestors (radius 8 mm) added at evaluation; floor clearance from the geometry R + (R + r\_a) cos(phi) - r\_a; the floor-touch tilts marked with a dagger are from the study log (S79), and arrestor-floor contact is not simulated.}\label{tab:gen_sweep}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccc}\toprule
+Arrestor mount (polar angle from the top of the ball, deg) & Goal success undisturbed & Goal success pushes + pulls & Median misalignment at fall, undisturbed / disturbed [deg] & Arrestor bottom above the floor, upright [cm] & Tilt at which it touches the floor [deg]\\\midrule
+none & 0.57 & 0.28 & 20.6 / 11.4 & n/a & n/a\\
+135 (opposite the wheel) & 0.66 & 0.37 & 7.2 / 4.3 & 1.3 & 21$^\dagger$\\
+120 & 0.69 & 0.39 & 5.4 / 3.2 & 3.3 & n/a\\
+110 & 0.72 & 0.40 & 4.1 / 2.7 & 4.8 & n/a\\
+100 & 0.75 & 0.45 & 3.4 / 1.8 & 6.5 & 57$^\dagger$\\
+95 & 0.75 & 0.43 & 2.6 / 1.8 & 7.3 & n/a\\
+90 (equator) & 0.76 & 0.44 & 2.7 / 1.7 & 8.2 & n/a\\
+\bottomrule\end{tabular}}
+\end{table*}

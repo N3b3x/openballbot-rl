@@ -1,0 +1,15 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Navigation around unclimbable blocks (undisturbed), frozen recommended controller with a planner. Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error; earlier measurement: controller g18\_ret\_rs025\_s1 trained and evaluated at wheel-ball free-rolling friction 0.001 (the recommended checkpoint at 0.01 is in Table 37). Domain randomisation: on at scale 1 (11 designs, floor classes). Observation noise: on (sensor ranges: noise 0.5 percent of range, 2 percent dropout). Worlds per cell: 528 per row (48 per design, 11 designs). Seeds: one controller seed (g18\_ret\_rs025\_s1, frozen). Protocol: blocks map, undisturbed, 20 s episodes, goal 1.2 m away behind a block; wavefront planner (eval\_nav.py) with obstacles inflated by 0.22 m on a 5 cm grid; nothing is retrained.}\label{tab:gen_nav}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccc}\toprule
+Hazard source & Falls & Reached goal & Stuck & Rolled onto a block\\\midrule
+blind (straight to the goal) & 0.91 & 0.09 & 0.00 & 0.74\\
+privileged height map (upper bound) & 0.09 & 0.91 & 0.00 & 0.00\\
+ToF 18 x 14, 55 x 42 deg, head, pitch -25 deg & 0.11 & 0.85 & 0.04 & 0.02\\
+depth camera 32 x 24, 87 x 58 deg, head, pitch -25 deg & 0.12 & 0.83 & 0.05 & 0.02\\
+depth camera 32 x 24, head, pitch -40 deg & 0.15 & 0.51 & 0.34 & 0.00\\
+ToF 8 x 8, 45 x 45 deg, head, pitch -25 deg & 0.14 & 0.73 & 0.13 & 0.02\\
+ToF 18 x 14 at the base origin, pitch -10 deg & 0.11 & 0.78 & 0.11 & 0.02\\
+two ToF 18 x 14 on the body cones & 0.35 & 0.58 & 0.07 & 0.25\\
+\bottomrule\end{tabular}}
+\end{table*}

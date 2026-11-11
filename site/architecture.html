@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- head:common -->
+<script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}</script>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<!-- /head:common -->
+<title>The controller: how the stack fits together | Ballbot</title>
+<meta name="description" content="The whole ballbot control stack with diagrams: goal to navigation layer to velocity command to LQR plus learned residual to wheel torques; the sensing pipeline from ToF ranges to a distance field; the training pipeline with 4096 worlds, domain randomisation, pushes and an asymmetric critic; and the evaluation protocol. Simulation only.">
+<!-- og -->
+<link rel="canonical" href="https://n3b3x.github.io/openballbot-rl/architecture.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ballbot control research">
+<meta property="og:title" content="The controller: how the stack fits together | Ballbot">
+<meta property="og:description" content="The whole ballbot control stack with diagrams: goal to navigation layer to velocity command to LQR plus learned residual to wheel torques; the sensing pipeline from ToF ranges to a distance field; the training pipeline with 4096 worlds, domain randomisation, pushes and an asymmetric critic; and the evaluation protocol. Simulation only.">
+<meta property="og:url" content="https://n3b3x.github.io/openballbot-rl/architecture.html">
+<meta property="og:image" content="https://n3b3x.github.io/openballbot-rl/assets/img/social-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A simulated ballbot: a cylindrical robot balanced on a basketball-textured ball, with the title of the study.">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /og -->
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/arch.css">
+<script type="module" src="assets/js/layout.js"></script>
+<script type="module" src="assets/js/arch.js"></script>
+<style>
+.tldr{border:1px solid color-mix(in srgb,var(--hybrid) 45%,var(--line));background:color-mix(in srgb,var(--hybrid) 7%,var(--bg-2));border-radius:var(--radius);padding:18px 22px;margin:1.4em 0 0;max-width:80ch}
+.tldr h2{font-size:1.05rem;margin:0 0 .5em;color:var(--hybrid)}
+.tldr ol{margin:0;padding-left:1.2em;color:var(--text-2);font-size:.98rem} .tldr li{margin:.3em 0}
+.lead{font-size:1.08rem;color:var(--text-2);max-width:70ch;margin:0 0 1.2em}
+.sowhat{border-left:3px solid var(--good);background:var(--bg-2);padding:12px 18px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:1.4em 0 0;max-width:74ch}
+.sowhat b{color:var(--good);font:500 .74rem var(--font-mono);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.25em}
+.fig{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);padding:12px}
+.fig svg,.fig img{width:100%;height:auto;display:block}
+.fig .cap{font-size:.82rem;color:var(--text-3);margin:8px 2px 0}
+@media (max-width:700px){.fig[data-m] svg{max-width:400px;margin:0 auto}}
+.defn{border-bottom:1px dotted var(--text-3);text-decoration:none;color:inherit;cursor:help}
+.steps{counter-reset:st;margin:1em 0;padding:0;list-style:none;max-width:74ch}
+.steps li{position:relative;padding-left:2.4em;margin:.7em 0}
+.steps li::before{counter-increment:st;content:counter(st);position:absolute;left:0;top:.1em;width:1.7em;height:1.7em;border-radius:50%;background:color-mix(in srgb,var(--hybrid) 18%,var(--bg-3));color:var(--hybrid);font:600 .8rem var(--font-mono);display:grid;place-items:center}
+.sees{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px;margin:1em 0}
+.sees .card h3{font-size:1rem;margin-bottom:.4em} .sees ul{margin:.3em 0 0 1.1em;padding:0;color:var(--text-2);font-size:.9rem} .sees li{margin:.2em 0}
+.sees .no h3{color:var(--bad)} .sees .yes h3{color:var(--learned)} .sees .crit h3{color:var(--warn)}
+.numtab{font-size:.88rem} .numtab td.num,.numtab th.num{text-align:right;font-family:var(--font-mono)}
+.detail .kv{max-width:none}
+.arch .sec{scroll-margin-top:110px}
+</style>
+</head>
+<body class="arch">
+<!-- nojs --><noscript><nav class="nojs" aria-label="Main (JavaScript is off)"><a href="index.html">Overview</a><a href="learn/index.html">Learn</a><a href="generalist.html">Results</a><a href="videos.html">Videos</a><a href="design.html">Design guidelines</a><a href="deploy.html">ROS 2</a><a href="math.html">Physics</a><a href="architecture.html">Controller</a><a href="reproduce.html">Reproduce</a><a href="glossary.html">Glossary</a></nav></noscript><!-- /nojs -->
+<main>
+
+<div class="arch-hero"><div class="wrap">
+  <div class="eyebrow">The controller</div>
+  <h1>How the whole stack fits together</h1>
+  <p class="lede">Four pictures explain the system: how a goal becomes wheel torques, how a depth sensor becomes a map, how the learned part is trained, and how every controller is judged. Click or tab to any block for what it does, its numbers and where in the repository it lives. Everything here is simulation; no hardware is involved.</p>
+  <div class="legend" aria-label="Colour legend">
+    <span class="chip model"><i></i> model-based: LQR, derived math</span>
+    <span class="chip learned"><i></i> learned: PPO, neural networks</span>
+    <span class="chip hybrid"><i></i> the combined controller</span>
+    <span class="chip" style="color:var(--warn)"><i></i> limits and randomisation</span>
+    <span class="chip good"><i></i> success and mechanical safety</span>
+  </div>
+  <div class="tldr">
+    <h2>In short</h2>
+    <ol>
+      <li>A navigation layer turns a goal and a map into a smooth velocity command. The balance controller never sees the map.</li>
+      <li>The balance controller is an LQR on the derived planar model plus a learned residual with authority 0.25: applied action = clip(a<sub>LQR</sub> + 0.25 a<sub>policy</sub>). The current recommendation (S112, S113) switches the authority between 0.15 while cruising and 0.3 when manoeuvring, with a goal dead band, and puts a motion layer between the navigation layer and the controller (<a href="generalist.html#motion">results, chapter 10b</a>).</li>
+      <li>The robot carries three passive ball arrestors; they, not the controller, fixed most falls.</li>
+      <li>The policy is trained on 4096 GPU worlds, 11 robot designs, wide randomisation, pushes and pulls, with a critic that sees more than the policy.</li>
+      <li>Every controller is scored on the same goal, velocity and flat tests, at three randomisation scales, with and without disturbances, on three seeds, and on held-out terrain and designs.</li>
+    </ol>
+  </div>
+  <noscript><p class="callout warn">The diagrams work without JavaScript as pictures; the click-for-detail panels need it.</p></noscript>
+</div></div>
+
+<nav class="subnav" aria-label="On this page"><div class="wrap">
+  <a href="#stack">1 Controller stack</a><a href="#sensing">2 Sensing</a><a href="#training">3 Training</a><a href="#evalp">4 Evaluation</a><a href="#history">5 Earlier stack</a>
+</div></nav>
+
+<!-- ===================== 1. CONTROLLER STACK ===================== -->
+<section class="sec" id="stack"><div class="wrap">
+  <div class="eyebrow">1 &middot; Controller stack</div>
+  <h2>From a goal to wheel torques</h2>
+  <p class="lead">Think of three people. A navigator with a map who says where to go next and how fast. A trained athlete who keeps the robot upright and tracks that speed. And a cage of small rollers that stops the athlete slipping off the ball. The navigator never touches the wheels; the athlete never sees the map. The picture reads left to right.</p>
+  <figure class="fig" data-m style="margin:0" data-svg="assets/img/arch-stack.svg" data-svg-m="assets/img/arch-stack-m.svg" data-detail="stack" data-first="mix">
+    <img src="assets/img/arch-stack.svg" alt="Controller stack: goal, navigation layer, velocity command, LQR with governor and residual PPO policy in parallel, sum with authority 0.25 and clip, wheel torques, simulated robot with arrestors, state fed back" loading="lazy" width="960" height="300">
+  </figure>
+  <p class="hint">Tap a block for its details. On a phone the stack is drawn top to bottom.</p>
+  <div class="detail" id="stack-detail" aria-live="polite" tabindex="-1"></div>
+  <h3>How the pieces talk</h3>
+  <ol class="steps">
+    <li><strong>Goal to command.</strong> Every 10 ms the navigation layer outputs a planar velocity (direction and speed). Without a map it is simply the direction to the goal at min(0.3 m/s, 1.5 &times; distance), Froude-scaled for the design. With a map it is the carrot follower's smooth command (<a href="math.html#s9">physics page, section 9</a>).</li>
+    <li><strong>Command to two actions.</strong> The <a class="defn" title="Linear quadratic regulator: textbook feedback gains computed from the planar model">LQR</a> passes the command through its governor and integral and computes a wheel action from the measured tilt, rates and ball rate. In parallel the policy, an MLP, maps 25 observation values and the design vector to a residual action.</li>
+    <li><strong>Sum and clip.</strong> applied = clip(a<sub>LQR</sub> + 0.25 a<sub>policy</sub>). The LQR always keeps at least three quarters of the say. With adaptive authority the factor is 0.15 while cruising and rises to 0.3 for about half a second when the command changes fast, nears zero or the body tilts beyond 4 degrees (S112).</li>
+    <li><strong>Torques and physics.</strong> The three normalised commands become torques at the wheel limit and the GPU simulator advances the robot. The new state is read back: the LQR sees tilt, rates, ball rate and velocity; the policy sees the same plus its command, heading, velocity integral and goal.</li>
+  </ol>
+  <div class="sowhat"><b>Why this shape</b>Pure learning tracked speed at only 0.54 to 0.66 of the command; the LQR alone was exact but fragile. Keeping the exact part exact and bounding the learned part gives 0.99 to 1.01 tracking with 0.71 to 0.76 goal success undisturbed and 0.42 to 0.44 with pushes and pulls (S83, S84). The arrestors added about 0.15 of that success before any retraining (S79, S80).</div>
+</div></section>
+
+<!-- ===================== 2. SENSING ===================== -->
+<section class="sec" id="sensing"><div class="wrap">
+  <div class="eyebrow">2 &middot; Sensing pipeline</div>
+  <h2>From ranges to a map the planner can descend</h2>
+  <p class="lead">A time-of-flight sensor does not see blocks; it returns a grid of distances. Five deterministic steps turn those numbers into a field that tells the robot, in every cell, how far it is from the goal by a path that avoids what it has seen. None of these steps is learned, and the balance controller never receives any of them.</p>
+  <figure class="fig" data-m style="margin:0" data-svg="assets/img/arch-sensing.svg" data-svg-m="assets/img/arch-sensing-m.svg" data-detail="sense" data-first="tof">
+    <img src="assets/img/arch-sensing.svg" alt="Sensing pipeline: ToF ranges, hit points, memory of 600 points above 3 cm, 64 by 64 occupancy grid inflated by 0.22 m, distance field replanned every 0.2 s; a dashed arrow shows the planner aiming the sensor" loading="lazy" width="920" height="250">
+  </figure>
+  <p class="hint">Tap a block for its details.</p>
+  <div class="detail" id="sense-detail" aria-live="polite" tabindex="-1"></div>
+  <h3>What was measured, same planner and controller throughout</h3>
+  <div class="tbl-wrap"><table class="tbl numtab" aria-label="Navigation results by hazard source">
+    <thead><tr><th>Hazard source</th><th class="num">reached goal</th><th class="num">falls</th><th class="num">rolled onto a block</th></tr></thead>
+    <tbody>
+      <tr><td>blind (straight to the goal)</td><td class="num">0.09</td><td class="num">0.91</td><td class="num">0.74</td></tr>
+      <tr><td>perfect map, jerky wavefront planner</td><td class="num">0.91</td><td class="num">0.09</td><td class="num">0.00</td></tr>
+      <tr><td>ToF 18&times;14 on the head, jerky planner</td><td class="num">0.85</td><td class="num">0.11</td><td class="num">0.02</td></tr>
+      <tr><td>ToF 18&times;14, smooth follower, sensor along the command</td><td class="num">0.72</td><td class="num">0.22</td><td class="num">0.16</td></tr>
+      <tr><td>ToF 18&times;14, smooth follower, sensor aimed at the planner target</td><td class="num">0.78</td><td class="num">0.16</td><td class="num">0.03</td></tr>
+      <tr><td>two ToF on the body cones (worst mount)</td><td class="num">0.58</td><td class="num">0.35</td><td class="num">0.25</td></tr>
+      <tr><td>perfect map, with pushes and pulls</td><td class="num">0.55 to 0.58</td><td class="num">0.41 to 0.44</td><td class="num">0.13 to 0.20</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">528 worlds (48 per design, 11 designs), 20 s episodes, randomisation scale 1, frozen recommended controller. Source: <span class="src">tracking_study_log.md S89, S90, S91</span></p>
+  <div class="sowhat"><b>Why this shape</b>Mount and pitch matter more than resolution, and a planner that turns smoothly must also point the sensor where it is going, not where it is driving. Under pushes even a perfect map falls 0.41, so the remaining limit is disturbance rejection near obstacles, not perception; training the policy with the planner in the loop changed nothing (S91).</div>
+</div></section>
+
+<!-- ===================== 3. TRAINING ===================== -->
+<section class="sec" id="training"><div class="wrap">
+  <div class="eyebrow">3 &middot; Training pipeline</div>
+  <h2>4096 robots, each in its own slightly different world</h2>
+  <p class="lead">The learned residual is trained by trial and error on a GPU simulator that runs thousands of robots at once. Each one has a different body, different friction, different pushes and a different patch of ground, so the policy cannot memorise one robot. The trick that makes this work with realistic sensing is an <a class="defn" title="Asymmetric actor-critic: the value network used only during training receives privileged information the policy does not">asymmetric critic</a>: the network that judges outcomes during training is allowed to see the hidden truth; the network that acts is not.</p>
+  <figure class="fig" data-m style="margin:0" data-svg="assets/img/arch-training.svg" data-svg-m="assets/img/arch-training-m.svg" data-detail="train" data-first="obs">
+    <img src="assets/img/arch-training.svg" alt="Training pipeline: 4096 worlds with 11 designs, randomisation at scale 1.75, pushes and pulls, ten terrain kinds and the tasks; what the policy sees; what only the critic sees; actor and critic updated by PPO" loading="lazy" width="920" height="330">
+  </figure>
+  <p class="hint">Tap a block for its details.</p>
+  <div class="detail" id="train-detail" aria-live="polite" tabindex="-1"></div>
+  <h3>What the policy sees, and does not see</h3>
+  <div class="sees">
+    <div class="card yes"><h3>The policy sees</h3><ul><li>body orientation (rotation vector) and angular velocity</li><li>linear velocity and the three wheel rates</li><li>its previous applied action</li><li>the command, its heading as sine and cosine, the integrated velocity error</li><li>the goal direction, distance and flag</li><li>a 6-value description of which robot design it is driving</li></ul><p class="hint">25 + 6 values at 100 Hz, with sensor noise. All available on a real robot.</p></div>
+    <div class="card no"><h3>The policy does not see</h3><ul><li>the terrain or any map</li><li>the floor friction or softness</li><li>the masses, torque scale or damping drawn this episode</li><li>when or how hard it is being pushed</li><li>the LQR's own action (it only feels its effect)</li></ul><p class="hint">It must infer all of this from how the robot moves.</p></div>
+    <div class="card crit"><h3>Only the critic sees</h3><ul><li>floor friction and softness</li><li>mass and torque scales, wheel damping</li><li>a height scan of the ground ahead</li><li>the design vector</li></ul><p class="hint">Privileged, training only. Discarded after training.</p></div>
+  </div>
+  <div class="tbl-wrap"><table class="tbl" aria-label="Training recipe of the recommended controller">
+    <thead><tr><th>Ingredient</th><th>Setting</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Worlds</td><td><code>4096</code>, MuJoCo-Warp float32, 100 Hz</td><td>enough variety per update to average over designs, surfaces and pushes</td></tr>
+      <tr><td>Designs</td><td><code>11</code>, each with its own LQR</td><td>a single policy for a family of bodies; design vector tells it which</td></tr>
+      <tr><td>Randomisation</td><td>scale <code>1.75</code>: mass, friction, torque, damping, latency, noise</td><td>robustness to model error; evaluated at 1, 1.75 and 2.5</td></tr>
+      <tr><td>Pushes</td><td><code>5 to 20 N</code> for 50 ms, every 2 to 4 s, scaled with weight</td><td>impulsive disturbances</td></tr>
+      <tr><td>Pulls</td><td><code>3 to 12 N</code> for 0.5 to 2 s, every 4 to 10 s</td><td>sustained disturbances; present in 58 percent of disturbed falls before the arrestors (S79)</td></tr>
+      <tr><td>Arrestors</td><td>3 rollers, 8 mm, 100 deg, zero gap</td><td>the body stays on the ball; trained and evaluated with them</td></tr>
+      <tr><td>Authority</td><td><code>0.25</code>; now adaptive <code>0.15 / 0.3</code> with a goal dead band</td><td>0.25 is the measured knee between tracking and robustness (S83); adaptive authority gave the fewest falls at goals and in the battery of any variant (S112, S113)</td></tr>
+      <tr><td>Motion layer</td><td>commands shaped by <code>motion_ref.py</code> in training and at run time, half of the velocity commands curving</td><td>bolted on to an unchanged policy it made arrival worse (S106); trained with, it costs nothing and improves arrival and hold (S110, S111)</td></tr>
+      <tr><td>Steps</td><td><code>200M</code></td><td>400M gave no gain (S84); for the current recipe 400M trades terrain goals for flat arrival and brings back goal hunting (S115)</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">Sources: <span class="src">train_dev.py</span> <span class="src">BRIEF fact sheet</span> <span class="src">tracking_study_log.md S79, S83, S84, S106, S110 to S115</span></p>
+  <div class="sowhat"><b>Why this shape</b>The policy is forced to be a controller, not a lookup table: it sees only what a robot could sense and must cope with whatever world it lands in. The critic's extra knowledge speeds learning without leaking into the deployed policy. Training with the obstacle map in the loop was tried and changed nothing (S91): the hard cases are push recoveries near obstacles, and the policy already follows the planner's smooth commands.</div>
+</div></section>
+
+<!-- ===================== 4. EVALUATION ===================== -->
+<section class="sec" id="evalp"><div class="wrap">
+  <div class="eyebrow">4 &middot; Evaluation protocol</div>
+  <h2>One protocol for every controller</h2>
+  <p class="lead">A result is only as good as the test that produced it, and several early results on this project did not survive their tests. The current protocol runs the same frozen controller through the same cells, with every setting written into the file name, and keeps a few sets the controller has never been trained on.</p>
+  <figure class="fig" data-m style="margin:0" data-svg="assets/img/arch-eval.svg" data-svg-m="assets/img/arch-eval-m.svg" data-detail="evalp" data-first="goal">
+    <img src="assets/img/arch-eval.svg" alt="Evaluation protocol: goal task, velocity task, flat tracking, the conditions they are crossed with (randomisation scales, disturbances, seeds, surfaces) and the held-out terrain and designs" loading="lazy" width="920" height="300">
+  </figure>
+  <p class="hint">Tap a block for its details.</p>
+  <div class="detail" id="evalp-detail" aria-live="polite" tabindex="-1"></div>
+  <h3>Headline numbers of the recommended controller</h3>
+  <div class="tbl-wrap"><table class="tbl numtab" aria-label="Headline results">
+    <thead><tr><th>Test</th><th class="num">current: adaptive 0.15 / 0.3 + motion layer, arrestors (g34)</th><th class="num">LQR + residual 0.25, arrestors</th><th class="num">same, no arrestors</th><th class="num">pure learning</th></tr></thead>
+    <tbody>
+      <tr><td>flat tracking, achieved / command up to 0.9 m/s</td><td class="num">0.96 to 1.06</td><td class="num">0.99 to 1.01</td><td class="num">0.96 to 1.00</td><td class="num">0.54 to 0.66</td></tr>
+      <tr><td>goal success, undisturbed</td><td class="num">0.77 to 0.79</td><td class="num">0.71 to 0.76</td><td class="num">0.58 to 0.60</td><td class="num">0.44 to 0.51</td></tr>
+      <tr><td>goal success, pushes and pulls</td><td class="num">0.51 to 0.52</td><td class="num">0.42 to 0.44</td><td class="num">0.29 to 0.30</td><td class="num">0.26 to 0.27</td></tr>
+      <tr><td>held-out 1.5x robot, goal success</td><td class="num">not measured</td><td class="num">0.61 to 0.71</td><td class="num"></td><td class="num">0.09 to 0.15</td></tr>
+    </tbody>
+  </table></div>
+  <p class="hint">Engine: MuJoCo-Warp float32 GPU. Randomisation and observation noise: on at scale 1 for the goal rows, off for flat tracking. Three seeds per controller column. The current column (g34) is at free-rolling friction 0.01; the 0.25 column is the earlier g18 family at 0.001 (S84); the no-arrestor column is its predecessor (authority 0.5, S80); pure learning rows are without arrestors. Sources: <span class="src">BRIEF fact sheet</span> <span class="src">tracking_study_log.md S80, S83, S84, S85-R, S113</span>. Full chapter-by-chapter results are on the <a href="generalist.html">results page</a>.</p>
+  <h3>Lessons that shaped the protocol</h3>
+  <ol class="steps">
+    <li><strong>Expose every world to the feature.</strong> 8 s episodes made slow robots look safe because they never reached the obstacle; the velocity task now runs 20 s (S87).</li>
+    <li><strong>Record where failures happen.</strong> Robots driving off the edge of the height field were counted as falls; the flat test now uses interior tiles and logs the fall position (S92).</li>
+    <li><strong>Name the reference.</strong> Held-out designs were once described relative to the wrong reference design; the design vector is now always relative to the nominal robot (S85-R).</li>
+    <li><strong>Settle before you measure.</strong> Arrestors placed at the unloaded reset pose wedged the ball; they are placed at the pose the robot settles into under gravity (S79).</li>
+  </ol>
+  <div class="sowhat"><b>Why this shape</b>The nulls are part of the result: a perfect height map for the balance policy, a depth sensor, longer training and planner-in-the-loop training all changed nothing measurable (S84, S88, S91). A protocol that can say "nothing changed" with confidence is what let the study stop chasing controller fixes for what turned out to be a traction limit.</div>
+</div></section>
+
+<!-- ===================== 5. EARLIER STACK ===================== -->
+<section class="sec" id="history"><div class="wrap">
+  <div class="eyebrow">5 &middot; Earlier stack</div>
+  <h2>What this replaced</h2>
+  <p class="lead">The first year of the project ran on a CPU simulator with a handful of worker processes, Stable-Baselines3 PPO and a Gymnasium environment, and it compared five controllers: pure LQR, pure PPO, PPO with an outer velocity integral, a fixed small residual, and a learned gate. Those experiments established that a learned tracker alone has a steady-state gain below one, that the LQR is the right core at low speed, and that a residual must be bounded. The GPU stack on this page is their successor. Randomised results from before the engine fix are void (S69, S70) and are not quoted anywhere on this site.</p>
+  <p>The chapter-by-chapter story, including the honest nulls, is on the <a href="story.html">story page</a> and the <a href="generalist.html">results page</a>; the physics behind every block is on the <a href="math.html">physics page</a>.</p>
+</div></section>
+
+</main>
+</body>
+</html>

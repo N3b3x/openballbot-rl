@@ -1,0 +1,11 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Ball size against step height (traction-limit test). Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 640 per terrain kind (64 per kind and design copy, two copies), split into halves by severity. Seeds: one policy (g18\_ret\_rs025\_s1, seed 1), trained on 9 cm-ball designs. Protocol: velocity task at 0.3 m/s on the tiles, undisturbed, arrestors on, 20 s episodes (eval\_governor.py with --eval-designs nom,nom against s1.5,s1.5).}\label{tab:gen_ballsize}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccc}\toprule
+Feature & Smaller half / larger half of the severity range & Falls, nominal (9 cm ball): smaller / larger & Falls, s1.5 (13.5 cm ball, unseen design): smaller / larger\\\midrule
+step up & 1.1 to 2.3 / 2.3 to 5.9 cm & 0.40 / 0.98 & 0.26 / 0.80\\
+bump & 1.4 to 2.4 / 2.4 to 3.6 cm & 0.52 / 0.94 & 0.33 / 0.62\\
+stairs (riser) & 1.2 to 1.4 / 1.4 to 3.2 cm & 0.17 / 0.67 & 0.19 / 0.64\\
+large drop & 10.9 to 15.1 / 15.1 to 18.3 cm & 0.64 / 0.83 & 0.62 / 0.72\\
+\bottomrule\end{tabular}}
+\end{table*}

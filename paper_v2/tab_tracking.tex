@@ -1,0 +1,41 @@
+\begin{table*}[t]\centering\small
+\caption{Flat-ground velocity-tracking benchmark for every policy, in study order (single seed unless noted, deterministic policy, 2 repeats per condition). Ratio: achieved/commanded speed averaged over 8 directions. RMSE: planar velocity error over all commands $\le$1\,m/s. Yaw err: $|\omega_z-\omega_{cmd}|$ at $\pm$1\,rad/s. Act.\ rate: mean $\lVert a_t-a_{t-1}\rVert^2$ (lower is smoother). Grid falls: share of speed-grid trials ($\le$1\,m/s) that fell. Falls/30: falls in 30 episodes of random training-distribution commands. Heading err: 0.5\,m/s commands from random start headings. $^\dagger$Policy leaves the ball (invalid).}
+\label{tab:tracking}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llcccccccc}\toprule
+Stage & Run (change) & Ratio@0.5 & Ratio@1.0 & RMSE [m/s] & Yaw err [rad/s] & Act.\ rate & Grid falls & Falls/30 & Heading err [m/s]\\\midrule
+Model-based & lqr (LQR on the derived planar model) & 1.04 & 1.06 & 0.05 & 0.42 & 0.000 & 25\% &18 & 0.02\\
+S0 baseline limits & ctrl\_base\_s0 (torque 10, tilt 20 $^\circ$) & 0.10 & 0.06 & 0.67 & 0.04 & -- & 0\% &8 & --\\
+S1 free limits (exploit) & ctrl\_free\_c\_s0$^\dagger$ (torque 30, tilt 70, no ball check) & 0.28 & 0.21 & 0.61 & 0.86 & -- & 3\% &-- & --\\
+S2 on-ball & ballc\_free\_s0 (+ off-ball termination 30 $^\circ$) & 0.20 & 0.21 & 0.56 & 0.13 & -- & 0\% &28 & --\\
+S2 on-ball & ballc\_freed\_s0 (+ larger reward, low fall penalty) & 0.23 & 0.33 & 0.50 & 0.27 & 0.882 & 0\% &30 & --\\
+S3 smoothness & smooth\_a\_s0 (+ action-rate -0.05) & 0.15 & 0.18 & 0.58 & 0.14 & 0.017 & 0\% &27 & --\\
+S3 smoothness & smooth\_b\_s0 (+ action-rate -0.2, 25 $^\circ$) & 0.12 & 0.13 & 0.61 & 0.04 & 0.002 & 0\% &28 & --\\
+S3 smoothness & smooth\_c\_s0 (scratch, action-rate -0.05) & 0.16 & 0.16 & 0.59 & 0.24 & 0.109 & 0\% &30 & --\\
+S4 lean reward & lean\_a\_s0 (lean bonus 0.5) & 0.07 & 0.10 & 0.63 & 0.03 & 0.007 & 0\% &23 & --\\
+S4 lean reward & lean\_b\_s0 (lean bonus 1.0) & 0.30 & 0.31 & 0.49 & 0.49 & 0.200 & 3\% &20 & --\\
+S4 lean reward & lean\_c\_s0 (scratch, lean 0.5) & 0.32 & 0.36 & 0.47 & 0.05 & 0.359 & 0\% &29 & --\\
+S5 error reward & trk\_a\_s0 (err reward, vmax 1.5, wmax 3) & 0.20 & 0.22 & 0.55 & 0.07 & 0.008 & 0\% &29 & --\\
+S5 error reward & trk\_b\_s0 (no soft ball penalty) & 0.14 & 0.15 & 0.59 & 0.05 & 0.121 & 0\% &27 & --\\
+S5 error reward & trk\_c\_s0 (dot reward, vmax 2) & 0.39 & 0.31 & 0.51 & 0.14 & 0.031 & 0\% &29 & --\\
+S6 spin cap & trk\_d\_s0 (wmax 1, from trk\_a) & 0.63 & 0.59 & 0.34 & 0.15 & 0.011 & 0\% &8 & --\\
+S6 spin cap & trk\_e\_s0 (wmax 1, from trk\_c) & 0.36 & 0.40 & 0.44 & 0.93 & 0.015 & 3\% &30 & --\\
+S6 spin cap & trk\_f\_s0 (wmax 1, scratch) & 0.98 & 0.91 & 0.12 & 0.40 & 0.147 & 0\% &16 & --\\
+S6 spin cap & trk\_f\_s1 (wmax 1, scratch, seed 1) & 1.09 & 0.95 & 0.11 & 0.50 & 0.082 & 0\% &14 & --\\
+S7 refine & trk\_g\_s0 (trk\_f continued) & 0.99 & 0.87 & 0.12 & 0.12 & 0.013 & 0\% &11 & --\\
+S7 refine & trk\_h\_s0 (trk\_f + action-rate -0.08) & 0.88 & 0.81 & 0.15 & 0.25 & 0.011 & 0\% &3 & 0.31\\
+S8 spin curriculum & spin\_a\_s0 (wmax 1.5, from trk\_g) & 0.94 & 0.87 & 0.19 & 0.16 & 0.021 & 3\% &19 & 0.31\\
+S8 spin curriculum & spin\_b\_s0 (wmax 1.5, from trk\_h) & 0.75 & 0.70 & 0.21 & 0.12 & 0.009 & 0\% &13 & 0.33\\
+S8 spin curriculum & spin\_c\_s1 (wmax 1.5, from trk\_f\_s1) & 0.75 & 0.75 & 0.21 & 0.11 & 0.009 & 0\% &22 & 0.34\\
+S9 robustness & rob\_a\_s0 (DR + pushes 5-20 N, from trk\_g) & 0.34 & 0.35 & 0.50 & 0.13 & 0.005 & 5\% &4 & 0.35\\
+S9 robustness & rob\_b\_s0 (DR + pushes 10-35 N, from trk\_g) & 0.28 & 0.27 & 0.52 & 0.24 & 0.004 & 0\% &8 & 0.37\\
+S9 robustness & rob\_a\_h\_s0 (DR + pushes 5-20 N, from trk\_h) & 0.30 & 0.29 & 0.51 & 0.51 & 0.011 & 25\% &9 & 0.37\\
+S10 residual & res\_a\_s0 (LQR + 0.3 PPO, vmax 1.5) & 0.84 & 0.43 & 0.48 & 0.12 & 0.007 & 59\% &24 & 0.31\\
+S10 residual & res\_b\_s0 (LQR + 0.3 PPO, vmax 1.5, wmax 1.5) & 1.00 & 0.53 & 0.46 & 0.07 & 0.007 & 52\% &24 & 0.22\\
+S10 residual & res\_c\_s0 (LQR + 0.1 PPO, zero-init, vmax 1) & 1.03 & 1.05 & 0.08 & 0.04 & 0.000 & 28\% &3 & 0.02\\
+S10 residual & res\_d\_s0 (res\_c + beta 0.2 + DR + pushes) & 1.33 & 0.75 & 0.32 & 0.16 & 0.001 & 50\% &15 & 0.13\\
+S11 DR from scratch & robs\_a\_s0 (full DR, 20M) & 0.35 & 0.37 & 0.45 & 0.10 & 0.003 & 0\% &5 & 0.34\\
+S11 DR from scratch & robs\_b\_s0 (damping 0.07-0.15, 20M) & 0.50 & 0.51 & 0.37 & 0.14 & 0.002 & 0\% &3 & 0.27\\
+S12 + outer integral & robs\_a\_ki2 (robs\_a + velocity integral ki=2) & 1.02 & 0.56 & 0.26 & 0.10 & 0.004 & 0\% &-- & 0.05\\
+S12 + outer integral & robs\_b\_ki1 (robs\_b + velocity integral ki=1) & 1.01 & 0.79 & 0.19 & 0.13 & 0.003 & 3\% &8 & 0.06\\
+\bottomrule\end{tabular}}\end{table*}

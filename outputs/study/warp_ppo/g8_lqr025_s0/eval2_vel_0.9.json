@@ -1,0 +1,103 @@
+{
+ "run": "g8_lqr025_s0",
+ "args": {
+  "run": "g8_lqr025_s0",
+  "task": "vel",
+  "speed": 0.9,
+  "n": 32,
+  "dr": false,
+  "surfaces": false,
+  "pull": false,
+  "eval_designs": "nom,nom",
+  "steps": 800,
+  "tile_seed": 0
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.828125,
+   "success": 0.0,
+   "track_err": 0.3292974531650543,
+   "late_err": 0.08504192531108856,
+   "late_speed_ratio": 1.0472201108932495
+  },
+  "step_up": {
+   "fall": 0.78125,
+   "success": 0.0,
+   "track_err": 0.31075599789619446,
+   "late_err": 0.06359190493822098,
+   "late_speed_ratio": 1.0237706899642944
+  },
+  "step_down": {
+   "fall": 0.859375,
+   "success": 0.0,
+   "track_err": 0.3355454206466675,
+   "late_err": 0.0752449557185173,
+   "late_speed_ratio": 1.0352824926376343
+  },
+  "small_drop": {
+   "fall": 0.828125,
+   "success": 0.0,
+   "track_err": 0.33698374032974243,
+   "late_err": 0.0800669938325882,
+   "late_speed_ratio": 1.0382342338562012
+  },
+  "large_drop": {
+   "fall": 0.765625,
+   "success": 0.0,
+   "track_err": 0.3077424466609955,
+   "late_err": 0.07158543169498444,
+   "late_speed_ratio": 1.0335681438446045
+  },
+  "ramp_up": {
+   "fall": 0.859375,
+   "success": 0.0,
+   "track_err": 0.33532392978668213,
+   "late_err": 0.07295524328947067,
+   "late_speed_ratio": 1.030500054359436
+  },
+  "ramp_down": {
+   "fall": 0.90625,
+   "success": 0.0,
+   "track_err": 0.364668071269989,
+   "late_err": 0.09741224348545074,
+   "late_speed_ratio": 1.0630574226379395
+  },
+  "stairs": {
+   "fall": 0.8125,
+   "success": 0.0,
+   "track_err": 0.30925315618515015,
+   "late_err": 0.06090891361236572,
+   "late_speed_ratio": 1.0206925868988037
+  },
+  "bump": {
+   "fall": 0.8125,
+   "success": 0.0,
+   "track_err": 0.3191731870174408,
+   "late_err": 0.07111755013465881,
+   "late_speed_ratio": 1.0280104875564575
+  },
+  "rough": {
+   "fall": 0.828125,
+   "success": 0.0,
+   "track_err": 0.3206486999988556,
+   "late_err": 0.061460331082344055,
+   "late_speed_ratio": 1.016801118850708
+  }
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.809374988079071,
+   "success": 0.0,
+   "track_err": 0.31806477904319763,
+   "late_err": 0.0677621066570282,
+   "late_speed_ratio": 1.0267301797866821
+  }
+ },
+ "overall": {
+  "fall": 0.828125,
+  "success": 0.0,
+  "track_err": 0.326119065284729,
+  "late_err": 0.07234872132539749,
+  "late_speed_ratio": 1.031949520111084
+ }
+}

@@ -1,0 +1,30 @@
+{
+ "run": "g34_mref_rsad_db_s2",
+ "scenario": "zigzag",
+ "mode": "ref",
+ "lqr_only": false,
+ "steps": 1500,
+ "speed": 0.3,
+ "pair_mu1": "0.01",
+ "push_scale": 0.0,
+ "worlds": 528,
+ "fall": 0.29924243688583374,
+ "heading_rate_rms_actual": 3.7663092613220215,
+ "heading_rate_rms_command": 1.0972458124160767,
+ "along_ratio": 0.3434889316558838,
+ "side_speed_mean": 0.0955473929643631,
+ "cmd_reversals_per_world": 0.0,
+ "by_design": {
+  "nom": 0.2083333432674408,
+  "zhigh": 0.4791666865348816,
+  "zlow": 0.2291666716337204,
+  "kb4": 0.1875,
+  "bal4": 0.2708333432674408,
+  "J02": 0.2708333432674408,
+  "tau6": 0.4166666865348816,
+  "bal025": 0.375,
+  "kb025": 0.5208333730697632,
+  "zeta41": 0.1875,
+  "zeta66": 0.1458333432674408
+ }
+}

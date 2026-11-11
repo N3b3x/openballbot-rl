@@ -1,0 +1,11 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Training with the planner in the loop against the frozen controller (null result). Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error; earlier measurement: controller g18\_ret\_rs025\_s1 trained and evaluated at wheel-ball free-rolling friction 0.001 (the recommended checkpoint at 0.01 is in Table 37). Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 528 per cell. Seeds: one frozen controller seed against two planner-trained seeds. Protocol: blocks map, smooth follower (sensor along the command), 20 s; the planner-trained runs spent 30 percent of training worlds on blocks tiles following the smooth planner on the privileged map, otherwise the recommended recipe.}\label{tab:gen_navtrain}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccc}\toprule
+Hazard source & frozen recommended controller (g18\_ret\_rs025\_s1): reached / fell / on block & planner-trained, seed 0 (g23\_nav\_rs025\_s0) & planner-trained, seed 1 (g23\_nav\_rs025\_s1)\\\midrule
+perfect map, undisturbed & 0.86 / 0.14 / 0.04 & 0.85 / 0.13 / 0.01 & 0.85 / 0.14 / 0.02\\
+perfect map, pushes + pulls & 0.55 / 0.44 / 0.20 & 0.55 / 0.43 / 0.13 & 0.57 / 0.42 / 0.13\\
+ToF 18 x 14, undisturbed & 0.72 / 0.22 / 0.16 & 0.68 / 0.25 / 0.15 & 0.71 / 0.23 / 0.17\\
+ToF 18 x 14, pushes + pulls & 0.41 / 0.56 / 0.22 & 0.43 / 0.53 / 0.18 & 0.46 / 0.51 / 0.21\\
+\bottomrule\end{tabular}}
+\end{table*}

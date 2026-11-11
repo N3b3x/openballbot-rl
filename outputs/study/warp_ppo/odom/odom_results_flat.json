@@ -1,0 +1,141 @@
+{
+ "cal": "odom_flat",
+ "C": [
+  [
+   0.049242181409738565,
+   -0.23655611816665909,
+   0.176882934012547
+  ],
+  [
+   0.23321480224828883,
+   -0.06982624443694768,
+   -0.15781029515517034
+  ],
+  [
+   0.13000735819838305,
+   0.1248656932640467,
+   0.1231092302547042
+  ]
+ ],
+ "models": {
+  "ideal (true rates, no noise)": {
+   "cpr": 0,
+   "bias_g": 0,
+   "rw_g": 0,
+   "noise_g": 0,
+   "bias_a": 0,
+   "noise_a": 0,
+   "r_err": 0.0
+  },
+  "realistic MEMS IMU + 4096-count encoders": {
+   "cpr": 4096,
+   "bias_g": 0.005,
+   "rw_g": 0.0005,
+   "noise_g": 0.003,
+   "bias_a": 0.03,
+   "noise_a": 0.05,
+   "r_err": 0.0
+  },
+  "realistic + ball radius 2 percent off": {
+   "cpr": 4096,
+   "bias_g": 0.005,
+   "rw_g": 0.0005,
+   "noise_g": 0.003,
+   "bias_a": 0.03,
+   "noise_a": 0.05,
+   "r_err": 0.02
+  },
+  "realistic, uncalibrated (planar model W)": {
+   "cpr": 4096,
+   "bias_g": 0.005,
+   "rw_g": 0.0005,
+   "noise_g": 0.003,
+   "bias_a": 0.03,
+   "noise_a": 0.05,
+   "r_err": 0.0,
+   "uncal": true
+  }
+ },
+ "results": {
+  "odom_flat | ideal (true rates, no noise)": {
+   "err_10s_median_m": 0.04322589531845317,
+   "err_10s_p90_m": 0.09366856747441961,
+   "pct_of_distance_10s_median": 2.3963921762092326,
+   "dist_10s_median_m": 1.7829076856724773,
+   "yaw_err_10s_median_deg": 0.022841401322381705,
+   "n_10s": 64,
+   "err_30s_median_m": 0.05554223299953644,
+   "err_30s_p90_m": 0.12909709010526207,
+   "pct_of_distance_30s_median": 0.9153307226280908,
+   "dist_30s_median_m": 5.787991726550806,
+   "yaw_err_30s_median_deg": 0.030489169572950038,
+   "n_30s": 61,
+   "err_60s_median_m": 0.07212635911691288,
+   "err_60s_p90_m": 0.12954298269024214,
+   "pct_of_distance_60s_median": 0.6141058956166542,
+   "dist_60s_median_m": 12.666878686155826,
+   "yaw_err_60s_median_deg": 0.05324478707184192,
+   "n_60s": 55
+  },
+  "odom_flat | realistic MEMS IMU + 4096-count encoders": {
+   "err_10s_median_m": 0.04878361820243787,
+   "err_10s_p90_m": 0.09655682381945496,
+   "pct_of_distance_10s_median": 2.399583465443834,
+   "dist_10s_median_m": 1.7829076856724773,
+   "yaw_err_10s_median_deg": 1.7558681189080432,
+   "n_10s": 64,
+   "err_30s_median_m": 0.09770029077817984,
+   "err_30s_p90_m": 0.2613567997170259,
+   "pct_of_distance_30s_median": 1.998776414854516,
+   "dist_30s_median_m": 5.787991726550806,
+   "yaw_err_30s_median_deg": 5.518088937376705,
+   "n_30s": 61,
+   "err_60s_median_m": 0.22154425341961517,
+   "err_60s_p90_m": 0.5809265895437974,
+   "pct_of_distance_60s_median": 1.8206526353631427,
+   "dist_60s_median_m": 12.666878686155826,
+   "yaw_err_60s_median_deg": 11.847392525688926,
+   "n_60s": 55
+  },
+  "odom_flat | realistic + ball radius 2 percent off": {
+   "err_10s_median_m": 0.041866941526711624,
+   "err_10s_p90_m": 0.11836436590724111,
+   "pct_of_distance_10s_median": 2.0712094973624477,
+   "dist_10s_median_m": 1.7829076856724773,
+   "yaw_err_10s_median_deg": 1.7558681189080432,
+   "n_10s": 64,
+   "err_30s_median_m": 0.10699513798938051,
+   "err_30s_p90_m": 0.2788384764752493,
+   "pct_of_distance_30s_median": 1.8280020535257797,
+   "dist_30s_median_m": 5.787991726550806,
+   "yaw_err_30s_median_deg": 5.518088937376705,
+   "n_30s": 61,
+   "err_60s_median_m": 0.21602849490380022,
+   "err_60s_p90_m": 0.5931326759000307,
+   "pct_of_distance_60s_median": 1.7753240830633696,
+   "dist_60s_median_m": 12.666878686155826,
+   "yaw_err_60s_median_deg": 11.847392525688926,
+   "n_60s": 55
+  },
+  "odom_flat | realistic, uncalibrated (planar model W)": {
+   "err_10s_median_m": 0.24523285837651676,
+   "err_10s_p90_m": 0.40869916331482253,
+   "pct_of_distance_10s_median": 13.296109109577834,
+   "dist_10s_median_m": 1.7829076856724773,
+   "yaw_err_10s_median_deg": 1.7558681189080432,
+   "n_10s": 64,
+   "err_30s_median_m": 0.34011858684331736,
+   "err_30s_p90_m": 0.5494736186758118,
+   "pct_of_distance_30s_median": 6.0351457826646815,
+   "dist_30s_median_m": 5.787991726550806,
+   "yaw_err_30s_median_deg": 5.518088937376705,
+   "n_30s": 61,
+   "err_60s_median_m": 0.3897090106192039,
+   "err_60s_p90_m": 0.6166512432464335,
+   "pct_of_distance_60s_median": 3.2093541735140794,
+   "dist_60s_median_m": 12.666878686155826,
+   "yaw_err_60s_median_deg": 11.847392525688926,
+   "n_60s": 55
+  }
+ }
+}

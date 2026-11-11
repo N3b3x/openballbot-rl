@@ -1,0 +1,15 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Privileged height scan as policy input against blind counterparts (retainer on). Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 1760 per goal and tile cell, 176 per terrain kind. Seeds: one per row as listed (scan arms one seed each). Protocol: eval\_battery.py; the scan arms add the privileged 7 x 5 height scan ahead as a policy input (the upper bound for any terrain sensor); per-kind columns are falls in the 8 s velocity task at 0.3 m/s, undisturbed.}\label{tab:gen_scan}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccc}\toprule
+Policy (all with the retainer) & Goal success undisturbed / disturbed (DR 1) & Tile velocity falls, undisturbed & step up falls & bump falls & stairs falls & large drop falls\\\midrule
+residual 0.25 + scan g22\_ret\_rs025\_scan\_s0, seed 0 & 0.68 / 0.41 & 0.36 & 0.59 & 0.78 & 0.51 & 0.70\\
+residual 0.25, blind g18\_ret\_rs025\_s0, seed 0 & 0.71 / 0.42 & 0.34 & 0.61 & 0.77 & 0.48 & 0.64\\
+residual 0.5 + scan g22\_ret\_rs05\_scan\_s0, seed 0 & 0.74 / 0.53 & 0.32 & 0.55 & 0.71 & 0.45 & 0.63\\
+residual 0.5, blind g16\_ret100\_s0, seed 0 & 0.71 / 0.46 & 0.31 & 0.53 & 0.56 & 0.42 & 0.68\\
+residual 0.5, blind g16\_ret100\_s1, seed 1 & 0.76 / 0.49 & 0.32 & 0.54 & 0.65 & 0.43 & 0.68\\
+pure learning + scan g22\_pure\_ret\_scan\_s0, seed 0 & 0.69 / 0.50 & 0.15 & 0.29 & 0.24 & 0.19 & 0.38\\
+pure learning, blind g16\_pure\_ret100\_s0, seed 0 & 0.70 / 0.50 & 0.16 & 0.24 & 0.20 & 0.20 & 0.43\\
+pure learning, blind g16\_pure\_ret100\_s1, seed 1 & 0.74 / 0.50 & 0.19 & 0.31 & 0.30 & 0.25 & 0.45\\
+\bottomrule\end{tabular}}
+\end{table*}

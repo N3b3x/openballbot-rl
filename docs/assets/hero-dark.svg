@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 380" width="1280" height="380" role="img" aria-labelledby="t d"><title id="t">openballbot-rl</title><desc id="d">An end-to-end ballbot pipeline from robot spec to ROS 2, simulation only.</desc><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d1a2d"/><stop offset="1" stop-color="#1a1430"/></linearGradient><pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#4493f8" stroke-opacity="0.1" stroke-width="1"/></pattern><radialGradient id="ballg" cx="0.35" cy="0.3" r="0.8"><stop offset="0" stop-color="#f08a4b"/><stop offset="0.55" stop-color="#c2410c"/><stop offset="1" stop-color="#6b230a"/></radialGradient><linearGradient id="bodyg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#14532d"/><stop offset="0.45" stop-color="#22a35a"/><stop offset="1" stop-color="#0f3d22"/></linearGradient><linearGradient id="wheelg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#64748b"/><stop offset="1" stop-color="#1e293b"/></linearGradient><linearGradient id="cone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#39c5cf" stop-opacity="0.45"/><stop offset="1" stop-color="#39c5cf" stop-opacity="0.04"/></linearGradient><linearGradient id="fade" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="0.45" stop-color="#fff" stop-opacity="1"/></linearGradient><mask id="gm"><rect width="1280" height="380" fill="url(#fade)"/></mask><clipPath id="clip"><rect x="0" y="0" width="1280" height="380" rx="22"/></clipPath></defs>
+<g clip-path="url(#clip)">
+<rect width="1280" height="380" fill="url(#bg)"/>
+<rect width="1280" height="380" fill="url(#grid)" mask="url(#gm)"/>
+<path d="M772 318 L345 380" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M806 318 L440 380" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M840 318 L535 380" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M874 318 L630 380" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M908 318 L725 380" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M942 318 L820 380" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M976 318 L915 380" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M1010 318 L1010 380" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M1044 318 L1105 380" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M1078 318 L1200 380" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M1112 318 L1295 380" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M1146 318 L1390 380" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M1180 318 L1485 380" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M1214 318 L1580 380" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M1248 318 L1675 380" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M710 318H1310" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M650 330H1370" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M590 346H1430" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+<path d="M530 368H1490" stroke="#4493f8" stroke-opacity="0.18000000000000002" stroke-width="1"/>
+</g>
+<rect x="0.5" y="0.5" width="1279" height="379" rx="22" fill="none" stroke="#3d444d"/>
+<rect x="64" y="58" width="113.4" height="24" rx="12.0" fill="#f0883e"/>
+<text x="120.7" y="74.32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#0d1117" text-anchor="middle">SIMULATION ONLY</text>
+<rect x="185.4" y="58" width="113.4" height="24" rx="12.0" fill="#4493f8" fill-opacity="0.2"/>
+<text x="242.10000000000002" y="74.32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#4493f8" text-anchor="middle">MuJoCo-Warp GPU</text>
+<rect x="306.8" y="58" width="49.8" height="24" rx="12.0" fill="#ab7df8" fill-opacity="0.2"/>
+<text x="331.7" y="74.32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="600" fill="#ab7df8" text-anchor="middle">ROS 2</text>
+<text x="61" y="150" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="64" font-weight="750" fill="#f0f6fc" text-anchor="start" letter-spacing="-1.5">openballbot-rl</text>
+<text x="64" y="196" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="22" font-weight="400" fill="#9198a1" text-anchor="start">An end-to-end ballbot pipeline: from a robot spec to a</text>
+<text x="64" y="226" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="22" font-weight="400" fill="#9198a1" text-anchor="start">GPU-trained balance controller, navigation and ROS 2.</text>
+<rect x="64" y="262" width="195.79999999999998" height="36" rx="18" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<circle cx="83" cy="280" r="12" fill="#4493f8"/>
+<g transform="translate(76.0 273.0) scale(0.5833)" fill="none" stroke="#0d1117" stroke-width="2.40" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 6a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0 M3.4 12a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0 M3.4 18a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0 M17.4 9a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0 M17.4 15a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0 M6.6 6l10.8 3 M6.6 12l10.8-3 M6.6 12l10.8 3 M6.6 18l10.8-3 M6.6 6l10.8 9 M6.6 18l10.8-9"/></g>
+<text x="102" y="285" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="600" fill="#f0f6fc" text-anchor="start">LQR + PPO residual</text>
+<rect x="271.79999999999995" y="262" width="179.6" height="36" rx="18" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<circle cx="290.79999999999995" cy="280" r="12" fill="#ab7df8"/>
+<g transform="translate(283.79999999999995 273.0) scale(0.5833)" fill="none" stroke="#0d1117" stroke-width="2.40" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z M12 12l8-4.5 M12 12v9 M12 12L4 7.5"/></g>
+<text x="309.79999999999995" y="285" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="600" fill="#f0f6fc" text-anchor="start">11 robot designs</text>
+<rect x="463.4" y="262" width="163.39999999999998" height="36" rx="18" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<circle cx="482.4" cy="280" r="12" fill="#39c5cf"/>
+<g transform="translate(475.4 273.0) scale(0.5833)" fill="none" stroke="#0d1117" stroke-width="2.40" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20L5 7 M12 20l7-13 M6.6 10a8 8 0 0 1 10.8 0 M8.6 14a5 5 0 0 1 6.8 0"/></g>
+<text x="501.4" y="285" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="600" fill="#f0f6fc" text-anchor="start">ToF navigation</text>
+<rect x="638.8" y="262" width="147.2" height="36" rx="18" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<circle cx="657.8" cy="280" r="12" fill="#3fb950"/>
+<g transform="translate(650.8 273.0) scale(0.5833)" fill="none" stroke="#0d1117" stroke-width="2.40" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 5.5a2.5 2.5 0 1 0 5.0 0a2.5 2.5 0 1 0 -5.0 0 M3.0 18a2.5 2.5 0 1 0 5.0 0a2.5 2.5 0 1 0 -5.0 0 M16.0 18a2.5 2.5 0 1 0 5.0 0a2.5 2.5 0 1 0 -5.0 0 M10.8 7.7L6.7 15.8 M13.2 7.7l4.1 8.1 M8 18h8"/></g>
+<text x="676.8" y="285" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="600" fill="#f0f6fc" text-anchor="start">ROS 2 bundle</text>
+<path d="M1046 74L1078 338L1150 368L1262 322L1198 298Z" fill="url(#cone)"/>
+<path d="M1046 74L1078 338" stroke="#39c5cf" stroke-opacity="0.5" stroke-width="1.1" stroke-dasharray="3 4"/>
+<path d="M1046 74L1150 368" stroke="#39c5cf" stroke-opacity="0.5" stroke-width="1.1" stroke-dasharray="3 4"/>
+<path d="M1046 74L1262 322" stroke="#39c5cf" stroke-opacity="0.5" stroke-width="1.1" stroke-dasharray="3 4"/>
+<path d="M1046 74L1198 298" stroke="#39c5cf" stroke-opacity="0.5" stroke-width="1.1" stroke-dasharray="3 4"/>
+<path d="M1078 338L1150 368L1262 322L1198 298Z" fill="#39c5cf" fill-opacity="0.16" stroke="#39c5cf" stroke-opacity="0.8" stroke-width="1.4"/>
+<path d="M1098.0 331.3L1168.7 360.3" stroke="#39c5cf" stroke-opacity="0.45" stroke-width="1"/>
+<path d="M1118.0 324.7L1187.3 352.7" stroke="#39c5cf" stroke-opacity="0.45" stroke-width="1"/>
+<path d="M1138.0 318.0L1206.0 345.0" stroke="#39c5cf" stroke-opacity="0.45" stroke-width="1"/>
+<path d="M1158.0 311.3L1224.7 337.3" stroke="#39c5cf" stroke-opacity="0.45" stroke-width="1"/>
+<path d="M1178.0 304.7L1243.3 329.7" stroke="#39c5cf" stroke-opacity="0.45" stroke-width="1"/>
+<path d="M1087.0 341.8L1206.0 301.0" stroke="#39c5cf" stroke-opacity="0.45" stroke-width="1"/>
+<path d="M1096.0 345.5L1214.0 304.0" stroke="#39c5cf" stroke-opacity="0.45" stroke-width="1"/>
+<path d="M1105.0 349.2L1222.0 307.0" stroke="#39c5cf" stroke-opacity="0.45" stroke-width="1"/>
+<path d="M1114.0 353.0L1230.0 310.0" stroke="#39c5cf" stroke-opacity="0.45" stroke-width="1"/>
+<path d="M1123.0 356.8L1238.0 313.0" stroke="#39c5cf" stroke-opacity="0.45" stroke-width="1"/>
+<path d="M1132.0 360.5L1246.0 316.0" stroke="#39c5cf" stroke-opacity="0.45" stroke-width="1"/>
+<path d="M1141.0 364.2L1254.0 319.0" stroke="#39c5cf" stroke-opacity="0.45" stroke-width="1"/>
+<path d="M760 352 C 840 340, 900 336, 1000 320" fill="none" stroke="#4493f8" stroke-width="2.5" stroke-dasharray="7 6" stroke-linecap="round"/>
+<ellipse cx="1200" cy="338" rx="14" ry="4.5" fill="#000" fill-opacity="0.2"/>
+<circle cx="1200" cy="325" r="10" fill="#f85149"/><circle cx="1196.5" cy="321.5" r="3" fill="#fff" fill-opacity="0.55"/>
+<ellipse cx="1016" cy="318" rx="62" ry="10" fill="#000" fill-opacity="0.22"/>
+<rect x="1006" y="150" width="8" height="70" rx="3" fill="#94a3b8"/>
+<rect x="972" y="76" width="76" height="98" rx="14" fill="url(#bodyg)"/>
+<ellipse cx="1010" cy="80" rx="38" ry="10" fill="#2fbf6c"/>
+<rect x="1024" y="64" width="30" height="20" rx="5" fill="#334155"/><circle cx="1046" cy="74" r="5" fill="#39c5cf"/>
+<circle cx="1010" cy="268" r="46" fill="url(#ballg)"/>
+<path d="M967 272 C 988 292, 1032 292, 1053 272" fill="none" stroke="#3b1406" stroke-opacity="0.45" stroke-width="2"/>
+<rect x="964" y="202" width="92" height="12" rx="6" fill="#475569"/>
+<path d="M974.8 234.0L976 208" stroke="#334155" stroke-width="6" stroke-linecap="round"/>
+<g transform="rotate(44 974.8 234.0)"><rect x="959.8" y="228.0" width="30" height="12" rx="5" fill="#1e293b"/><rect x="961.8" y="229.5" width="4.5" height="9" rx="2" fill="#94a3b8"/><rect x="968.3" y="229.5" width="4.5" height="9" rx="2" fill="#94a3b8"/><rect x="974.8" y="229.5" width="4.5" height="9" rx="2" fill="#94a3b8"/><rect x="981.3" y="229.5" width="4.5" height="9" rx="2" fill="#94a3b8"/></g>
+<rect x="997" y="211" width="26" height="10" rx="4" fill="#334155"/>
+<path d="M1045.2 234.0L1044 208" stroke="#334155" stroke-width="6" stroke-linecap="round"/>
+<g transform="rotate(-44 1045.2 234.0)"><rect x="1030.2" y="228.0" width="30" height="12" rx="5" fill="#1e293b"/><rect x="1032.2" y="229.5" width="4.5" height="9" rx="2" fill="#94a3b8"/><rect x="1038.7" y="229.5" width="4.5" height="9" rx="2" fill="#94a3b8"/><rect x="1045.2" y="229.5" width="4.5" height="9" rx="2" fill="#94a3b8"/><rect x="1051.7" y="229.5" width="4.5" height="9" rx="2" fill="#94a3b8"/></g>
+<text x="1010" y="358" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="500" fill="#9198a1" text-anchor="middle" font-style="italic">simulated three-omniwheel ballbot</text>
+</svg>

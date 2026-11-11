@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- head:common -->
+<script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}</script>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<!-- /head:common -->
+<title>Ballbot: a robot on a ball, controlled by physics plus a little learning</title>
+<meta name="description" content="Simulation study of a ballbot: a derived planar model and LQR, a small learned residual, passive ball arrestors and a navigation layer. Headline numbers, the pipeline from robot spec to ROS 2, featured simulation videos, a step-by-step course and design guidelines.">
+<!-- og -->
+<link rel="canonical" href="https://n3b3x.github.io/openballbot-rl/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ballbot control research">
+<meta property="og:title" content="Ballbot: a robot on a ball, controlled by physics plus a little learning">
+<meta property="og:description" content="Simulation study of a ballbot: a derived planar model and LQR, a small learned residual, passive ball arrestors and a navigation layer. Headline numbers, the pipeline from robot spec to ROS 2, featured simulation videos, a step-by-step course and design guidelines.">
+<meta property="og:url" content="https://n3b3x.github.io/openballbot-rl/">
+<meta property="og:image" content="https://n3b3x.github.io/openballbot-rl/assets/img/social-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A simulated ballbot: a cylindrical robot balanced on a basketball-textured ball, with the title of the study.">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /og -->
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/home.css?v=8">
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module" src="assets/js/layout.js"></script>
+<script type="module" src="assets/js/hero3d.js?v=5"></script>
+</head>
+<body>
+<!-- nojs --><noscript><nav class="nojs" aria-label="Main (JavaScript is off)"><a href="index.html">Overview</a><a href="learn/index.html">Learn</a><a href="generalist.html">Results</a><a href="videos.html">Videos</a><a href="design.html">Design guidelines</a><a href="deploy.html">ROS 2</a><a href="math.html">Physics</a><a href="architecture.html">Controller</a><a href="reproduce.html">Reproduce</a><a href="glossary.html">Glossary</a></nav></noscript><!-- /nojs -->
+<main>
+
+<!-- 1. Hero: the canvas, fallback, toast and HUD ids are owned by assets/js/hero3d.js; keep them. -->
+<section class="hero" aria-labelledby="h1">
+  <div id="hero-canvas"></div>
+  <div id="hero-fallback" class="hero-fallback"><img src="assets/img/hero-poster.svg?v=2" alt="Rendering of the simulated ballbot: a white tower with a sensor head on three omniwheel drives above an orange basketball-textured ball" width="800" height="600"></div>
+  <div id="hero-toast" role="status" aria-live="polite"></div>
+  <div class="hero-copy">
+    <div class="eyebrow">Open research &middot; <span class="badge-sim">simulation only</span></div>
+    <h1 id="h1">A robot on a ball, steered by physics <em>plus a little learning</em></h1>
+    <p class="lede"><a class="term" href="glossary.html#ballbot" data-def="A robot that balances and drives on a single ball, like an inverted pendulum on a sphere. It cannot stand still without active control.">Ballbot</a> control that is a textbook <a class="term" href="glossary.html#lqr" data-def="Linear quadratic regulator: the optimal linear feedback for a linearised model with quadratic costs on state and effort.">LQR</a> with a small learned correction on top, three passive rollers that keep the body on the ball, and a planner that steers around what a cheap depth sensor sees. Derived, trained, stress-tested and exported to ROS 2, entirely in simulation.</p>
+    <div class="hero-cta">
+      <a class="btn primary" href="learn/index.html"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-learn"/></svg>Learn it step by step</a>
+      <a class="btn" href="generalist.html"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-results"/></svg>Results</a>
+      <a class="btn" href="videos.html"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-video"/></svg>Videos</a>
+    </div>
+  </div>
+  <div class="hero-ui">
+    <div id="hero-hud" aria-hidden="true">a =  0.00 m/s&sup2;   lean =  0.0&deg;</div>
+    <p class="hero-note">Drag to orbit. Click the robot to push it. <strong>The lean and the recovery are computed live</strong> from the project's planar model and LQR; the 3D body is a rendering of the simulated nominal design.</p>
+    <button id="hero-play" class="btn" hidden type="button">Play animation</button>
+  </div>
+</section>
+
+<!-- 2. Headline numbers -->
+<section class="block wrap" aria-labelledby="numbers" id="results">
+  <div class="eyebrow">Headline results</div>
+  <h2 id="numbers">What the recommended controller does</h2>
+  <p class="lede">The recommendation is <code>g39_goalcentre_s0</code> (S121): the LQR plus a bounded PPO residual with adaptive authority, trained with a motion layer, with all goal logic on the true ball centre. Ranges are over three training seeds, measured on 11 robot designs with randomised mass, friction, torque, damping, latency and noise.</p>
+  <div class="keynums home" role="list">
+    <div class="keynum hybrid reveal" role="listitem" data-src="S118, S121">
+      <b><span class="v" data-k="hgf.g39.err.min" data-f="1" data-m="1">3.6</span> to <span class="v" data-k="hgf.g39.err.max" data-f="1" data-m="1">4.9</span> <small>cm</small></b>
+      <span class="what">goal hold error, against <span class="v" data-k="hgf.g34.err.min" data-f="0" data-m="1">11</span> to <span class="v" data-k="hgf.g34.err.max" data-f="0" data-m="1">14</span> cm before the fix</span>
+      <p>Flat-tile goal test, 528 worlds per seed, measured at the true ball centre. The old goal logic followed a point that circles the ball as it rolls (<a href="generalist.html#goalpoint">the goal-point bug</a>, found by the ROS 2 work).</p>
+    </div>
+    <div class="keynum model reveal" role="listitem" data-src="S118, S99 close-out">
+      <b><span class="v" data-k="hgf.g39.ach.min" data-f="2" data-m="1">0.94</span> to <span class="v" data-k="hgf.g39.ach.max" data-f="2" data-m="1">1.06</span></b>
+      <span class="what">of the commanded speed, on flat ground</span>
+      <p><a class="term" href="glossary.html#tracking" data-def="Achieved speed divided by commanded speed, measured once the robot has settled. 1.00 is exact.">Speed tracking</a> at 0.3, 0.6 and 0.9 m/s over three seeds; above 1.00 is a slight overshoot at the higher speeds. This is the LQR's precision, kept because the learned part has limited authority.</p>
+    </div>
+    <div class="keynum hybrid reveal" role="listitem" data-src="S118, S121">
+      <b><span class="v" data-k="hgf.g39.goal.1.u.min" data-f="2" data-m="1">0.73</span> to <span class="v" data-k="hgf.g39.goal.1.u.max" data-f="2" data-m="1">0.77</span></b>
+      <span class="what">goal success undisturbed; <span class="v" data-k="hgf.g39.goal.1.d.min" data-f="2" data-m="1">0.49</span> to <span class="v" data-k="hgf.g39.goal.1.d.max" data-f="2" data-m="1">0.50</span> under pushes and pulls</span>
+      <p><a class="term" href="glossary.html#goal-success" data-def="Fraction of worlds in which the robot reaches a 1.1 m goal and stays upright, over 11 designs and ten terrain kinds.">Goal success</a> over ten terrain kinds, judged at the true centre (slightly stricter than the g34 range of <span class="v" data-k="mrf.g34.goal.1.u.min" data-f="2" data-m="1">0.77</span> to <span class="v" data-k="mrf.g34.goal.1.u.max" data-f="2" data-m="1">0.79</span>).</p>
+    </div>
+    <div class="keynum warn reveal" role="listitem" data-src="S121; S104, S89">
+      <b><span class="v" data-k="n2f.g39.tof18.success.min" data-f="2" data-m="1">0.87</span> to <span class="v" data-k="n2f.g39.tof18.success.max" data-f="2" data-m="1">0.89</span></b>
+      <span class="what">of goals behind unclimbable blocks reached with a small ToF sensor</span>
+      <p>A forward <a class="term" href="glossary.html#tof" data-def="Time-of-flight sensor: a low-resolution depth sensor (here 18 by 14 zones) that measures distance to what is in front of it.">ToF</a> sensor and a planner; a perfect map reaches <span class="v" data-k="n2f.g39.oracle.success.min" data-f="2" data-m="1">0.94</span> to <span class="v" data-k="n2f.g39.oracle.success.max" data-f="2" data-m="1">0.95</span>, a blind controller <span class="v" data-k="nav26.blind.success" data-f="2" data-m="1">0.09</span>. Under pushes and pulls <span class="v" data-k="n2f.g39.tof18_pp.success.min" data-f="2" data-m="1">0.49</span> to <span class="v" data-k="n2f.g39.tof18_pp.success.max" data-f="2" data-m="1">0.55</span>.</p>
+    </div>
+  </div>
+  <p class="src-note">Protocol: MuJoCo-Warp float32 GPU engine, 100 Hz, domain randomisation and observation noise on; pushes of 5 to 20 N for 50 ms and pulls of 3 to 12 N for 0.5 to 2 s in the disturbed columns. Full tables: <a href="generalist.html#goalcentre">Results, chapter 10c</a>; definitions: <a href="method.html">Setup and method</a>. All values are generated from the result files by <code>site/build_data.py</code>.</p>
+  <div class="callout warn"><b>What is not claimed.</b> There is no physical robot. Sustained pulls above about 3 N and steps above a traction limit still defeat the controller, and three designs (a light ball, a heavy body, weak motors) stay hard on flat ground. See <a href="#honest">What is honest here</a>.</div>
+</section>
+
+<!-- 3. Pipeline at a glance -->
+<section class="block wrap" aria-labelledby="pipeline" id="pipeline-sec">
+  <div class="eyebrow">The pipeline at a glance</div>
+  <h2 id="pipeline">From a robot spec to ROS 2, in six stages</h2>
+  <p class="lede">Each stage has a page. Colours follow the site: blue for the model-based parts, violet for learned ones, teal for the hybrid controller, amber for deployment.</p>
+  <ol class="pipe" aria-label="Pipeline stages">
+    <li class="stage model"><a href="design.html">
+      <span class="node"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-ruler"/></svg></span>
+      <span class="stn">1</span><h3>Robot spec</h3>
+      <p>Ball, body, motors and wheel contacts in physical units, checked by analytic margins.</p>
+      <span class="go">Design guidelines</span></a></li>
+    <li class="stage model"><a href="architecture.html">
+      <span class="node"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-gpu"/></svg></span>
+      <span class="stn">2</span><h3>Simulation</h3>
+      <p>MuJoCo-Warp on the GPU: thousands of randomised worlds, eleven designs, ten terrain kinds.</p>
+      <span class="go">The controller</span></a></li>
+    <li class="stage learned"><a href="method.html">
+      <span class="node"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-ppo"/></svg></span>
+      <span class="stn">3</span><h3>Training</h3>
+      <p>PPO learns a bounded correction on top of the LQR, with the motion layer in the loop.</p>
+      <span class="go">Setup and method</span></a></li>
+    <li class="stage hybrid"><a href="generalist.html">
+      <span class="node"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-eval"/></svg></span>
+      <span class="stn">4</span><h3>Evaluation</h3>
+      <p>Batteries of goals, velocities, pushes and terrain; every table states its protocol.</p>
+      <span class="go">Results</span></a></li>
+    <li class="stage hybrid"><a href="generalist.html#nav">
+      <span class="node"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-route"/></svg></span>
+      <span class="stn">5</span><h3>Navigation</h3>
+      <p>A ToF sensor, a map and a smooth planner steer around blocks the robot cannot climb.</p>
+      <span class="go">Chapter 10</span></a></li>
+    <li class="stage warn"><a href="deploy.html">
+      <span class="node"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-ros"/></svg></span>
+      <span class="stn">6</span><h3>ROS 2</h3>
+      <p>An exported bundle and a tested control core, replayed against the simulator. Not yet run on ROS.</p>
+      <span class="go">Deployment</span></a></li>
+  </ol>
+  <p class="pipe-note">The loop closes: re-implementing the controller for ROS 2 (stage 6) found the goal-point bug that changed stage 3 and produced the recommendation (<a href="generalist.html#goalpoint">S118</a>).</p>
+</section>
+
+<!-- 4. Featured videos -->
+<section class="block wrap" aria-labelledby="featured" id="featured-sec">
+  <div class="eyebrow">Featured simulation clips</div>
+  <h2 id="featured">Same seed, same pushes, two controllers</h2>
+  <p class="lede">The robot drives to a goal on flat ground and holds it while short pushes and sustained pulls act on the body (the red arrow is the applied force, 3 cm per newton). Randomisation and sensor noise are on. One world each: an anecdote, not a statistic.</p>
+  <div class="vpair" data-vpair>
+    <article class="vclip ok">
+      <div class="vplayer" data-src="videos/c13_push_pull_hold.mp4" data-poster="videos/c13_push_pull_hold.jpg" data-title="g34 holding a goal while pushed and pulled">
+        <button type="button" class="vph" aria-label="Play: g34 holding a goal while pushed and pulled"><img src="videos/c13_push_pull_hold.jpg" loading="lazy" decoding="async" width="1280" height="720" alt="Poster frame: the robot holding position on a flat tile at 6.0 s, 0.01 m/s, tilt 1.9 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="vlabel">g34</span><span class="vtag good">12 s &middot; no fall</span></button>
+      </div>
+      <div class="vtext"><h3>g34: the previous recommendation</h3><p>Goal logic at the ball body origin, 80 ms history. Simulation, DR on, noise on, flat tile. It survives the whole clip, including a push that tilts it past 20 degrees near 8 s.</p></div>
+    </article>
+    <article class="vclip ok">
+      <div class="vplayer" data-src="videos/c14_g40_push_pull_hold.mp4" data-poster="videos/c14_g40_push_pull_hold.jpg" data-title="g40 holding a goal while pushed and pulled, same seed as the g34 clip">
+        <button type="button" class="vph" aria-label="Play: g40 holding a goal while pushed and pulled, same seed as the g34 clip"><img src="videos/c14_g40_push_pull_hold.jpg" loading="lazy" decoding="async" width="1280" height="720" alt="Poster frame: the robot holding position on a flat tile at 6.0 s, 0.03 m/s, tilt 2.0 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="vlabel">g40</span><span class="vtag good">12 s &middot; no fall</span></button>
+      </div>
+      <div class="vtext"><h3>g40: 240 ms memory and the true-centre goal</h3><p>Same world and disturbances as the clip on the left. Watch the command: it settles with almost no reversals. <b>g40 is not the recommendation:</b> g39 is, because g40 navigates worse under pushes (S121). This clip shows the calm hold.</p></div>
+    </article>
+    <div class="vboth"><button type="button" class="btn sm vboth-go"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-video"/></svg><span>Play both together</span></button><span>Same seed; they start from the same frame. <a href="videos.html#motion">All clips, with context</a></span></div>
+  </div>
+  <div class="vrow">
+    <article class="vclip ok">
+      <div class="vplayer" data-src="videos/c12_nav_with_layer.mp4" data-poster="videos/c12_nav_with_layer.jpg" data-title="ToF navigation around blocks with the motion layer">
+        <button type="button" class="vph" aria-label="Play: ToF navigation around blocks with the motion layer"><img src="videos/c12_nav_with_layer.jpg" loading="lazy" decoding="async" width="1280" height="720" alt="Poster frame: the robot among low blocks at 5.8 s, cyan command and green path curving gently"><span class="play" aria-hidden="true"><i></i></span><span class="vtag good">11.6 s &middot; reaches the goal</span></button>
+      </div>
+      <div class="vtext"><h3>Navigating around blocks with a ToF sensor</h3><p>Planner, sensor memory and motion layer on the g34 checkpoint, DR and noise on. Cyan is the command, green the path driven. One route, not typical timing.</p></div>
+    </article>
+    <article class="vclip fall">
+      <div class="vplayer" data-src="videos/c11_step3cm_nom.mp4" data-poster="videos/c11_step3cm_nom.jpg" data-title="The limit: a 3 cm step at 0.5 m/s, stalls and falls">
+        <button type="button" class="vph" aria-label="Play: the limit, a 3 cm step at 0.5 m/s, stalls and falls"><img src="videos/c11_step3cm_nom.jpg" loading="lazy" decoding="async" width="1280" height="720" alt="Poster frame: the robot approaching a step at 1.9 s, tilt 4.6 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="vtag bad">3.75 s &middot; falls</span></button>
+      </div>
+      <div class="vtext"><h3>A failure kept on purpose: a 3 cm step</h3><p>Above the nominal ball's predicted traction limit of 2.6 cm, the ball cannot get up the riser and the robot falls. DR and noise on; g34 checkpoint.</p></div>
+    </article>
+  </div>
+</section>
+
+<!-- 5. Pieces -->
+<section class="block wrap" aria-labelledby="built" id="built-sec">
+  <div class="eyebrow">What we built</div>
+  <h2 id="built">Four pieces, one recipe</h2>
+  <p class="thesis">Derive the physics <span class="m">first</span>, let a network <span class="l">correct what the model gets wrong</span>, keep the body <span class="h">on the ball mechanically</span>, and plan around what cannot be climbed.</p>
+  <div class="built reveal">
+    <div class="piece m"><span class="k">1 &middot; model-based</span><h3>LQR on a derived model</h3>
+      <p>A planar Euler-Lagrange model of ball, body and wheels, linearised and given per-design gains. A velocity reference governor limits acceleration to 0.5 m/s<sup>2</sup>, an integral term removes steady error, and a yaw loop turns the robot.</p>
+      <code class="eq">Q = diag(1e-6, 50, 1, 1), R = 1</code></div>
+    <div class="piece l"><span class="k">2 &middot; learned</span><h3>A bounded PPO residual</h3>
+      <p>A policy trained with PPO adds a correction to the LQR action, scaled by an <a class="term" href="glossary.html#authority" data-def="The scale on the learned correction. At 0.25 the policy may move the applied action by at most a quarter of the full range.">authority</a> that switches between 0.15 while cruising and 0.3 when manoeuvring (S112). It learns what the planar model leaves out: contact, saturation, the differences between designs.</p>
+      <code class="eq">a = clip(a_LQR + &alpha;(t) a_policy), &alpha; in [0.15, 0.3]</code></div>
+    <div class="piece mech"><span class="k">3 &middot; mechanism</span><h3>Three ball arrestors</h3>
+      <p>In 95 percent of falls before this change the body derailed off the ball at about 15 deg of tilt; motor saturation was under 1 percent. Three passive 8 mm rollers at a 100 deg polar angle, touching the ball only at the loaded seat, keep it on.</p>
+      <code class="eq">Rezero-style, passive, S79</code></div>
+    <div class="piece nav"><span class="k">4 &middot; navigation</span><h3>A planner over a sensed map</h3>
+      <p>Steps above the traction limit cannot be climbed, so a planner builds a map from a forward ToF sensor and steers around them with a smooth follower. A motion layer between planner and controller smooths the commands, brakes into the goal and holds it.</p>
+      <code class="eq">heading-rate RMS 1.31 rad/s with the layer, S114</code></div>
+  </div>
+  <div class="recipe">
+    <code class="eq"><span class="m">LQR</span> + (0.15 to 0.3) &times; <span class="l">residual</span> + <span class="h">arrestors</span> + motion layer + planner + true-centre goal</code>
+    <p>Trained on 11 robot designs with <a class="term" href="glossary.html#domain-randomisation" data-def="Randomising simulator parameters (mass, friction, torque, damping, latency, noise) during training so the policy does not overfit one robot.">domain randomisation</a> at scale 1.75, 200M steps, motion layer in the loop (g39, S118). How the pieces talk to each other is on the <a href="architecture.html">Controller</a> page.</p>
+  </div>
+</section>
+
+<!-- 6. What is new -->
+<section class="block wrap" aria-labelledby="new" id="new-sec">
+  <div class="eyebrow">Latest in the study log, S117 to S122</div>
+  <h2 id="new">What changed most recently</h2>
+  <div class="grid g3 latest">
+    <a class="card" href="generalist.html#history"><span class="chip">S117</span><h3>A longer memory</h3><p>240 ms of history calms the robot on flat ground. It does not lift the pull limit: <span class="v" data-k="hgp.g34_mref_rsad_db_s0.full" data-f="2" data-m="1">0.36</span> fall at 80 ms and <span class="v" data-k="hgp.g38_hist24_s0.full" data-f="2" data-m="1">0.35</span> at 240 ms under 3 to 12 N pulls.</p></a>
+    <a class="card" href="generalist.html#goalpoint"><span class="chip warn">S118</span><h3>The goal-point bug</h3><p>Goal logic followed a point that circles the ball as it rolls. The fix cut the real hold error by a factor of <span class="v" data-k="hg.err_cut.min" data-f="0" data-m="1">2</span> to <span class="v" data-k="hg.err_cut.max" data-f="0" data-m="1">4</span>.</p></a>
+    <a class="card" href="design.html"><span class="chip">S119</span><h3>Design sweep and guidelines</h3><p>Seven rules for a first build, from 22 one-property variants. Ball mass and motor torque matter most.</p></a>
+    <a class="card" href="generalist.html#g39"><span class="chip">S120</span><h3>The g40 trade-off</h3><p>Memory plus fix: calmer and more precise, but ToF navigation under pushes drops to <span class="v" data-k="n2.g40.tof18_pp.success" data-f="2" data-m="1">0.45</span> from <span class="v" data-k="n2f.g39.tof18_pp.success.min" data-f="2" data-m="1">0.49</span> to <span class="v" data-k="n2f.g39.tof18_pp.success.max" data-f="2" data-m="1">0.55</span>.</p></a>
+    <a class="card" href="generalist.html#g39"><span class="chip good">S121</span><h3>Recommendation: g39</h3><p>Keeps g34's navigation, adds the precise hold, and is the default of the ROS 2 bundle.</p></a>
+    <a class="card" href="generalist.html#deadband"><span class="chip">S122</span><h3>Dead band fix, in progress</h3><p>The authority dead band read a swinging speed. Retrained on the true centre speed, seed 0 matches g39 on every number; seeds 1 and 2 are still training.</p></a>
+  </div>
+</section>
+
+<!-- 7. Where to go -->
+<section class="block wrap" aria-labelledby="order" id="go-sec">
+  <div class="eyebrow">Where to go</div>
+  <h2 id="order">Pick your way in</h2>
+  <div class="grid g3 ways">
+    <a class="card feature" href="learn/index.html"><span class="itile learned"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-learn"/></svg></span><h3>Learn</h3><p>A step-by-step course that builds up the ballbot from first principles to the deployed controller.</p><span class="more-link">Start the course <svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-arrow"/></svg></span></a>
+    <a class="card feature" href="generalist.html"><span class="itile"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-results"/></svg></span><h3>Results</h3><p>The whole journey chapter by chapter, with the honest nulls and every table's protocol.</p><span class="more-link">Read the results <svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-arrow"/></svg></span></a>
+    <a class="card feature" href="videos.html"><span class="itile warn"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-video"/></svg></span><h3>Videos</h3><p>Chaptered simulation clips with what to look at in each, failures included.</p><span class="more-link">Watch the clips <svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-arrow"/></svg></span></a>
+    <a class="card feature" href="design.html"><span class="itile model"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-ruler"/></svg></span><h3>Design guidelines</h3><p>Which robot properties a first build needs, from a sweep of 22 simulated variants.</p><span class="more-link">See the rules <svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-arrow"/></svg></span></a>
+    <a class="card feature" href="deploy.html"><span class="itile good"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-ros"/></svg></span><h3>ROS 2 deployment</h3><p>The exported controller, its parity tests and what was not verified.</p><span class="more-link">How it is deployed <svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-arrow"/></svg></span></a>
+    <a class="card feature" href="https://github.com/N3b3x/openballbot-rl"><span class="itile"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-github"/></svg></span><h3>Code</h3><p>Training, evaluation, the site generator and the ROS 2 package, on GitHub.</p><span class="more-link">Open the repository <svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-external"/></svg></span></a>
+  </div>
+  <div class="order-more">Also: <a href="math.html">Physics</a><a href="architecture.html">The controller</a><a href="bounds.html">Rules and bounds</a><a href="lessons.html">Lessons</a><a href="design-space.html">Design space explorer</a><a href="live.html">Live policy</a><a href="reproduce.html">Reproduce</a><a href="story.html">The journey</a><a href="method.html">Setup and method</a><a href="glossary.html">Glossary</a></div>
+</section>
+
+<!-- 8. Honesty note -->
+<section class="block wrap" aria-labelledby="honest">
+  <div class="honest reveal">
+    <div class="eyebrow" style="color:var(--warn-text)">What is honest here</div>
+    <h2 id="honest">Simulation only, with the failures left in</h2>
+    <div class="cols">
+      <div class="c-sim"><h4 aria-level="3">Scope</h4><ul>
+        <li>Everything is MuJoCo simulation (MuJoCo-Warp, float32, GPU). No hardware was built or tested, and nothing here is a hardware claim.</li>
+        <li>Results before the engine correction (log entries S69 and S70) are not used; an earlier randomisation step had corrupted the physics.</li>
+        <li>Most rows are 1 to 3 training seeds. A fall rate over 64 worlds has a standard error up to 0.06.</li></ul></div>
+      <div class="c-fail"><h4 aria-level="3">What failed</h4><ul>
+        <li>Pushes and pulls cut goal success by about 0.27, 0.77 to 0.79 down to 0.51 to 0.52. Short pushes are absorbed fully and sustained pulls up to about 3 N too; at 3 to 12 N, 36 percent fall even on flat ground. Training on 1.5 and 2 times stronger disturbances did not help <sup class="ref"><a href="#src-S116" data-src="S113, S116">S113, S116</a></sup>.</li>
+        <li>Steps and bumps above the traction limit h<sub>max</sub> = r(1 &minus; cos(arctan &mu;)), about 0.29 r, fail 90 to 98 percent at any speed. A perfect height map or a depth sensor does not reduce those falls <sup class="ref"><a href="#src-S87" data-src="S87, S88">S87, S88</a></sup>.</li>
+        <li>A tenth-torque design is motor limited for every controller, at most 0.30 <sup class="ref"><a href="#src-S85R" data-src="S85-R">S85-R</a></sup>; the light-ball design kb025 falls on flat ground by sliding off its ball within the first second, the one flat-ground weakness that survived the S98 correction <sup class="ref"><a href="#src-S93" data-src="S92, S98">S92, S98</a></sup>.</li>
+        <li>A 240 ms observation history makes the robot calmer on flat ground but worse at navigating under pushes (<span class="v" data-k="n2.g40.tof18_pp.success" data-f="2" data-m="1">0.45</span> against <span class="v" data-k="n2f.g39.tof18_pp.success.min" data-f="2" data-m="1">0.49</span> to <span class="v" data-k="n2f.g39.tof18_pp.success.max" data-f="2" data-m="1">0.55</span> reached), so it is the alternative, not the default <sup class="ref"><a href="#src-S121" data-src="S120, S121">S120, S121</a></sup>.</li>
+        <li>Training the policy with the planner in the loop changed nothing <sup class="ref"><a href="#src-S91" data-src="S91">S91</a></sup>.</li>
+        <li>Three designs stay hard on flat ground: the light ball kb025 (0.25 times the ball mass), the heavy body bal4 (4 times the ballast) and the weak motors of tau6 (6 N m against 30). A higher tracking reward, extra training share for these designs, twice the training steps and harder training pushes all failed to improve on the recommended recipe <sup class="ref"><a href="#src-S114" data-src="S113, S114, S115, S116">S113 to S116</a></sup>.</li></ul></div>
+      <div class="c-open"><h4 aria-level="3">What held up</h4><ul>
+        <li>The LQR base carries the policy to an unseen 1.5x robot: 0.61 to 0.71 goal success, where pure learning collapses to 0.09 to 0.15 <sup class="ref"><a href="#src-S85R" data-src="S85-R">S85-R</a></sup>.</li>
+        <li>The authority dial is a real trade-off: 0.15 gives tracking 1.01 and robust success 0.35; 0.5 gives 0.85 and 0.47; pure learning 0.74 and 0.50 <sup class="ref"><a href="#src-S83" data-src="S82, S83">S82, S83</a></sup>.</li>
+        <li>Obstacle falls depend mostly on obstacle size; on the corrected contact model they also rise with approach speed (0.28 at 0.1 m/s to 0.51 at 0.9 m/s); whether a speed layer that slows before a feature reduces them is under re-test, because the first measurement used episodes too short for a slowed robot to reach its feature <sup class="ref"><a href="#src-S87" data-src="S87, S100, S103">S87, S100, S103</a></sup>.</li></ul></div>
+    </div>
+    <div class="sources src-note" id="sources">Sources, all in <code>docs/research/tracking_study_log.md</code>:
+      <ol>
+        <li id="src-S79">S79: why the robot falls, and the Rezero-style ball arrestors.</li>
+        <li id="src-S83">S82, S83: the authority curve with the arrestors, and the recommended controller.</li>
+        <li id="src-S84">S84: three seeds of the recommended controller; depth sensor on top of it.</li>
+        <li id="src-S99">S98, S99, S102: the contact-model correction (wheel-ball free-rolling friction 0.001 to 0.01) and the three recommended g26 checkpoints retrained on it; headline tracking and goal numbers are their ranges.</li>
+        <li id="src-S85R">S85-R: unseen robot designs, corrected design vector.</li>
+        <li id="src-S87">S87, S88, S100, S103: obstacle falls against size and speed; the traction limit and ball size; the speed correction on the corrected contact model; the speed layer (worth 0.03 to 0.05 of falls once exposure is controlled).</li>
+        <li id="src-S104">S104 (with S89, S90): navigation around unclimbable blocks with the ToF head sensor on the recommended checkpoint.</li>
+        <li id="src-S89">S89, S90: navigation around unclimbable blocks; smooth motion with a real sensor.</li>
+        <li id="src-S91">S91: training with the planner in the loop, a null result.</li>
+        <li id="src-S110">S105, S106, S110 to S113: why the paths wobbled; the motion layer, bolted on (worse) and trained with (better); adaptive authority and the goal dead band; the recommended g34 checkpoints and their flat tracking and battery ranges.</li>
+        <li id="src-S114">S114, S115, S116 and their addenda: navigation with the motion layer; the contact escape on the new controller; the hard designs on flat ground; the variants that did not help; the sustained-pull sweep.</li>
+        <li id="src-S116">S116 addendum: short pushes are absorbed; sustained pulls are absorbed up to about 3 N; at 3 to 12 N 36 percent fall on flat ground.</li>
+        <li id="src-S121">S117 to S122: a longer observation history; the goal point that swung around the ball and its fix (g39); the design sweep and guidelines; the g40 trade-off; the g39 recommendation; the dead band on the true centre speed (training, no result yet).</li>
+        <li id="src-S93">S92, S98: flat-ground driving rate after the map-edge correction; the light-ball design's unseating, the one flat-ground weakness left after the S98 contact-model correction (the 20 s standing numbers of S93 to S97 are void).</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+</main>
+<script type="module">
+// "Play both together" for the featured pair; layout.js mounts single players on click
+const pair = document.querySelector('[data-vpair]');
+const go = pair && pair.querySelector('.vboth-go');
+if (go) go.addEventListener('click', () => {
+  const vids = [...pair.querySelectorAll('.vplayer')].map((p) => {
+    let v = p.querySelector('video');
+    if (!v) { v = document.createElement('video'); v.controls = true; v.playsInline = true; v.preload = 'metadata'; v.muted = true; v.poster = p.dataset.poster; v.src = p.dataset.src; v.setAttribute('aria-label', p.dataset.title); p.replaceChildren(v); }
+    return v;
+  });
+  vids.forEach((v) => { v.pause(); v.currentTime = 0; });
+  Promise.all(vids.map((v) => new Promise((r) => (v.readyState >= 1 ? r() : v.addEventListener('loadedmetadata', r, { once: true }))))).then(() => vids.forEach((v) => v.play().catch(() => {})));
+  go.querySelector('span').textContent = 'Replay both together';
+});
+</script>
+</body>
+</html>

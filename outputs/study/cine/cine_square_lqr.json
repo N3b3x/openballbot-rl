@@ -1,0 +1,33 @@
+{
+ "id": "cine_square_lqr",
+ "title": "Square course",
+ "controller": "lqr",
+ "controller_family": "model",
+ "scenario": "square",
+ "terrain": "flat floor, no relief",
+ "description": "Model-based LQR drives the square course (0.5 m/s legs, one fast leg, one turning leg).",
+ "outcome": "No fall. Mean position error 35.5 cm, max 101.8 cm, final 20.4 cm; max off-ball angle 9.3 deg.",
+ "stats": {
+  "duration_s": 26.0,
+  "fell": false,
+  "fall_t_s": null,
+  "fall_reason": null,
+  "mean_err_cm": 35.5,
+  "max_err_cm": 101.8,
+  "final_err_cm": 20.4,
+  "dist_travelled_m": 12.63,
+  "max_off_ball_deg": 9.3,
+  "max_lean_deg": 9.0,
+  "mean_speed_err_mps": 0.244,
+  "end_to_plan_end_cm": 20.4,
+  "pushes": 0
+ },
+ "duration_s": 29.6,
+ "sim_only": true,
+ "domain_randomisation": false,
+ "slow_motion": 1.0,
+ "pushes": "",
+ "config": "configs/env/res_c.yaml",
+ "sequence": "square",
+ "command": "python scripts/study/render_cinematic.py --job square_lqr"
+}

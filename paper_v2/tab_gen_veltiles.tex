@@ -1,0 +1,44 @@
+\begin{table}[t]\centering\footnotesize
+\caption{Velocity task at 0.3\,m/s on the tiled terrain, corrected engine. Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 16 per (design, terrain kind): 1760 per cell. Seeds: one per row as listed. Protocol: velocity task at 0.3 m/s at a random heading on the tiles with floor classes, 800 steps (eval\_battery.py); tracking error is the mean over upright steps.}\label{tab:gen_veltiles}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcccc}\toprule
+Policy & Falls, undisturbed & Falls, pushes + pulls & Tracking error undisturbed / disturbed [m/s] & Seed\\\midrule
+pure learning (no LQR), 300M steps g12\_pure\_s0, seed 0 & 0.32 & 0.54 & 0.194 / 0.292 & seed 0\\
+LQR + residual 0.5, standard randomisation g12\_res\_s0, seed 0 & 0.55 & 0.72 & 0.112 / 0.218 & seed 0\\
+LQR + residual 0.5, standard randomisation g12\_res\_s1, seed 1 & 0.55 & 0.74 & 0.104 / 0.205 & seed 1\\
+LQR + residual 0.5, randomisation ramped to 1.75x g12\_dr175\_s0, seed 0 & 0.54 & 0.71 & 0.109 / 0.217 & seed 0\\
+LQR + residual 0.5, randomisation ramped to 1.75x g12\_dr175\_s1, seed 1 & 0.53 & 0.71 & 0.102 / 0.226 & seed 1\\
+soft LQR base (R x3, a\_max 0.3), ramped to 1.75x g12\_soft175\_s0, seed 0 & 0.55 & 0.71 & 0.109 / 0.208 & seed 0\\
+soft LQR base (R x3, a\_max 0.3), ramped to 1.75x g12\_soft175\_s1, seed 1 & 0.53 & 0.73 & 0.118 / 0.212 & seed 1\\
+soft LQR base, authority 0.75 g13\_softrs075\_s0, seed 0 & 0.54 & 0.70 & 0.123 / 0.217 & seed 0\\
+ramped 1.75x, fall penalty 5 (was 2) g14\_fp5\_s0, seed 0 & 0.54 & 0.73 & 0.110 / 0.219 & seed 0\\
+soft base, fall penalty 5 g14\_softfp5\_s0, seed 0 & 0.54 & 0.71 & 0.113 / 0.223 & seed 0\\
+ramped 1.75x, push and pull strength ramped 0.2 to 1 g14\_pramp\_s0, seed 0 & 0.54 & 0.73 & 0.111 / 0.222 & seed 0\\
+ramped 1.75x + edge starts + depth sensor g15\_edge\_depth\_s0, seed 0 & 0.56 & 0.73 & 0.101 / 0.223 & seed 0\\
+ramped 1.75x + edge starts, blind control g15\_edge\_blind\_s0, seed 0 & 0.53 & 0.73 & 0.105 / 0.228 & seed 0\\
+pure learning (no LQR), 300M steps g12\_pure\_s1, seed 1 & 0.38 & 0.57 & 0.181 / 0.274 & seed 1\\
+ramped 1.75x, trained with the ball retainer (arrestors at 100 deg) g16\_ret100\_s0, seed 0 & 0.31 & 0.49 & 0.141 / 0.226 & seed 0\\
+ramped 1.75x, trained with the ball retainer (arrestors at 100 deg) g16\_ret100\_s1, seed 1 & 0.32 & 0.50 & 0.138 / 0.220 & seed 1\\
+pure learning, trained with the retainer g16\_pure\_ret100\_s0, seed 0 & 0.16 & 0.34 & 0.171 / 0.251 & seed 0\\
+pure learning, trained with the retainer g16\_pure\_ret100\_s1, seed 1 & 0.19 & 0.38 & 0.155 / 0.235 & seed 1\\
+retainer, authority 0.5, tracking weight x3 g17\_ret100\_trk3\_s0, seed 0 & 0.32 & 0.46 & 0.141 / 0.219 & seed 0\\
+retainer, authority 0.15 g18\_ret\_rs015\_s0, seed 0 & 0.38 & 0.58 & 0.126 / 0.246 & seed 0\\
+retainer, authority 0.25 (recommended) g18\_ret\_rs025\_s0, seed 0 & 0.34 & 0.55 & 0.125 / 0.235 & seed 0\\
+retainer, authority 0.25 (recommended) g18\_ret\_rs025\_s1, seed 1 & 0.35 & 0.56 & 0.131 / 0.236 & seed 1\\
+retainer, authority 0.35 g18\_ret\_rs035\_s0, seed 0 & 0.34 & 0.52 & 0.132 / 0.223 & seed 0\\
+retainer, soft LQR base, authority 0.5 g18\_ret\_soft\_s0, seed 0 & 0.29 & 0.49 & 0.150 / 0.217 & seed 0\\
+retainer, authority 0.25 (recommended) g18\_ret\_rs025\_s2, seed 2 & 0.36 & 0.55 & 0.137 / 0.224 & seed 2\\
+retainer, authority 0.25, 400M steps g19\_ret\_rs025\_400m\_s0, seed 0 & 0.38 & 0.55 & 0.140 / 0.221 & seed 0\\
+retainer, authority 0.25, depth sensor + edge starts g20\_ret\_rs025\_depth\_s0, seed 0 & 0.35 & 0.54 & 0.121 / 0.224 & seed 0\\
+retainer, authority 0.25, 12 training designs (adds tau3; 1920 worlds per goal row) g21\_ret\_rs025\_tau3\_s0, seed 0 & 0.35 & 0.56 & 0.127 / 0.232 & seed 0\\
+retainer, authority 0.25, 12 training designs (adds tau3; 1920 worlds per goal row) g21\_ret\_rs025\_tau3\_s1, seed 1 & 0.36 & 0.57 & 0.130 / 0.228 & seed 1\\
+retainer, authority 0.25, privileged height scan input g22\_ret\_rs025\_scan\_s0, seed 0 & 0.36 & 0.55 & 0.132 / 0.226 & seed 0\\
+retainer, authority 0.5, privileged height scan input g22\_ret\_rs05\_scan\_s0, seed 0 & 0.32 & 0.48 & 0.131 / 0.213 & seed 0\\
+pure learning, retainer, privileged height scan input g22\_pure\_ret\_scan\_s0, seed 0 & 0.15 & 0.35 & 0.165 / 0.231 & seed 0\\
+recommended recipe on the corrected contact model (free-rolling friction 0.01; recommended checkpoint) g26\_ret\_rs025\_mu01\_s0, seed 0 & 0.34 & 0.53 & 0.134 / 0.220 & seed 0\\
+recommended recipe on the corrected contact model (free-rolling friction 0.01; recommended checkpoint) g26\_ret\_rs025\_mu01\_s1, seed 1 & 0.34 & 0.51 & 0.140 / 0.229 & seed 1\\
+recommended recipe on the corrected contact model (free-rolling friction 0.01; recommended checkpoint) g26\_ret\_rs025\_mu01\_s2, seed 2 & 0.34 & 0.53 & 0.138 / 0.227 & seed 2\\
+recommended recipe, trained with the planner in the loop (30 \% of worlds on blocks tiles) g23\_nav\_rs025\_s0, seed 0 & 0.36 & 0.55 & 0.132 / 0.204 & seed 0\\
+recommended recipe, trained with the planner in the loop (30 \% of worlds on blocks tiles) g23\_nav\_rs025\_s1, seed 1 & 0.36 & 0.55 & 0.126 / 0.213 & seed 1\\
+\bottomrule\end{tabular}}
+\end{table}

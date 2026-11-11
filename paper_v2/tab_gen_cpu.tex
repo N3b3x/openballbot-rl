@@ -1,0 +1,16 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Baseline controllers on the CPU engine (selected rows of Table~\ref{tab:tracking}). Engine: CPU (MuJoCo 3.13, float64, implicit-fast, contact-frame fix). Domain randomisation: off (nominal robot). Observation noise: off. Worlds per cell: 1 robot per condition, 2 repeats per speed and direction (8 directions); 30 random-command episodes. Seeds: 1 per row unless two are listed. Protocol: scripts/study/eval\_control.py and eval\_falls.py, deterministic policies. The 1.0 m/s ratio of the LQR averages trials that mostly fall; the LQR falls in every 1 m/s trial of the study log.}\label{tab:gen_cpu}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lccccc}\toprule
+Controller & Achieved/commanded at 0.5 m/s & at 1.0 m/s & Velocity RMSE, commands up to 1 m/s [m/s] & Heading-test error [m/s] & Falls in 30 random-command episodes\\\midrule
+LQR on the derived model (lqr) & 1.04 & 1.06 & 0.05 & 0.02 & 18/30\\
+PPO, spin cap 1 rad/s, from scratch (trk\_f\_s0) & 0.98 & 0.91 & 0.12 & n/a & 16/30\\
+same, seed 1 (trk\_f\_s1) & 1.09 & 0.95 & 0.11 & n/a & 14/30\\
+trk\_f continued, smoother (trk\_g\_s0) & 0.99 & 0.87 & 0.12 & n/a & 11/30\\
+PPO fine-tuned under DR, pushes 10 to 35 N (rob\_b\_s0) & 0.28 & 0.27 & 0.52 & 0.37 & 8/30\\
+PPO from scratch under DR (narrow damping) (robs\_b\_s0) & 0.50 & 0.51 & 0.37 & 0.27 & 3/30\\
+robs\_b + outer velocity integral (robs\_b\_ki1) & 1.01 & 0.79 & 0.19 & 0.06 & 8/30\\
+LQR + residual (beta 0.1, zero-init) (res\_c\_s0) & 1.03 & 1.05 & 0.08 & 0.02 & 3/30\\
+res\_c continued, beta 0.2, DR + pushes (res\_d\_s0) & 1.33 & 0.75 & 0.32 & 0.13 & 15/30\\
+\bottomrule\end{tabular}}
+\end{table*}

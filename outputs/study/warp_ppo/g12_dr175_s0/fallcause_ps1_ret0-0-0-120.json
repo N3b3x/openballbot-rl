@@ -1,0 +1,127 @@
+{
+ "run": "g12_dr175_s0",
+ "worlds": 1760,
+ "falls": 1073,
+ "fall_rate": 0.6096590909090909,
+ "success": 0.38863635063171387,
+ "push_scale": 1.0,
+ "pull": true,
+ "lqr_only": false,
+ "tilt_at_unseat_deg": {
+  "p10": 2.0765624046325684,
+  "median": 9.250367164611816,
+  "p90": 25.620033264160156
+ },
+ "survivors_max_tilt_median": 19.30911636352539,
+ "survivors_max_tilt_p90": 27.056936264038086,
+ "first_event": {
+  "unseated_first": 0.4790307548928239,
+  "tipped_first": 0.4995340167753961,
+  "neither": 0.021435228331780055
+ },
+ "terminated_by": {
+  "offset_only": 0.9878844361602982,
+  "tilt": 0.007455731593662628
+ },
+ "unseat_lead_steps_median": 7.0,
+ "at_fall": {
+  "mis_median": 3.176936149597168,
+  "max_mis_median": 6.545085430145264,
+  "max_dgap_median_cm": 0.4492610692977905,
+  "sat_frac_last_1s_mean": 0.0056135449558496475,
+  "pull_active_frac": 0.6458527493010252,
+  "pull_frac_last_1s_mean": 0.48767006397247314,
+  "push_within_0p5s_frac": 0.03168685927306617,
+  "push_within_1s_frac": 0.03727865796831314
+ },
+ "survivors_max_mis_median": 2.1800520420074463,
+ "survivors_max_dgap_median_cm": 0.20866245031356812,
+ "by_kind": {
+  "flat": {
+   "fall": 0.4375,
+   "unseated_first": 0.5194805194805194
+  },
+  "step_up": {
+   "fall": 0.7443181872367859,
+   "unseated_first": 0.4732824427480916
+  },
+  "step_down": {
+   "fall": 0.5227273106575012,
+   "unseated_first": 0.5
+  },
+  "small_drop": {
+   "fall": 0.6306818127632141,
+   "unseated_first": 0.42342342342342343
+  },
+  "large_drop": {
+   "fall": 0.7727273106575012,
+   "unseated_first": 0.5
+  },
+  "ramp_up": {
+   "fall": 0.46590909361839294,
+   "unseated_first": 0.524390243902439
+  },
+  "ramp_down": {
+   "fall": 0.6420454978942871,
+   "unseated_first": 0.4424778761061947
+  },
+  "stairs": {
+   "fall": 0.6363636255264282,
+   "unseated_first": 0.4375
+  },
+  "bump": {
+   "fall": 0.7272727489471436,
+   "unseated_first": 0.5234375
+  },
+  "rough": {
+   "fall": 0.5170454978942871,
+   "unseated_first": 0.46153846153846156
+  }
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.5687500238418579,
+   "unseated_first": 0.27472527472527475
+  },
+  "zhigh": {
+   "fall": 0.59375,
+   "unseated_first": 0.7368421052631579
+  },
+  "zlow": {
+   "fall": 0.581250011920929,
+   "unseated_first": 0.26881720430107525
+  },
+  "kb4": {
+   "fall": 0.48750001192092896,
+   "unseated_first": 0.08974358974358974
+  },
+  "bal4": {
+   "fall": 0.48125001788139343,
+   "unseated_first": 0.7402597402597403
+  },
+  "J02": {
+   "fall": 0.5562500357627869,
+   "unseated_first": 0.33707865168539325
+  },
+  "tau6": {
+   "fall": 0.606249988079071,
+   "unseated_first": 0.09278350515463918
+  },
+  "bal025": {
+   "fall": 0.981249988079071,
+   "unseated_first": 0.7643312101910829
+  },
+  "kb025": {
+   "fall": 0.737500011920929,
+   "unseated_first": 0.8813559322033898
+  },
+  "zeta41": {
+   "fall": 0.543749988079071,
+   "unseated_first": 0.2988505747126437
+  },
+  "zeta66": {
+   "fall": 0.5687500238418579,
+   "unseated_first": 0.45054945054945056
+  }
+ }
+}

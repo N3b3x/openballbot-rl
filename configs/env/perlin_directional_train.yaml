@@ -1,0 +1,36 @@
+# Environment config: perlin_directional_medium  (generated for the perception-guided ballbot study)
+camera:
+  enabled: true          # false => proprioception-only ablation
+  disable_rgb: true      # depth-only
+  frame_rate: 90
+  height: 64
+  width: 64
+env:
+  max_allowed_tilt: 20
+  max_ep_steps: 800      # policy decisions; x action_repeat physics steps (4000 steps = 8 s)
+  goal_progress: 2.0     # episode ends as success after 2 m of progress along the target direction
+  action_repeat: 5       # 100 Hz control (physics 500 Hz)
+  max_wheel_velocity: 10.0
+  fix_wheel_contacts: true
+logging:
+  cams: false
+  reward_terms: false
+reward:
+  type: directional
+  config:
+    action_reg_coef: -0.0001
+    scale: 0.1          # directional-reward weight (paper: 0.01 at 500 Hz; re-balanced vs survival bonus)
+    survival_bonus: 0.02
+    cap: 0.6             # cap on rewarded speed [m/s]
+    fall_penalty: 10.0   # terminal penalty on a fall
+    target_direction: [0.0, 1.0]
+terrain:
+  type: perlin
+  config:
+    scale: 25.0
+    octaves: 4
+    persistence: 0.2
+    lacunarity: 2.0
+    amplitude: 0.08
+    amplitude_range: [0.02, 0.14]
+    seed: null

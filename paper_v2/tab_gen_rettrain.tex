@@ -1,0 +1,14 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Training with the ball retainer, corrected engine. Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on (flat columns: off). Observation noise: on (flat columns: off). Worlds per cell: 1760 per goal and tile cell (176 per terrain kind); 64 per flat cell. Seeds: as listed (two seeds for the trained-with-retainer, ramped and pure rows). Protocol: eval\_battery.py; the retainer rows use the 100 deg arrestors in training and evaluation (RETAINER=0,0,0,100), the zero-shot row adds them only at evaluation; its flat row was not part of the S92 re-run, so its flat falls are measured on the old tile positions and overstated (error and achieved speed unaffected).}\label{tab:gen_rettrain}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llccccc}\toprule
+Policy & Arrestors & Goal success undisturbed, DR 1 / 1.75 / 2.5 & Goal success pushes + pulls, DR 1 / 1.75 / 2.5 & Tile velocity falls undisturbed / disturbed (DR 1) & Flat error at 0.3 / 0.6 / 0.9 [m/s] & Flat achieved / command\\\midrule
+ramped recipe, seed 0 g12\_dr175\_s0 & none & 0.58 / 0.54 / 0.45 & 0.29 / 0.25 / 0.19 & 0.54 / 0.71 & 0.027 / 0.046 / 0.057 & 0.95 to 0.99\\
+ramped recipe, seed 1 g12\_dr175\_s1 & none & 0.60 / 0.56 / 0.47 & 0.30 / 0.25 / 0.19 & 0.53 / 0.71 & 0.013 / 0.021 / 0.041 & 1.00 to 1.02\\
+ramped recipe, seed 0 g12\_dr175\_s0 & added at evaluation (zero-shot) & 0.75 (scale 1 only) & 0.45 (scale 1 only) & 0.36 / 0.53 & 0.030 / 0.046 / 0.067 & 0.96 to 0.99\\
+trained with the retainer, seed 0 g16\_ret100\_s0 & trained with & 0.71 / 0.70 / 0.62 & 0.46 / 0.42 / 0.35 & 0.31 / 0.49 & 0.049 / 0.140 / 0.188 & 0.81 to 0.86\\
+trained with the retainer, seed 1 g16\_ret100\_s1 & trained with & 0.76 / 0.73 / 0.67 & 0.49 / 0.44 / 0.37 & 0.32 / 0.50 & 0.048 / 0.096 / 0.115 & 0.87 to 0.91\\
+pure learning, seed 0 g12\_pure\_s0 & none & 0.44 / 0.43 / 0.37 & 0.26 / 0.23 / 0.18 & 0.32 / 0.54 & 0.130 / 0.260 / 0.406 & 0.55 to 0.60\\
+pure learning, seed 1 g12\_pure\_s1 & none & 0.51 / 0.44 / 0.39 & 0.27 / 0.23 / 0.19 & 0.38 / 0.57 & 0.103 / 0.246 / 0.421 & 0.54 to 0.67\\
+\bottomrule\end{tabular}}
+\end{table*}

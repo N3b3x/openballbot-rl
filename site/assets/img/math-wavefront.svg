@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 330" class="d-wave" role="img" aria-labelledby="dw-t">
+<title id="dw-t">A grid of cells with a goal cell marked zero, a block of obstacle cells, an inflated margin around the block, and distance-to-goal numbers growing outward around the obstacle. A robot cell on the far side has a carrot point several cells down the field, and a curved commanded heading toward it.</title>
+<style>
+.d-wave text{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10.5px;fill:var(--text-3,#8a97ab);text-anchor:middle}
+.d-wave .t{font-family:Inter,system-ui,sans-serif;font-size:12px;fill:var(--text,#dfe6f0);text-anchor:start}
+.d-wave .k{font-family:Inter,system-ui,sans-serif;font-size:11px;fill:var(--text-3,#8a97ab);text-anchor:start}
+.d-wave .c{fill:none;stroke:var(--line,#3a4756);stroke-width:1}
+</style>
+<defs><marker id="dw-ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--hybrid,#2ee6c4)"/></marker></defs>
+<!-- 11 x 9 grid of 34 px cells at origin (20,20); goal at col 1 row 4; obstacle cols 4-5 rows 2-6; margin cols 3-6 rows 1-7; robot col 9 row 4 -->
+<g transform="translate(20 20)">
+<!-- margin cells -->
+<rect x="102" y="34" width="136" height="238" style="fill:var(--warn,#ffb454);opacity:.18"/>
+<!-- obstacle -->
+<rect x="136" y="68" width="68" height="170" style="fill:var(--warn,#ffb454);opacity:.75"/>
+<!-- grid lines -->
+<path class="c" d="M0 0H374M0 34H374M0 68H374M0 102H374M0 136H374M0 170H374M0 204H374M0 238H374M0 272H374M0 306H374M0 0V306M34 0V306M68 0V306M102 0V306M136 0V306M170 0V306M204 0V306M238 0V306M272 0V306M306 0V306M340 0V306M374 0V306"/>
+<!-- goal -->
+<rect x="35" y="137" width="32" height="32" rx="4" style="fill:var(--good,#5ee08a);opacity:.85"/>
+<!-- distance numbers: Chebyshev distance to goal (col1,row4) with obstacle+margin blocking cols 3..6 rows 1..7 -->
+<g>
+<!-- row 0 -->
+<text x="17" y="21">4</text><text x="51" y="21">4</text><text x="85" y="21">4</text><text x="119" y="21">4</text><text x="153" y="21">4</text><text x="187" y="21">4</text><text x="221" y="21">4</text><text x="255" y="21">5</text><text x="289" y="21">6</text><text x="323" y="21">7</text><text x="357" y="21">8</text>
+<!-- row 1 -->
+<text x="17" y="55">3</text><text x="51" y="55">3</text><text x="85" y="55">3</text><text x="255" y="55">5</text><text x="289" y="55">6</text><text x="323" y="55">7</text><text x="357" y="55">8</text>
+<!-- row 2 -->
+<text x="17" y="89">2</text><text x="51" y="89">2</text><text x="85" y="89">2</text><text x="255" y="89">6</text><text x="289" y="89">6</text><text x="323" y="89">7</text><text x="357" y="89">8</text>
+<!-- row 3 -->
+<text x="17" y="123">1</text><text x="51" y="123">1</text><text x="85" y="123">1</text><text x="255" y="123">7</text><text x="289" y="123">7</text><text x="323" y="123">7</text><text x="357" y="123">8</text>
+<!-- row 4 -->
+<text x="17" y="157">1</text><text x="51" y="157" style="fill:var(--bg,#0a0e14);font-weight:700">0</text><text x="85" y="157">1</text><text x="255" y="157">7</text><text x="289" y="157">7</text><text x="357" y="157">8</text>
+<!-- row 5 -->
+<text x="17" y="191">1</text><text x="51" y="191">1</text><text x="85" y="191">1</text><text x="255" y="191">7</text><text x="289" y="191">7</text><text x="323" y="191">7</text><text x="357" y="191">8</text>
+<!-- row 6 -->
+<text x="17" y="225">2</text><text x="51" y="225">2</text><text x="85" y="225">2</text><text x="255" y="225">6</text><text x="289" y="225">6</text><text x="323" y="225">7</text><text x="357" y="225">8</text>
+<!-- row 7 -->
+<text x="17" y="259">3</text><text x="51" y="259">3</text><text x="85" y="259">3</text><text x="255" y="259">5</text><text x="289" y="259">6</text><text x="323" y="259">7</text><text x="357" y="259">8</text>
+<!-- row 8 -->
+<text x="17" y="293">4</text><text x="51" y="293">4</text><text x="85" y="293">4</text><text x="119" y="293">4</text><text x="153" y="293">4</text><text x="187" y="293">4</text><text x="221" y="293">4</text><text x="255" y="293">5</text><text x="289" y="293">6</text><text x="323" y="293">7</text><text x="357" y="293">8</text>
+</g>
+<!-- robot at col 9 row 4 -->
+<circle cx="323" cy="153" r="11" style="fill:var(--bg-3,#161e2a);stroke:var(--hybrid,#2ee6c4);stroke-width:2.5"/>
+<!-- carrot: descend 6 cells: (9,4)->(8,3)->(7,2)->(7,1)->(7,0)->(6,0)->(5,0) ; carrot at col 5 row 0 -->
+<path d="M323 153 L289 119 L255 85 L255 51 L255 17 L221 17 L187 17" fill="none" style="stroke:var(--hybrid,#2ee6c4);stroke-width:1.6;stroke-dasharray:3 3;opacity:.8"/>
+<circle cx="187" cy="17" r="6" style="fill:var(--hybrid,#2ee6c4)"/>
+<!-- heading: rate-limited toward the carrot -->
+<path d="M323 153 Q300 110 262 60" fill="none" style="stroke:var(--hybrid,#2ee6c4);stroke-width:2.6" marker-end="url(#dw-ah)"/>
+</g>
+<!-- legend -->
+<text class="t" x="410" y="40">goal: field = 0</text>
+<rect x="410" y="52" width="14" height="14" rx="3" style="fill:var(--good,#5ee08a);opacity:.85"/>
+<text class="t" x="410" y="92">block (3 cm or higher)</text>
+<rect x="410" y="104" width="14" height="14" style="fill:var(--warn,#ffb454);opacity:.75"/>
+<text class="t" x="410" y="144">inflated by 0.22 m</text>
+<rect x="410" y="156" width="14" height="14" style="fill:var(--warn,#ffb454);opacity:.18"/>
+<text class="t" x="410" y="196">robot and carrot</text>
+<circle cx="417" cy="214" r="6" style="fill:var(--hybrid,#2ee6c4)"/>
+<text class="k" x="410" y="250">numbers: steps to the</text>
+<text class="k" x="410" y="264">goal around the block</text>
+<text class="k" x="410" y="290">heading turns at most</text>
+<text class="k" x="410" y="304">2 rad/s toward the carrot</text>
+</svg>

@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- head:common -->
+<script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}</script>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<!-- /head:common -->
+<title>The journey: how a ballbot controller evolved</title>
+<meta name="description" content="A chaptered account of how a velocity-tracking controller for a simulated ballbot evolved from a baseline that barely moved to a hybrid of derived physics and learned policies, including the dead ends.">
+<!-- og -->
+<link rel="canonical" href="https://n3b3x.github.io/openballbot-rl/story.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ballbot control research">
+<meta property="og:title" content="The journey: how a ballbot controller evolved">
+<meta property="og:description" content="A chaptered account of how a velocity-tracking controller for a simulated ballbot evolved from a baseline that barely moved to a hybrid of derived physics and learned policies, including the dead ends.">
+<meta property="og:url" content="https://n3b3x.github.io/openballbot-rl/story.html">
+<meta property="og:image" content="https://n3b3x.github.io/openballbot-rl/assets/img/social-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A simulated ballbot: a cylindrical robot balanced on a basketball-textured ball, with the title of the study.">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /og -->
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/story.css">
+<script type="module" src="assets/js/layout.js"></script>
+<script type="module" src="assets/js/story.js"></script>
+</head>
+<body>
+<!-- nojs --><noscript><nav class="nojs" aria-label="Main (JavaScript is off)"><a href="index.html">Overview</a><a href="learn/index.html">Learn</a><a href="generalist.html">Results</a><a href="videos.html">Videos</a><a href="design.html">Design guidelines</a><a href="deploy.html">ROS 2</a><a href="math.html">Physics</a><a href="architecture.html">Controller</a><a href="reproduce.html">Reproduce</a><a href="glossary.html">Glossary</a></nav></noscript><!-- /nojs -->
+<div class="progress" id="progress" aria-hidden="true"></div>
+<main>
+<header class="page-hero wrap">
+  <div class="eyebrow">The journey</div>
+  <h1>From a robot that barely moves to a controller that knows its own physics</h1>
+  <p class="lede">A ballbot balances on one ball and moves only by leaning. This is the story of how we got a small simulated one to go where it is told: twelve chapters, each with the question, what we tried, the data, the decision, and what went wrong. Failures stay in.</p>
+  <p class="lede" style="font-size:1rem"><strong>Simulation only.</strong> Every result on this page comes from the MuJoCo simulator. There is no hardware claim anywhere on this site. Each chapter names the repo file its numbers come from.</p>
+  <div class="statstrip">
+    <div class="card"><div class="stat bad">0.06</div><small>speed ratio at 1 m/s, first baseline (S0)</small></div>
+    <div class="card"><div class="stat learned">0.91</div><small>same ratio after capping the spin command (S6)</small></div>
+    <div class="card"><div class="stat model">4.79 / 5.78</div><small>unstable pole and non-minimum-phase zero, 1/s</small></div>
+    <div class="card"><div class="stat model">50&times;</div><small>smoother actions from LQR than from PPO</small></div>
+    <div class="card"><div class="stat hybrid">gate</div><small>the current design: LQR and PPO blended by a learned gate</small></div>
+  </div>
+  <p style="margin-top:20px"><button class="btn" id="toggleAll" aria-pressed="false">Expand all details</button>
+  &nbsp; <a class="btn" href="#ledger">Jump to the decision ledger</a>
+  &nbsp; <a class="btn" href="#dead-ends">Dead ends we kept</a></p>
+</header>
+
+<div class="wrap story-layout">
+<nav class="rail" aria-label="Chapters"><h2>Chapters</h2><ol id="railList"></ol>
+  <div class="extra"><h2>Also on this page</h2><ol><li><a href="#ledger"><span class="n">&#9656;</span><span class="t">Decision ledger</span></a></li><li><a href="#dead-ends"><span class="n">&#9656;</span><span class="t">Dead ends</span></a></li><li><a href="#next"><span class="n">&#9656;</span><span class="t">What is next</span></a></li></ol></div>
+</nav>
+
+<div class="chapters">
+
+<!-- ============ 1 ============ -->
+<article class="chapter" id="ch1" data-short="Baseline and the cheat">
+  <div class="ch-head"><div class="ch-num">01</div><div><h2>A baseline that barely moves, and a policy that cheats</h2><div class="ch-tags"><span class="chip">S0</span><span class="chip">S1</span><span class="chip bad">void results</span></div></div></div>
+  <div class="step q"><h3>The question</h3><p>Can a learned policy make the ballbot follow a velocity command at 1 m/s, in any direction?</p></div>
+  <div class="step"><h3>What we tried</h3>
+    <p>S0 used the limits from the base repository: wheel torque 10 N m, wheel damping 0.8, a fall declared at 20 degrees of tilt. The robot balanced and barely moved: it achieved only 6% of the commanded speed at 1 m/s. So we gave the policy more authority (S1): torque 30, damping 0.1, tilt limit 70 degrees.</p>
+    <p>The reward went up and the speed reached 0.2. It looked like progress.</p></div>
+  <div class="step"><h3>The data</h3>
+    <div class="cards-row">
+      <div class="card"><div class="stat warn">0.06</div><small>S0 speed ratio at 1 m/s</small></div>
+      <div class="card"><div class="stat bad">0.2 to 0.6 s</div><small>time until the S1 policy had kicked the ball out</small></div>
+      <div class="card"><div class="stat bad">never</div><small>how often the 70-degree tilt check fired</small></div>
+    </div>
+    <div class="tablewrap"><table class="mini-table"><thead><tr><th>Limit</th><th>S0 baseline</th><th>S1 free</th></tr></thead><tbody>
+      <tr><td>wheel torque</td><td>10 N m</td><td>30 N m</td></tr><tr><td>wheel damping</td><td>0.8</td><td>0.1</td></tr><tr><td>tilt termination</td><td>20 deg</td><td>70 deg</td></tr></tbody></table></div>
+  </div>
+  <div class="step d"><h3>The decision, and why</h3>
+    <p>Throw the S1 results away. A trace of an S1 episode showed the policy shoving the ball out from under itself within 0.2 to 0.6 seconds and then standing on its own wheels. The body stayed upright, so the tilt check never fired and the reward kept paying. We added an explicit <strong>off-ball termination</strong> (<code>max_ball_offset_deg</code>, the angle of the line from ball centre to body from vertical) and logged <code>off_ball_deg</code> in every evaluation.</p>
+    <details class="more"><summary>The exploit, precisely</summary><div><p>The constraint that defines a ballbot, that it stays on the ball, was never in the reward or the termination. Raising the tilt limit to 70 degrees removed the only proxy for it. The policy found the gap in under a second of simulated time. The paper draft files this under specification gaming (reward misspecification).</p></div></details></div>
+  <div class="step f"><h3>What surprised us</h3><div class="callout warn"><p>A policy that looks better on every number you chose to log can be cheating on the one you did not. The lesson recorded in the log is short: <strong>check the constraint that defines the task</strong>.</p></div></div>
+  <p class="src">Source: <code>docs/research/tracking_study_log.md</code> (S0, S1); <code>paper_v2/main.tex</code> (related work).</p>
+</article>
+
+<!-- ============ 2 ============ -->
+<article class="chapter" id="ch2" data-short="Honest balance">
+  <div class="ch-head"><div class="ch-num">02</div><div><h2>Staying on the ball: honest balance, smoothness, and reward shaping</h2><div class="ch-tags"><span class="chip">S2</span><span class="chip">S3</span><span class="chip">S4</span><span class="chip">S5</span></div></div></div>
+  <div class="step q"><h3>The question</h3><p>With the cheat closed, how fast can a policy go, and which reward makes it go faster?</p></div>
+  <div class="step"><h3>What we tried</h3>
+    <ul>
+      <li><strong>S2, on the ball.</strong> Honest balance, speed ratio 0.21 to 0.33. Yaw tracking appeared for the first time.</li>
+      <li><strong>S3, smoothness.</strong> An action-rate penalty and a soft ball-offset penalty cut jitter by 8 to 500 times, but speed fell further.</li>
+      <li><strong>S4, lean reward.</strong> Pay the policy for leaning into the command while it is below the commanded speed. Best result 0.36.</li>
+      <li><strong>S5, error reward.</strong> Reward the tracking error itself, with speed commands up to 1.5 or 2 m/s. Still 0.15 to 0.31, though yaw improved.</li>
+    </ul></div>
+  <div class="step"><h3>The data</h3>
+    <figure class="viz" data-viz="ch2"><figcaption>Rewards changed; the ratio barely did. Range text shows the spread across runs of that stage. The last bar is the result of chapter 3. Source: tracking_study_log.md.</figcaption></figure></div>
+  <div class="step d"><h3>The decision, and why</h3>
+    <p>Stop reshaping the reward. Two probes pointed elsewhere. First, the S4 policies used only 1 to 3 percent of available torque and leaned about 1 degree; given a 2 m/s command, the best peaked at 1.21 m/s. That is learned caution, not a physical limit. Second, a fall probe on 30 random-command episodes found that every S2 to S5 policy fell in 20 to 30 of them, and <strong>23 of 29 falls for <code>trk_a</code> (24 of 29 for <code>trk_c</code>) happened under yaw commands above 1 rad/s</strong>. Training had sampled yaw up to plus or minus 3 rad/s.</p></div>
+  <div class="step f"><h3>What failed or surprised us</h3>
+    <ul><li>A strong smoothness penalty applied before the policy can move simply freezes it. Order matters: track first, smooth later.</li>
+    <li>A hand-tuned cascaded PD controller, 48 gain and sign combinations, never balanced. Feeding back tilt alone lets the ball run away. We dropped it and decided a proper model-based baseline was owed (chapter 6).</li></ul></div>
+  <p class="src">Source: <code>docs/research/tracking_study_log.md</code> (S2 to S5).</p>
+</article>
+
+<!-- ============ 3 ============ -->
+<article class="chapter" id="ch3" data-short="The spin cap">
+  <div class="ch-head"><div class="ch-num">03</div><div><h2>Why spin commands above 1 rad/s broke learning</h2><div class="ch-tags"><span class="chip">S6</span><span class="chip">S7</span><span class="chip">S8</span><span class="chip good">biggest single jump</span></div></div></div>
+  <div class="step q"><h3>The question</h3><p>If the falls cluster on fast spin commands, is the command distribution, not the reward, what limits tracking?</p></div>
+  <div class="step"><h3>What we tried</h3>
+    <p><strong>S6:</strong> cap the commanded yaw rate at 1 rad/s and retrain. <strong>S7:</strong> keep the best policies and refine them, with a four times larger action-rate penalty for <code>trk_h</code>. <strong>S8:</strong> widen the spin range again to 1.5 rad/s with a curriculum, to see what it costs.</p></div>
+  <div class="step"><h3>The data</h3>
+    <figure class="viz" data-viz="ch3a"><figcaption>Capping spin and starting from scratch lifts the ratio from 0.31 to 0.91, and a second seed reproduces it (0.95). Continuing an already timid policy under the new cap reaches only 0.59.</figcaption></figure>
+    <div class="cards-row">
+      <div class="card"><div class="stat good">0.98</div><small>ratio at 0.5 m/s, <code>trk_f</code></small></div>
+      <div class="card"><div class="stat good">0.147 &rarr; 0.013</div><small>action rate, <code>trk_g</code> refine, no loss at 0.5 m/s</small></div>
+      <div class="card"><div class="stat good">3/30</div><small>falls for <code>trk_h</code>, completes the square course</small></div>
+    </div>
+    <figure class="viz" data-viz="ch3b"><figcaption>S8: widening spin back to 1.5 rad/s improved yaw at plus or minus 1 rad/s but lost translation speed, and random-command falls rose to 19, 13 and 22 of 30 on the harder distribution.</figcaption></figure></div>
+  <div class="step d"><h3>The decision, and why</h3>
+    <p>Fix the yaw range at 1 rad/s, and <strong>retrain from scratch whenever the command distribution changes</strong>. Infeasible commands in training teach the policy that moving is dangerous, which suppresses learning of the feasible ones. The effect is a property of the training distribution, not of the reward shape we had spent three stages tuning. S7 then confirmed the order: track first, smooth afterwards.</p>
+    <details class="more"><summary>Numbers behind the spin fixes</summary><div>
+      <p>Continuing timid policies reached only 0.59, and one collapsed into spinning (30 of 30 falls). In S8 the yaw tracking at plus or minus 1 rad/s improved (<code>spin_a</code> -0.92/+0.76, <code>spin_b</code> -0.89/+0.87, <code>spin_c</code> -0.95/+0.82) but ratios at 1 m/s fell to 0.87, 0.70 and 0.75, against 0.87, 0.81 and 0.95 before. The heading weakness did not change (0.31 to 0.34 m/s).</p></div></details></div>
+  <div class="step f"><h3>What failed or surprised us</h3><div class="callout warn"><p>Widening the spin range does not come free: it trades translation for yaw, exactly as the S5 finding predicts. Spin above 1 rad/s stays an open problem in the log.</p></div></div>
+  <p class="src">Source: <code>docs/research/tracking_study_log.md</code> (S6, S7, S8); <code>paper_v2/main.tex</code> abstract.</p>
+</article>
+
+<!-- ============ 4 ============ -->
+<article class="chapter" id="ch4" data-short="Things that lied">
+  <div class="ch-head"><div class="ch-num">04</div><div><h2>Things that looked wrong: the video, the heading, and the clock</h2><div class="ch-tags"><span class="chip">video fix</span><span class="chip">heading</span><span class="chip">throughput</span></div></div></div>
+  <div class="step q"><h3>The question</h3><p>Are the weird things we see in the renders failures of the controller, or of our measurement?</p></div>
+  <div class="step"><h3>What we tried, and found</h3>
+    <p><strong>The video artifact.</strong> In the renders the robot seemed to wander away from its planned path, as if it had lost the plot. It had not. The 8 second episode limit was silently resetting the robot to its start pose while the commanded path kept going. Videos now disable the time limit, draw the whole planned path (green), the actual path (red) and the target point, stop with a banner on a <em>real</em> fall, and report the distance from the planned point.</p>
+    <p><strong>Heading.</strong> After a 4 rad turn, a world-frame command was executed in the wrong direction. Every training episode had started with the same heading, so the policy had learned a direction table, not a skill. We added <code>init_yaw_random</code> and a heading test to the benchmark.</p>
+    <p><strong>The clock.</strong> Profiling showed the Python RK4 contact-frame stepper, four forward passes per physics step, dominated cost. The <code>implicitfast</code> integrator needs one pass and keeps the same contact-frame friction fix.</p></div>
+  <div class="step"><h3>The data</h3>
+    <figure class="viz" data-viz="ch4a"><figcaption>The heading test: 0.5 m/s from six random start yaws and four directions. Both PPO policies mis-track by about 0.3 m/s (falls 21% for trk_h, 38% for trk_g). The LQR of chapter 6, which has no heading preference, errs by 0.02.</figcaption></figure>
+    <figure class="viz" data-viz="ch4b"><figcaption>Three times faster. Validation: trk_g and trk_h, trained on RK4, give the same speed curve within 0.01 m/s on implicitfast; falls for trk_h move from 3/30 to 5/30.</figcaption></figure></div>
+  <div class="step d"><h3>The decision, and why</h3>
+    <p>Randomise the start yaw in training, test heading explicitly, and use <code>implicitfast</code> from S9 onward. We switched only after showing that policies trained on the slow integrator behave the same on the fast one.</p></div>
+  <div class="step f"><h3>What surprised us</h3><div class="callout"><p>Two of the three problems were in our instruments, not in the controller. The heading weakness, though, was real, and it is the reason the later chapters care about heading error as a headline metric.</p></div></div>
+  <p class="src">Source: <code>docs/research/tracking_study_log.md</code> (Video fix, Heading, Throughput).</p>
+</article>
+
+<!-- ============ 5 ============ -->
+<article class="chapter" id="ch5" data-short="Deriving the physics">
+  <div class="ch-head"><div class="ch-num">05</div><div><h2>Deriving the physics, then checking it against what the policies learned</h2><div class="ch-tags"><span class="chip model">derived model</span><span class="chip model">theory test</span></div></div></div>
+  <div class="step q"><h3>The question</h3><p>The prior report wrote down M q'' + C q' + G = tau without deriving it. What does the actual robot's physics say it can and cannot do?</p></div>
+  <div class="step"><h3>What we tried</h3>
+    <p>We extracted parameters from the simulator model (body 3.853 kg with its centre of mass 0.1306 m above the ball centre, ball 0.168 kg, radius 0.09 m), modelled the omniwheel transmission and the reflected rotor inertia (0.1025 kg m^2, 188 times the ball's own), and wrote the planar Lagrangian. Four things fall out of it.</p>
+    <ul>
+      <li><strong>An unstable pole</strong> at 4.79 1/s: a fall takes about a fifth of a second to develop.</li>
+      <li><strong>A non-minimum-phase zero</strong> at 5.78 1/s, independent of the drive: to go forward you must first push the ball backwards so the body tips forward.</li>
+      <li><strong>A momentum identity:</strong> adding the two Lagrange equations cancels torque and damping, so a combination of body and ball motion is conserved by the actuators.</li>
+      <li><strong>A lean law:</strong> sin(theta) = kappa a, with kappa = 0.176 rad per m/s^2 (10.1 degrees of lean per m/s^2 of acceleration).</li>
+    </ul>
+    <details class="more"><summary>The equations</summary><div>
+      <div class="eq">z = sqrt( m_a g l / ( I_a + m_a l^2 + m_a l r ) ) = 5.78 1/s<br>p = 4.79 1/s (largest positive eigenvalue of the linearised A)<br>sin(theta) = kappa a, kappa = 0.176 rad per m/s^2</div>
+      <p>m_a is the body mass, l the centre-of-mass height above the ball centre, r the ball radius, I_a the body pitch inertia (0.0366 kg m^2). The omniwheel transmission W maps ball-relative angular velocity to wheel rates; the planar projection n = (3.61, -1.11, -2.50) gives J_eff = J_w |n|^2. Script: <code>scripts/study/ballbot_model.py</code>.</p></div></details></div>
+  <div class="step"><h3>The data</h3>
+    <figure class="viz" data-viz="ch5a"><figcaption>Because z/p is only 1.21, no linear controller can have a comfortable robustness margin: the usual window between p and z/2 is empty.</figcaption></figure>
+    <p>The test of a derived model is whether trained systems obey it. In the full 3-D simulator, the momentum identity held on trajectories of all three controllers (slope 0.93, 0.88, 0.89; R^2 0.82, 0.60, 0.60), and all three showed the predicted non-minimum-phase reversal (1.7, 0.3 and 1.1 cm backwards first).</p>
+    <figure class="viz" data-viz="ch5b"><figcaption>The PPO policies were trained from reward alone and never saw the lean law. They rediscovered it.</figcaption></figure></div>
+  <div class="step d"><h3>The decision, and why</h3>
+    <p>Treat the derived model as the design basis for everything that follows: a model-based baseline (chapter 6), and a way to read learned behaviour. It earned that trust by predicting data it was not fitted to.</p></div>
+  <div class="step f"><h3>Caveats we kept</h3><ul>
+    <li>Soft contact makes the ball creep at the floor, which corrupts instantaneous-acceleration comparisons.</li>
+    <li>Wheel rates differ from the model's W by a constant 27 to 28 percent (an effective rolling radius), not by a speed-dependent slip.</li></ul></div>
+  <p class="src">Source: <code>docs/research/tracking_study_log.md</code> (First-principles model, Theory vs learned); <code>scripts/study/ballbot_model.py</code>, <code>scripts/study/analyze_theory.py</code>; <code>paper_v2/main.tex</code>.</p>
+</article>
+
+<!-- ============ 6 ============ -->
+<article class="chapter" id="ch6" data-short="LQR">
+  <div class="ch-head"><div class="ch-num">06</div><div><h2>LQR: right state, a governor, an integral, and a wall at 1 m/s</h2><div class="ch-tags"><span class="chip model">LQR</span><span class="chip bad">1 m/s edge</span></div></div></div>
+  <div class="step q"><h3>The question</h3><p>If the physics is known, how far can a controller designed only on the derived model go, with no simulator tuning?</p></div>
+  <div class="step"><h3>What we tried</h3>
+    <p>A linear quadratic regulator on the derived (A, B), gains of magnitude K = (0, 76.1, 4.33, 11.6) (signs follow the torque convention of the model). Three additions were needed before it worked on the full simulator:</p>
+    <ol><li><strong>The right state.</strong> It must use the ball's rotation as a state. Measured linear velocity of the ball destabilises it, because of the contact creep from chapter 5.</li>
+    <li><strong>A reference governor.</strong> Acceleration commands are limited to 0.5 m/s^2, because the non-minimum-phase zero punishes sudden reference changes.</li>
+    <li><strong>A slow outer integral</strong> on measured velocity, to remove steady-state error.</li></ol></div>
+  <div class="step"><h3>The data</h3>
+    <div class="cards-row">
+      <div class="card"><div class="stat model">1.00 to 1.08</div><small>speed ratio at 0.25 to 0.75 m/s</small></div>
+      <div class="card"><div class="stat model">0.02</div><small>heading error, m/s</small></div>
+      <div class="card"><div class="stat model">0.0002</div><small>action rate, about 50&times; smoother than PPO</small></div>
+      <div class="card"><div class="stat bad">every trial</div><small>falls at 1 m/s, and on the square course's turning leg</small></div>
+    </div></div>
+  <div class="step d"><h3>The decision, and why</h3>
+    <p>Keep the LQR as the accuracy and smoothness reference in every benchmark (<code>lqr</code>). It beats the learned policies at low speed and ignores heading, and it fails exactly where they succeed, which is the argument for combining them.</p></div>
+  <div class="step f"><h3>The 1 m/s wall: a hypothesis we killed</h3>
+    <p>Both families fail near 1 m/s. For the LQR we measured: torque below 17 percent of the limit, wheel normal forces steady at 17 to 18 N, no growing slip. Failure coincided with a yaw spin-up and a growing body-ball oscillation. The tempting explanation was 3-D gyroscopic coupling of the wheel rotors (about 0.2 N m s per wheel at 40 rad/s).</p>
+    <figure class="viz" data-viz="ch6a"><figcaption>If rotor gyroscopics were the cause, lighter rotors should push the edge outward. They pull it inward slightly: gyroscopic hypothesis refuted. Remaining suspects: omniwheel contact at high sliding speed, and ball-floor contact. All three designs fall from 1 m/s.</figcaption></figure>
+    <details class="more"><summary>A side-finding on sampling</summary><div><p>A continuous-time LQR with light rotors is unstable once sampled: a fast closed-loop pole at -135 1/s is too fast for 100 Hz. We added <code>discrete_dt</code> (zero-order hold plus the discrete Riccati equation) to the controller. Script: <code>scripts/study/edge_armature.py</code>.</p></div></details></div>
+  <p class="src">Source: <code>docs/research/tracking_study_log.md</code> (LQR baseline, 1 m/s edge, edge vs rotor inertia); <code>ballbot_gym/controllers/lqr.py</code>.</p>
+</article>
+
+<!-- ============ 7 ============ -->
+<article class="chapter" id="ch7" data-short="Residual on LQR">
+  <div class="ch-head"><div class="ch-num">07</div><div><h2>Residual learning on top of the LQR</h2><div class="ch-tags"><span class="chip hybrid">S10</span><span class="chip model">LQR</span><span class="chip learned">PPO</span></div></div></div>
+  <div class="step q"><h3>The question</h3><p>The LQR is precise but brittle at the edge; PPO is robust but sloppy. Can a small learned correction on top of the LQR keep the first and gain the second?</p></div>
+  <div class="step"><h3>What we tried</h3>
+    <p><code>residual_lqr: true</code>: the applied action is the LQR action plus beta times the policy output.</p>
+    <ul><li><strong>First attempt</strong> (<code>res_a/b</code>: beta 0.3, random initial policy, speeds to 1.5): worse than LQR alone, 25 to 50 percent falls at 0.5 m/s. The untrained residual destabilised the LQR: first episodes lasted about 100 steps versus about 700 for the LQR by itself, and the commands included speeds the LQR cannot survive.</li>
+    <li><strong>Corrected</strong> (<code>res_c</code>): zero-initialised output so the starting controller is exactly the LQR (<code>--zero-init-actor</code>), beta 0.1, speeds and spin capped at 1.</li>
+    <li><strong>Bigger</strong> (<code>res_d</code>): res_c continued with beta 0.2, domain randomisation and pushes.</li></ul></div>
+  <div class="step"><h3>The data</h3>
+    <figure class="viz" data-viz="ch7a"><figcaption>The residual fixes the LQR's weak axis: yaw, while keeping its strengths (heading error 0.019, no grid falls, action rate 0.0002, ratio 1.00 to 1.02 up to 0.5 m/s).</figcaption></figure>
+    <figure class="viz" data-viz="ch7b"><figcaption>Giving the residual more authority made it fight the LQR: overshoot (0.66 at a 0.5 m/s command), 31% falls at 0.5 m/s, heading error 0.13.</figcaption></figure></div>
+  <div class="step d"><h3>The decision, and why</h3>
+    <p>Keep <code>res_c</code> as the residual reference, with <strong>zero initialisation and a small beta</strong>. A residual with a small beta is enough to shape yaw, where the LQR is weak, but not enough to rescue balance near the edge, where the LQR is simply wrong.</p></div>
+  <div class="step f"><h3>What failed</h3>
+    <div class="callout bad"><p>res_c falls 19% of the time at 0.75 m/s and 94% at 1 m/s, and 6 of 10 pushes at 30 N bring it down, where the LQR survives all ten. The residual did not move the LQR's 1 m/s wall, and the bigger one made things worse. (Residual-on-LQR did later turn out best on rough ground: chapter 10.)</p></div></div>
+  <p class="src">Source: <code>docs/research/tracking_study_log.md</code> (Residual RL, S10 residual results, res_d).</p>
+</article>
+
+<!-- ============ 8 ============ -->
+<article class="chapter" id="ch8" data-short="Robustness">
+  <div class="ch-head"><div class="ch-num">08</div><div><h2>Pushes, randomised physics, and the damping brittleness</h2><div class="ch-tags"><span class="chip">S9</span><span class="chip">S11</span><span class="chip learned">domain randomisation</span></div></div></div>
+  <div class="step q"><h3>The question</h3><p>How well do the controllers survive pushes and a robot that is not exactly the one they were trained on?</p></div>
+  <div class="step"><h3>What we tried</h3>
+    <p>A push benchmark (<code>scripts/study/eval_push.py</code>): drive at 0.5 m/s, one 50 ms push at t = 2 s, 10 trials per force, any fall counts. Then a randomised-physics test: mass, wheel friction, wheel damping, torque limit, action latency and sensor noise. Then domain randomisation (DR) in training (S9, S11).</p></div>
+  <div class="step"><h3>The data</h3>
+    <div class="tablewrap"><table class="mini-table"><thead><tr><th>Falls of 10, nominal physics</th><th>40 N push</th><th>50 N push</th></tr></thead><tbody>
+      <tr><td>LQR</td><td>6</td><td>9</td></tr><tr><td>trk_g</td><td>1</td><td>5</td></tr><tr><td>trk_h</td><td>0</td><td>0</td></tr><tr><td>rob_a (DR)</td><td>0</td><td>0</td></tr></tbody></table></div>
+    <p>With randomised physics and no push, trk_g falls 7 of 10, trk_h 6, LQR 4, and the DR-trained rob_a 0. So which parameter hurts?</p>
+    <figure class="viz" data-viz="ch8a"><figcaption>One parameter at a time on trk_g. The nominal-trained policy is brittle to <strong>drivetrain damping</strong>. It was never shown a robot whose wheels dragged differently.</figcaption></figure></div>
+  <div class="step d"><h3>The decision, and why</h3>
+    <p>Fine-tuning a tracking policy under DR works for survival (rob_b: 0 of 10 falls at every nominal push up to 50 N) but brings the timid optimum back. Starting <em>from scratch</em> under the harder distribution did better: mid-training (10.5M of 20M steps) <code>robs_b</code> already had no grid falls and a ratio of 0.48 at 1 m/s. We also narrowed damping to 0.07 to 0.15, a tolerance one can actually measure on a bench.</p>
+    <figure class="viz" data-viz="ch8b"><figcaption>Robustness has a speed price. Note the pattern: a constant ratio at every speed (robs_a about 0.35, robs_b about 0.50) means the steady-state gain is below one, not that there is a speed cap. That observation is what motivates the next chapter.</figcaption></figure></div>
+  <div class="step f"><h3>What failed or surprised us</h3>
+    <ul><li>A first version of the benchmark counted only falls after the push. Fixed.</li>
+    <li>Running more than 10 evaluation processes next to training ran the machine out of memory (OpenBLAS threads). Fix: <code>OPENBLAS_NUM_THREADS=1</code> and small batches.</li>
+    <li><code>rob_a_h</code> (fine-tuned from trk_h): ratio 0.29 and some grid falls.</li></ul></div>
+  <p class="src">Source: <code>docs/research/tracking_study_log.md</code> (Robustness benchmark, S9, S11 results).</p>
+</article>
+
+<!-- ============ 9 ============ -->
+<article class="chapter" id="ch9" data-short="Cascade integral">
+  <div class="ch-head"><div class="ch-num">09</div><div><h2>The cascade integral: closing the loop around a timid policy</h2><div class="ch-tags"><span class="chip">S12</span><span class="chip">S13</span><span class="chip learned">PPO + integral</span></div></div></div>
+  <div class="step q"><h3>The question</h3><p>If a robust policy tracks only half the commanded speed, can we wrap an outer loop around it so the speed comes out right?</p></div>
+  <div class="step"><h3>What we tried</h3>
+    <p>An outer integral on the velocity error that raises the command the policy sees: c' = c + ki times the integral of (c - v), saturated at the trained range of 1.5 m/s with anti-windup (<code>scripts/study/policy_io.py</code>, run name <code>&lt;run&gt;@ki=&lt;k&gt;</code>). In S13 we also tried putting the integrated error <em>inside</em> the policy as an observation (<code>obs_vint</code>).</p></div>
+  <div class="step"><h3>The data</h3>
+    <figure class="viz" data-viz="ch9"><figcaption>The amber dashed line is robs_b alone, drawn from its measured ratio of about 0.50 at every speed. With the integral (ki 1) the same policy reaches 0.25, 0.51, 0.73 and 0.79 m/s; robs_c with the integral reaches 0.25, 0.51, 0.76 and 0.93.</figcaption></figure>
+    <div class="cards-row">
+      <div class="card"><div class="stat learned">0.27 &rarr; 0.06</div><small>heading error, robs_b without and with the integral (m/s)</small></div>
+      <div class="card"><div class="stat learned">0.045</div><small>heading error, robs_c with the integral: the most accurate robust controller</small></div>
+      <div class="card"><div class="stat good">0/10</div><small>falls at every nominal push up to 50 N, robs_b@ki=1</small></div>
+    </div></div>
+  <div class="step d"><h3>The decision, and why</h3>
+    <p>Keep the integral as an outer wrapper, saturating at the trained range. The inner policy supplies robustness and the integral supplies accuracy: the same division of labour that the LQR (also with an integral) gets from model knowledge. Putting the integrated error into the observation (<code>robs_c</code>) helped the inner ratio (0.62 and 0.54) and the combination was best.</p></div>
+  <div class="step f"><h3>What failed or surprised us</h3>
+    <ul><li>An earlier saturation at 1.0 m/s was a bug of reasoning: with an inner gain of 0.5 the cap pinned the achieved speed near 0.5.</li>
+    <li>The 1 m/s edge remains: robs_c@ki1 falls 38% of trials at 1.0 m/s, and on the square course the 1 m/s leg was 0.47 short and the robot fell on the turning leg after it.</li>
+    <li>A naive position-feedback loop pushes the speeds to the edge and is listed as an open problem. Velocity tracking does not correct position drift.</li>
+    <li>Training <code>robs_b</code> ten million steps longer made it smoother (action rate 0.0014), not faster.</li></ul></div>
+  <p class="src">Source: <code>docs/research/tracking_study_log.md</code> (S12 cascade, S13 results, Open problems).</p>
+</article>
+
+<!-- ============ 10 ============ -->
+<article class="chapter" id="ch10" data-short="Rough ground and steps">
+  <div class="ch-head"><div class="ch-num">10</div><div><h2>Rough ground, steps, and the traction limit</h2><div class="ch-tags"><span class="chip">Perlin</span><span class="chip">S14</span><span class="chip">S15</span><span class="chip warn">physical limit</span></div></div></div>
+  <div class="step q"><h3>The question</h3><p>Do the controllers cope with uneven floors, and can they climb a small step, the way a book on a floor would demand?</p></div>
+  <div class="step"><h3>What we tried</h3>
+    <p><strong>Perlin terrain without terrain training</strong> (4 and 8 cm amplitude). At 0.5 m/s all but trk_h track within 0.02 m/s. At 0.75 m/s res_c had no falls on either amplitude, the LQR 12 to 25 percent, robs_b and robs_c with the integral 12 to 75 percent. Residual-on-LQR generalises best to rough ground.</p>
+    <p><strong>S14, terrain training</strong> (random Perlin 0 to 10 cm): it did not help. <code>res_t</code> was about equal to res_c, and <code>robs_t</code> with the integral degraded with amplitude (62 to 88 percent falls at 12 cm).</p>
+    <p><strong>Step edges</strong> (<code>eval_step.py</code>): a raised floor at y = 1 m with a 2 cm bevel; success means cross, stop, and hold for 2 seconds. An early version counted success at the crossing and used identical trials; both were fixed.</p>
+    <p><strong>S15, step training</strong> on book terrain (steps 0 to 4 cm, commands within 45 degrees of straight ahead at 0.3 to 1.0 m/s): <code>climb_a</code> from robs_c, <code>climb_b</code> from res_c.</p></div>
+  <div class="step"><h3>The data</h3>
+    <figure class="viz" data-viz="ch10a"><figcaption>Training on steps gave no gain over the flat-trained policy: at 3 cm, climb_a made 2 of 10 against 3 for robs_c. climb_b was worse (2 of 10 at 2 cm). At 0.4 m/s nobody climbs 2 cm.</figcaption></figure>
+    <p>For the LQR, a speed sweep shows a climb window: minimum speeds of about 0.3, 0.4, 0.5 and 0.5 to 0.6 m/s for 1, 1.5, 2 and 2.5 cm steps, failure above about 0.8 m/s. The minimum sits below sqrt(2 g h) because the motors add energy.</p></div>
+  <div class="step d"><h3>The decision, and why</h3>
+    <p>Stop training for steps: <strong>the limit is physical, not learned</strong>. A static estimate says the horizontal force needed to roll the ball over a step is F = W tan(alpha) with cos(alpha) = (r - h)/r.</p>
+    <figure class="viz" data-viz="ch10b"><figcaption>At 3 cm the need (44 N) is below the roughly 52 N of friction the three wheels can deliver; at 4 cm it is above.</figcaption></figure>
+    <figure class="viz" data-viz="ch10c"><figcaption>Scaling the wheel-ball friction (eval_step.py --fric-scale) turns 3 cm from 1 of 4 into 4 of 4, as the traction story predicts. Only 4 trials per cell: suggestive, not conclusive.</figcaption></figure>
+    <p>The design implication for a small real robot: a larger ball relative to step height, more wheel preload, higher-friction wheels.</p></div>
+  <div class="step f"><h3>What failed or surprised us</h3><ul>
+    <li>Terrain training and step training both failed to move the limit. Both are kept in the dead-ends list.</li>
+    <li>The earlier book study, in the original simulator envelope, never crossed 1 cm.</li>
+    <li>The frozen depth features from the two ball-facing cameras were ignored by the policy (blank depth changed nothing), because those cameras mostly see the ball itself. This is why the roadmap moved to side-mounted time-of-flight sensors.</li></ul></div>
+  <p class="src">Source: <code>docs/research/tracking_study_log.md</code> (Perlin terrain, S14, Step edges, S15, Traction hypothesis); <code>docs/research/ballbot_v2_roadmap.md</code> section 1.</p>
+</article>
+
+<!-- ============ 11 ============ -->
+<article class="chapter" id="ch11" data-short="Testing the literature">
+  <div class="ch-head"><div class="ch-num">11</div><div><h2>Testing the literature's claims on our own robot</h2><div class="ch-tags"><span class="chip">S16</span><span class="chip good">1 supported</span><span class="chip bad">2 refuted</span></div></div></div>
+  <div class="step q"><h3>The question</h3><p>A survey of ballbot papers (see the <a href="literature.html">literature page</a>) suggested why our LQR hits a wall and why small robots fail. Do those explanations hold in our simulator?</p></div>
+  <div class="step"><h3>What we tried</h3>
+    <div class="tablewrap"><table class="mini-table"><thead><tr><th>Hypothesis from the literature</th><th>Test</th><th>Verdict</th></tr></thead><tbody>
+      <tr><td>Control rate is the limit</td><td>LQR on nominal and half-scale robots at 100, 250 and 500 Hz</td><td><span class="chip bad">refuted</span> identical falls at 1.0 m/s and for s = 0.5; consistent with a delay bound exp(pT) of about 1.1 at 10 ms</td></tr>
+      <tr><td>Friction is the limit</td><td>wheel-ball cross friction x2, x4; roll friction x10</td><td><span class="chip bad">refuted</span> the LQR's 1 m/s limit and the s = 0.5 failure do not move; PPO tracks 1 m/s (0.91 to 0.95), so the limit belongs to the linear controller or planar model</td></tr>
+      <tr><td>Steeper wheel contact angle helps (micro-ballbot paper and patent: 60 to 70 deg zenith; ours 51)</td><td>design parameter <code>dz</code> rotates each wheel assembly about the ball centre; LQR pushed with 1 x body weight, 6 trials per cell</td><td><span class="chip good">supported</span> see chart</td></tr></tbody></table></div></div>
+  <div class="step"><h3>The data</h3>
+    <figure class="viz" data-viz="ch11"><figcaption>Contact angle changes push survival strongly. Small samples (6 to 8 trials each). Reflected rotor inertia also drops from 0.103 to 0.043 kg m^2 at 66 degrees, but the sensitivity floor rises from 10.7 to 12.9.</figcaption></figure></div>
+  <div class="step d"><h3>The decision, and why</h3>
+    <p>Do not chase control rate or wheel friction; treat the wheel contact angle as a first-class <strong>design variable</strong>. The planar model predicts <em>no</em> effect on traction-limited torque (the extra normal force N ~ 1/cos(zeta) is cancelled by the shorter lever arm), so here the simulator disagrees with the theory and the model misses a mechanism.</p></div>
+  <div class="step f"><h3>Also tested</h3>
+    <p>A more realistic actuator (<code>env.motor</code>: first-order current lag, back-EMF torque-speed curve, Coulomb friction; 150 rad/s no-load, 3 N m stall, 50 mN m friction, 3 ms lag) makes the nominal LQR lose 0.8 m/s tracking (falls 4 of 4), yet it still survives pushes of 1 x weight (6 of 6). Lesson: controllers must be retrained with the actuator model in the loop.</p></div>
+  <p class="src">Source: <code>docs/research/tracking_study_log.md</code> (S16 tests of the literature hypotheses); <code>docs/research/design_rules.md</code>.</p>
+</article>
+
+<!-- ============ 12 ============ -->
+<article class="chapter" id="ch12" data-short="Design space and hybrid">
+  <div class="ch-head"><div class="ch-num">12</div><div><h2>The design-space study and the interleaved hybrid controller</h2><div class="ch-tags"><span class="chip">S16</span><span class="chip hybrid">gated hybrid</span><span class="chip warn">still training</span></div></div></div>
+  <div class="step q"><h3>The question</h3><p>Given what works where (LQR for accuracy, robust PPO for pushes, residual-on-LQR for rough ground), can one pipeline combine them, and how do the <em>physical</em> choices (scale, ball mass, body mass, centre-of-mass height, motors, rotor inertia) change what is achievable and learnable?</p></div>
+  <div class="step"><h3>What we tried</h3>
+    <p><strong>Design space.</strong> A design is (s, kball, kbal, zb, J, tau, damp): geometric scale, ball-mass multiplier, ballast multiplier, ballast height, rotor inertia, wheel torque, damping. For each variant the tool re-derives the planar model and reports the pole, the zero, a sensitivity bound, the lean law, torque authority and acceleration limits (<code>scripts/study/design_space.py</code>).</p>
+    <p><strong>Hybrid.</strong> The policy outputs three wheel actions plus a gate logit; the applied action is (1 - g) times the LQR action plus g times the PPO action, with g between 0 and 1. It observes the LQR action and a 4-number morphology context, and each reset draws a design from a pool, so one policy meets a family of ballbots. The output layer starts at zero with gate bias -0.8 (g = 0.1), so training starts from almost-LQR and the cascade integral can still wrap it. The residual of chapter 7 is the special case a_pi = a_LQR + beta u.</p></div>
+  <div class="step"><h3>The data</h3>
+    <figure class="viz" data-viz="ch12a"><figcaption>The structural floor on peak sensitivity is set by the topology: z/p stays within 1.08 to 1.29 across the whole sweep. Weight distribution only tunes it: a low centre of mass helps, a high one hurts a lot.</figcaption></figure>
+    <p>Other analytic findings: p scales as s to the minus one half (a half-size robot must be controlled sqrt(2) faster); the lean constant stays between 7.3 and 14.8 deg per m/s^2 over the whole sweep; the LQR-recoverable linear tilt falls below 20 degrees at a torque authority of about 6.9 (tau of 6 N m per wheel at s = 1).</p>
+    <p><strong>Zero-shot LQR</strong> (model re-derived per variant, no training) holds 9 of 13 designs without a fall at the slowest test speed (4 of 13 at 0.8 of the scaled speed) and fails at once on the half-scale robot and the 0.25-times ball. The planar model is least faithful when the ball is much lighter than the body (mass ratio above about 60).</p>
+    <figure class="viz" data-viz="ch12b"><figcaption>Half-way training progress on six of the 13 designs (<code>run_queue_design.sh</code>, 5M steps each). PPO already balances the half-scale robot for longer than the LQR can at all. s1.5 is struggling. Final numbers were not in the log at the time of writing.</figcaption></figure>
+    <figure class="viz" data-viz="gate"><figcaption>The hybrid at a glance. g = 0 is the model-based controller, g = 1 pure PPO.</figcaption></figure></div>
+  <div class="step d"><h3>The decision, and why</h3>
+    <p>Interleave rather than choose. Each family beat the other somewhere: the LQR wins accuracy and smoothness below 0.75 m/s, PPO survives the nonlinear regime (1 m/s) and pushes, the residual wins on rough floors. A learned gate lets the data decide, and starting at g = 0.1 keeps the safety of the model while it learns. The design rules that fell out of the sweep are summarised in <code>docs/research/design_rules.md</code>: a structural sensitivity floor (about 20 dB), a traction limit of about 0.31 N m per wheel (the 30 N m motor limit has a 133 times margin), and a delay budget of about 145 ms.</p></div>
+  <div class="step f"><h3>What we cannot say yet</h3>
+    <div class="callout warn"><p><strong>No final hybrid benchmark exists in the log.</strong> The gated controller and the morphology pool are built and training; the tracking log records no finished head-to-head against LQR, robs_c@ki or res_c. Until that table exists, the hybrid is a design with a rationale, not a result. The literature search found no prior LQR/RL gate for a balancing robot, but that was one search pass, so we claim novelty cautiously.</p></div></div>
+  <p class="src">Source: <code>docs/research/tracking_study_log.md</code> (S16); <code>docs/research/design_rules.md</code>; <code>scripts/study/design_space.py</code>, <code>design_constraints.py</code>, <code>eval_design.py</code>.</p>
+</article>
+
+</div><!-- /chapters -->
+</div><!-- /story-layout -->
+
+<!-- ============ ledger ============ -->
+<section class="block" id="ledger"><div class="wrap">
+  <div class="eyebrow">Decision ledger</div>
+  <h2>Every decision, the evidence behind it, and what we turned down</h2>
+  <p class="lede">Filter by any word. Each row links back to its chapter.</p>
+  <div class="ledger-tools"><input id="ledgerQ" type="search" placeholder="Filter: spin, LQR, friction, integral..." aria-label="Filter the decision ledger"><span class="chip" id="ledgerCount">15 decisions</span></div>
+  <div class="tablewrap"><table class="ledger" id="ledgerTable">
+    <thead><tr><th>Decision</th><th>Evidence</th><th>Alternative rejected</th><th>Chapter</th></tr></thead>
+    <tbody>
+      <tr><td data-h="Decision">Add an explicit off-ball termination</td><td data-h="Evidence">S1 trace: ball kicked out in 0.2 to 0.6 s, 70-degree tilt check never fired</td><td data-h="Alternative rejected">Trust the tilt limit and reward alone</td><td data-h="Chapter"><a href="#ch1">1 Baseline</a></td></tr>
+      <tr><td data-h="Decision">Track first, smooth second</td><td data-h="Evidence">S3 strong smoothness froze the policy; S7 refine cut action rate 0.147 to 0.013 with no loss at 0.5 m/s</td><td data-h="Alternative rejected">A smoothness penalty from step one</td><td data-h="Chapter"><a href="#ch2">2</a> <a href="#ch3">3</a></td></tr>
+      <tr><td data-h="Decision">Cap spin at 1 rad/s and retrain from scratch</td><td data-h="Evidence">23 of 29 falls under yaw above 1 rad/s; ratio at 1 m/s 0.31 to 0.91, second seed 0.95</td><td data-h="Alternative rejected">More reward shaping; continuing a timid policy (0.59); widening spin (speed dropped, S8)</td><td data-h="Chapter"><a href="#ch3">3 Spin cap</a></td></tr>
+      <tr><td data-h="Decision">Randomise start yaw; test heading explicitly</td><td data-h="Evidence">Heading test: 0.31 m/s error, 21% falls (trk_h); 0.32, 38% (trk_g)</td><td data-h="Alternative rejected">A single fixed start heading</td><td data-h="Chapter"><a href="#ch4">4</a></td></tr>
+      <tr><td data-h="Decision">Use the implicitfast integrator</td><td data-h="Evidence">1.10 vs 3.26 ms per control step; same speed curve within 0.01 m/s</td><td data-h="Alternative rejected">RK4 contact-frame stepper</td><td data-h="Chapter"><a href="#ch4">4</a></td></tr>
+      <tr><td data-h="Decision">Derive the model before tuning more</td><td data-h="Evidence">Pole, zero, momentum identity predicted data; PPO policies hit 83 to 91% of the derived lean constant</td><td data-h="Alternative rejected">Hand-tuned cascaded PD (0 of 48 combinations balanced)</td><td data-h="Chapter"><a href="#ch5">5 Physics</a></td></tr>
+      <tr><td data-h="Decision">LQR on ball rotation with a governor and outer integral</td><td data-h="Evidence">Ratio 1.00 to 1.08 at 0.25 to 0.75 m/s; heading error 0.02 m/s</td><td data-h="Alternative rejected">Tilt-only feedback; measured ball velocity as state (destabilised by creep)</td><td data-h="Chapter"><a href="#ch6">6 LQR</a></td></tr>
+      <tr><td data-h="Decision">Discrete-time LQR design</td><td data-h="Evidence">Continuous design with light rotors has a fast pole at -135 1/s: unstable when sampled at 100 Hz</td><td data-h="Alternative rejected">Continuous Riccati solution</td><td data-h="Chapter"><a href="#ch6">6</a></td></tr>
+      <tr><td data-h="Decision">Zero-initialised residual with beta 0.1</td><td data-h="Evidence">res_a/b episodes about 100 steps vs about 700; res_c fixes yaw (+-1 rad/s: -1.01 / +0.93 vs LQR +-0.57)</td><td data-h="Alternative rejected">Random-init residual, beta 0.3; larger beta 0.2 (res_d, 15 of 30 falls)</td><td data-h="Chapter"><a href="#ch7">7 Residual</a></td></tr>
+      <tr><td data-h="Decision">Train from scratch under narrow-damping DR</td><td data-h="Evidence">robs_b ratio about 0.50 vs 0.27 for fine-tuned rob_b; random-command falls 3 of 30</td><td data-h="Alternative rejected">Fine-tune a nominal policy under DR (brings back the timid optimum)</td><td data-h="Chapter"><a href="#ch8">8 Robustness</a></td></tr>
+      <tr><td data-h="Decision">Wrap the policy with an outer velocity integral, saturated at 1.5 m/s</td><td data-h="Evidence">robs_b@ki=1: heading error 0.27 to 0.06; 0.79 m/s at a 1.0 command</td><td data-h="Alternative rejected">Cap at 1.0 m/s (pinned speed near 0.5)</td><td data-h="Chapter"><a href="#ch9">9 Integral</a></td></tr>
+      <tr><td data-h="Decision">Stop training for steps and terrain</td><td data-h="Evidence">climb_a no better than flat-trained robs_c; friction x2 turns 1 of 4 into 4 of 4 at 3 cm; 44 N needed vs about 52 N available</td><td data-h="Alternative rejected">More step or Perlin training (S14, S15)</td><td data-h="Chapter"><a href="#ch10">10 Steps</a></td></tr>
+      <tr><td data-h="Decision">Do not chase control rate or friction for the 1 m/s wall</td><td data-h="Evidence">100, 250 and 500 Hz identical; friction x2, x4, roll x10 no change; gyroscopic test refuted</td><td data-h="Alternative rejected">Faster loops, grippier wheels, rotor gyroscopics</td><td data-h="Chapter"><a href="#ch6">6</a> <a href="#ch11">11</a></td></tr>
+      <tr><td data-h="Decision">Make wheel contact angle a design variable</td><td data-h="Evidence">LQR push survival 0/6 at 41 deg, 1/8 at 51 deg, 6/6 at 66 deg</td><td data-h="Alternative rejected">Trusting the planar model's prediction of no effect</td><td data-h="Chapter"><a href="#ch11">11 Literature tests</a></td></tr>
+      <tr><td data-h="Decision">Interleave LQR and PPO with a learned gate, over a pool of designs</td><td data-h="Evidence">LQR wins low speed, PPO wins pushes and 1 m/s, residual wins rough ground; LQR cannot balance s = 0.5 but PPO learns it</td><td data-h="Alternative rejected">Picking one controller family; a fixed design</td><td data-h="Chapter"><a href="#ch12">12 Hybrid</a></td></tr>
+    </tbody></table></div>
+</div></section>
+
+<!-- ============ dead ends ============ -->
+<section class="block" id="dead-ends"><div class="wrap">
+  <div class="eyebrow">Dead ends we kept</div>
+  <h2>Things that did not work, written down so nobody tries them twice</h2>
+  <div class="dead">
+    <div class="card"><h3>Free limits without an on-ball check</h3><p>The policy ejected the ball in 0.2 to 0.6 s and stood on its wheels.</p><p class="why">Chapter 1. All S1 results void.</p></div>
+    <div class="card"><h3>A hand-tuned cascaded PD</h3><p>48 gain and sign combinations; none balanced because tilt-only feedback lets the ball run away.</p><p class="why">Chapter 2.</p></div>
+    <div class="card"><h3>Smoothness before motion</h3><p>Jitter fell 8 to 500 times and the policy froze.</p><p class="why">Chapter 2.</p></div>
+    <div class="card"><h3>Reward shaping as the cure for slowness</h3><p>The lean and error rewards did not fix it; the command distribution was the cause.</p><p class="why">Chapters 2 and 3.</p></div>
+    <div class="card"><h3>Widening spin to 1.5 rad/s</h3><p>Yaw improved, translation speed dropped, falls rose to 13 to 22 of 30.</p><p class="why">Chapter 3, S8.</p></div>
+    <div class="card"><h3>Continuing a timid policy after a distribution change</h3><p>Reached 0.59; one policy collapsed into spinning (30 of 30 falls).</p><p class="why">Chapter 3.</p></div>
+    <div class="card"><h3>The gyroscopic explanation of the 1 m/s wall</h3><p>Lighter rotors made the edge slightly worse, not better.</p><p class="why">Chapter 6.</p></div>
+    <div class="card"><h3>A randomly initialised residual (res_a, res_b)</h3><p>It destabilised the LQR it was meant to help.</p><p class="why">Chapter 7.</p></div>
+    <div class="card"><h3>A bigger residual (res_d)</h3><p>Overshoot, 15 of 30 random-command falls: it fought the LQR.</p><p class="why">Chapter 7.</p></div>
+    <div class="card"><h3>Fine-tuning under domain randomisation</h3><p>rob_b and rob_a_h survived pushes but at ratio 0.27 to 0.29.</p><p class="why">Chapter 8.</p></div>
+    <div class="card"><h3>A velocity-integral cap of 1.0 m/s</h3><p>With an inner gain of 0.5 it pinned the achieved speed near 0.5.</p><p class="why">Chapter 9.</p></div>
+    <div class="card"><h3>Naive position feedback</h3><p>Pushed commanded speeds to the stability edge. Needs a learned or model-based path layer.</p><p class="why">Open problem, S-log.</p></div>
+    <div class="card"><h3>Terrain training and step training</h3><p>res_t, robs_t and climb_a/b matched or lost to their flat-trained parents.</p><p class="why">Chapter 10.</p></div>
+    <div class="card"><h3>Frozen depth features from the ball cameras</h3><p>The policy ignored them; blank depth changed nothing.</p><p class="why">Roadmap section 1; motivates the ToF sensors.</p></div>
+    <div class="card"><h3>Control rate and wheel friction as explanations</h3><p>Both refuted on our simulator.</p><p class="why">Chapter 11.</p></div>
+    <div class="card"><h3>The planar model's contact-angle prediction</h3><p>It predicts no effect; the simulator shows a strong one.</p><p class="why">Chapter 11.</p></div>
+  </div>
+</div></section>
+
+<!-- ============ next ============ -->
+<section class="block" id="next"><div class="wrap">
+  <div class="eyebrow">Where it stands</div>
+  <h2>Open problems and what is next</h2>
+  <div class="grid g2">
+    <div class="card"><h3>Open problems in the log</h3><ul>
+      <li>The 1 m/s stability edge for both families.</li>
+      <li>Spin above 1 rad/s.</li>
+      <li>Position drift: velocity tracking does not correct position.</li>
+      <li>Throughput: about 800 environment steps per second per run on CPU. A GPU port needs the contact-frame friction fix reimplemented.</li></ul></div>
+    <div class="card"><h3>Roadmap to a small robot (v2)</h3><div class="tablewrap"><table class="mini-table"><tbody>
+      <tr><td>Book climbing, 0 to 4 cm</td><td>running</td></tr>
+      <tr><td>Side ToF vs proprioception</td><td>running (sensor implemented)</td></tr>
+      <tr><td>Teacher-student distillation, history, randomisation</td><td>TODO</td></tr>
+      <tr><td>ONNX export and onboard latency</td><td>TODO</td></tr>
+      <tr><td>Physical prototype</td><td>TODO, not started</td></tr></tbody></table></div>
+      <p class="src">Source: <code>docs/research/ballbot_v2_roadmap.md</code> section 6. Everything above is simulation until a prototype exists.</p></div>
+  </div>
+  <p style="margin-top:24px"><a class="btn primary" href="results.html">See the full results</a> &nbsp; <a class="btn" href="math.html">Open the math lab</a> &nbsp; <a class="btn" href="design-space.html">Explore the design space</a> &nbsp; <a class="btn" href="architecture.html">Architecture</a> &nbsp; <a class="btn" href="videos.html">Videos</a> &nbsp; <a class="btn" href="literature.html">Literature</a></p>
+</div></section>
+</main>
+</body>
+</html>

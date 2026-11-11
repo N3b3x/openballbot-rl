@@ -1,0 +1,92 @@
+{
+ "spec": {
+  "name": "ota_ballrad_0p12",
+  "ball_radius_m": 0.12,
+  "ball_mass_kg": 0.1679,
+  "body_mass_kg": 3.8531,
+  "body_com_height_m": 0.1306,
+  "motor_torque_limit": 30.0,
+  "rotor_inertia": 0.005,
+  "wheel_damping": 0.1,
+  "contact_zenith_deg": 51.0
+ },
+ "generator": {
+  "s": 1.3333333333333333,
+  "J": 0.0011865234375000005,
+  "tau": 9.492187500000002,
+  "damp": 0.04871392896287468,
+  "dz": 0.0,
+  "kball": 0.42175055153297397,
+  "kbal": 0.3038886844602438,
+  "zb": -0.071875
+ },
+ "physics": {
+  "r": 0.12,
+  "m_k": 0.1678999975801617,
+  "m_a": 3.853099928242304,
+  "total_mass": 4.020999925822466,
+  "l": 0.13091335719090288,
+  "mass_ratio": 22.94877893850291,
+  "l_over_r": 1.090944643257524,
+  "p": 3.83176005062187,
+  "z": 4.558879586002418,
+  "z_over_p": 1.1897612391628076,
+  "Ms_lb": 11.539560180064377,
+  "kappa_deg": 11.520812296713943,
+  "torque_authority": 34.44010962887138,
+  "a_torque": 126.70002960228015,
+  "a_lean": 1.7359887033056303,
+  "a_max": 1.7359887033056303,
+  "C_struct": 1.6363607563486429,
+  "C_delay": 12.059683129122382,
+  "T_loop_max": 0.18089524693683573,
+  "C_trac": 1.8137159501669178,
+  "C_motor": 133.06636540301477,
+  "C_lean": 1.1573258022037536,
+  "C_geom": 2.617017602285723,
+  "C_speed": 4.872627760505119,
+  "v_max": 4.872627760505119,
+  "rec_tilt_trac_deg": 27.996928569135548,
+  "binding": "C_lean",
+  "feasible": true,
+  "pull_capacity_5deg_N": 3.2943921019049522,
+  "pull_capacity_10deg_N": 6.563711890706069
+ },
+ "files": {
+  "xml": "C:\\Users\\Owner\\Documents\\GitHub\\openballbot-rl\\ballbot_gym\\models\\variants\\dz_ota_ballrad_0p12.xml",
+  "json": "C:\\Users\\Owner\\Documents\\GitHub\\openballbot-rl\\ballbot_gym\\models\\variants\\dz_ota_ballrad_0p12.json",
+  "yaml": "C:\\Users\\Owner\\Documents\\GitHub\\openballbot-rl\\configs\\env\\dz_ota_ballrad_0p12.yaml"
+ },
+ "sim": {
+  "goal_still": {
+   "fall": 0.703906238079071,
+   "success": 0.29609376192092896
+  },
+  "goal_pushes": {
+   "fall": 0.69921875,
+   "success": 0.30078125
+  },
+  "goal_pulls_half": {
+   "fall": 0.7125000357627869,
+   "success": 0.2835937440395355
+  },
+  "drive_0.3": {
+   "fall": 0.762890636920929,
+   "success": 0.0,
+   "track_err": 0.10390423238277435,
+   "late_speed_ratio": 0.9868540167808533
+  },
+  "goal_terrain": {
+   "fall": 0.73046875,
+   "success": 0.2671875059604645
+  }
+ },
+ "sim_protocol": {
+  "engine": "MuJoCo-Warp float32 GPU",
+  "controller": "g34_mref_rsad_db_s0",
+  "worlds_per_case": 256,
+  "dr": "on (standard ranges)",
+  "noise": "on",
+  "note": "flat map (TILES_FLAT) except goal_terrain; pulls 1.5 to 6 N sustained"
+ }
+}

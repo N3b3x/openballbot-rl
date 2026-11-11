@@ -1,0 +1,172 @@
+{
+ "run": "g18_ret_rs025_s2",
+ "worlds": 1760,
+ "falls": 412,
+ "fall_rate": 0.2340909090909091,
+ "success": 0.0,
+ "push_scale": 0.0,
+ "pull": false,
+ "lqr_only": true,
+ "tilt_at_unseat_deg": {
+  "p10": 2.929248809814453,
+  "median": 6.968211650848389,
+  "p90": 12.988469123840332
+ },
+ "survivors_max_tilt_median": 0.9825792908668518,
+ "survivors_max_tilt_p90": 1.7082884311676025,
+ "first_event": {
+  "unseated_first": 0.34951456310679613,
+  "tipped_first": 0.0048543689320388345,
+  "neither": 0.6456310679611651
+ },
+ "terminated_by": {
+  "offset_only": 0.8689320388349514,
+  "tilt": 0.0
+ },
+ "unseat_lead_steps_median": 27.0,
+ "at_fall": {
+  "mis_median": 999.0,
+  "max_mis_median": 180.0,
+  "max_dgap_median_cm": 100.0,
+  "sat_frac_last_1s_mean": 0.0024190940894186497,
+  "pull_active_frac": 0.0,
+  "pull_frac_last_1s_mean": 0.0,
+  "push_within_0p5s_frac": 0.12378640776699029,
+  "push_within_1s_frac": 0.25728155339805825
+ },
+ "survivors_max_mis_median": 0.15949039161205292,
+ "survivors_max_dgap_median_cm": 0.2539217472076416,
+ "by_kind": {
+  "flat": {
+   "fall": 0.27840909361839294,
+   "unseated_first": 0.32653061224489793
+  },
+  "step_up": {
+   "fall": 0.20454546809196472,
+   "unseated_first": 0.3055555555555556
+  },
+  "step_down": {
+   "fall": 0.23295454680919647,
+   "unseated_first": 0.36585365853658536
+  },
+  "small_drop": {
+   "fall": 0.23295454680919647,
+   "unseated_first": 0.36585365853658536
+  },
+  "large_drop": {
+   "fall": 0.22159092128276825,
+   "unseated_first": 0.3333333333333333
+  },
+  "ramp_up": {
+   "fall": 0.23295454680919647,
+   "unseated_first": 0.4146341463414634
+  },
+  "ramp_down": {
+   "fall": 0.1875,
+   "unseated_first": 0.2727272727272727
+  },
+  "stairs": {
+   "fall": 0.2443181872367859,
+   "unseated_first": 0.37209302325581395
+  },
+  "bump": {
+   "fall": 0.21590909361839294,
+   "unseated_first": 0.42105263157894735
+  },
+  "rough": {
+   "fall": 0.28977274894714355,
+   "unseated_first": 0.3137254901960784
+  }
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.03750000149011612,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 7.440000057220459,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 0.9614412188529968
+  },
+  "zhigh": {
+   "fall": 0.23749999701976776,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 4.880000114440918,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 0.5918220281600952
+  },
+  "zlow": {
+   "fall": 0.012500000186264515,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 16.35999870300293,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 1.2569434642791748
+  },
+  "kb4": {
+   "fall": 0.7250000238418579,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 3.7200000286102295,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 0.7535542845726013
+  },
+  "bal4": {
+   "fall": 0.125,
+   "unseated_first": 1.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 1.2400000095367432,
+   "sat_frac_last_1s_mean": 0.009166667237877846,
+   "survivors_max_tilt_median": 1.6995024681091309
+  },
+  "J02": {
+   "fall": 0.0,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": null,
+   "sat_frac_last_1s_mean": null,
+   "survivors_max_tilt_median": 1.1990994215011597
+  },
+  "tau6": {
+   "fall": 0.03750000149011612,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 9.079999923706055,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 0.9097822904586792
+  },
+  "bal025": {
+   "fall": 0.23749999701976776,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 7.199999809265137,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 0.7514740228652954
+  },
+  "kb025": {
+   "fall": 0.7875000238418579,
+   "unseated_first": 0.9841269841269841,
+   "tipped_first": 0.015873015873015872,
+   "t_fall_median_s": 1.2400000095367432,
+   "sat_frac_last_1s_mean": 0.006455027498304844,
+   "survivors_max_tilt_median": 2.48325252532959
+  },
+  "zeta41": {
+   "fall": 0.01875000074505806,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 14.40999984741211,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 0.9589958190917969
+  },
+  "zeta66": {
+   "fall": 0.35625001788139343,
+   "unseated_first": 0.0,
+   "tipped_first": 0.0,
+   "t_fall_median_s": 4.829999923706055,
+   "sat_frac_last_1s_mean": 0.0,
+   "survivors_max_tilt_median": 0.8796001672744751
+  }
+ },
+ "stand": true
+}

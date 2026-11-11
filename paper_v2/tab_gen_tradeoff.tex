@@ -1,0 +1,22 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Tracking accuracy against robustness with the retainer, corrected engine. Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on (flat columns: off). Observation noise: on (flat columns: off). Worlds per cell: 1760 per goal and tile cell (176 per terrain kind); 64 per flat cell. Seeds: one per row as listed; authority 0.25 has three seeds (plus a 400M-step run), authority 0.5 and pure learning two. Protocol: eval\_battery.py; every row except the two references is trained and evaluated with the 100 deg arrestors; the zero-shot row adds them only at evaluation; its flat row was not part of the S92 re-run, so its flat falls are measured on the old tile positions and overstated (error and achieved speed unaffected).}\label{tab:gen_tradeoff}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccc}\toprule
+Controller & Flat achieved / command (0.3 to 0.9 m/s) & Flat error at 0.9 m/s [m/s] & Goal success undisturbed, DR 1 / 1.75 / 2.5 & Goal success pushes + pulls, DR 1 / 1.75 / 2.5 & Tile velocity falls undisturbed / disturbed (DR 1) & Median goal time [s]\\\midrule
+no arrestors (reference) g12\_dr175\_s0, seed 0 & 0.95 to 0.99 & 0.057 & 0.58 / 0.54 / 0.45 & 0.29 / 0.25 / 0.19 & 0.54 / 0.71 & 2.44\\
+no arrestors (reference) g12\_dr175\_s1, seed 1 & 1.00 to 1.02 & 0.041 & 0.60 / 0.56 / 0.47 & 0.30 / 0.25 / 0.19 & 0.53 / 0.71 & 2.33\\
+authority 0.5, arrestors added at evaluation only g12\_dr175\_s0, seed 0 & 0.96 to 0.99 & 0.067 & 0.75 (scale 1 only) & 0.45 (scale 1 only) & 0.36 / 0.53 & n/a\\
+authority 0.15 g18\_ret\_rs015\_s0, seed 0 & 0.99 to 1.01 & 0.042 & 0.69 / 0.65 / 0.56 & 0.35 / 0.31 / 0.22 & 0.38 / 0.58 & 2.24\\
+authority 0.25 (recommended) g18\_ret\_rs025\_s0, seed 0 & 0.99 to 1.01 & 0.036 & 0.71 / 0.68 / 0.60 & 0.42 / 0.36 / 0.29 & 0.34 / 0.55 & 2.44\\
+authority 0.25 (recommended) g18\_ret\_rs025\_s1, seed 1 & 0.98 to 1.00 & 0.034 & 0.76 / 0.72 / 0.66 & 0.43 / 0.39 / 0.32 & 0.35 / 0.56 & 2.50\\
+authority 0.25 (recommended) g18\_ret\_rs025\_s2, seed 2 & 0.90 to 0.99 & 0.049 & 0.76 / 0.71 / 0.63 & 0.44 / 0.41 / 0.32 & 0.36 / 0.55 & 2.68\\
+authority 0.25, 400M steps g19\_ret\_rs025\_400m\_s0, seed 0 & 0.92 to 1.01 & 0.058 & 0.75 / 0.70 / 0.64 & 0.43 / 0.36 / 0.30 & 0.38 / 0.55 & 2.61\\
+authority 0.35 g18\_ret\_rs035\_s0, seed 0 & 0.91 to 0.98 & 0.060 & 0.72 / 0.71 / 0.63 & 0.45 / 0.40 / 0.32 & 0.34 / 0.52 & 2.73\\
+authority 0.5 g16\_ret100\_s0, seed 0 & 0.81 to 0.86 & 0.188 & 0.71 / 0.70 / 0.62 & 0.46 / 0.42 / 0.35 & 0.31 / 0.49 & 2.81\\
+authority 0.5 g16\_ret100\_s1, seed 1 & 0.87 to 0.91 & 0.115 & 0.76 / 0.73 / 0.67 & 0.49 / 0.44 / 0.37 & 0.32 / 0.50 & 2.75\\
+authority 0.5, tracking weight x3 g17\_ret100\_trk3\_s0, seed 0 & 0.74 to 0.88 & 0.201 & 0.71 / 0.68 / 0.62 & 0.49 / 0.43 / 0.36 & 0.32 / 0.46 & 3.10\\
+soft LQR base, authority 0.5 g18\_ret\_soft\_s0, seed 0 & 0.69 to 0.76 & 0.266 & 0.75 / 0.75 / 0.66 & 0.51 / 0.47 / 0.39 & 0.29 / 0.49 & 2.96\\
+pure learning (no LQR) g16\_pure\_ret100\_s0, seed 0 & 0.64 to 0.73 & 0.335 & 0.70 / 0.67 / 0.64 & 0.50 / 0.45 / 0.40 & 0.16 / 0.34 & 2.96\\
+pure learning (no LQR) g16\_pure\_ret100\_s1, seed 1 & 0.65 to 0.82 & 0.325 & 0.74 / 0.73 / 0.67 & 0.50 / 0.46 / 0.40 & 0.19 / 0.38 & 2.62\\
+\bottomrule\end{tabular}}
+\end{table*}

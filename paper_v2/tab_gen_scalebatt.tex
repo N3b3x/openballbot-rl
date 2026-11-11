@@ -1,0 +1,12 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{The scale policy on the standard battery at friction 0.01, against the recommended checkpoints. Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error; wheel-ball free-rolling friction 0.01 in every row (the scale seeds were trained at 0.001 and evaluated at 0.01 through PAIR\_MU1, files battery\_mu0.01.json; the recommended checkpoints were trained at 0.01). Domain randomisation: on at scale 1 for the goal columns (the 11 training designs of the goal task), off for the flat columns (nominal design). Observation noise: on (goal), off (flat). Worlds per cell: 1760 per goal cell, 64 per flat cell. Seeds: one row per training seed, as listed. Protocol: the standard battery (eval\_battery.py): goal task of Table 2 and the clean flat benchmark of Table 1 on interior tiles.}\label{tab:gen_scalebatt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{p{0.3\linewidth}ccc}\toprule
+Policy & Goal success, undisturbed / pushes and pulls (DR scale 1) & Flat benchmark, achieved over commanded speed at 0.3 / 0.6 / 0.9 m/s & Flat benchmark falls at 0.3 / 0.6 / 0.9 m/s\\\midrule
+scale policy, 14 designs, trained at 0.001 g24\_scale\_rs025\_s0, seed 0, evaluated at 0.01  & 0.74 / 0.47 & 0.91 / 0.92 / 0.98 & 0.00 / 0.00 / 0.00\\
+scale policy, 14 designs, trained at 0.001 g24\_scale\_rs025\_s1, seed 1, evaluated at 0.01  & 0.70 / 0.44 & 0.89 / 0.93 / 0.99 & 0.00 / 0.00 / 0.00\\
+recommended checkpoint, 11 designs, trained and evaluated at 0.01 g26\_ret\_rs025\_mu01\_s0, seed 0  & 0.74 / 0.45 & 0.90 / 0.96 / 0.99 & 0.00 / 0.00 / 0.00\\
+recommended checkpoint, 11 designs, trained and evaluated at 0.01 g26\_ret\_rs025\_mu01\_s1, seed 1  & 0.74 / 0.46 & 0.85 / 0.95 / 0.99 & 0.00 / 0.00 / 0.00\\
+recommended checkpoint, 11 designs, trained and evaluated at 0.01 g26\_ret\_rs025\_mu01\_s2, seed 2  & 0.73 / 0.45 & 0.93 / 0.98 / 1.00 & 0.00 / 0.00 / 0.00\\
+\bottomrule\end{tabular}}
+\end{table*}

@@ -1,0 +1,17 @@
+\begin{table}[t]\centering\footnotesize
+\caption{Where the recommended controller still falls (velocity task, undisturbed). Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 176 per terrain kind. Seeds: as in the column headers. Protocol: velocity task at 0.3 m/s on the tiles, undisturbed (pushes and pulls off), 100 deg arrestors; fall rate per terrain kind, sorted by the seed-0 value.}\label{tab:gen_obstacles}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lccc}\toprule
+Terrain kind & recommended, seed 0 (g18\_ret\_rs025\_s0) & recommended, seed 1 (g18\_ret\_rs025\_s1) & recommended + depth sensor, seed 0 (g20\_ret\_rs025\_depth\_s0)\\\midrule
+flat & 0.08 & 0.07 & 0.08\\
+ramp up & 0.12 & 0.14 & 0.11\\
+step down & 0.16 & 0.16 & 0.19\\
+rough & 0.17 & 0.16 & 0.23\\
+small drop & 0.18 & 0.17 & 0.22\\
+ramp down & 0.20 & 0.26 & 0.24\\
+stairs & 0.48 & 0.52 & 0.51\\
+step up & 0.61 & 0.62 & 0.55\\
+large drop & 0.64 & 0.66 & 0.68\\
+bump & 0.77 & 0.74 & 0.75\\
+\bottomrule\end{tabular}}
+\end{table}

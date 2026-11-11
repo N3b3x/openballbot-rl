@@ -1,0 +1,15 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Navigation with pushes and pulls, and a wider planner margin. Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error; earlier measurement: controller g18\_ret\_rs025\_s1 trained and evaluated at wheel-ball free-rolling friction 0.001 (the recommended checkpoint at 0.01 is in Table 37). Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 528 per row. Seeds: one controller seed (g18\_ret\_rs025\_s1, frozen). Protocol: as Table 19, with pushes 5 to 20 N and pulls 3 to 12 N (first three rows), and with the obstacle margin widened from 0.22 m to 0.30 or 0.38 m (last five rows; their disturbance setting is in the label).}\label{tab:gen_navpp}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccc}\toprule
+Hazard source & Falls & Reached goal & Stuck & Rolled onto a block\\\midrule
+blind & 0.86 & 0.14 & 0.00 & 0.44\\
+privileged height map & 0.41 & 0.58 & 0.01 & 0.13\\
+ToF 18 x 14, head, pitch -25 deg & 0.52 & 0.45 & 0.03 & 0.15\\
+ToF 18 x 14, margin 0.30 m (undisturbed) & 0.19 & 0.11 & 0.70 & 0.00\\
+ToF 18 x 14, margin 0.38 m (undisturbed) & 0.28 & 0.00 & 0.71 & 0.00\\
+ToF 18 x 14, margin 0.30 m, pushes + pulls & 0.62 & 0.14 & 0.24 & 0.17\\
+ToF 18 x 14, margin 0.38 m, pushes + pulls & 0.62 & 0.01 & 0.38 & 0.21\\
+privileged map, margin 0.38 m, pushes + pulls & 0.57 & 0.00 & 0.42 & 0.21\\
+\bottomrule\end{tabular}}
+\end{table*}

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>8. Designing the robot | Ballbot course</title>
+<meta name="description" content="Lesson 8 of the ballbot course: what the S119 design sweep says about ball mass, motor torque, rotor inertia, body mass and centre of mass height, with an interactive design explorer and checker.">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark'}catch(e){}</script>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../assets/css/tokens.css">
+<link rel="stylesheet" href="assets/css/learn.css">
+<script type="module" src="assets/js/learn.js"></script>
+</head>
+<body>
+<main>
+<header class="lhead"><div class="wrap">
+  <div class="eyebrow"><span>Lesson 8 of 10</span><span class="t">16 min</span><span class="t">Design</span></div>
+  <h1>Designing the robot</h1>
+  <p class="lede">The same simulation that trains the controller can ask what a good ballbot looks like. This lesson reads the design sweep: which properties matter, which limits are physical, and which rows only show the controller's training range.</p>
+  <div class="chips"><span class="chip sim">Simulation only, no hardware</span></div>
+  <section class="goals" aria-labelledby="g1"><h2 id="g1">You will be able to</h2><ul><li>name the properties the sweep varied and rank their importance;</li><li>separate a physical limit of a build from a gap in the controller's training;</li><li>estimate the sustained pull a robot can resist from its body mass.</li></ul></section>
+</div></header>
+
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">8.1</span>One question: what must a robot have for this controller to work?</h2>
+
+  <p>There is no physical robot yet, so the project can ask a design question cheaply: which properties of the build does the controller need? S119 took the nominal robot (9 cm ball of 0.17 kg, a 3.85 kg body with its centre of mass 13 cm above the ball centre, 30 N m peak torque per wheel, rotor inertia 0.005 kg m<sup>2</sup>, wheel contact 51 degrees from the top) and changed <b>one property at a time</b>. Each new design was built from a physical spec, checked with the analytic margins of lesson 1, and then simulated with 256 randomised robots per case under five conditions: holding a goal, holding it while being pushed, while being pulled with half-strength sustained pulls, driving at 0.3 m/s, and reaching goals on terrain. The controller was the recommended recipe (g34 at the time of the sweep); each design is unseen by it.</p>
+
+</div></section>
+<figure class="widget" data-widget="l08:explorer">
+    <header><h3>The design explorer</h3><span class="tag">S119 sweep, 22 simulated designs</span></header>
+    <div class="stage ph"></div>
+    <div class="body"></div>
+    <figcaption><b>Choose a property, then read the shape.</b> Lines connect the tested values; the hollow dot is the nominal robot. Turn conditions on and off. Select a value to see its analytic physics below (pole, zero, lean, the binding limit). The physics table is the planar model plus contact checks; the fall rates come from the full simulation, and the two disagree on the ball mass, which only the simulation sees.<span class="src">outputs/study/specs/ota_sim.csv (falls), ota_sweep.csv (physics), spec_nominal_sim.csv; 256 worlds per case</span></figcaption>
+    <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
+  </figure>
+<div class="tryit"><div class="lbl">Try it</div><p>In the explorer, select <b>Ball mass</b> and then <b>Motor torque limit</b>. What does each curve say about how far a designer can go before the robot stops balancing? Then select <b>Ball radius</b> and read the warning.</p><details class="answer"><summary>Show the answer</summary><div><p>Ball mass: with a ball under about 2 percent of the body mass the robot falls even standing (0.41 at 1.1 percent); the nominal 4.4 percent is good and 9 to 17 percent is better, with no standing falls. The planar analytic model hardly moves with ball mass, so only the full contact simulation shows this. Motor torque: half the nominal limit (15 N m) is as good as nominal; at a third the falls rise six times; at 10 to 20 percent the robot cannot hold itself. Ball radius: the 12 cm ball is physically easier (smaller unstable pole), yet the learned controller falls 69 percent because it never trained on another ball size. The LQR alone falls 2 percent there. That is the extrapolation caveat: some rows measure the training range of the controller as much as the robot.</p></div></details></div><section class="lsec"><div class="wrap">
+  <h2><span class="k">8.2</span>The seven guidelines</h2>
+
+  <p>The sweep's results condense into seven rules (<a href="https://github.com/N3b3x/openballbot-rl/blob/master/docs/research/design_guidelines.md"><code>docs/research/design_guidelines.md</code></a>), in order of importance: a <b>ball mass</b> of at least 4 percent of the body mass; <b>motor peak torque</b> of at least 15 N m per wheel for a 4 kg robot (continuous rating about 3 N m; the median torque actually used was 0.73 N m, the 99th percentile 8.1 N m, with short peaks to the limit during recoveries); <b>rotor inertia</b> not below 0.005 kg m<sup>2</sup>; a <b>body centre of mass</b> at least the nominal 1.4 ball radii above the ball centre, higher is better up to 2.4; <b>body mass</b> of 3 to 5 kg; a <b>contact angle</b> near 50 degrees; and a <b>ball of 9 cm or larger</b>. A taller body is easier to control, the opposite of what a broomstick suggests, because it needs less lean per acceleration (lesson 2).</p>
+
+</div></section>
+<figure class="widget" data-widget="l08:checker">
+    <header><h3>Check a candidate design</h3><span class="tag">guideline checker</span></header>
+    <div class="stage ph"></div>
+    <div class="body"></div>
+    <figcaption><b>Dial in a robot and see which guidelines it meets.</b> The check is the seven rules, nothing more; under each one you see the closest variant that was actually simulated. Combinations were not tested: a design that passes every rule is a good candidate, not a proven one.<span class="src">docs/research/design_guidelines.md; simulated variants from ota_sim.csv</span></figcaption>
+    <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
+  </figure>
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">8.3</span>The pull limit</h2>
+
+  <p>One limit does not depend on the controller. A short shove is absorbed completely. A <i>sustained</i> sideways force needs a steady lean against it, and the lean the robot can hold is limited: roughly <b>m<sub>a</sub> g sin 5&deg;</b>, about 3.3 N for the nominal 3.85 kg body. Beyond that falls rise in proportion to the pull: 0.08 up to 3 N, 0.14 at 1.5 to 6 N, 0.22 at 2.25 to 9 N and 0.36 at 3 to 12 N on flat ground (S116). Stronger training pushes, longer training and a longer controller memory did not change it (S116, S117). Body mass is the only lever found: it sets the pull the robot resists.</p>
+
+</div></section>
+<figure class="widget" data-widget="l08:pulls">
+    <header><h3>Pull capacity against body mass</h3><span class="tag">S116, S119</span></header>
+    <div class="stage ph"></div>
+    <div class="body"></div>
+    <figcaption><b>The limit is mass times gravity times a lean.</b> Bars: falls for the nominal robot under sustained pulls of increasing strength (the first is within the capacity). Slider: the static estimate for another body mass, and the simulated falls of the nearest tested mass under half-strength pulls.<span class="src">docs/research/tracking_study_log.md S116 addendum; ota_sim.csv body mass rows</span></figcaption>
+    <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
+  </figure>
+<div class="tryit"><div class="lbl">Check yourself</div><p>A designer wants to cut the cost of a ballbot by using motors with one tenth of the nominal torque (3 N m per wheel instead of 30). What does the sweep predict for a robot of the same mass?</p><div class="opts"><button>Little change: torque is only used in short peaks</button><button data-ok>It cannot hold itself: about half the robots fall even when standing</button><button>It balances but cannot drive</button></div><details class="answer"><summary>Why</summary><div><p>Torque actually used is small (median 0.73 N m) but the recoveries from pushes need short peaks up to the limit. At 6 N m (a fifth) 13 percent of robots fall standing, at 3 N m about half, and the LQR alone falls just as often, so the limit is physical (S119). Interestingly, driving at 0.3 m/s still worked at those torques, which shows why standing and pushed conditions belong in the test.</p></div></details></div>
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">Summary</span>Key takeaways</h2>
+  <div class="takeaways"><ul><li>Ball mass is the strongest single property and the planar analytic model misses it: below about 2 percent of the body mass the robot cannot stand.</li><li>Motor torque of at least half the nominal limit is needed; below a third falls rise sharply and the LQR alone fails equally.</li><li>A taller body is easier; rotor inertia should not be lower than nominal; the contact angle should be about 50 degrees.</li><li>Body mass sets the sustained pull resisted, about m g sin 5 degrees (3.3 N for the nominal body); no controller change moved that limit.</li><li>Rows outside the training range (the 12 cm ball) measure the controller, not the build: check with the LQR alone.</li></ul></div>
+  <h3 style="margin-top:1.6em">Code and evidence</h3>
+  <div class="sources">
+    <div><h3>Code</h3><ul><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/scripts/study/robot_spec.py"><code>scripts/study/robot_spec.py</code></a>: spec in physical units, analytic margins, simulation</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/scripts/study/design_space.py"><code>scripts/study/design_space.py</code></a>: the parametric generator</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/scripts/study/design_constraints.py"><code>scripts/study/design_constraints.py</code></a>: analytic design margins</li></ul></div>
+    <div><h3>Study log and docs</h3><ul><li>S119: the design sweep and its caveats</li><li>S114 addendum: where the hard designs fall</li><li>S116, S117: sustained pulls and the controller memory</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/docs/research/design_guidelines.md"><code>docs/research/design_guidelines.md</code></a></li><li>On the main site: <a href="../design-space.html">Design space explorer</a></li></ul></div>
+  </div>
+</div></section>
+</main>
+</body>
+</html>

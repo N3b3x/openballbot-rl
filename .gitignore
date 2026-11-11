@@ -111,8 +111,8 @@ venv.bak/
 # Rope project settings
 .ropeproject
 
-# mkdocs documentation
-/site
+# mkdocs documentation (not used here: site/ is the hand-built research website and is tracked)
+# /site
 
 # mypy
 .mypy_cache/
@@ -187,3 +187,43 @@ outputs/visualizations/*.gif
 # These directories have been moved to new structure
 
 **/papers/*.txt
+# configs/env holds the environment configs (must be tracked; plain 'env/' above would hide it)
+!configs/env/
+
+# --- perception-guided ballbot study ---
+!notebooks/
+!notebooks/*.ipynb
+outputs/study/runs/
+outputs/study/*.log
+!outputs/study/sample/
+!outputs/study/sample/**
+!outputs/study/results/
+!outputs/study/analysis/
+
+# ROS 2 bridge parity rollouts (experiments/warp_ppo/record_parity.py, about 30 MB each); the tests use small fixtures in ros2/ballbot_control/test/data
+outputs/study/warp_ppo/*/parity_rollout.npz
+
+# Study artefacts (2026-11-11): keep code, configs, small result files (json/csv/md); exclude raw logs, checkpoints,
+# recordings and rendered videos (the site carries its own copies of the clips it shows in site/videos/)
+outputs/study/**/*.out
+outputs/study/**/*.log
+outputs/study/**/*.pt
+outputs/study/**/*.npz
+outputs/study/**/*.npy
+outputs/study/**/*.pkl
+outputs/study/**/*.mp4
+outputs/study/**/*.jpg
+outputs/study/**/*.png
+outputs/study/**/*.gif
+outputs/study/**/log.csv
+outputs/study/warp_ppo/q*.sh
+outputs/study/warp_ppo/gpu_guard.csv
+scratch/
+.claude/
+
+# Model checkpoints and large run artefacts anywhere in the tree (exported ROS 2 bundles use .onnx/.ts/.npz and are tracked)
+*.pt
+*.pth
+*.ckpt
+# MuJoCo writes this next to wherever a script was started
+MUJOCO_LOG.TXT

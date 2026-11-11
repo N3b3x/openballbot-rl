@@ -1,0 +1,66 @@
+{
+ "args": {
+  "name": "ctrl_base_s0",
+  "variant": "proprio",
+  "env_config": "configs/env/ctrl_base.yaml",
+  "total_timesteps": 3000000.0,
+  "seed": 0,
+  "n_envs": 12,
+  "n_steps": 426,
+  "batch_size": 1280,
+  "n_epochs": 8,
+  "lr": 0.0003,
+  "lr_end": 3e-05,
+  "gamma": 0.99,
+  "ent_coef": 0.0,
+  "log_std_init": -1.0,
+  "encoder": "outputs/encoders/encoder_epoch_53",
+  "out_root": "outputs/study/runs",
+  "device": "auto",
+  "init_from": ""
+ },
+ "env": {
+  "camera": {
+   "enabled": false,
+   "disable_rgb": true,
+   "frame_rate": 90,
+   "height": 64,
+   "width": 64
+  },
+  "env": {
+   "max_allowed_tilt": 20,
+   "max_ep_steps": 800,
+   "action_repeat": 5,
+   "max_wheel_velocity": 10.0,
+   "fix_wheel_contacts": true,
+   "command_mode": true,
+   "cmd_resample_steps": 200,
+   "cmd_zero_prob": 0.1,
+   "wheel_damping": 0.8,
+   "cmd_vmax": 1.0,
+   "cmd_wmax": 2.0,
+   "obs_vel_clip": 2.0
+  },
+  "logging": {
+   "cams": false,
+   "reward_terms": false
+  },
+  "reward": {
+   "type": "directional",
+   "config": {
+    "action_reg_coef": -0.0001,
+    "scale": 0.1,
+    "survival_bonus": 0.02,
+    "fall_penalty": 10.0,
+    "target_direction": [
+     0.0,
+     1.0
+    ]
+   }
+  },
+  "terrain": {
+   "type": "flat",
+   "config": {}
+  }
+ }
+}

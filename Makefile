@@ -1,4 +1,8 @@
-.PHONY: install install-dev test lint format type-check clean docs
+.PHONY: install install-dev test test-cov lint format format-check type-check clean docs test-ros2 check-docs check-site
+
+# Targets install, install-dev, test, test-cov, lint, format, format-check, type-check, train and eval belong to the legacy SB3 path
+# (ballbot_gym, ballbot_rl, configs/). The current GPU pipeline is run from experiments/warp_ppo; see docs/pipeline.md.
+# test-ros2, check-docs and check-site cover the current ROS 2 package, the documentation and the website.
 
 install:
 	bash scripts/setup/install.sh
@@ -36,13 +40,20 @@ clean:
 	rm -rf dist
 	rm -rf build
 
-docs:
-	# Add documentation generation command if using Sphinx/MkDocs
-	@echo "Documentation generation not yet configured"
+test-ros2:
+	cd ros2/ballbot_control && python -m pytest -q
+
+check-docs:
+	python scripts/docs/check_docs.py
+
+check-site:
+	python scripts/site/check_links.py
+
+docs: check-docs
 
 train:
 	ballbot-train --config configs/train/ppo_directional.yaml
 
 eval:
-	ballbot-eval --algo ppo --path outputs/models/example_model.zip --n_test 5
+	ballbot-eval --algo ppo --path outputs/experiments/archived_models/2025-12-03_ppo-perlin-directional-5.2M-steps/best_model.zip --n_test 5
 

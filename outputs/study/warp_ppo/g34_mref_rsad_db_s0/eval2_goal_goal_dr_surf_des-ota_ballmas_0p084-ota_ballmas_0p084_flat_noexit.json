@@ -1,0 +1,123 @@
+{
+ "run": "g34_mref_rsad_db_s0",
+ "args": {
+  "run": "g34_mref_rsad_db_s0",
+  "task": "goal",
+  "speed": 0.6,
+  "n": 128,
+  "dr": true,
+  "surfaces": true,
+  "pull": false,
+  "eval_designs": "ota_ballmas_0p084,ota_ballmas_0p084",
+  "steps": 800,
+  "tile_seed": 0
+ },
+ "env_settings": {
+  "overrides": {},
+  "push_scale": 1.0,
+  "dr_scale": null,
+  "tiles_flat": true,
+  "no_exit": true,
+  "dr_off": "",
+  "dr_mft": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "lqr_base": 0.25,
+  "eval_designs": [
+   "ota_ballmas_0p084",
+   "ota_ballmas_0p084"
+  ],
+  "retainer": "0,0,0,100",
+  "pair_mu1": 0.01
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.06640625,
+   "success": 0.93359375,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.929999828338623
+  },
+  "step_up": {
+   "fall": 0.0390625,
+   "success": 0.9609375,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.919999837875366
+  },
+  "step_down": {
+   "fall": 0.04296875,
+   "success": 0.95703125,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.9099998474121094
+  },
+  "small_drop": {
+   "fall": 0.03515625,
+   "success": 0.96484375,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.929999828338623
+  },
+  "large_drop": {
+   "fall": 0.0625,
+   "success": 0.9375,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.8999998569488525
+  },
+  "ramp_up": {
+   "fall": 0.04296875,
+   "success": 0.95703125,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.950000047683716
+  },
+  "ramp_down": {
+   "fall": 0.05078125,
+   "success": 0.94921875,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.950000047683716
+  },
+  "stairs": {
+   "fall": 0.0390625,
+   "success": 0.9609375,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.93999981880188
+  },
+  "bump": {
+   "fall": 0.06640625,
+   "success": 0.93359375,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.93999981880188
+  },
+  "rough": {
+   "fall": 0.07421875,
+   "success": 0.92578125,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.919999837875366
+  }
+ },
+ "by_design": {
+  "ota_ballmas_0p084": {
+   "fall": 0.05156249925494194,
+   "success": 0.948437511920929,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.9099998474121094
+  }
+ },
+ "overall": {
+  "fall": 0.05195312574505806,
+  "success": 0.948046863079071,
+  "nonfinite": 0.0,
+  "fall_at_map_edge": 0.0,
+  "median_time_s": 2.929999828338623
+ }
+}

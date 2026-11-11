@@ -1,0 +1,11 @@
+\begin{table}[t]\centering\footnotesize
+\caption{Falls and crossings on the larger half of each obstacle range. Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 640 per terrain kind, halved by severity. Seeds: one policy each (seed 1). Protocol: velocity task at 0.3 m/s on the tiles, undisturbed, arrestors on, 20 s episodes; crossed = left the tile upright past the feature.}\label{tab:gen_stall}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcc}\toprule
+Feature (larger half of the range) & Pure learning, retainer (g16\_pure\_ret100\_s1): falls / crossed & LQR + residual 0.25, retainer (g18\_ret\_rs025\_s1): falls / crossed\\\midrule
+step up, larger half (2.3 to 5.9 cm) & 0.69 / 0.02 & 0.98 / 0.02\\
+bump, larger half (2.4 to 3.6 cm) & 0.30 / 0.02 & 0.94 / 0.06\\
+stairs (riser), larger half (1.4 to 3.2 cm) & 0.38 / 0.03 & 0.67 / 0.33\\
+large drop, larger half (15.1 to 18.3 cm) & 0.58 / 0.39 & 0.83 / 0.17\\
+\bottomrule\end{tabular}}
+\end{table}

@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 658" width="1000" height="658" role="img" aria-labelledby="t d"><title id="t">Controller architecture</title><desc id="d">Planner velocity command, motion-reference layer, LQR base plus PPO residual with adaptive authority, safety and torque limits, wheels, and the state estimator feeding back.</desc><defs><marker id="ah-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5L8.5 5L1 8.5z" fill="#9198a1"/></marker><marker id="ah-purple" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5L8.5 5L1 8.5z" fill="#ab7df8"/></marker></defs>
+<rect x="204" y="26" width="776" height="432" rx="18" fill="#0d1117" stroke="#3d444d" stroke-width="1.3" stroke-dasharray="6 5"/>
+<text x="222" y="50" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="700" fill="#9198a1" text-anchor="start" letter-spacing="0.8">BALANCE CONTROLLER  ·  100 Hz</text>
+<text x="962" y="50" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="500" fill="#6e7681" text-anchor="end">GpuBallbot.step in training  ·  controller_node in ROS 2</text>
+<rect x="20" y="150" width="164" height="160" rx="14" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<path d="M20 196V164a14 14 0 0 1 14 -14H170a14 14 0 0 1 14 14V196z" fill="#4493f8" fill-opacity="0.16"/>
+<path d="M20 196H184" stroke="#3d444d" stroke-width="1"/>
+<circle cx="47" cy="173.0" r="15" fill="#4493f8"/>
+<g transform="translate(38.0 164.0) scale(0.7500)" fill="none" stroke="#0d1117" stroke-width="2.00" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19a2 2 0 1 0 4 0a2 2 0 1 0 -4 0 M16 5a2 2 0 1 0 4 0a2 2 0 1 0 -4 0 M8 19h7.5a3.5 3.5 0 0 0 0-7h-7a3.5 3.5 0 0 1 0-7H16"/></g>
+<text x="72" y="178.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="650" fill="#f0f6fc" text-anchor="start">Planner</text>
+<text x="36" y="218" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#4493f8" text-anchor="start">/cmd_vel</text>
+<text x="36" y="236.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">Nav2 in ROS 2</text>
+<text x="36" y="255.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">(10 to 20 Hz) or the</text>
+<text x="36" y="273.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">study's wavefront</text>
+<text x="36" y="292.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">planner</text>
+<rect x="228" y="150" width="206" height="214" rx="14" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<path d="M228 196V164a14 14 0 0 1 14 -14H420a14 14 0 0 1 14 14V196z" fill="#39c5cf" fill-opacity="0.16"/>
+<path d="M228 196H434" stroke="#3d444d" stroke-width="1"/>
+<circle cx="255" cy="173.0" r="15" fill="#39c5cf"/>
+<g transform="translate(246.0 164.0) scale(0.7500)" fill="none" stroke="#0d1117" stroke-width="2.00" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17c2.5 0 3.5-10 6-10s3.5 10 6 10 3.5-10 6-10"/></g>
+<text x="280" y="178.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="650" fill="#f0f6fc" text-anchor="start">Motion layer</text>
+<text x="244" y="218" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">Shapes the command a</text>
+<text x="244" y="236.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">ballbot can follow:</text>
+<text x="244" y="255.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">accel 0.4, brake 0.5 m/s²</text>
+<text x="244" y="273.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">lateral accel 0.35 m/s²</text>
+<text x="244" y="292.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">arrival braking curve</text>
+<text x="244" y="310.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">goal hold on ball centre</text>
+<text x="244" y="350" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="500" fill="#39c5cf" text-anchor="start">motion_ref.py</text>
+<rect x="476" y="52" width="216" height="120" rx="14" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<path d="M476 98V66a14 14 0 0 1 14 -14H678a14 14 0 0 1 14 14V98z" fill="#ab7df8" fill-opacity="0.16"/>
+<path d="M476 98H692" stroke="#3d444d" stroke-width="1"/>
+<circle cx="503" cy="75.0" r="15" fill="#ab7df8"/>
+<g transform="translate(494.0 66.0) scale(0.7500)" fill="none" stroke="#0d1117" stroke-width="2.00" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4H5v16h2 M17 4h2v16h-2 M9.5 9h1 M13.5 9h1 M9.5 15h1 M13.5 15h1"/></g>
+<text x="528" y="80.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="650" fill="#f0f6fc" text-anchor="start">LQR base</text>
+<text x="492" y="120" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">Per-design discrete LQR</text>
+<text x="492" y="138.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">on the planar model</text>
+<text x="492" y="158" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="500" fill="#ab7df8" text-anchor="start">lqr_gpu.py</text>
+<rect x="476" y="182" width="216" height="140" rx="14" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<path d="M476 228V196a14 14 0 0 1 14 -14H678a14 14 0 0 1 14 14V228z" fill="#3fb950" fill-opacity="0.16"/>
+<path d="M476 228H692" stroke="#3d444d" stroke-width="1"/>
+<circle cx="503" cy="205.0" r="15" fill="#3fb950"/>
+<g transform="translate(494.0 196.0) scale(0.7500)" fill="none" stroke="#0d1117" stroke-width="2.00" stroke-linecap="round" stroke-linejoin="round"><path d="M3.4 6a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0 M3.4 12a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0 M3.4 18a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0 M17.4 9a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0 M17.4 15a1.6 1.6 0 1 0 3.2 0a1.6 1.6 0 1 0 -3.2 0 M6.6 6l10.8 3 M6.6 12l10.8-3 M6.6 12l10.8 3 M6.6 18l10.8-3 M6.6 6l10.8 9 M6.6 18l10.8-9"/></g>
+<text x="528" y="210.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="650" fill="#f0f6fc" text-anchor="start">PPO residual actor</text>
+<text x="492" y="250" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">obs 25 + history 8 x 28</text>
+<text x="492" y="268.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">+ design vector 6 = 255</text>
+<text x="492" y="287.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">MLP 3 x 512, 3 outputs</text>
+<text x="492" y="308" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="500" fill="#3fb950" text-anchor="start">train_dev.py</text>
+<rect x="476" y="332" width="216" height="112" rx="14" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<path d="M476 378V346a14 14 0 0 1 14 -14H678a14 14 0 0 1 14 14V378z" fill="#f0883e" fill-opacity="0.16"/>
+<path d="M476 378H692" stroke="#3d444d" stroke-width="1"/>
+<circle cx="503" cy="355.0" r="15" fill="#f0883e"/>
+<g transform="translate(494.0 346.0) scale(0.7500)" fill="none" stroke="#0d1117" stroke-width="2.00" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17a8 8 0 1 1 16 0 M12 17l4-5 M4 17h2 M18 17h2"/></g>
+<text x="528" y="360.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="650" fill="#f0f6fc" text-anchor="start">Adaptive authority</text>
+<text x="492" y="400" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9198a1" text-anchor="start">rs 0.15 cruising, to 0.3 on</text>
+<text x="492" y="418" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9198a1" text-anchor="start">fast command change, stop</text>
+<text x="492" y="436" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9198a1" text-anchor="start">(ball &gt; 0.05 m/s) or tilt</text>
+<circle cx="742" cy="236" r="24" fill="#151b23" stroke="#f0f6fc" stroke-width="1.8"/>
+<path d="M733 236h18 M742 227v18" stroke="#f0f6fc" stroke-width="2.4" stroke-linecap="round"/>
+<text x="742" y="280" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="500" fill="#9198a1" text-anchor="middle">applied =</text>
+<text x="742" y="296" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="12" font-weight="600" fill="#f0f6fc" text-anchor="middle">clip(u + rs·a)</text>
+<rect x="800" y="52" width="164" height="250" rx="14" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<path d="M800 98V66a14 14 0 0 1 14 -14H950a14 14 0 0 1 14 14V98z" fill="#f85149" fill-opacity="0.16"/>
+<path d="M800 98H964" stroke="#3d444d" stroke-width="1"/>
+<circle cx="827" cy="75.0" r="15" fill="#f85149"/>
+<g transform="translate(818.0 66.0) scale(0.7500)" fill="none" stroke="#0d1117" stroke-width="2.00" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z M9 12l2 2 4-4"/></g>
+<text x="852" y="80.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="650" fill="#f0f6fc" text-anchor="start">Safety</text>
+<text x="816" y="120" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9198a1" text-anchor="start">HOLD / ACTIVE /</text>
+<text x="816" y="138" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9198a1" text-anchor="start">FAULT modes</text>
+<text x="816" y="156" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9198a1" text-anchor="start">tilt &gt; 30 deg: FAULT</text>
+<text x="816" y="174" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9198a1" text-anchor="start">stale state: FAULT</text>
+<text x="816" y="192" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9198a1" text-anchor="start">torque clamp to</text>
+<text x="816" y="210" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9198a1" text-anchor="start">design limit</text>
+<text x="816" y="228" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="400" fill="#9198a1" text-anchor="start">(30 N m, nom)</text>
+<text x="816" y="288" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="500" fill="#f85149" text-anchor="start">safety.py</text>
+<path d="M187 225H223" fill="none" stroke="#9198a1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-arrow)"/>
+<text x="206" y="216" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#6e7681" text-anchor="middle" font-style="italic">v, goal</text>
+<path d="M437 236H471" fill="none" stroke="#9198a1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-arrow)"/>
+<text x="455" y="228" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#6e7681" text-anchor="middle" font-style="italic">cmd</text>
+<path d="M455 236V112H471" fill="none" stroke="#9198a1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-arrow)"/>
+<path d="M455 236V388H471" fill="none" stroke="#9198a1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-arrow)"/>
+<path d="M695 112H742V207" fill="none" stroke="#9198a1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-arrow)"/>
+<text x="706" y="106" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#ab7df8" text-anchor="start" font-style="italic">u</text>
+<path d="M695 243H713" fill="none" stroke="#9198a1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-arrow)"/>
+<text x="706" y="237" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#3fb950" text-anchor="start" font-style="italic">a</text>
+<path d="M695 388H802V306" fill="none" stroke="#9198a1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M802 306V276L761 251" fill="none" stroke="#9198a1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-arrow)"/>
+<text x="706" y="382" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="13" font-weight="700" fill="#f0883e" text-anchor="start" font-style="italic">rs</text>
+<path d="M769 236H795" fill="none" stroke="#9198a1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-arrow)"/>
+<rect x="800" y="496" width="164" height="120" rx="14" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<path d="M800 542V510a14 14 0 0 1 14 -14H950a14 14 0 0 1 14 14V542z" fill="#f85149" fill-opacity="0.16"/>
+<path d="M800 542H964" stroke="#3d444d" stroke-width="1"/>
+<circle cx="827" cy="519.0" r="15" fill="#f85149"/>
+<g transform="translate(818.0 510.0) scale(0.7500)" fill="none" stroke="#0d1117" stroke-width="2.00" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 16 0a8 8 0 1 0 -16 0 M10 12a2 2 0 1 0 4 0a2 2 0 1 0 -4 0 M12 4v3 M12 17v3 M4 12h3 M17 12h3"/></g>
+<text x="852" y="524.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="650" fill="#f0f6fc" text-anchor="start">Wheels</text>
+<text x="816" y="564" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">3 omniwheels,</text>
+<text x="816" y="582.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">torque in N m</text>
+<text x="816" y="602" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="500" fill="#f85149" text-anchor="start">/wheel_torque_cmd</text>
+<rect x="560" y="496" width="196" height="120" rx="14" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<path d="M560 542V510a14 14 0 0 1 14 -14H742a14 14 0 0 1 14 14V542z" fill="#d29922" fill-opacity="0.16"/>
+<path d="M560 542H756" stroke="#3d444d" stroke-width="1"/>
+<circle cx="587" cy="519.0" r="15" fill="#d29922"/>
+<g transform="translate(578.0 510.0) scale(0.7500)" fill="none" stroke="#0d1117" stroke-width="2.00" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13a8 8 0 1 0 16 0a8 8 0 1 0 -16 0 M4.5 11c4 3 11 3 15 0 M12 5v-2"/></g>
+<text x="612" y="524.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="650" fill="#f0f6fc" text-anchor="start">Ballbot</text>
+<text x="576" y="564" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">simulated: MuJoCo-Warp</text>
+<text x="576" y="582.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="600" fill="#f0883e" text-anchor="start">no physical robot yet</text>
+<rect x="316" y="496" width="200" height="120" rx="14" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<path d="M316 542V510a14 14 0 0 1 14 -14H502a14 14 0 0 1 14 14V542z" fill="#4493f8" fill-opacity="0.16"/>
+<path d="M316 542H516" stroke="#3d444d" stroke-width="1"/>
+<circle cx="343" cy="519.0" r="15" fill="#4493f8"/>
+<g transform="translate(334.0 510.0) scale(0.7500)" fill="none" stroke="#0d1117" stroke-width="2.00" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12a7 7 0 1 0 14 0a7 7 0 1 0 -14 0 M10.5 12a1.5 1.5 0 1 0 3.0 0a1.5 1.5 0 1 0 -3.0 0 M12 2v4 M12 18v4 M2 12h4 M18 12h4"/></g>
+<text x="368" y="524.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="650" fill="#f0f6fc" text-anchor="start">IMU + encoders</text>
+<text x="332" y="564" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">gyro, accelerometer,</text>
+<text x="332" y="582.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">wheel encoder rates</text>
+<text x="332" y="602" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="500" fill="#4493f8" text-anchor="start">/imu  ·  /joint_states</text>
+<rect x="20" y="496" width="252" height="120" rx="14" fill="#151b23" stroke="#3d444d" stroke-width="1"/>
+<path d="M20 542V510a14 14 0 0 1 14 -14H258a14 14 0 0 1 14 14V542z" fill="#ab7df8" fill-opacity="0.16"/>
+<path d="M20 542H272" stroke="#3d444d" stroke-width="1"/>
+<circle cx="47" cy="519.0" r="15" fill="#ab7df8"/>
+<g transform="translate(38.0 510.0) scale(0.7500)" fill="none" stroke="#0d1117" stroke-width="2.00" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 3 5-8 4 5 M3 21h18"/></g>
+<text x="72" y="524.0" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="14.5" font-weight="650" fill="#f0f6fc" text-anchor="start">State estimator</text>
+<text x="36" y="564" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">attitude filter, gyro bias,</text>
+<text x="36" y="582.5" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12.5" font-weight="400" fill="#9198a1" text-anchor="start">calibrated encoders, Kalman</text>
+<text x="36" y="602" font-family="ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace" font-size="11" font-weight="500" fill="#ab7df8" text-anchor="start">odometry.py  ·  estimator.py</text>
+<path d="M882.0 305V491" fill="none" stroke="#9198a1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-arrow)"/>
+<text x="890.0" y="410" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="11" font-weight="500" fill="#6e7681" text-anchor="start" font-style="italic">torques</text>
+<path d="M797 556.0H761" fill="none" stroke="#9198a1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-arrow)"/>
+<path d="M557 556.0H521" fill="none" stroke="#9198a1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-arrow)"/>
+<path d="M313 556.0H277" fill="none" stroke="#9198a1" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#ah-arrow)"/>
+<path d="M146 493V476H516" fill="none" stroke="#ab7df8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 5"/>
+<path d="M331.0 476V369" fill="none" stroke="#ab7df8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 5" marker-end="url(#ah-purple)"/>
+<path d="M516 476V449" fill="none" stroke="#ab7df8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 5" marker-end="url(#ah-purple)"/>
+<path d="M146 476V315" fill="none" stroke="#ab7df8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="5 5" marker-end="url(#ah-purple)"/>
+<text x="176" y="470" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#ab7df8" text-anchor="start" font-style="italic">state estimate</text>
+<text x="112" y="392" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="11.5" font-weight="600" fill="#ab7df8" text-anchor="middle" font-style="italic">/odom</text>
+<text x="500.0" y="644" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif" font-size="12" font-weight="500" fill="#6e7681" text-anchor="middle" font-style="italic">State feeds the motion layer, the observation, the LQR and the authority rule; /odom feeds the planner. Simulation only.</text>
+</svg>

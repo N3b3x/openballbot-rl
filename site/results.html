@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- head:common -->
+<script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}</script>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<!-- /head:common -->
+<title>Results at a glance | Ballbot control research</title>
+<meta name="description" content="Five charts that summarise the corrected-engine ballbot study: the journey to the recommended controller, the authority dial, falls by obstacle size, navigation per sensor, and unseen robot designs. Simulation only.">
+<!-- og -->
+<link rel="canonical" href="https://n3b3x.github.io/openballbot-rl/results.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ballbot control research">
+<meta property="og:title" content="Results at a glance | Ballbot control research">
+<meta property="og:description" content="Five charts that summarise the corrected-engine ballbot study: the journey to the recommended controller, the authority dial, falls by obstacle size, navigation per sensor, and unseen robot designs. Simulation only.">
+<meta property="og:url" content="https://n3b3x.github.io/openballbot-rl/results.html">
+<meta property="og:image" content="https://n3b3x.github.io/openballbot-rl/assets/img/social-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A simulated ballbot: a cylindrical robot balanced on a basketball-textured ball, with the title of the study.">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /og -->
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/results.css">
+<script type="module" src="assets/js/layout.js"></script>
+<script type="module" src="assets/js/charts.js"></script>
+<style>
+.tl{border:1px solid var(--line-2);background:var(--bg-2);border-radius:var(--radius);padding:18px 20px;margin:22px 0 0;max-width:78ch}
+.tl .k{font:500 .72rem var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--hybrid);display:block;margin-bottom:.5em}
+.tl ul{margin:0;padding-left:1.1em}.tl li{margin:.35em 0;line-height:1.5}
+.tl b{font-family:var(--font-mono);font-weight:500}
+.figs{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));margin:28px 0 0}
+.figs .full{grid-column:1/-1}
+.fig{display:flex;flex-direction:column;gap:12px;min-width:0}
+.fig h2{font-size:clamp(1.15rem,2.2vw,1.45rem);margin:0;line-height:1.3}
+.fig .num{font:500 .72rem var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--text-3)}
+.fig .take{font-size:1rem;color:var(--text);margin:0;line-height:1.5;max-width:70ch}
+.fig .take b{color:var(--hybrid);font-weight:600}
+.fig .panel{padding:clamp(10px,2vw,18px)}
+.fig .cap{font-size:.8rem;color:var(--text-3);line-height:1.5;margin:0}
+.fig .cap b{color:var(--text-2)}
+.fig .go{margin-top:2px}
+.klg{display:flex;flex-wrap:wrap;gap:4px 14px;font:400 .72rem var(--font-mono);color:var(--text-3);margin:0 0 10px}
+.klg span{display:inline-flex;align-items:center;gap:6px}
+.klg i{display:inline-block;width:14px;height:10px;border-radius:3px}
+.chart-host{min-height:120px}
+.after{margin-top:40px;max-width:78ch;color:var(--text-2);font-size:.95rem}
+@media (max-width:520px){.fig .panel{padding:8px;margin-inline:calc(-1 * var(--gutter) + 6px)}.fig .take{font-size:.95rem}}
+</style>
+</head>
+<body>
+<!-- nojs --><noscript><nav class="nojs" aria-label="Main (JavaScript is off)"><a href="index.html">Overview</a><a href="learn/index.html">Learn</a><a href="generalist.html">Results</a><a href="videos.html">Videos</a><a href="design.html">Design guidelines</a><a href="deploy.html">ROS 2</a><a href="math.html">Physics</a><a href="architecture.html">Controller</a><a href="reproduce.html">Reproduce</a><a href="glossary.html">Glossary</a></nav></noscript><!-- /nojs -->
+<main>
+<header class="rhero wrap">
+  <p class="eyebrow">Results at a glance</p>
+  <h1>Five charts, one controller</h1>
+  <p class="lede">The whole corrected-engine study on one screen: how goal success rose recipe by recipe, where the learned authority should sit, what still makes the robot fall, when seeing the terrain matters, and what carries over to a robot it never trained on. Each chart links to the chapter of the <a href="generalist.html">generalist study</a> that holds the full tables and the caveats.</p>
+  <p class="badge-sim">SIMULATION ONLY &middot; MuJoCo-Warp float32 GPU, corrected engine (S69 onward)</p>
+  <div class="tl"><span class="k">TL;DR</span>
+    <ul>
+      <li>The recommended controller is an LQR on the derived planar model plus a learned residual with authority <b>0.25</b>, on a robot fitted with three passive ball arrestors. It tracks speed closely (<b>0.85 to 1.00</b> of the command, error at most 0.054 m/s, no falls) and reaches a goal across ten terrain kinds <b>0.73 to 0.74</b> of the time undisturbed and <b>0.45 to 0.46</b> with pushes and pulls, on the three recommended checkpoints (g26, corrected contact model, S99 close-out; the same recipe on the old model: 0.90 to 1.01, 0.71 to 0.76 and 0.42 to 0.44).</li>
+      <li>The arrestors, not more training, were the step change: without them the same recipe reaches <b>0.58 to 0.60</b> and <b>0.29 to 0.30</b>. In 95 percent of the earlier falls the body derailed off the ball at about 15 deg of tilt (S79).</li>
+      <li>What remains: obstacles larger than about a quarter of the ball radius fail at any speed, a traction limit; where they can be avoided, a forward time-of-flight sensor plus a planner takes goal success from <b>0.09</b> (blind) to <b>0.85</b>, against <b>0.91</b> with a perfect map.</li>
+    </ul>
+  </div>
+</header>
+
+<section class="rsec" id="charts" style="border-top:0;padding-top:8px"><div class="wrap">
+<div class="figs">
+
+  <figure class="fig full" id="journey">
+    <span class="num">1 &middot; The journey</span>
+    <h2>Goal success, recipe by recipe</h2>
+    <p class="take"><b>Takeaway.</b> Pure learning and the LQR residual without arrestors sit at 0.44 to 0.60 undisturbed; fitting the ball arrestors lifts every recipe by about 0.15, and the residual at authority 0.25 keeps that gain while tracking speed exactly.</p>
+    <div class="panel"><div data-chart="journey" role="region" aria-label="Goal success per recipe, undisturbed and with pushes and pulls"></div></div>
+    <figcaption class="cap"><b>Setup.</b> Engine: MuJoCo-Warp float32 GPU, corrected engine. Domain randomisation: on at scale 1 (mass, friction, torque, damping, latency, noise). Observation noise: on. Worlds: 1760 per policy and condition (16 per design and terrain kind, 11 designs, 10 kinds). Seeds: 2 per recipe, 3 for the recommended controller; whiskers span the seeds. Protocol: goal 1.1 m away, reached within 0.2 m inside 8 s; disturbed = pushes 5 to 20 N for 50 ms and pulls 3 to 12 N for 0.5 to 2 s. Source: <a href="data/study.json">data/study.json</a> (goal), study log S74, S80 to S84.</figcaption>
+    <p class="go"><a class="btn" href="generalist.html#retainer">Read the chapter: the body derails off the ball; a passive retainer stops that</a> <a class="btn" href="generalist.html#goal" style="margin-left:6px">The goal task</a></p>
+  </figure>
+
+  <figure class="fig" id="dial">
+    <span class="num">2 &middot; The authority dial</span>
+    <h2>Tracking against robustness</h2>
+    <p class="take"><b>Takeaway.</b> How much the learned part may override the LQR sets a trade-off: above authority 0.25 speed tracking slips from 1.00 to 0.85 while push robustness gains only 0.05, and below it robustness drops with no tracking gain, so 0.25 is the knee.</p>
+    <div class="panel"><div data-chart="dial" role="region" aria-label="Scatter of tracking accuracy against goal success with pushes and pulls for each policy"></div></div>
+    <figcaption class="cap"><b>Setup.</b> Engine: MuJoCo-Warp float32 GPU, corrected engine. x axis: flat benchmark, nominal design, DR off, noise off, 64 worlds, achieved over commanded speed averaged over 0.3, 0.6 and 0.9 m/s. y axis: goal task with pushes and pulls, DR on at scale 1, noise on, 1760 worlds. Seeds: one point per trained seed (authority 0.25: three). All points except the grey reference pair have the 100 deg arrestors. Source: <a href="data/study.json">data/study.json</a> (tradeoff), study log S82, S83.</figcaption>
+    <p class="go"><a class="btn" href="generalist.html#retainer">Read the chapter: the trade-off is set by the learned authority</a></p>
+  </figure>
+
+  <figure class="fig" id="size">
+    <span class="num">3 &middot; What still makes it fall</span>
+    <h2>Falls by obstacle size, not speed</h2>
+    <p class="take"><b>Takeaway.</b> Split every terrain feature at its median size and the larger half dominates the falls: up-steps and bumps above about 2.4 cm, a quarter of the 9 cm ball radius, fail 90 to 95 percent of the time at any approach speed, which matches the traction limit h_max = 0.29 r.</p>
+    <div class="panel"><div data-chart="size" role="region" aria-label="Fall rate per terrain feature for the smaller and larger half of its size range"></div></div>
+    <figcaption class="cap"><b>Setup.</b> Engine: MuJoCo-Warp float32 GPU, corrected engine. Domain randomisation: on at scale 1. Observation noise: on. Worlds: 352 per terrain kind, split into halves at the median drawn size. Seeds: one policy, the recommended controller g18_ret_rs025_s1 (seed 1), arrestors on. Protocol: velocity task at 0.3 m/s on the tiles, undisturbed, 20 s episodes so that every robot reaches the feature. Source: study log S87 (Table 15 of the generalist study), values read from <code>outputs/study/warp_ppo/g18_ret_rs025_s1/speed_long_0.3_sev.json</code>; speed independence from the same entry (falls 0.42 / 0.41 / 0.37 at 0.1 / 0.2 / 0.3 m/s).</figcaption>
+    <p class="go"><a class="btn" href="generalist.html#retainer">Read the chapter: a traction limit, not missing foresight</a></p>
+  </figure>
+
+  <figure class="fig" id="nav">
+    <span class="num">4 &middot; Terrain-aware navigation</span>
+    <h2>Where obstacles can be avoided, seeing them is decisive</h2>
+    <p class="take"><b>Takeaway.</b> With the same balance controller, goal success behind an 8 cm block goes from 0.09 blind to 0.91 with a perfect map and 0.85 with a forward 18 x 14 time-of-flight sensor; where the sensor points matters more than its resolution, and pushes near blocks remain the open problem.</p>
+    <div class="panel"><div data-chart="nav" role="region" aria-label="Navigation outcome per sensor configuration: reached, stuck, fell"></div></div>
+    <figcaption class="cap"><b>Setup.</b> Engine: MuJoCo-Warp float32 GPU, corrected engine. Domain randomisation: on at scale 1. Observation noise: on; sensor ranges carry 0.5 percent range-proportional noise and 2 percent dropout. Worlds: 528 (48 per design, 11 designs), 20 s episodes. Seeds: one controller seed (g18_ret_rs025_s1, frozen, arrestors on), one planner setting (wavefront on a 5 cm grid, 0.22 m margin). Head sensors are gimbal-stabilised 15 cm above the base. Rows below the dashed line add the training push and pull ranges. Source: <a href="data/study.json">data/study.json</a> (nav), study log S89.</figcaption>
+    <p class="go"><a class="btn" href="generalist.html#nav">Read the chapter: terrain-aware navigation</a></p>
+  </figure>
+
+  <figure class="fig full" id="designs">
+    <span class="num">5 &middot; Unseen robot designs</span>
+    <h2>The LQR base is what carries a policy to a robot it never saw</h2>
+    <p class="take"><b>Takeaway.</b> On a robot scaled 1.5x the LQR-based controllers keep 0.69 to 0.71 goal success while pure learning, the most robust recipe on its training designs, collapses to 0.09; the tenth-torque design is motor limited for every controller, at most 0.30, and training on it does not help.</p>
+    <div class="panel"><div data-chart="designs" role="region" aria-label="Goal success on two held-out robot designs per policy"></div></div>
+    <figcaption class="cap"><b>Setup.</b> Engine: MuJoCo-Warp float32 GPU, corrected engine. Domain randomisation: on at scale 1. Observation noise: on. Worlds: 160 per design (16 per terrain kind). Seeds: one per 11-design policy, two for the 12-design policy that adds the tenth-torque design to training. Protocol: goal task as in chart 1, arrestors as trained; s1.5 = all lengths scaled 1.5x (13.5 cm ball), tau3 = wheel torque limit one tenth of nominal. Evaluated with the corrected design vector (S85-R; the earlier S85 numbers are void). Source: <a href="data/study.json">data/study.json</a> (designs_ho), study log S85-R.</figcaption>
+    <p class="go"><a class="btn" href="generalist.html#designs">Read the chapter: generalisation to unseen designs</a></p>
+  </figure>
+
+</div>
+
+<p class="after">This page is a summary and repeats nothing else: the per-terrain tables, the null results (wider randomisation, disturbance-focused variants, a depth sensor for the balance policy, training with the planner in the loop) and the corrections are in the <a href="generalist.html">generalist study</a>; the clips behind these numbers are on the <a href="videos.html">videos</a> page. Colours keep one meaning across the site: teal is the LQR plus learned residual, violet is pure learning, green is success, amber is a limit and red is a fall. Every value is a share of simulated worlds; the sample sizes above say how far to trust a difference.</p>
+</div></section>
+</main>
+</body>
+</html>

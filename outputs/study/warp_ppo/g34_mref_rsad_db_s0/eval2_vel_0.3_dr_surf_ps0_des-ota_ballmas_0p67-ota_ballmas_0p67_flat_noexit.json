@@ -1,0 +1,147 @@
+{
+ "run": "g34_mref_rsad_db_s0",
+ "args": {
+  "run": "g34_mref_rsad_db_s0",
+  "task": "vel",
+  "speed": 0.3,
+  "n": 128,
+  "dr": true,
+  "surfaces": true,
+  "pull": false,
+  "eval_designs": "ota_ballmas_0p67,ota_ballmas_0p67",
+  "steps": 800,
+  "tile_seed": 0
+ },
+ "env_settings": {
+  "overrides": {},
+  "push_scale": 0.0,
+  "dr_scale": null,
+  "tiles_flat": true,
+  "no_exit": true,
+  "dr_off": "",
+  "dr_mft": [
+   1.0,
+   1.0,
+   1.0
+  ],
+  "lqr_base": 0.25,
+  "eval_designs": [
+   "ota_ballmas_0p67",
+   "ota_ballmas_0p67"
+  ],
+  "retainer": "0,0,0,100",
+  "pair_mu1": 0.01
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.0,
+   "success": 0.0,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.033623307943344116,
+   "late_err": 0.021536927670240402,
+   "late_speed_ratio": 0.9998525381088257
+  },
+  "step_up": {
+   "fall": 0.0,
+   "success": 0.0,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.0328962504863739,
+   "late_err": 0.020457206293940544,
+   "late_speed_ratio": 1.0020530223846436
+  },
+  "step_down": {
+   "fall": 0.0,
+   "success": 0.0,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.03193259611725807,
+   "late_err": 0.019807063043117523,
+   "late_speed_ratio": 1.0018939971923828
+  },
+  "small_drop": {
+   "fall": 0.0,
+   "success": 0.0,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.03269611671566963,
+   "late_err": 0.020761525258421898,
+   "late_speed_ratio": 1.0003187656402588
+  },
+  "large_drop": {
+   "fall": 0.0,
+   "success": 0.0,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.03292713314294815,
+   "late_err": 0.020434701815247536,
+   "late_speed_ratio": 0.9998083710670471
+  },
+  "ramp_up": {
+   "fall": 0.0,
+   "success": 0.0,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.03369813412427902,
+   "late_err": 0.021421413868665695,
+   "late_speed_ratio": 1.0003336668014526
+  },
+  "ramp_down": {
+   "fall": 0.0,
+   "success": 0.0,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.03329471871256828,
+   "late_err": 0.020820744335651398,
+   "late_speed_ratio": 1.001220703125
+  },
+  "stairs": {
+   "fall": 0.0,
+   "success": 0.0,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.03366103768348694,
+   "late_err": 0.0213476475328207,
+   "late_speed_ratio": 1.0001636743545532
+  },
+  "bump": {
+   "fall": 0.0,
+   "success": 0.0,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.03363383188843727,
+   "late_err": 0.021265849471092224,
+   "late_speed_ratio": 0.9993602633476257
+  },
+  "rough": {
+   "fall": 0.0,
+   "success": 0.0,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.032727643847465515,
+   "late_err": 0.020468810573220253,
+   "late_speed_ratio": 1.0009198188781738
+  }
+ },
+ "by_design": {
+  "ota_ballmas_0p67": {
+   "fall": 0.0,
+   "success": 0.0,
+   "nonfinite": 0.0,
+   "fall_at_map_edge": 0.0,
+   "track_err": 0.03290816396474838,
+   "late_err": 0.020535675808787346,
+   "late_speed_ratio": 1.0007368326187134
+  }
+ },
+ "overall": {
+  "fall": 0.0,
+  "success": 0.0,
+  "nonfinite": 0.0,
+  "fall_at_map_edge": 0.0,
+  "track_err": 0.03310907632112503,
+  "late_err": 0.020832190290093422,
+  "late_speed_ratio": 1.000592589378357
+ }
+}

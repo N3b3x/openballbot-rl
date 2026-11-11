@@ -1,0 +1,109 @@
+{
+ "args": {
+  "name": "book_tof_s0",
+  "variant": "proprio",
+  "env_config": "configs/env/book_tof.yaml",
+  "total_timesteps": 2000000.0,
+  "seed": 0,
+  "n_envs": 12,
+  "n_steps": 426,
+  "batch_size": 1280,
+  "n_epochs": 8,
+  "lr": 0.0003,
+  "lr_end": 3e-05,
+  "gamma": 0.999,
+  "ent_coef": 0.0,
+  "log_std_init": -1.0,
+  "encoder": "outputs/encoders/encoder_epoch_53",
+  "out_root": "outputs/study/runs",
+  "device": "auto",
+  "init_from": ""
+ },
+ "env": {
+  "camera": {
+   "enabled": false,
+   "disable_rgb": true,
+   "frame_rate": 90,
+   "height": 64,
+   "width": 64
+  },
+  "env": {
+   "max_allowed_tilt": 20,
+   "max_ep_steps": 800,
+   "goal_progress": 2.0,
+   "action_repeat": 5,
+   "max_wheel_velocity": 10.0,
+   "fix_wheel_contacts": true
+  },
+  "logging": {
+   "cams": false,
+   "reward_terms": false
+  },
+  "reward": {
+   "type": "directional",
+   "config": {
+    "action_reg_coef": -0.0001,
+    "scale": 0.1,
+    "survival_bonus": 0.02,
+    "cap": 0.6,
+    "fall_penalty": 10.0,
+    "target_direction": [
+     0.0,
+     1.0
+    ]
+   }
+  },
+  "terrain": {
+   "type": "book",
+   "config": {
+    "step_y": 0.6,
+    "book_len": 0.0,
+    "rough_amplitude": 0.03,
+    "step_height_m": 0.02,
+    "ranges": {
+     "step_height_m": [
+      0.0,
+      0.04
+     ]
+    },
+    "seed": null
+   }
+  },
+  "tof": [
+   {
+    "pos": [
+     0.11,
+     0.0,
+     0.03
+    ],
+    "yaw_deg": -20,
+    "pitch_deg": -35,
+    "zones": [
+     8,
+     8
+    ],
+    "max_range": 2.0,
+    "noise_abs": 0.005,
+    "noise_rel": 0.01,
+    "dropout": 0.02
+   },
+   {
+    "pos": [
+     -0.11,
+     0.0,
+     0.03
+    ],
+    "yaw_deg": 20,
+    "pitch_deg": -35,
+    "zones": [
+     8,
+     8
+    ],
+    "max_range": 2.0,
+    "noise_abs": 0.005,
+    "noise_rel": 0.01,
+    "dropout": 0.02
+   }
+  ]
+ }
+}

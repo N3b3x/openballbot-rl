@@ -1,0 +1,37 @@
+{
+ "run": "g38_hist24_s1",
+ "scenario": "zigzag",
+ "goal_metric_point": "ball_centre",
+ "goal_centre_logic": false,
+ "rs_adapt": [
+  0.15,
+  0.3,
+  0.05
+ ],
+ "mode": "ref",
+ "lqr_only": false,
+ "steps": 1500,
+ "speed": 0.3,
+ "pair_mu1": "0.01",
+ "push_scale": 0.0,
+ "worlds": 528,
+ "fall": 0.20643940567970276,
+ "heading_rate_rms_actual": 3.7796308994293213,
+ "heading_rate_rms_command": 1.088639497756958,
+ "along_ratio": 0.37409743666648865,
+ "side_speed_mean": 0.08329720050096512,
+ "cmd_reversals_per_world": 0.0,
+ "by_design": {
+  "nom": 0.0833333358168602,
+  "zhigh": 0.3125,
+  "zlow": 0.0833333358168602,
+  "kb4": 0.1458333432674408,
+  "bal4": 0.25,
+  "J02": 0.0625,
+  "tau6": 0.4166666865348816,
+  "bal025": 0.3125,
+  "kb025": 0.375,
+  "zeta41": 0.1875,
+  "zeta66": 0.0416666679084301
+ }
+}

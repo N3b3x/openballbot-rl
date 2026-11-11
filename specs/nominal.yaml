@@ -1,0 +1,10 @@
+# The nominal simulated ballbot expressed in physical units (reproduces design dz_nom). Simulation only.
+name: spec_nominal
+ball_radius_m: 0.09
+ball_mass_kg: 0.1679
+body_mass_kg: 3.8531
+body_com_height_m: 0.1306
+motor_torque_limit: 30.0
+rotor_inertia: 0.005
+wheel_damping: 0.1
+contact_zenith_deg: 51.0

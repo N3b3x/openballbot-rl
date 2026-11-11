@@ -1,0 +1,12 @@
+\begin{table*}[t]\centering\footnotesize
+\caption{Generalisation to unseen robot designs, corrected engine. Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 160 per design (16 per terrain kind). Seeds: one per row as listed (two for the 12-design runs). Protocol: goal task of Table 2 on two designs outside the 11 training designs: s1.5 (robot scaled 1.5 times, ball radius 13.5 cm) and tau3 (wheel torque limit one tenth of nominal); the 12-design runs include tau3 in training, so for them only s1.5 is unseen.}\label{tab:gen_designs_ho}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llcccc}\toprule
+Policy & Trained on tau3 & Undisturbed: s1.5 (larger robot, unseen) & tau3 (one tenth torque) & Pushes + pulls: s1.5 & tau3\\\midrule
+recommended: LQR + residual 0.25, retainer g18\_ret\_rs025\_s1, seed 1 & no & 0.71 & 0.30 & 0.66 & 0.15\\
+LQR + residual 0.5, no retainer g12\_dr175\_s1, seed 1 & no & 0.69 & 0.15 & 0.61 & 0.12\\
+pure learning, retainer g16\_pure\_ret100\_s1, seed 1 & no & 0.09 & 0.00 & 0.15 & 0.00\\
+LQR + residual 0.25, retainer, 12 designs g21\_ret\_rs025\_tau3\_s0, seed 0 & yes & 0.89 & 0.29 & 0.76 & 0.17\\
+LQR + residual 0.25, retainer, 12 designs g21\_ret\_rs025\_tau3\_s1, seed 1 & yes & 0.75 & 0.26 & 0.66 & 0.21\\
+\bottomrule\end{tabular}}
+\end{table*}

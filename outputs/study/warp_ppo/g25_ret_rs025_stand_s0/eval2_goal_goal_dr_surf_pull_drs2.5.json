@@ -1,0 +1,179 @@
+{
+ "run": "g25_ret_rs025_stand_s0",
+ "args": {
+  "run": "g25_ret_rs025_stand_s0",
+  "task": "goal",
+  "speed": 0.6,
+  "n": 16,
+  "dr": true,
+  "surfaces": true,
+  "pull": true,
+  "eval_designs": null,
+  "steps": 800,
+  "tile_seed": 0
+ },
+ "env_settings": {
+  "overrides": {},
+  "push_scale": 1.0,
+  "dr_scale": 2.5,
+  "tiles_flat": false,
+  "no_exit": false,
+  "dr_off": "",
+  "dr_mft": [
+   2.5,
+   2.5,
+   2.5
+  ],
+  "lqr_base": 0.25,
+  "eval_designs": [
+   "nom",
+   "zhigh",
+   "zlow",
+   "kb4",
+   "bal4",
+   "J02",
+   "tau6",
+   "bal025",
+   "kb025",
+   "zeta41",
+   "zeta66"
+  ],
+  "retainer": "0,0,0,100"
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.625,
+   "success": 0.375,
+   "fall_at_map_edge": 0.00909090880304575,
+   "median_time_s": 2.190000057220459
+  },
+  "step_up": {
+   "fall": 0.7784091234207153,
+   "success": 0.22159092128276825,
+   "fall_at_map_edge": 0.007299270015209913,
+   "median_time_s": 2.309999942779541
+  },
+  "step_down": {
+   "fall": 0.6590909361839294,
+   "success": 0.34090909361839294,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.240000009536743
+  },
+  "small_drop": {
+   "fall": 0.6875,
+   "success": 0.3125,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.3299999237060547
+  },
+  "large_drop": {
+   "fall": 0.8181818723678589,
+   "success": 0.1818181872367859,
+   "fall_at_map_edge": 0.0069444444961845875,
+   "median_time_s": 2.2200000286102295
+  },
+  "ramp_up": {
+   "fall": 0.6420454978942871,
+   "success": 0.35795456171035767,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.4700000286102295
+  },
+  "ramp_down": {
+   "fall": 0.6704545617103577,
+   "success": 0.3295454680919647,
+   "fall_at_map_edge": 0.016949152573943138,
+   "median_time_s": 2.119999885559082
+  },
+  "stairs": {
+   "fall": 0.6818181872367859,
+   "success": 0.3181818127632141,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.2899999618530273
+  },
+  "bump": {
+   "fall": 0.8068181872367859,
+   "success": 0.1931818276643753,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.3299999237060547
+  },
+  "rough": {
+   "fall": 0.5795454978942871,
+   "success": 0.41477274894714355,
+   "fall_at_map_edge": 0.009803921915590763,
+   "median_time_s": 2.200000047683716
+  }
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.6812500357627869,
+   "success": 0.3125,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.3299999237060547
+  },
+  "zhigh": {
+   "fall": 0.581250011920929,
+   "success": 0.41875001788139343,
+   "fall_at_map_edge": 0.02150537632405758,
+   "median_time_s": 2.2100000381469727
+  },
+  "zlow": {
+   "fall": 0.675000011920929,
+   "success": 0.32500001788139343,
+   "fall_at_map_edge": 0.009259259328246117,
+   "median_time_s": 2.319999933242798
+  },
+  "kb4": {
+   "fall": 0.625,
+   "success": 0.375,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.2100000381469727
+  },
+  "bal4": {
+   "fall": 0.625,
+   "success": 0.375,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.369999885559082
+  },
+  "J02": {
+   "fall": 0.5625,
+   "success": 0.4375,
+   "fall_at_map_edge": 0.011111111380159855,
+   "median_time_s": 2.369999885559082
+  },
+  "tau6": {
+   "fall": 0.762499988079071,
+   "success": 0.23749999701976776,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 1.9799998998641968
+  },
+  "bal025": {
+   "fall": 0.96875,
+   "success": 0.03125,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.299999952316284
+  },
+  "kb025": {
+   "fall": 0.862500011920929,
+   "success": 0.13750000298023224,
+   "fall_at_map_edge": 0.014492753893136978,
+   "median_time_s": 2.129999876022339
+  },
+  "zeta41": {
+   "fall": 0.6312500238418579,
+   "success": 0.3687500059604645,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.200000047683716
+  },
+  "zeta66": {
+   "fall": 0.668749988079071,
+   "success": 0.33125001192092896,
+   "fall_at_map_edge": 0.0,
+   "median_time_s": 2.3399999141693115
+  }
+ },
+ "overall": {
+  "fall": 0.694886326789856,
+  "success": 0.30454543232917786,
+  "fall_at_map_edge": 0.004905968904495239,
+  "median_time_s": 2.25
+ }
+}

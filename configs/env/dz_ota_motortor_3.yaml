@@ -1,0 +1,62 @@
+camera:
+  enabled: false
+  disable_rgb: true
+  frame_rate: 90
+  height: 64
+  width: 64
+env:
+  max_allowed_tilt: 70
+  max_ball_offset_deg: 30
+  action_rate_coef: -0.02
+  lean_coef: 0.5
+  ball_offset_coef: 0.05
+  max_ep_steps: 800
+  action_repeat: 5
+  max_wheel_velocity: 3.0
+  fix_wheel_contacts: true
+  command_mode: true
+  cmd_resample_steps: 300
+  cmd_zero_prob: 0.1
+  wheel_damping: 0.1
+  cmd_vmax: 1.2
+  cmd_wmax: 1.0
+  obs_vel_clip: 8.0
+  cmd_reward: err
+  dr:
+    mass: 0.15
+    friction: 0.2
+    damping:
+    - 0.07
+    - 0.15
+    torque: 0.15
+    latency_p: 0.2
+    obs_noise: 0.01
+    push_force:
+    - 5.0
+    - 20.0
+    push_every:
+    - 2.0
+    - 4.0
+    push_dur: 0.05
+  init_yaw_random: true
+  integrator: implicitfast
+  obs_vint: true
+  wheel_armature: 0.005
+  lqr_model_json: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\dz_ota_motortor_3.json
+  xml_path: C:\Users\Owner\Documents\GitHub\openballbot-rl\ballbot_gym\models\variants\dz_ota_motortor_3.xml
+logging:
+  cams: false
+  reward_terms: false
+reward:
+  type: directional
+  config:
+    action_reg_coef: -0.0001
+    scale: 0.5
+    survival_bonus: 0.02
+    fall_penalty: 2.0
+    target_direction:
+    - 0.0
+    - 1.0
+terrain:
+  type: flat
+  config: {}

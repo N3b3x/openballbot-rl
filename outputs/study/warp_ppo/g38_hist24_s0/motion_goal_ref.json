@@ -1,0 +1,41 @@
+{
+ "run": "g38_hist24_s0",
+ "scenario": "goal",
+ "rs_adapt": [
+  0.15,
+  0.3,
+  0.05
+ ],
+ "mode": "ref",
+ "lqr_only": false,
+ "steps": 1500,
+ "speed": 0.3,
+ "pair_mu1": "0.01",
+ "push_scale": 0.0,
+ "worlds": 528,
+ "fall": 0.06439393758773804,
+ "heading_rate_rms_actual": 3.509031295776367,
+ "heading_rate_rms_command": 1.1236796379089355,
+ "along_ratio": 0.09914939105510712,
+ "side_speed_mean": 0.025981595739722252,
+ "cmd_reversals_per_world": 0.9997348785400391,
+ "arrived": 0.946969747543335,
+ "time_to_arrive_median_s": 2.890000104904175,
+ "overshoot_median_m": 0.19288486242294312,
+ "overshoot_p90_m": 0.22877494990825653,
+ "hold_err_rms_m": 0.0669691190123558,
+ "hold_speed_rms": 0.04059587046504021,
+ "by_design": {
+  "nom": 0.02083333395421505,
+  "zhigh": 0.0,
+  "zlow": 0.0,
+  "kb4": 0.0,
+  "bal4": 0.2083333432674408,
+  "J02": 0.0,
+  "tau6": 0.1666666716337204,
+  "bal025": 0.02083333395421505,
+  "kb025": 0.2916666865348816,
+  "zeta41": 0.0,
+  "zeta66": 0.0
+ }
+}

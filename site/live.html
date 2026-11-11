@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- head:common -->
+<script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}</script>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<!-- /head:common -->
+<title>Live policy | Ballbot control research</title>
+<meta name="description" content="Run the trained PPO ballbot policy in your browser: MuJoCo WebAssembly physics, a JavaScript copy of the network, and a parity check against the Python reference. Simulation only.">
+<!-- og -->
+<link rel="canonical" href="https://n3b3x.github.io/openballbot-rl/live.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ballbot control research">
+<meta property="og:title" content="Live policy | Ballbot control research">
+<meta property="og:description" content="Run the trained PPO ballbot policy in your browser: MuJoCo WebAssembly physics, a JavaScript copy of the network, and a parity check against the Python reference. Simulation only.">
+<meta property="og:url" content="https://n3b3x.github.io/openballbot-rl/live.html">
+<meta property="og:image" content="https://n3b3x.github.io/openballbot-rl/assets/img/social-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A simulated ballbot: a cylindrical robot balanced on a basketball-textured ball, with the title of the study.">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /og -->
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/live.css?v=3">
+<script type="module" src="assets/js/layout.js"></script>
+<script type="module" src="assets/js/live.js?v=1"></script>
+</head>
+<body>
+<!-- nojs --><noscript><nav class="nojs" aria-label="Main (JavaScript is off)"><a href="index.html">Overview</a><a href="learn/index.html">Learn</a><a href="generalist.html">Results</a><a href="videos.html">Videos</a><a href="design.html">Design guidelines</a><a href="deploy.html">ROS 2</a><a href="math.html">Physics</a><a href="architecture.html">Controller</a><a href="reproduce.html">Reproduce</a><a href="glossary.html">Glossary</a></nav></noscript><!-- /nojs -->
+<main>
+<header class="wrap pagehead">
+  <div class="eyebrow">Live, in your browser</div>
+  <h1>Drive the trained policy</h1>
+  <p class="lede">This page runs the real controller. A neural network trained with PPO reads the robot's state 100 times a second and sets three wheel torques; MuJoCo, compiled to WebAssembly, simulates the physics. Set a velocity command, shove the robot, and watch it keep its balance on the ball. Everything here is <strong>simulation</strong>; no hardware was involved.</p>
+  <div class="lv-badges" aria-live="polite">
+    <span class="lv-badge busy" id="b-engine"><i></i><span>MuJoCo WebAssembly: loading</span></span>
+    <span class="lv-badge" id="b-fix"><i></i><span>Contact-frame fix: pending</span></span>
+    <span class="lv-badge" id="b-parity"><i></i><span>Parity vs Python: pending</span></span>
+  </div>
+</header>
+
+<section class="wrap" style="padding-bottom:40px" aria-label="Live simulation">
+  <div class="lv-grid">
+    <div>
+      <div class="lv-stage" id="stage" role="img" aria-label="3D view of the simulated ballbot balancing on a ball over a checkered floor">
+        <div class="lv-load" id="loading"><div><strong id="load-title">Loading the simulator</strong><br><span id="load-msg">Fetching the MuJoCo WebAssembly build (about 10 MB, cached afterwards) and the policy weights.</span></div></div>
+        <div class="lv-hud" id="hud" aria-hidden="true"></div>
+        <div class="lv-banner" id="banner" hidden role="status"></div>
+      </div>
+      <div class="lv-legend" aria-hidden="true">
+        <span class="cmd" style="color:var(--text-2)">commanded velocity</span><span class="act">actual velocity</span>
+        <span style="color:var(--text-3)">drag to orbit, scroll or pinch to zoom</span>
+      </div>
+    </div>
+
+    <div class="lv-panel card">
+      <div>
+        <h3 style="margin-bottom:.3em">Velocity command</h3>
+        <p class="lv-small" style="margin:0 0 10px">World-frame target velocity, as in training (up to 1.5 m/s). Drag the puck, or focus the pad and use the arrow keys.</p>
+        <div class="lv-pad-wrap">
+          <canvas id="pad" width="440" height="440" tabindex="0" role="application" aria-label="Velocity command pad. Arrow keys change the target velocity, space or 0 sets it to zero."></canvas>
+          <div class="lv-readout" id="cmd-readout" aria-live="off"></div>
+        </div>
+      </div>
+      <label class="lv-slide">Yaw rate command: <b id="wz-val">0.00 rad/s</b>
+        <input type="range" id="wz" min="-1" max="1" step="0.05" value="0"></label>
+      <div class="lv-row" role="group" aria-label="Presets">
+        <button class="btn" data-preset="0,0,0">Stand still</button>
+        <button class="btn" data-preset="0,0.6,0">Forward 0.6</button>
+        <button class="btn" data-preset="0,0,0.8">Spin on the spot</button>
+        <button class="btn" id="tour" aria-pressed="false">Auto tour</button>
+      </div>
+      <div class="lv-row" role="group" aria-label="Disturbances">
+        <span class="lv-small" style="align-self:center">Shove (15 N, 50 ms):</span>
+        <button class="btn" data-push="0,15">&#8593; N</button><button class="btn" data-push="15,0">&#8594; E</button>
+        <button class="btn" data-push="0,-15">&#8595; S</button><button class="btn" data-push="-15,0">&#8592; W</button>
+      </div>
+      <div class="lv-row" role="group" aria-label="Simulation control">
+        <button class="btn primary" id="pause" aria-pressed="false">Pause</button>
+        <button class="btn" id="reset">Reset</button>
+        <button class="btn" id="follow" aria-pressed="true">Follow robot</button>
+      </div>
+      <label class="lv-slide">Speed: <b id="speed-val">1.0x</b>
+        <input type="range" id="speed" min="0.1" max="2" step="0.1" value="1"></label>
+      <label class="lv-toggle"><input type="checkbox" id="nofix"><span>Switch the <strong>contact-frame fix</strong> off. The policy was trained with it; without it the omniwheels behave like ordinary friction and the robot falls within a fraction of a second. <a href="#fix">Why?</a></span></label>
+    </div>
+  </div>
+
+  <div class="lv-plots" aria-label="Live plots of commanded and actual velocity">
+    <div class="lv-plot"><h4>Velocity x (m/s)</h4><canvas id="p-vx"></canvas></div>
+    <div class="lv-plot"><h4>Velocity y (m/s)</h4><canvas id="p-vy"></canvas></div>
+    <div class="lv-plot"><h4>Yaw rate (rad/s)</h4><canvas id="p-wz"></canvas></div>
+    <div class="lv-plot"><h4>Wheel commands (fraction of 30 N m)</h4><canvas id="p-act"></canvas>
+      <div class="lv-legend" style="margin-top:6px"><span class="w0">wheel 0</span><span class="w1">wheel 1</span><span class="w2">wheel 2</span></div></div>
+  </div>
+</section>
+
+<section class="block wrap" id="policy">
+  <div class="eyebrow">What the network does</div>
+  <h2>Eight signals in, three torques out</h2>
+  <p class="lede">The policy is a small multilayer perceptron: the actor has 22 inputs (the eight signals below), two layers of 256 tanh units and 3 outputs, about 72,000 weights (144,391 parameters including the value network that is only used in training). It has no camera and no memory beyond the last action and one integral term: it balances from the robot's own motion alone.</p>
+  <div class="lv-two" style="margin-top:28px">
+    <div class="card">
+      <h3>What it sees (live)</h3>
+      <div class="lv-card-scroll"><table class="lv-obs"><tbody id="obs-body"></tbody></table></div>
+      <p class="lv-small" style="margin:10px 0 0">The five rows marked standardised are shifted and scaled with the running mean and variance recorded during training, then clipped to &plusmn;10; <code>cmd</code>, <code>heading</code> and <code>vint</code> are fed raw. Together they make 22 numbers.</p>
+    </div>
+    <div class="card">
+      <h3>What it outputs (live)</h3>
+      <div class="lv-bars" id="act-bars"></div>
+      <p class="lv-small" style="margin:12px 0 6px">Each output in [&minus;1, 1] is multiplied by 30 and applied as the torque in N m on one omniwheel motor (with the sign convention of the model). Five physics steps of 2 ms are simulated per decision, so the policy acts at 100 Hz.</p>
+      <svg class="lv-net" viewBox="0 0 520 120" role="img" aria-label="Network: 22 inputs, two hidden layers of 256 tanh units, 3 outputs">
+        <g stroke="var(--line-2)" fill="none"><path d="M70 60 L190 30 M70 60 L190 90 M70 30 L190 60 M70 90 L190 60 M210 30 L330 60 M210 90 L330 60 M210 60 L330 30 M210 60 L330 90 M350 30 L450 60 M350 90 L450 60 M350 60 L450 40 M350 60 L450 80"/></g>
+        <rect x="30" y="20" width="40" height="80" rx="8" fill="var(--bg-3)" stroke="var(--line-2)"/><text x="50" y="64" text-anchor="middle">22</text>
+        <rect x="190" y="12" width="20" height="96" rx="8" fill="color-mix(in srgb,var(--learned) 30%,var(--bg-2))" stroke="var(--learned)"/><text x="200" y="124" text-anchor="middle">256</text>
+        <rect x="330" y="12" width="20" height="96" rx="8" fill="color-mix(in srgb,var(--learned) 30%,var(--bg-2))" stroke="var(--learned)"/><text x="340" y="124" text-anchor="middle">256</text>
+        <rect x="450" y="30" width="40" height="60" rx="8" fill="var(--bg-3)" stroke="var(--line-2)"/><text x="470" y="64" text-anchor="middle">3</text>
+        <text x="130" y="14" text-anchor="middle">tanh</text><text x="270" y="14" text-anchor="middle">tanh</text><text x="400" y="14" text-anchor="middle">linear, clip</text>
+      </svg>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:28px">
+    <strong>An honest curiosity.</strong> The input called <code>motor_state</code> is meant to be the three wheel speeds. Reading the environment code (<code>ballbot_gym/envs/ballbot_env.py</code>) shows it indexes the velocity vector by <em>joint number</em> instead of <em>degree-of-freedom address</em>, so what the policy actually receives is <code>[base vy, base vz, base roll rate] / 30</code> (entries 1 to 3 of the velocity vector, which belong to the base's free joint). The policy was trained on exactly that signal, so this page reproduces it, because faithful behaviour matters more than the label. So the row labelled <code>motor_state</code> in the table above is not a wheel speed.
+  </div>
+</section>
+
+<section class="block wrap" id="parity">
+  <div class="eyebrow">Parity with the Python reference</div>
+  <h2>Does the browser behave like the training environment?</h2>
+  <p class="lede">A claim of faithfulness needs evidence. We recorded deterministic rollouts of the same policy in the original Python environment (MuJoCo 3.13.0, no domain randomisation, flat floor) and replayed the same initial states and commands here, with the policy running in JavaScript and the physics in WebAssembly.</p>
+  <div class="lv-two" style="margin-top:24px">
+    <div class="card">
+      <h3>Base-position difference, JavaScript + WASM vs Python</h3>
+      <div class="lv-tablewrap"><table class="lv-ptable" aria-describedby="par-note">
+        <thead><tr><th>Reference run</th><th class="v">1 s</th><th class="v">4 s</th><th class="v">8 s</th><th class="v">max</th></tr></thead>
+        <tbody id="par-body"><tr><td colspan="5" class="lv-small">Loading reference numbers.</td></tr></tbody>
+      </table></div>
+      <p class="lv-small" id="par-note" style="margin:10px 0 0">Differences in millimetres. Each run is 8 s (the training episode length) from the same start with the same fixed command; the position is the base body of the robot.</p>
+      <div class="lv-row" style="margin-top:12px"><button class="btn" id="par-run">Run the check in this browser</button></div>
+    </div>
+    <div class="card">
+      <h3>Other checks</h3>
+      <div class="lv-card-scroll"><table class="lv-obs"><tbody id="par-extra"></tbody></table></div>
+    </div>
+  </div>
+  <div class="callout warn">
+    <strong>What this does and does not show.</strong> The agreement is measured on noise-free runs from a clean start. The policy was trained with domain randomisation (random masses, friction, torque scale, one-step latency, sensor noise and random pushes); this page runs the nominal model with no noise and no hidden pushes, so it shows what the policy does in the idealised case. Contact-rich chaotic dynamics eventually amplify tiny numerical differences, so longer runs than 8 s (or other commands) may drift further than the table shows; we only report what we measured. The floor is flat: the study's rough-terrain and book-climbing experiments are not reproduced here.
+  </div>
+</section>
+
+<section class="block wrap" id="fix">
+  <div class="eyebrow">Why this was not obvious</div>
+  <h2>Reproducing the omniwheel contact fix in JavaScript</h2>
+  <p class="lede">The robot drives the ball with three omniwheels. Each wheel is modelled as a capsule that rolls freely along its own axis (friction 0.001) and grips across it (friction 1.0). Stock MuJoCo picks the first contact tangent arbitrarily, so that anisotropy points the wrong way. The study's Python environment therefore runs its own stepper that rewrites every ball-wheel contact frame so the first tangent follows the capsule axis.</p>
+  <div class="lv-two">
+    <div class="card">
+      <h3>How the browser does the same</h3>
+      <ol style="color:var(--text-2);padding-left:1.2em;margin:0">
+        <li>The official <code>@mujoco/mujoco</code> 3.13.0 build exposes the individual pipeline stages, so the step is split as in Python: kinematics, collision, <em>rewrite frames</em>, constraints, forces, then <code>mj_implicit</code>.</li>
+        <li><code>data.contact</code> is returned <strong>by copy</strong>, so writing to it has no effect. The frames are instead rewritten in place inside the live WebAssembly memory (<code>data.arena</code>), whose struct layout the page calibrates and verifies against <code>data.contact</code> before using it.</li>
+        <li>Switch the fix off with the checkbox above and the same code falls over almost immediately, matching what the Python environment does without the fix (it also falls at control step 25 in the reference run).</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Limits of this approach</h3>
+      <ul style="color:var(--text-2);padding-left:1.2em;margin:0">
+        <li>It relies on the arena layout of MuJoCo 3.13.0, hence the pinned version and the start-up self-check. A different build could change the layout; the badge at the top turns amber if the check fails.</li>
+        <li>Single-threaded WebAssembly in your browser tab; speed depends on your device.</li>
+        <li>The model file is a snapshot of <code>ballbot_gym/models/ballbot.xml</code> with a down-scaled ball texture (visual only).</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="block wrap" id="repro">
+  <div class="eyebrow">Reproduce</div>
+  <h2>Re-run the numbers yourself</h2>
+  <pre class="cmd"><code>python scripts/site/export_policy.py    # weights + normalisation to JSON, verified against SB3 (error &lt; 1e-5)
+python scripts/site/ref_rollout.py      # deterministic Python reference rollouts (site/live/ref_rollout.json)
+npm i @mujoco/mujoco@3.13.0
+MUJOCO_JS=$PWD/node_modules/@mujoco/mujoco/mujoco.js node site/live/parity_node.mjs   # writes site/live/parity.json</code></pre>
+  <p class="lv-small">Design notes and the full feasibility analysis are in <code>site/live/FEASIBILITY.md</code>. Policy: run <code>robs_c_s0</code> (<code>outputs/study/runs/robs_c_s0</code>), proprioceptive PPO, trained for 20 million steps with domain randomisation.</p>
+</section>
+</main>
+</body>
+</html>

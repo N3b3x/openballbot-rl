@@ -1,0 +1,15 @@
+\begin{table}[t]\centering\footnotesize
+\caption{Falls against feature size (velocity task, 0.3\,m/s, 20\,s). Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 352 per kind (two tile maps' worth of worlds, split into halves by severity). Seeds: one policy (g18\_ret\_rs025\_s1, seed 1). Protocol: velocity task at 0.3 m/s on the tiles, undisturbed, arrestors on, 20 s episodes; worlds split at the median drawn severity of their tile.}\label{tab:gen_severity}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcccc}\toprule
+Feature & Severity range on the map & Split & Falls, smaller half & Falls, larger half\\\midrule
+step up & 1.1 to 5.9 cm & 2.3 cm & 0.40 & 0.95\\
+bump & 1.4 to 3.6 cm & 2.4 cm & 0.59 & 0.90\\
+stairs (riser) & 1.2 to 3.2 cm & 1.4 cm & 0.27 & 0.70\\
+large drop & 10.9 to 18.3 cm & 15.1 cm & 0.61 & 0.77\\
+small drop & 3.1 to 5.8 cm & 4.4 cm & 0.23 & 0.34\\
+step down & 1.2 to 5.5 cm & 2.6 cm & 0.12 & 0.21\\
+ramp up & 3.5 to 11.2 deg & 9.6 deg & 0.15 & 0.12\\
+ramp down & 5.2 to 11.9 deg & 8.5 deg & 0.28 & 0.29\\
+\bottomrule\end{tabular}}
+\end{table}

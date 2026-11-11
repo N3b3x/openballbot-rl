@@ -1,0 +1,10 @@
+\begin{table}[t]\centering\footnotesize
+\caption{Arrestor roller friction (zero-shot). Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error. Domain randomisation: on at scale 1. Observation noise: on. Worlds per cell: 1760 per cell. Seeds: one policy (g12\_dr175\_s0, seed 0), zero-shot. Protocol: goal task of Table 2, arrestors at 100 deg with the stated sliding friction (0 = ideal ball-transfer unit).}\label{tab:gen_friction}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lcc}\toprule
+Arrestor sliding friction & Goal success undisturbed & Goal success pushes + pulls\\\midrule
+0 & 0.75 & 0.45\\
+0.05 & 0.74 & 0.42\\
+0.2 & 0.76 & 0.42\\
+\bottomrule\end{tabular}}
+\end{table}

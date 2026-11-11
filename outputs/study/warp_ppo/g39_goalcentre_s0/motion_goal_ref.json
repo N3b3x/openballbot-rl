@@ -1,0 +1,43 @@
+{
+ "run": "g39_goalcentre_s0",
+ "scenario": "goal",
+ "goal_metric_point": "ball_centre",
+ "goal_centre_logic": true,
+ "rs_adapt": [
+  0.15,
+  0.3,
+  0.05
+ ],
+ "mode": "ref",
+ "lqr_only": false,
+ "steps": 1500,
+ "speed": 0.3,
+ "pair_mu1": "0.01",
+ "push_scale": 0.0,
+ "worlds": 528,
+ "fall": 0.07007575780153275,
+ "heading_rate_rms_actual": 2.348259210586548,
+ "heading_rate_rms_command": 0.5301777720451355,
+ "along_ratio": 0.1339094191789627,
+ "side_speed_mean": 0.012307637371122837,
+ "cmd_reversals_per_world": 0.1946212202310562,
+ "arrived": 0.9431818723678589,
+ "time_to_arrive_median_s": 2.940000057220459,
+ "overshoot_median_m": 0.09911832213401794,
+ "overshoot_p90_m": 0.15826773643493652,
+ "hold_err_rms_m": 0.03640111908316612,
+ "hold_speed_rms": 0.024669701233506203,
+ "by_design": {
+  "nom": 0.0,
+  "zhigh": 0.0,
+  "zlow": 0.0,
+  "kb4": 0.0,
+  "bal4": 0.2083333432674408,
+  "J02": 0.0,
+  "tau6": 0.2291666716337204,
+  "bal025": 0.0,
+  "kb025": 0.3333333432674408,
+  "zeta41": 0.0,
+  "zeta66": 0.0
+ }
+}

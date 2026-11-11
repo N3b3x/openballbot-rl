@@ -1,0 +1,118 @@
+{
+ "run": "g18_ret_rs025_s1",
+ "source": "sensor",
+ "sensor": {
+  "res": "18x14",
+  "fov": "55,42",
+  "pitch": -25.0,
+  "up": 0.15,
+  "mount": "head",
+  "noise": 0.005
+ },
+ "planner": {
+  "kind": "wave",
+  "hyst": 1.0,
+  "look": 0.6,
+  "half_w": 0.22,
+  "thr": 0.03,
+  "v_max": 0.3,
+  "mem": 600,
+  "goal_r": 1.2
+ },
+ "steps": 2000,
+ "worlds": 528,
+ "push_scale": 0.0,
+ "pull": false,
+ "retainer": "0,0,0,100",
+ "overall": {
+  "fall": 0.10795454680919647,
+  "success": 0.8522727489471436,
+  "stuck": 0.039772726595401764,
+  "over_block": 0.02083333395421505,
+  "median_time_s": 8.34999942779541
+ },
+ "diag": {
+  "stuck_final_goal_dist_median": 0.7165592908859253,
+  "stuck_cmd_zero_frac": 0.3333333432674408,
+  "stuck_dist_from_start_median": 1.039568543434143
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.0625,
+   "success": 0.8958333730697632,
+   "stuck": 0.0416666679084301,
+   "over_block": 0.0,
+   "median_time_s": 8.25
+  },
+  "zhigh": {
+   "fall": 0.0625,
+   "success": 0.875,
+   "stuck": 0.0625,
+   "over_block": 0.02083333395421505,
+   "median_time_s": 8.010000228881836
+  },
+  "zlow": {
+   "fall": 0.0416666679084301,
+   "success": 0.8958333730697632,
+   "stuck": 0.0625,
+   "over_block": 0.0,
+   "median_time_s": 8.59000015258789
+  },
+  "kb4": {
+   "fall": 0.1458333432674408,
+   "success": 0.8541666865348816,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 7.279999732971191
+  },
+  "bal4": {
+   "fall": 0.1666666716337204,
+   "success": 0.6875,
+   "stuck": 0.1458333432674408,
+   "over_block": 0.1041666716337204,
+   "median_time_s": 8.569999694824219
+  },
+  "J02": {
+   "fall": 0.0416666679084301,
+   "success": 0.8958333730697632,
+   "stuck": 0.0625,
+   "over_block": 0.0,
+   "median_time_s": 8.050000190734863
+  },
+  "tau6": {
+   "fall": 0.0625,
+   "success": 0.9375,
+   "stuck": 0.0,
+   "over_block": 0.0833333358168602,
+   "median_time_s": 7.159999847412109
+  },
+  "bal025": {
+   "fall": 0.125,
+   "success": 0.875,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 7.440000057220459
+  },
+  "kb025": {
+   "fall": 0.4375,
+   "success": 0.5,
+   "stuck": 0.0625,
+   "over_block": 0.02083333395421505,
+   "median_time_s": 8.809999465942383
+  },
+  "zeta41": {
+   "fall": 0.0,
+   "success": 1.0,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 9.389999389648438
+  },
+  "zeta66": {
+   "fall": 0.0416666679084301,
+   "success": 0.9583333730697632,
+   "stuck": 0.0,
+   "over_block": 0.0,
+   "median_time_s": 9.539999961853027
+  }
+ }
+}

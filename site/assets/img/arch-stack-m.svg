@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 640" class="d-stack" role="img" aria-labelledby="dsm-t">
+<title id="dsm-t">Controller stack, top to bottom: goal, navigation layer, velocity command, LQR and residual policy side by side, sum and clip, wheel torques, robot with arrestors, and the state fed back.</title>
+<style>
+.d-stack text{font-family:Inter,system-ui,sans-serif;font-size:13px;fill:var(--text,#dfe6f0)}
+.d-stack .m{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;fill:var(--text-2,#9aa8bb)}
+.d-stack .k{fill:var(--text-3,#8a97ab);font-size:11px}
+.d-stack .h{font-size:14px;font-weight:600}
+.d-stack .bx{fill:var(--bg-3,#161e2a);stroke-width:1.8}
+.d-stack .bm{stroke:var(--model,#4aa8ff)} .d-stack .bl{stroke:var(--learned,#a78bfa)} .d-stack .bh{stroke:var(--hybrid,#2ee6c4)} .d-stack .bw{stroke:var(--warn,#ffb454)} .d-stack .bn{stroke:var(--line-2,#5a6b84)} .d-stack .bg{stroke:var(--good,#5ee08a)}
+.d-stack .w{fill:none;stroke:var(--line-2,#5a6b84);stroke-width:1.6}
+</style>
+<defs>
+<marker id="dsm-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--line-2,#5a6b84)"/></marker>
+<marker id="dsm-ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--hybrid,#2ee6c4)"/></marker>
+</defs>
+<g data-d="goal" class="node" tabindex="0" role="button" aria-label="Goal">
+<rect x="100" y="12" width="160" height="48" rx="10" class="bx bg"/>
+<text x="114" y="33" class="h">Goal</text><text x="114" y="50" class="m">x, y about 1.1 m away</text>
+</g>
+<path d="M180 60V84" class="w" marker-end="url(#dsm-a)"/>
+<g data-d="nav" class="node" tabindex="0" role="button" aria-label="Navigation layer">
+<rect x="40" y="86" width="280" height="88" rx="10" class="bx bm"/>
+<text x="54" y="108" class="h">Navigation layer</text>
+<text x="54" y="128" class="m">distance field map, carrot 0.3 m</text>
+<text x="54" y="144" class="m">turn &lt;= 2 rad/s, v &lt;= 0.3 m/s (Froude)</text>
+<text x="54" y="162" class="k">nav.py (WavePlanner)</text>
+</g>
+<path d="M180 174V200" class="w" marker-end="url(#dsm-a)"/>
+<text x="190" y="192" class="m">velocity command</text>
+<path d="M180 200H95V220" class="w" marker-end="url(#dsm-a)"/><path d="M180 200H265V220" class="w" marker-end="url(#dsm-a)"/>
+<g data-d="lqr" class="node" tabindex="0" role="button" aria-label="LQR with governor and integral">
+<rect x="14" y="222" width="162" height="94" rx="10" class="bx bm"/>
+<text x="26" y="244" class="h">LQR + governor</text>
+<text x="26" y="264" class="m">Q diag(1e-6,50,1,1)</text><text x="26" y="280" class="m">R 1, a_max 0.5 m/s²</text><text x="26" y="296" class="m">k_i 1, yaw k 5</text>
+</g>
+<g data-d="policy" class="node" tabindex="0" role="button" aria-label="Residual PPO policy">
+<rect x="184" y="222" width="162" height="94" rx="10" class="bx bl"/>
+<text x="196" y="244" class="h">Residual (PPO)</text>
+<text x="196" y="264" class="m">MLP, 25 obs</text><text x="196" y="280" class="m">+ design vector</text><text x="196" y="296" class="m">output x rho = 0.25</text>
+</g>
+<path d="M95 316V352H160" class="w"/><path d="M265 316V352H200" class="w"/>
+<g data-d="mix" class="node" tabindex="0" role="button" aria-label="Sum and clip">
+<circle cx="180" cy="352" r="20" class="bx bh"/><text x="173" y="358" style="font-size:18px">+</text>
+<text x="206" y="356" class="m">clip(a_LQR + 0.25 a_pi)</text>
+</g>
+<path d="M180 372V398" fill="none" style="stroke:var(--hybrid,#2ee6c4);stroke-width:2" marker-end="url(#dsm-ah)"/>
+<g data-d="torque" class="node" tabindex="0" role="button" aria-label="Wheel torques">
+<rect x="100" y="400" width="160" height="54" rx="10" class="bx bw"/>
+<text x="114" y="422" class="h">Wheels</text><text x="114" y="440" class="m">3 torques, clipped</text>
+</g>
+<path d="M180 454V478" class="w" marker-end="url(#dsm-a)"/>
+<g data-d="robot" class="node" tabindex="0" role="button" aria-label="Simulated robot with arrestors">
+<rect x="100" y="480" width="160" height="72" rx="10" class="bx bn"/>
+<text x="114" y="502" class="h">Robot</text><text x="114" y="520" class="m">MuJoCo-Warp, 100 Hz</text><text x="114" y="538" class="m" style="fill:var(--good,#5ee08a)">3 ball arrestors</text>
+</g>
+<path d="M260 516H336V268H346" class="w"/><path d="M336 268V222" class="w"/>
+<path d="M336 400V268" class="w"/>
+<path d="M336 268H346" class="w" marker-end="url(#dsm-a)"/>
+<path d="M100 516H24V316" class="w" marker-end="url(#dsm-a)"/>
+<text x="14" y="580" class="k">Feedback: tilt, rates, ball rate, velocity, heading, every 10 ms.</text>
+<text x="14" y="600" class="k">Blue model-based, violet learned, teal combined,</text>
+<text x="14" y="616" class="k">amber limit, green mechanical safety.</text>
+</svg>

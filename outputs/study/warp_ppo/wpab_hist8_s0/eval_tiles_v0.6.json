@@ -1,0 +1,57 @@
+{
+ "run": "wpab_hist8_s0",
+ "speed": 0.6,
+ "dr": true,
+ "kinds": {
+  "flat": {
+   "fall": 0.125,
+   "crossed": 0.703125,
+   "stayed": 0.171875
+  },
+  "step_up": {
+   "fall": 0.390625,
+   "crossed": 0.25,
+   "stayed": 0.359375
+  },
+  "step_down": {
+   "fall": 0.3125,
+   "crossed": 0.578125,
+   "stayed": 0.109375
+  },
+  "small_drop": {
+   "fall": 0.390625,
+   "crossed": 0.484375,
+   "stayed": 0.125
+  },
+  "large_drop": {
+   "fall": 0.828125,
+   "crossed": 0.140625,
+   "stayed": 0.03125
+  },
+  "ramp_up": {
+   "fall": 0.21875,
+   "crossed": 0.09375,
+   "stayed": 0.6875
+  },
+  "ramp_down": {
+   "fall": 0.390625,
+   "crossed": 0.59375,
+   "stayed": 0.015625
+  },
+  "stairs": {
+   "fall": 0.40625,
+   "crossed": 0.234375,
+   "stayed": 0.359375
+  },
+  "bump": {
+   "fall": 0.765625,
+   "crossed": 0.0625,
+   "stayed": 0.171875
+  },
+  "rough": {
+   "fall": 0.296875,
+   "crossed": 0.546875,
+   "stayed": 0.15625
+  }
+ }
+}

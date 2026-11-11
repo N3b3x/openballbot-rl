@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- head:common -->
+<script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}</script>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<!-- /head:common -->
+<title>The robot and its physics: a guided derivation | Ballbot</title>
+<meta name="description" content="A guided derivation for curious readers: the planar ballbot model, why it falls, the lean law, the LQR and its governor, residual control and authority, Froude scaling, the traction limit at a step edge, why ball arrestors leave the model unchanged, and the wavefront planner with its carrot follower. Live widgets, simulation only.">
+<!-- og -->
+<link rel="canonical" href="https://n3b3x.github.io/openballbot-rl/math.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ballbot control research">
+<meta property="og:title" content="The robot and its physics: a guided derivation | Ballbot">
+<meta property="og:description" content="A guided derivation for curious readers: the planar ballbot model, why it falls, the lean law, the LQR and its governor, residual control and authority, Froude scaling, the traction limit at a step edge, why ball arrestors leave the model unchanged, and the wavefront planner with its carrot follower. Live widgets, simulation only.">
+<meta property="og:url" content="https://n3b3x.github.io/openballbot-rl/math.html">
+<meta property="og:image" content="https://n3b3x.github.io/openballbot-rl/assets/img/social-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A simulated ballbot: a cylindrical robot balanced on a basketball-textured ball, with the title of the study.">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /og -->
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/math.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script type="module" src="assets/js/layout.js"></script>
+<script type="module" src="assets/js/math.js"></script>
+<style>
+/* page-specific: guided-derivation layout */
+.tldr{border:1px solid color-mix(in srgb,var(--hybrid) 45%,var(--line));background:color-mix(in srgb,var(--hybrid) 7%,var(--bg-2));border-radius:var(--radius);padding:18px 22px;margin:1.4em 0 0}
+.tldr h2{font-size:1.05rem;margin:0 0 .5em;color:var(--hybrid)}
+.tldr ol{margin:0;padding-left:1.2em;color:var(--text-2);font-size:.98rem} .tldr li{margin:.3em 0}
+.toc{display:flex;flex-wrap:wrap;gap:6px;margin:1.2em 0 0}
+.toc a{font:500 .78rem var(--font-mono);color:var(--text-2);padding:.35em .75em;border-radius:99px;border:1px solid var(--line);text-decoration:none}
+.toc a:hover{border-color:var(--model);color:var(--text)}
+.lead{font-size:1.08rem;color:var(--text-2);max-width:68ch;margin:0 0 1.2em}
+.sowhat{border-left:3px solid var(--good);background:var(--bg-2);padding:12px 18px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:1.4em 0 0;max-width:72ch}
+.sowhat b{color:var(--good);font:500 .74rem var(--font-mono);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:.25em}
+.fig{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);padding:12px;min-width:0}
+.fig svg,.fig img{width:100%;height:auto;display:block}
+.fig .cap{font-size:.82rem;color:var(--text-3);margin:8px 2px 0}
+/* on phones the dense diagrams keep a readable size and scroll sideways inside their frame */
+@media (max-width:620px){.fig [data-svg]{overflow-x:auto;-webkit-overflow-scrolling:touch}.fig [data-svg]>svg,.fig [data-svg]>img{min-width:var(--minw,520px)}.fig .cap::before{content:"Swipe sideways to see the whole figure. ";color:var(--text-3)}}
+.two{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,6fr);gap:clamp(18px,3vw,36px);align-items:start}
+@media (max-width:900px){.two{grid-template-columns:minmax(0,1fr)}}
+.params{font-size:.9rem} .params td:first-child{font-family:var(--font-mono);color:var(--model)} .params td:last-child{font-family:var(--font-mono);text-align:right}
+.defn{border-bottom:1px dotted var(--text-3);text-decoration:none;color:inherit;cursor:help}
+.steps{counter-reset:st;margin:1em 0;padding:0;list-style:none;max-width:72ch}
+.steps li{position:relative;padding-left:2.4em;margin:.7em 0}
+.steps li::before{counter-increment:st;content:counter(st);position:absolute;left:0;top:.1em;width:1.7em;height:1.7em;border-radius:50%;background:color-mix(in srgb,var(--model) 18%,var(--bg-3));color:var(--model);font:600 .8rem var(--font-mono);display:grid;place-items:center}
+.assume{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:10px;margin:1em 0}
+.assume div{background:var(--bg-3);border-radius:var(--radius-sm);padding:10px 12px;font-size:.86rem;color:var(--text-2)} .assume div b{display:block;color:var(--warn);font:500 .72rem var(--font-mono);letter-spacing:.08em;text-transform:uppercase}
+.numtab{font-size:.88rem} .numtab td.num,.numtab th.num{text-align:right;font-family:var(--font-mono)}
+.numtab tr.pick td{color:var(--text);font-weight:600} .numtab tr.pick td:first-child::after{content:" (recommended)";color:var(--hybrid);font-weight:500;font-size:.8em}
+.src{font:400 .72rem var(--font-mono);color:var(--text-3)}
+.simcv-wave{width:100%;max-width:420px;display:block;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--line);touch-action:manipulation;cursor:crosshair}
+h2.q{font-size:clamp(1.4rem,3vw,2rem)}
+.deeper summary{cursor:pointer;color:var(--model);font-weight:600;padding:.4em 0}
+.block-anchor{scroll-margin-top:80px}
+</style>
+</head>
+<body>
+<!-- nojs --><noscript><nav class="nojs" aria-label="Main (JavaScript is off)"><a href="index.html">Overview</a><a href="learn/index.html">Learn</a><a href="generalist.html">Results</a><a href="videos.html">Videos</a><a href="design.html">Design guidelines</a><a href="deploy.html">ROS 2</a><a href="math.html">Physics</a><a href="architecture.html">Controller</a><a href="reproduce.html">Reproduce</a><a href="glossary.html">Glossary</a></nav></noscript><!-- /nojs -->
+<main>
+
+<section class="wrap" style="padding-top:clamp(40px,7vw,80px);padding-bottom:40px">
+  <div class="eyebrow">The robot and its physics</div>
+  <h1>Why a ball-balancing robot is hard, in nine short derivations</h1>
+  <p class="lede">This page walks from a drawing of the robot to every equation the controller relies on. Each step has a plain-words lead-in, the derivation, a small picture, and one line on why it matters. Nothing here requires more than school mechanics and a willingness to follow a few symbols.</p>
+  <div class="tagrow"><span class="chip model">Derived math (blue)</span><span class="chip learned">Learned part (violet)</span><span class="chip hybrid">Combined controller (teal)</span><span class="chip">Simulation only, no hardware</span></div>
+  <div class="tldr">
+    <h2>In short</h2>
+    <ol>
+      <li>A ballbot is an inverted pendulum on a ball. Left alone, a lean grows e-fold every 0.21 s.</li>
+      <li>To go forward it must first roll backward (a non-minimum-phase zero), and to keep accelerating it must lean: \(\sin\theta=\kappa a\), about 10 degrees per m/s&sup2;.</li>
+      <li>An LQR designed on this model, with a velocity governor and a slow integral, tracks speed almost exactly. A small learned residual (authority 0.25) adds robustness without spoiling that.</li>
+      <li>Scaling the robot by \(s\) scales speeds by \(\sqrt s\) and forces by \(s^3\), so commands and pushes are scaled the same way to keep the task fair.</li>
+      <li>A ball cannot climb a step higher than \(r\,(1-\cos\arctan\mu)\), about 0.29 of its radius: 2.6 cm for the 9 cm ball. No controller changes that.</li>
+      <li>Passive arrestors hold the body on the ball with forces through the ball's centre, so they leave the model untouched.</li>
+      <li>A wavefront distance field and a carrot follower route the robot around what it cannot climb, smoothly.</li>
+    </ol>
+  </div>
+  <nav class="toc" aria-label="Sections on this page">
+    <a href="#s1">1 The plane</a><a href="#s2">2 Falling</a><a href="#s3">3 Lean law</a><a href="#s4">4 LQR</a><a href="#s5">5 Residual</a><a href="#s6">6 Froude</a><a href="#s7">7 Step edge</a><a href="#s8">8 Arrestors</a><a href="#s9">9 Navigation</a><a href="#s10">10 Limits and checks</a>
+  </nav>
+  <p style="font-size:.9rem;color:var(--text-3);margin-top:1.4em">Sources: <code>paper_v2/main.tex</code> (propositions 1 to 3 and the parameter table), <code>scripts/study/ballbot_model.py</code> (symbolic derivation), <code>experiments/warp_ppo/lqr_gpu.py</code> (the LQR as run), <code>experiments/warp_ppo/retainer.py</code> (arrestors), <code>experiments/warp_ppo/nav.py</code> (planner), and <code>docs/research/tracking_study_log.md</code> entries cited by their S-number. Live numbers are computed in your browser by <code>assets/js/ballbot-model.js</code>, a port of the Python model, and checked against it at the bottom of the page.</p>
+</section>
+
+<!-- ============================ 1. THE PLANE ============================ -->
+<section class="block block-anchor" id="s1">
+<div class="wrap">
+  <div class="eyebrow">1. The robot in one plane</div>
+  <h2 class="q">Two angles describe everything</h2>
+  <p class="lead">Picture the robot from the side. A ball sits on the floor; a tall body balances on top of it, touching it through three small wheels. The wheels can spin the ball under the body. If we look only at motion in one vertical plane, there are just two things to track: how far the ball has rolled, and how far the body leans. Everything on this page follows from those two angles and a handful of masses and lengths.</p>
+  <div class="two">
+    <div>
+      <p><strong>Coordinates.</strong> Let \(\varphi\) be the rotation angle of the ball (radius \(r\)) and \(\theta\) the tilt of the body from vertical, positive when the top leans toward \(+x\). The ball rolls without slipping, so its position is tied to its rotation, and the body's <a class="defn" title="Centre of mass: the single point where the body's weight can be taken to act">centre of mass</a> sits a height \(l\) above the ball's centre:</p>
+      <div class="eqn">$$x=r\varphi,\qquad \text{COM at }\big(x+l\sin\theta,\; l\cos\theta\big).$$</div>
+      <p><strong>The motor is an internal pair.</strong> The wheels push on the ball and the ball pushes back on the wheels. So a torque \(\tau\) applied to the ball is matched by \(-\tau\) on the body. This single fact will explain the wrong-way start in section 2. The wheels turn with the <em>relative</em> angle \(\varphi-\theta\), and that is where their rotor inertia \(J\) and viscous damping \(d\) act.</p>
+      <table class="params" aria-label="Model parameters of the nominal robot">
+        <thead><tr><th>Symbol</th><th>Meaning</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>m<sub>a</sub></td><td>body mass, including wheels and sensors</td><td>3.853 kg</td></tr>
+          <tr><td>l</td><td>body COM height above the ball centre</td><td>0.1306 m</td></tr>
+          <tr><td>I<sub>a</sub></td><td>body pitch inertia about its COM</td><td>0.0366 kg m&sup2;</td></tr>
+          <tr><td>m<sub>k</sub>, r</td><td>ball mass and radius</td><td>0.168 kg, 0.09 m</td></tr>
+          <tr><td>I<sub>k</sub></td><td>ball inertia</td><td>5.44 &times; 10<sup>-4</sup> kg m&sup2;</td></tr>
+          <tr><td>J<sub>eff</sub>, d<sub>eff</sub></td><td>wheel rotor inertia and damping, reflected into the plane</td><td>0.1025 kg m&sup2;, 2.05 N m s</td></tr>
+          <tr><td>&tau;<sub>max</sub></td><td>wheel torque limit</td><td>30 N m</td></tr>
+        </tbody>
+      </table>
+      <p class="src">Values read from the simulator model file; table 1 of <code>paper_v2/main.tex</code>. The reflected rotor inertia is 188 times the ball's own inertia: the drive, not the ball, dominates what the controller feels.</p>
+    </div>
+    <figure class="fig" style="margin:0">
+      <div data-svg="assets/img/math-planar.svg"><img src="assets/img/math-planar.svg" alt="Side view of the planar ballbot: ball of radius r, body leaning by theta with its centre of mass at height l, torque tau between body and ball" loading="lazy" width="520" height="330"></div>
+      <figcaption class="cap">The planar model. The three real wheels collapse into one equivalent drive acting between body and ball; the 3-D robot decouples into two such planes plus a yaw spin.</figcaption>
+    </figure>
+  </div>
+  <div class="sowhat"><b>So what</b>Seven numbers and two angles are enough to predict how this robot falls, how it must lean, and how fast a controller has to react. Every later claim on this page is a consequence of this drawing.</div>
+</div>
+</section>
+
+<!-- ============================ 2. FALLING ============================ -->
+<section class="block block-anchor" id="s2">
+<div class="wrap">
+  <div class="eyebrow">2. Why it falls, and why it first rolls the wrong way</div>
+  <h2 class="q">From energy to equations of motion</h2>
+  <p class="lead">Mechanics gives a recipe: write down the kinetic energy (motion) and potential energy (height), subtract them, and a standard procedure (the <a class="defn" title="Euler-Lagrange equations: d/dt of the derivative of L with respect to velocity minus the derivative of L with respect to position equals the applied force">Euler-Lagrange equations</a>) produces the equations of motion. We only need the result and two facts about it.</p>
+  <div class="two">
+    <div>
+      <p><strong>Energy.</strong> The ball translates and spins, the body translates with the ball and swings about it, and the rotors spin with the relative rate:</p>
+      <div class="eqn">$$\begin{aligned}T&=\tfrac12\big(I_k+m_kr^2\big)\dot\varphi^2+\tfrac12 m_a\big[(r\dot\varphi+l\cos\theta\,\dot\theta)^2+(l\sin\theta\,\dot\theta)^2\big]\\&\quad+\tfrac12 I_a\dot\theta^2+\tfrac12 J\,(\dot\varphi-\dot\theta)^2,\qquad V=m_a\,g\,l\cos\theta .\end{aligned}$$</div>
+      <p>The bracket expands to \(r^2\dot\varphi^2+2rl\cos\theta\,\dot\varphi\dot\theta+l^2\dot\theta^2\). The middle term couples ball and body: move one and you move the other.</p>
+      <p><strong>Equations of motion.</strong> With the motor pair \((\tau,-\tau)\) and the wheel damping on the relative rate:</p>
+      <div class="eqn">$$M(\theta)\begin{pmatrix}\ddot\varphi\\\ddot\theta\end{pmatrix}+\begin{pmatrix}-m_alr\sin\theta\,\dot\theta^2\\-m_agl\sin\theta\end{pmatrix}=\begin{pmatrix}1\\-1\end{pmatrix}\big(\tau-d(\dot\varphi-\dot\theta)\big),$$
+      $$M(\theta)=\begin{pmatrix}I_k+J+(m_a+m_k)r^2 & m_alr\cos\theta-J\\ m_alr\cos\theta-J & I_a+J+m_al^2\end{pmatrix}.$$</div>
+      <p class="src">This is <code>derive_planar()</code> in <code>ballbot_model.py</code>; the live simulator in section 4 integrates exactly these equations.</p>
+      <h3 style="margin-top:1.4em">Near upright, it is a linear system</h3>
+      <p>For small lean, \(\sin\theta\approx\theta\) and \(\cos\theta\approx1\). Collect the state \(s=(\varphi,\theta,\dot\varphi,\dot\theta)\) and the equations become \(\dot s=As+B\tau\). The matrices below are recomputed from the sliders:</p>
+      <div class="grid g2">
+        <div class="card eqn" id="mat-A" aria-label="Linearised A matrix">A = ...</div>
+        <div class="card eqn" id="mat-B" aria-label="Linearised B matrix">B = ...</div>
+      </div>
+      <p>Look at \(B\): one torque accelerates the ball forward (\(+\)) and tips the body backward (\(-\)). Opposite signs. Keep that in mind.</p>
+    </div>
+    <div>
+      <div class="lab-ctl" id="ctl" role="group" aria-label="Robot parameters">
+        <p style="margin:0 0 8px;font-size:.86rem;color:var(--text-2)">Change the robot. Every live number and plot on this page follows.</p>
+        <div class="btn-row" style="margin:0 0 10px" role="group" aria-label="Presets">
+          <button class="pill" data-preset="nominal">Nominal (MuJoCo)</button>
+          <button class="pill" data-preset="low">COM at 8.7 cm</button>
+          <button class="pill" data-preset="high">COM at 38 cm</button>
+          <button class="pill" data-preset="lightball">Light ball (0.04 kg)</button>
+          <button class="pill" data-preset="heavyball">Heavy ball (1 kg)</button>
+        </div>
+        <div class="ctl-grid">
+          <div class="ctl"><label for="c-r">Ball radius r <b id="v-r">9.0 cm</b></label><input id="c-r" type="range" min="3" max="20" step="0.5" value="9"></div>
+          <div class="ctl"><label for="c-l">COM height l <b id="v-l">13.1 cm</b></label><input id="c-l" type="range" min="3" max="40" step="0.5" value="13.06"></div>
+          <div class="ctl"><label for="c-ma"><span>Body mass m<sub>a</sub></span> <b id="v-ma">3.85 kg</b></label><input id="c-ma" type="range" min="0.5" max="12" step="0.05" value="3.853"></div>
+          <div class="ctl"><label for="c-mk"><span>Ball mass m<sub>k</sub></span> <b id="v-mk">0.168 kg</b></label><input id="c-mk" type="range" min="0.05" max="3" step="0.01" value="0.168"></div>
+          <div class="ctl"><label for="c-J"><span>Rotor inertia J<sub>eff</sub></span> <b id="v-J">0.103</b></label><input id="c-J" type="range" min="0" max="0.3" step="0.005" value="0.1025"></div>
+        </div>
+      </div>
+      <div class="readout" aria-live="polite" style="margin:0 0 18px">
+        <div><small>unstable pole p</small><b class="bad" id="o-p">-</b></div>
+        <div><small>wrong-way zero z</small><b class="warn" id="o-z">-</b></div>
+        <div><small>z / p</small><b id="o-zp">-</b></div>
+        <div><small>sensitivity floor (15 ms)</small><b id="o-ms">-</b></div>
+        <div><small>lean per m/s&sup2;</small><b class="model" id="o-k">-</b></div>
+      </div>
+      <div class="widget">
+        <h4>Poles and zeros of torque &rarr; ball position</h4>
+        <div id="pz"></div>
+        <div class="legend"><span><i style="background:var(--bad)"></i>unstable pole p</span><span><i style="background:var(--model)"></i>stable open-loop poles</span><span><i style="background:var(--warn)"></i>zeros &plusmn;z</span><span><i style="background:var(--model);opacity:.45"></i>LQR closed-loop poles (pale x)</span></div>
+        <p class="cap">Anything in the right half (shaded) grows on its own. The pole p is the fall; the zero at +z is the wrong-way start. The LQR of section 4 moves all poles to the left.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:2em">Fact 1: an unstable pole, the fall</h3>
+  <div class="two">
+    <div>
+      <p>A <a class="defn" title="Pole: a rate at which a linear system's motion grows (positive) or decays (negative) on its own, in 1/s">pole</a> is a rate at which the system moves by itself. Set the torque to zero and ask how a tiny lean evolves.</p>
+      <div class="prop"><div class="tag">Proposition 1 (paper_v2)</div>
+        <p>With no wheel damping the linearised plant has poles \(\{0,0,\pm\lambda\}\),</p>
+        <div class="eqn">$$\lambda=\sqrt{\frac{m_a g l\,M_{11}}{\det M_0}}.$$</div>
+      </div>
+      <p><em>Why.</em> With \(\tau=0\) and small angles the equations read \(M_0\ddot q=K q\) with \(K=\mathrm{diag}(0,\,m_agl)\). The gravity entry \(m_agl\) is an inverted pendulum: it pushes the lean the way it is already going. Solving \(\det(M_0s^2-K)=0\) gives \(s^2(\det M_0\, s^2-m_aglM_{11})=0\).</p>
+      <p>For the robot on the sliders: undamped \(\lambda=\)<span data-live="lambda"></span>&nbsp;1/s, with damping \(p=\)<span data-live="p"></span>&nbsp;1/s, so a lean grows e-fold every <span data-live="tau_fall"></span>&nbsp;s. A lower centre of mass or a bigger ball slows the fall; try the presets.</p>
+    </div>
+    <div class="sowhat" style="margin-top:0"><b>So what</b>The controller has one fifth of a second to notice a lean and act before it has grown by a factor of 2.7. That is why sensing delay and loop rate matter so much, and why a 10 ms control period is not generous.</div>
+  </div>
+
+  <h3 style="margin-top:2em">Fact 2: a right-half-plane zero, the wrong-way start</h3>
+  <div class="two">
+    <div>
+      <p>A <a class="defn" title="Zero: an input pattern the output does not respond to; a zero in the right half plane means the output first moves opposite to its final direction">zero</a> tells you which way the output moves first. Here the output is the ball position and the input is the motor torque.</p>
+      <div class="prop"><div class="tag">Proposition 2 (paper_v2)</div>
+        <p>The transfer function from torque to ball position has a real zero pair \(\pm z\),</p>
+        <div class="eqn">$$z=\sqrt{\frac{m_a g l}{I_a+m_al^2+m_alr}},$$</div>
+        <p>independent of the rotor inertia and the damping. The zero at \(+z\) makes the plant non-minimum phase.</p>
+      </div>
+      <p><em>Why, in words.</em> To go forward the body must lean forward, because only a lean lets gravity pull the robot along. The only way to tip the body is to push on the ball, and the torque is an internal pair: it spins the ball one way and the body the other. So to lean <em>forward</em> the controller first rolls the ball <em>backward</em>. Any controller, model-based or learned, must show this reversal; the paper measured 0.3 to 1.7 cm of it in the full simulation.</p>
+      <p><em>Why, in algebra.</em> Cramer's rule on the linearised equations gives the numerator of \(\hat\varphi/\hat\tau\) as \((M_{22}+M_{12})s^2-m_agl\). The \(J\) and \(d\) terms cancel because both act on the relative coordinate \(\varphi-\theta\).</p>
+    </div>
+    <div class="sowhat" style="margin-top:0"><b>So what</b>You cannot ask this robot for a sudden change of speed. A step command demands an impulsive reversal and a torque spike. Section 4's velocity governor exists for exactly this reason, and section 5 explains why the learned part is kept small.</div>
+  </div>
+
+  <details class="deeper" style="margin-top:1.6em">
+    <summary>One level deeper: the sensitivity floor, and why z and p being close is bad</summary>
+    <div class="two" style="margin-top:1em">
+      <div>
+        <p>Feeding back ball position through any stabilising linear controller, an unstable pole \(p\) and a right-half-plane zero \(z\) impose a floor on the peak of the <a class="defn" title="Sensitivity function S: how much a disturbance or model error is amplified by the closed loop at each frequency">sensitivity function</a> (Skogestad's bound), with \(T\) the total loop delay:</p>
+        <div class="eqn">$$\lVert S\rVert_\infty\;\ge\;\frac{z+p}{\lvert z-p\rvert}\,e^{pT}.$$</div>
+        <p>It blows up as \(z\to p\). Loop shaping also wants the crossover above the pole and below about half the zero, \(p<\omega_c<z/2\), a window that exists only when \(z>2p\). For this robot \(z/p=\)<span data-live="zp"></span>, so the window is <strong data-live="window"></strong>. The floor is <span data-live="ms0"></span> (about <span data-live="msdb"></span> dB) with zero delay and <span data-live="ms"></span> with a 15 ms loop. Across the <span data-live="nsweep"></span> designs in <code>design_sweep.csv</code>, \(z/p\) ranges from <span data-live="zpmin"></span> to <span data-live="zpmax"></span>: no body shape we tried opens the window. This is a statement about the model, not a hardware result.</p>
+      </div>
+      <div>
+        <div class="widget"><h4>Bode plot of torque &rarr; ball position</h4><div id="bode-m"></div><div id="bode-p"></div><p class="cap">Red line: p. Amber lines: z/2 and z. The green band is the window p &lt; &omega; &lt; z/2 when it exists.</p></div>
+        <div class="widget" style="margin-top:14px"><h4>Sensitivity floor versus z / p</h4><div id="floor"></div>
+          <div class="legend"><span><i style="background:var(--model)"></i>floor, no delay</span><span><i style="background:var(--warn)"></i>floor, 15 ms loop</span><span><i style="background:var(--text-3)"></i>designs in design_sweep.csv</span><span>&#9733; current robot</span></div>
+          <p class="cap">Every grey dot is a body design; all sit on the steep wall, far from z = 2p.</p></div>
+      </div>
+    </div>
+  </details>
+</div>
+</section>
+
+<!-- ============================ 3. LEAN LAW ============================ -->
+<section class="block block-anchor" id="s3">
+<div class="wrap">
+  <div class="eyebrow">3. The lean law</div>
+  <h2 class="q">To accelerate, lean. How much is fixed by the body.</h2>
+  <p class="lead">A cyclist leans into a turn by an amount that depends on speed, not on skill. A ballbot leans into its acceleration the same way. The angle is set by masses and lengths alone, and no controller can bargain it down. This section derives the exchange rate.</p>
+  <div class="two">
+    <div>
+      <div class="prop"><div class="tag">Proposition 3 (paper_v2)</div>
+        <p>Adding the two rows of the equations of motion cancels the torque and the damping (both enter as \(+\) and \(-\)):</p>
+        <div class="eqn">$$(M_{11}+M_{12})\ddot\varphi+(M_{12}+M_{22})\ddot\theta-m_alr\sin\theta\,\dot\theta^2=m_agl\sin\theta .$$</div>
+        <p>Hold a steady lean (\(\ddot\theta=\dot\theta=0\)) and write the ball acceleration as \(a=r\ddot\varphi\). Then \(\sin\theta=\kappa a\) with</p>
+        <div class="eqn">$$\kappa=\frac{(m_a+m_k)r^2+I_k+m_alr}{m_a\,g\,l\,r}.$$</div>
+      </div>
+      <p>The identity has no control term in it, so it holds on every trajectory of every controller. The paper used it as a controller-independent check of the inertia model: regression slope 0.88 to 0.93 against the simulator. It also contains the wrong-way start: right after a torque, before the lean has changed, the right-hand side is still zero, so \(\ddot\varphi\) and \(\ddot\theta\) must have opposite signs.</p>
+      <p>For the robot on the sliders, \(\kappa\) is <span data-live="kappa"></span>&deg; of lean per m/s&sup2;. A 20&deg; lean budget therefore caps sustained acceleration near <span data-live="amax"></span>&nbsp;m/s&sup2;.</p>
+      <figure class="fig" style="margin:1em 0 0">
+        <div data-svg="assets/img/math-lean.svg"><img src="assets/img/math-lean.svg" alt="Three robots: upright at rest, leaning about 10 degrees at 1 m/s squared, and at the 20 degree budget" loading="lazy" width="520" height="260"></div>
+        <figcaption class="cap">The lean law drawn for the nominal robot: about 10 degrees of lean per m/s&sup2;.</figcaption>
+      </figure>
+    </div>
+    <div>
+      <div class="widget">
+        <h4>Steady lean needed per acceleration</h4>
+        <div id="lean"></div>
+        <p class="cap">Slope is &kappa; from the closed form; exact for the linear model. The amber lines mark the 20&deg; budget used by <code>design_constraints.py</code>.</p>
+      </div>
+      <div class="sowhat"><b>So what</b>The velocity governor in section 4 limits acceleration to 0.5 m/s&sup2;, which by this law is about 5&deg; of lean: well inside the budget, and well inside the 15&deg; where the body used to derail off the ball before the arrestors (S79). The lean law is also why Froude scaling (section 6) keeps angles unchanged: \(\kappa\) is scale-free.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============================ 4. LQR ============================ -->
+<section class="block block-anchor" id="s4">
+<div class="wrap">
+  <div class="eyebrow">4. The LQR</div>
+  <h2 class="q">One matrix of gains, and three fixes that make it usable</h2>
+  <p class="lead">An <a class="defn" title="Linear quadratic regulator: the feedback gain that minimises a weighted sum of squared state and squared control effort for a linear model">LQR</a> is the textbook way to stabilise a linear system: pick how much you dislike each state error and how much you dislike using torque, and a standard equation hands you the gains. On its own it balances. To make it follow speed commands on a real contact simulation it needs a governor, an integral, and a yaw loop. Each exists for a measured reason.</p>
+  <figure class="fig" style="margin:0 0 1.4em">
+    <div data-svg="assets/img/math-lqr-loop.svg" style="--minw:720px"><img src="assets/img/math-lqr-loop.svg" alt="Block diagram: command, governor, velocity integral, LQR per plane, yaw loop, transmission to wheel torques, robot, state fed back" loading="lazy" width="760" height="300"></div>
+    <figcaption class="cap">The model-based layer as implemented in <code>lqr_gpu.py</code>. Blue blocks are derived from the planar model.</figcaption>
+  </figure>
+  <div class="two">
+    <div>
+      <h3>The gain</h3>
+      <p>Per plane the state is \(s=(\varphi,\theta,\dot\varphi-\dot\varphi_{\mathrm{ref}},\dot\theta)\) and the torque is \(\tau=-Ks\). The weights say what we care about:</p>
+      <div class="eqn">$$Q=\mathrm{diag}(10^{-6},\,50,\,1,\,1),\qquad R=1 .$$</div>
+      <p>Almost nothing on ball position (the robot may drift), a lot on lean (50), moderate on the rolling-rate error and the lean rate, and unit cost on torque. With these the continuous-time Riccati equation gives \(K\approx(0,\,76.1,\,4.33,\,11.6)\) in magnitude and closed-loop poles near \(-20.3,-5.02,-4.50\) and 0 (paper_v2). The pale crosses in the section 2 plot are these poles.</p>
+      <h3>Designed at 10 ms, not in continuous time</h3>
+      <p>The controller only acts every 10 ms and holds its torque in between. The GPU implementation designs the gain for that sampled system directly: the model is discretised with a zero-order hold, and the discrete Riccati equation is solved with the weights scaled by the step so that the discrete cost approximates the continuous integral:</p>
+      <div class="eqn">$$\begin{aligned}(A_d,B_d)&=\mathrm{c2d}(A,B,\,\Delta t),\qquad X=\mathrm{DARE}(A_d,B_d,\,Q\Delta t,\,R\Delta t),\\ K&=(R\Delta t+B_d^\top XB_d)^{-1}B_d^\top XA_d .\end{aligned}$$</div>
+      <p class="src"><code>lqr_gpu.py</code>, <code>design_tables()</code>. One \(K\) is computed per robot design from that design's own \((A,B)\); the earlier CPU study found the continuous design could go unstable under the hold for light rotors, which is why the discrete form is the default here.</p>
+      <h3>The velocity governor: why</h3>
+      <p>A step in the commanded speed would ask for an impulsive torque and a large wrong-way reversal (section 2). The governor turns the step into a ramp: the internal reference \(v_{\mathrm{ref}}\) moves toward the command by at most \(a_{\max}\Delta t\) per step,</p>
+      <div class="eqn">$$v_{\mathrm{ref}}\leftarrow v_{\mathrm{ref}}+\Delta v\,\min\!\Big(1,\;\frac{a_{\max}\Delta t}{\lVert\Delta v\rVert}\Big),\qquad a_{\max}=0.5\ \mathrm{m/s^2}.$$</div>
+      <p>By the lean law that is about 5&deg; of lean. Switch the governor off in the simulator and watch the reversal and torque spike grow.</p>
+      <h3>The integral: why</h3>
+      <p>The linear model is not the simulator. The soft ball-floor contact creeps and the wheels roll with a slightly different effective radius, so a pure LQR settles at a speed a little off the command. A slow integral of the velocity error corrects the rolling-rate reference and removes that offset:</p>
+      <div class="eqn">$$\xi\leftarrow\mathrm{clip}\big(\xi+(v_{\mathrm{ref}}-v_{\mathrm{meas}})\Delta t,\ \pm2\big),\qquad \dot\varphi_{\mathrm{ref}}=\frac{v_{\mathrm{ref}}+k_i\,\xi}{r},\quad k_i=1 .$$</div>
+      <p>The clip is <a class="defn" title="Anti-windup: a limit on an integrator so it cannot accumulate a huge correction while the output is saturated">anti-windup</a>. Result on flat ground: achieved speed 0.99 to 1.01 of the command, error at most 0.04 to 0.06 m/s up to 0.9 m/s (brief fact sheet, S83).</p>
+      <h3>Yaw and the wheels</h3>
+      <p>Spinning in place is a third, decoupled channel with a simple proportional loop, \(\tau_z=-k_{\mathrm{yaw}}(\omega_{\mathrm{cmd}}-\omega_z)\), \(k_{\mathrm{yaw}}=5\). The two plane torques and \(\tau_z\) are rotated into the body frame and mapped to the three wheels by the inverse transpose of the omniwheel transmission \(W\), then normalised by the torque limit and clipped to \([-1,1]\).</p>
+    </div>
+    <div class="widget" id="simwidget">
+      <h4>Live balancing simulator (nonlinear, RK4, this page's robot)</h4>
+      <canvas id="sim" class="simcv" width="720" height="250" role="img" aria-label="Side view of the planar ballbot balancing; the ball first moves backwards when a forward velocity is commanded"></canvas>
+      <canvas id="strip" class="simcv" width="720" height="230" style="margin-top:8px" role="img" aria-label="Time traces of ball position, body tilt and motor torque"></canvas>
+      <div class="readout" aria-live="off">
+        <div><small>ball x</small><b id="s-x">0.00 m</b></div>
+        <div><small>velocity</small><b id="s-v">0.00 m/s</b></div>
+        <div><small>tilt &theta;</small><b id="s-th">0.0&deg;</b></div>
+        <div><small>torque &tau;</small><b id="s-u">0.0 N m</b></div>
+        <div><small>reversal after last command</small><b class="warn" id="s-rev">-</b></div>
+      </div>
+      <div class="ctl" style="margin-top:10px">
+        <label for="s-cmd">Velocity command <b id="s-cmdv">0.00 m/s</b></label>
+        <input id="s-cmd" type="range" min="-1" max="1" step="0.05" value="0">
+      </div>
+      <div class="ctl">
+        <label for="s-F">Push strength <b id="s-Fv">15 N</b></label>
+        <input id="s-F" type="range" min="2" max="60" step="1" value="15">
+      </div>
+      <div class="btn-row">
+        <button class="pill" id="b-pb">&larr; Push backward</button>
+        <button class="pill" id="b-pf">Push forward &rarr;</button>
+        <button class="pill" id="b-go">+0.5 m/s</button>
+        <button class="pill" id="b-stop">Stop</button>
+        <button class="pill" id="b-drop">Start at 5&deg; lean</button>
+        <button class="pill" id="b-gov" aria-pressed="true">Governor: on</button>
+        <button class="pill" id="b-cap" aria-pressed="false">Torque cap: none</button>
+        <button class="pill" id="b-ctrl" aria-pressed="true">LQR: on</button>
+        <button class="pill" id="b-run" aria-pressed="true">Pause</button>
+        <button class="pill" id="b-reset">Reset</button>
+      </div>
+      <p class="cap">Continuous-time LQR gain applied through a 100 Hz hold, the governor (0.5 m/s&sup2;) and the slow integral, ported from <code>ballbot_gym/controllers/lqr.py</code>. Failure is a tilt beyond 30&deg;. The planar model has no wheel slip; the torque-cap button imposes the traction ceiling it would otherwise ignore (what-if only). Changing a slider resets the run.</p>
+    </div>
+  </div>
+  <div class="sowhat"><b>So what</b>The LQR is the accurate, smooth part of the controller and the part that transfers to new robot bodies, because every design gets its own \(K\) from its own model. What it lacks is robustness to things the model does not know about: pushes, odd surfaces, a body that lifts off the ball. That is what the next two sections add.</div>
+</div>
+</section>
+
+<!-- ============================ 5. RESIDUAL ============================ -->
+<section class="block block-anchor" id="s5">
+<div class="wrap">
+  <div class="eyebrow">5. Residual control</div>
+  <h2 class="q">Let a learned policy nudge the LQR, but only so far</h2>
+  <p class="lead">Instead of replacing the LQR with a neural network, we keep it and let a trained policy add a correction on top. A single number, the authority \(\rho\), sets how large that correction may be. Turning it is a direct trade between tracking accuracy and robustness, and the measurements show a knee.</p>
+  <div class="two">
+    <div>
+      <div class="eqn">$$a=\mathrm{clip}\big(a_{\mathrm{LQR}}+\rho\,a_\pi,\ -1,\ 1\big),\qquad a_\pi\in[-1,1]^3 .$$</div>
+      <p>Here \(a_{\mathrm{LQR}}\) is the normalised wheel command of section 4 and \(a_\pi\) the policy's output for the three wheels. Because \(a_\pi\) is bounded, the policy can move each wheel by at most \(\rho\) of full scale. With \(\rho=0.25\) the LQR always keeps at least three quarters of the say. The policy's output layer starts near zero, so training begins from the LQR itself and learns only what the LQR gets wrong.</p>
+      <p class="src"><code>train_dev.py</code>: <code>applied = (lqr.act() + rs * a).clamp(-1, 1)</code>, where <code>rs</code> is the authority; <code>--lqr-base</code> argument.</p>
+      <h3>What authority does, measured</h3>
+      <p>All rows: trained and evaluated with the arrestors of section 8, three domain-randomisation scales, 176 worlds per terrain kind, seed 0 unless noted. Tracking is achieved speed over commanded speed on flat ground; robust is goal success with pushes and pulls at scale 1.</p>
+      <div class="table-scroll"><table class="numtab" style="min-width:520px" aria-label="Authority sweep">
+        <thead><tr><th>Learned authority &rho;</th><th class="num">flat tracking</th><th class="num">goal, undisturbed</th><th class="num">goal, pushes + pulls</th></tr></thead>
+        <tbody>
+          <tr><td>0.15</td><td class="num">1.01 to 1.02</td><td class="num">0.69</td><td class="num">0.35</td></tr>
+          <tr class="pick"><td>0.25</td><td class="num">0.99 to 1.01</td><td class="num">0.71 to 0.76</td><td class="num">0.42 to 0.43</td></tr>
+          <tr><td>0.35</td><td class="num">0.92 to 0.97</td><td class="num">0.72</td><td class="num">0.45</td></tr>
+          <tr><td>0.5</td><td class="num">0.80 to 0.90</td><td class="num">0.71 to 0.76</td><td class="num">0.46 to 0.49</td></tr>
+          <tr><td>pure learning (no LQR)</td><td class="num">0.66 to 0.83</td><td class="num">0.70 to 0.74</td><td class="num">0.50</td></tr>
+        </tbody>
+      </table></div>
+      <p class="src">S82 and S83 of <code>tracking_study_log.md</code>; the 0.25 row spans two seeds (a third seed in S84 agrees). Without arrestors the same controller reaches 0.58 to 0.60 and 0.29 to 0.30.</p>
+    </div>
+    <div>
+      <figure class="fig" style="margin:0 0 14px">
+        <div data-svg="assets/img/math-residual.svg" style="--minw:600px"><img src="assets/img/math-residual.svg" alt="Block diagram: LQR action plus rho times policy action, summed, clipped, sent to the wheels" loading="lazy" width="640" height="230"></div>
+        <figcaption class="cap">The combined controller. Blue is derived, violet is learned, teal is the sum.</figcaption>
+      </figure>
+      <div class="widget">
+        <h4>Authority dial</h4>
+        <div class="ctl"><label for="rho">authority &rho; <b id="rho-v">0.25</b></label><input id="rho" type="range" min="0" max="1" step="0.05" value="0.25"></div>
+        <div id="rho-bars" aria-live="polite"></div>
+        <div id="rho-plot"></div>
+        <p class="cap">Top: one wheel, with the LQR asking for +0.30 and the policy for its full -1. The policy's reach is &rho;. Bottom: the measured trade-off from S82 and S83; the dot is the current &rho;, interpolated between measured points for display only.</p>
+      </div>
+    </div>
+  </div>
+  <div class="sowhat"><b>So what</b>Below 0.25 the policy is too weak to add robustness; above it, tracking drifts away from the command while robustness saturates. The knee at \(\rho=0.25\) is the recommended controller: exact tracking, and most of the robustness gain. Pure learning is a little more robust and much less accurate.</div>
+</div>
+</section>
+
+<!-- ============================ 6. FROUDE ============================ -->
+<section class="block block-anchor" id="s6">
+<div class="wrap">
+  <div class="eyebrow">6. Froude scaling</div>
+  <h2 class="q">A bigger robot is the same robot in slow motion</h2>
+  <p class="lead">The study trains one policy on eleven robot designs, including robots scaled up and down. For that to be fair, a half-size robot must not be asked to run as fast in metres per second as a full-size one. Mechanics says how speeds, forces and times should scale when every length is multiplied by \(s\). The rule is older than robots: ship designers call the relevant ratio the Froude number.</p>
+  <div class="two">
+    <div>
+      <ol class="steps">
+        <li><strong>Scale the geometry.</strong> Multiply every length by \(s\): \(r\to sr\), \(l\to sl\). Keep the materials, so masses scale with volume, \(m\to s^3m\), and inertias with mass times length squared, \(I\to s^5I\).</li>
+        <li><strong>Look for a time scale that keeps the equations the same.</strong> Divide the equations of motion by \(m_agl\). Every term becomes a ratio of the form (mass &times; length&sup2;)/(mass &times; g &times; length) &times; (1/time&sup2;), that is \(l/(g\,t^2)\). Those ratios are unchanged if \(t\to\sqrt{s}\,t\).</li>
+        <li><strong>Read off the rest.</strong> Speed is length over time: \(v\to\sqrt{s}\,v\). Acceleration is length over time squared: unchanged. Angles: unchanged (so the lean law's \(\kappa\) is the same number for every scale; check it from its formula, numerator and denominator both go as \(s^5\)). Force is mass times acceleration: \(F\to s^3F\). Torque is force times length: \(\tau\to s^4\tau\). The unstable pole is a rate, \(p\to p/\sqrt{s}\): a half-size robot falls \(\sqrt2\) times faster.</li>
+      </ol>
+      <div class="eqn">$$\frac{v^2}{g\,l}\ \text{(Froude number) invariant}\quad\Rightarrow\quad v\propto\sqrt{s},\quad t\propto\sqrt{s},\quad F\propto s^3,\quad \tau\propto s^4,\quad \theta\ \text{unchanged}.$$</div>
+      <h3>Why commands and pushes are scaled</h3>
+      <p>The command range is multiplied by \(f=\sqrt s\) (<code>design_space.py</code> writes <code>cmd_vmax = 1.2 f</code> into each design's config, and the GPU environment multiplies every sampled speed and every planner speed by <code>f_w</code>). Pushes are scaled with the robot's weight: the 1.5&times; design's config asks for 16.9 to 67.5 N instead of 5 to 20 N, which is the factor \(1.5^3=3.375\) (<code>configs/env/dz_s1.5.yaml</code>). Without this a large robot would be tested at a relatively gentle crawl with relatively feeble shoves, and a small robot at an impossible sprint, and no single number could compare them.</p>
+    </div>
+    <div>
+      <figure class="fig" style="margin:0 0 14px">
+        <div data-svg="assets/img/math-froude.svg"><img src="assets/img/math-froude.svg" alt="Nominal and 1.5 times robots side by side with the scaling exponents for length, mass, inertia, time, speed, force, torque and angle" loading="lazy" width="560" height="300"></div>
+        <figcaption class="cap">Scaling rules under a uniform geometric scale \(s\).</figcaption>
+      </figure>
+      <div class="widget">
+        <h4>Scale a robot</h4>
+        <div class="ctl"><label for="fr-s">geometric scale s <b id="fr-sv">1.00</b></label><input id="fr-s" type="range" min="0.5" max="2" step="0.05" value="1"></div>
+        <div class="readout" id="fr-out" aria-live="polite"></div>
+        <p class="cap">Speed and push ranges as the training recipe scales them; the pole from the live model with all lengths, masses and inertias scaled.</p>
+      </div>
+    </div>
+  </div>
+  <div class="sowhat"><b>So what</b>Scaling tells the policy and the benchmark what "the same task" means on a different body. It also predicts, before any experiment, that a 1.5&times; robot should be an easier, slower-falling version of the nominal one. Held-out tests agree: LQR-based controllers keep 0.61 to 0.71 goal success on the 1.5&times; robot they never trained on (S85-R, brief fact sheet).</div>
+</div>
+</section>
+
+<!-- ============================ 7. STEP EDGE ============================ -->
+<section class="block block-anchor" id="s7">
+<div class="wrap">
+  <div class="eyebrow">7. The traction limit at a step edge</div>
+  <h2 class="q">How high a step can a ball climb?</h2>
+  <p class="lead">For a long time the obstacle falls looked like a controller problem: more training, more sensing, a better policy. A one-line force balance says otherwise. A driven ball pressed against a step edge can only get over it if friction at the edge can supply the sideways force needed, and that caps the step height at a fixed fraction of the ball's radius. This is new on the site, so the derivation is spelled out with its assumptions.</p>
+  <div class="two">
+    <div>
+      <h3>Assumptions</h3>
+      <div class="assume">
+        <div><b>Quasi-static</b>The ball creeps over the edge; no momentum carries it. This is the worst case for climbing and matches the 0.3 m/s approach used in the tests.</div>
+        <div><b>Rigid</b>Ball and edge do not deform: a single point contact at the edge.</div>
+        <div><b>No wheel slip</b>The wheels deliver whatever torque is asked, so the limit comes from the ball-floor contact, not from the motors.</div>
+        <div><b>Body upright</b>The body's load acts straight down through the ball centre; its horizontal reaction on the ball is neglected.</div>
+      </div>
+      <h3>Derivation</h3>
+      <ol class="steps">
+        <li><strong>Geometry.</strong> A ball of radius \(r\) touches a step of height \(h\) at its edge. The line from the edge to the ball centre makes an angle \(\theta\) with the vertical, and the centre sits \(r-h\) above the edge, so
+          <div class="eqn">$$\cos\theta=\frac{r-h}{r}=1-\frac{h}{r}.$$</div></li>
+        <li><strong>Lift-off.</strong> To climb, the ball must leave the lower floor and pivot on the edge. At that moment the edge is the only support, so it carries the whole vertical load \(W=(m_a+m_k)g\). The edge reaction has a normal part \(N\) along the edge-to-centre line and a friction part \(F\) along the tangent.</li>
+        <li><strong>Force balance.</strong> Quasi-static, so the horizontal forces cancel and the vertical forces carry the weight:
+          <div class="eqn">$$N\sin\theta-F\cos\theta=0,\qquad N\cos\theta+F\sin\theta=W .$$</div>
+          The first line gives \(F/N=\tan\theta\): the steeper the contact, the larger the share of the load that friction must carry.</li>
+        <li><strong>What drives it.</strong> The wheel torque on the ball must equal the moment of the edge friction about the centre, \(T=Fr\). The torque is available (no wheel slip, motors far from saturation: under 1 percent in S79), so the only question is whether the edge can hold \(F\).</li>
+        <li><strong>Coulomb limit.</strong> Friction can supply at most \(\mu N\). So climbing is possible only when \(\tan\theta\le\mu\), that is \(\theta\le\arctan\mu\), and therefore
+          <div class="eqn">$$h_{\max}=r\,\big(1-\cos(\arctan\mu)\big)=r\Big(1-\frac{1}{\sqrt{1+\mu^2}}\Big).$$</div></li>
+      </ol>
+      <p>With \(\mu\approx1\) this is \(\theta\le45^\circ\) and \(h_{\max}\approx0.29\,r\): <strong>2.6 cm for the 9 cm ball, 4.0 cm for the 13.5 cm ball</strong> of the 1.5&times; design (S88). The simulated surfaces span friction 0.4 to 1.2, so the limit varies per world between about 0.07 r and 0.36 r.</p>
+      <h3>Test</h3>
+      <p>The same controller, trained only on 9 cm balls, was driven at 0.3 m/s at steps and bumps on both balls (S88, 640 worlds per kind, undisturbed). On the larger half of each range the 9 cm ball fell 0.98 at step-ups and 0.94 at bumps; the 13.5 cm ball fell 0.80 and 0.62, crossing features the small ball never crossed. Drops, which are not a traction problem, changed little. A perfect height map given to the balance policy did not reduce these falls either (S88): the limit is physical, not a lack of foresight.</p>
+    </div>
+    <div>
+      <figure class="fig" style="margin:0 0 14px">
+        <div data-svg="assets/img/math-step-edge.svg"><img src="assets/img/math-step-edge.svg" alt="Ball of radius r against a step of height h: the edge normal force N at angle theta from vertical, friction F along the tangent, weight W through the centre and wheel torque T" loading="lazy" width="560" height="330"></div>
+        <figcaption class="cap">Forces on the ball at lift-off. Horizontal balance forces \(F/N=\tan\theta\); friction can only supply \(\mu N\).</figcaption>
+      </figure>
+      <div class="widget">
+        <h4>Climbable step height</h4>
+        <div class="ctl"><label for="tr-mu">floor friction &mu; <b id="tr-muv">1.00</b></label><input id="tr-mu" type="range" min="0.2" max="1.6" step="0.05" value="1"></div>
+        <div class="ctl"><label for="tr-r">ball radius r <b id="tr-rv">9.0 cm</b></label><input id="tr-r" type="range" min="4" max="20" step="0.5" value="9"></div>
+        <div id="tr-draw"></div>
+        <div class="readout" id="tr-out" aria-live="polite"></div>
+        <p class="cap">The drawn ball, step and contact angle update with the sliders. The limit does not depend on mass, torque or controller.</p>
+      </div>
+    </div>
+  </div>
+  <div class="sowhat"><b>So what</b>Steps and bumps above \(0.29\,r\) fail 90 to 98 percent of the time at any speed (S87, S88), and neither a perfect map nor a depth sensor given to the balance policy changes that. The climbable step height is a design decision about ball size and floor friction. What sensing can buy is a route around the obstacle, which is section 9.</div>
+</div>
+</section>
+
+<!-- ============================ 8. ARRESTORS ============================ -->
+<section class="block block-anchor" id="s8">
+<div class="wrap">
+  <div class="eyebrow">8. Ball arrestors</div>
+  <h2 class="q">Why holding the body onto the ball leaves the model unchanged</h2>
+  <p class="lead">Before the arrestors, 95 percent of falls were not tip-overs. The body slid off the ball at about 15 degrees of tilt, with the motors below 1 percent of their limit (S79). The model of sections 1 to 4 assumes body and ball stay together, pivoting about the ball's centre; the simulated robot held them together only by gravity and three wheel contacts. Three small passive rollers fix that. The argument that they do not disturb the derived dynamics is a one-liner about spheres.</p>
+  <div class="two">
+    <div>
+      <h3>The geometry</h3>
+      <p>Each arrestor is a sphere of radius 8 mm fixed to the body, on the azimuth opposite one drive wheel, at a polar angle of 100&deg; from the top of the ball (just below the equator). It is placed to touch the ball exactly when the robot stands seated under gravity, with zero gap and zero preload (<code>retainer.py</code>, <code>settle()</code> and <code>arrestor_positions()</code>). The frictionless default models an ideal ball-transfer unit; mass is neglected (real units weigh about 10 g).</p>
+      <h3>The force argument</h3>
+      <ol class="steps">
+        <li><strong>Seated, it does nothing.</strong> With zero gap and zero preload the arrestor carries no force while the wheels sit on the ball. The planar model is then exactly the one derived above.</li>
+        <li><strong>When it acts, its force is radial.</strong> A contact force on a frictionless sphere is normal to the surface, and every normal of a sphere passes through its centre. So the arrestor's force on the ball has zero moment about the ball's centre: it cannot spin the ball, and it does not enter the ball's rotational equation at all.</li>
+        <li><strong>It is an internal body-ball force.</strong> It acts equal and opposite on body and ball, like the pin the planar model already assumes between them. It constrains the body from lifting or sliding off; it adds no new degree of freedom and no new drive. The model becomes <em>more</em> true, not different.</li>
+        <li><strong>With roller friction, barely anything changes.</strong> Sliding friction 0, 0.05 and 0.2 on the arrestors gave goal success 0.75, 0.74 and 0.76 undisturbed and 0.45, 0.42, 0.42 disturbed, equal within noise, because seated arrestors carry no load and so their drag barely acts (S79).</li>
+      </ol>
+      <h3>Measured effect</h3>
+      <p>Added at evaluation to a policy trained without them (zero-shot): goal success rose from 0.57 to 0.75 undisturbed and from 0.28 to 0.45 with pushes and pulls, and the misalignment at fall dropped from 12 to 19 degrees to 2 to 3 degrees (S79, 100&deg; mount). Mounts between 90 and 100&deg; were equal within noise; 100&deg; was chosen because only a mount below the equator can resist the body lifting off. Floor clearance at 100&deg; is 6.5 cm, touching only beyond 57&deg; of tilt; the diametrically opposite mount at 135&deg; would scrape at 21&deg; and is not buildable on this ball (S79).</p>
+    </div>
+    <div>
+      <figure class="fig" style="margin:0 0 14px">
+        <div data-svg="assets/img/math-arrestor.svg"><img src="assets/img/math-arrestor.svg" alt="Cross-section of the ball with a drive wheel 51 degrees from the top and a small arrestor roller at 100 degrees on the opposite side; its normal force points at the ball centre" loading="lazy" width="560" height="330"></div>
+        <figcaption class="cap">Any contact force on a frictionless sphere is radial. The arrestor force (green) and the wheel's normal force (amber) both aim at the centre; only the wheel's tangential friction can spin the ball.</figcaption>
+      </figure>
+      <div class="sowhat" style="margin-top:0"><b>So what</b>The arrestors were the first change in the study that improved every robustness measure at once, and they did it without retraining and without touching the LQR. This is the pattern the whole stack follows: fix with mechanism what mechanism can fix, keep the derived controller exact, and let learning handle the remainder.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ============================ 9. NAVIGATION ============================ -->
+<section class="block block-anchor" id="s9">
+<div class="wrap">
+  <div class="eyebrow">9. Navigation</div>
+  <h2 class="q">A distance field and a carrot</h2>
+  <p class="lead">If a block is three times higher than the ball can climb, the only answer is to go around it. The navigation layer sits above the balance controller and only ever hands it a velocity command; the balance controller never sees the map. Two ideas do the work: a grid where every cell knows how far it is from the goal, and a follower that aims at a point a little way down that grid rather than at the goal itself.</p>
+  <div class="two">
+    <div>
+      <h3>The wavefront distance field</h3>
+      <p>Around the robot's tile lies a \(64\times64\) grid of 5 cm cells. A cell is an obstacle if the ground there is more than 3 cm above the start ground; obstacles are inflated by 0.22 m (robot half width plus margin) with a max-pool. The goal cell gets distance 0 and every other free cell is relaxed repeatedly over its eight neighbours:</p>
+      <div class="eqn">$$d_{ij}\leftarrow\min\Big(d_{ij},\ 1+\min_{(k,l)\in\mathcal N_8(i,j)} d_{kl}\Big),\qquad d=\infty\ \text{on inflated cells},\quad d_{\mathrm{goal}}=0 .$$</div>
+      <p>After 110 sweeps the field holds the number of steps to the goal around every obstacle (<code>nav.py</code>, <code>field()</code>). It is recomputed every 0.2 s from the privileged map or from the sensor memory (section 5 of the architecture page). A local rule (steer away from nearby obstacles) was tried first and left 0.56 to 0.59 of worlds stuck in local minima beside the blocks; a distance field has no local minima (S89).</p>
+      <h3>The carrot follower</h3>
+      <p>The first planner stepped toward the best of 24 points 0.15 m away, every step. It reached the goal 0.91 of the time but its commanded heading jumped about: heading-rate RMS 14.4 rad/s (S89, S90). The smooth follower reads the same field differently:</p>
+      <ol class="steps">
+        <li><strong>Carrot.</strong> Descend the field greedily in 5 cm steps for 0.3 m from the robot. The point reached is the carrot. Several cells ahead, so small map changes do not flip the heading. If the robot stands inside the inflated margin (field \(=\infty\)), start the descent from the best point on rings 0.1 to 0.3 m around it, or the carrot never leaves the robot (S90).</li>
+        <li><strong>Heading.</strong> Turn the commanded heading toward the carrot at most \(w_{\max}=2\) rad/s.</li>
+        <li><strong>Speed.</strong> \(v=\min\big(v_{\max},\ k_{\mathrm{goal}}\,d_{\mathrm{goal}},\ v_{\mathrm{turn}}\big)\) with \(v_{\max}=0.3\) m/s, \(k_{\mathrm{goal}}=1.5\), and \(v_{\mathrm{turn}}\) lowered when the heading error is large; the speed itself changes at most 0.6 m/s&sup2;. All speeds are multiplied by the design's Froude factor \(\sqrt s\).</li>
+      </ol>
+      <p>With the privileged map the heading-rate RMS fell from 14.4 to 1.7 rad/s for a few points of success (0.91 to 0.86), because rate-limited turns clip block corners slightly more often (S90).</p>
+      <h3>With a real sensor, aim it</h3>
+      <p>With a forward ToF sensor (18&times;14 zones) the smooth follower first did worse than the jerky one (0.72 against 0.85), because the head gimbal followed the slowly turning command and saw side blocks late. Aiming the sensor at the planner's target heading instead recovered most of it: 0.78 success, block contacts 0.16 to 0.03, heading-rate RMS 1.8 (S90). Mount and pitch matter more than resolution (S89).</p>
+    </div>
+    <div>
+      <figure class="fig" style="margin:0 0 14px">
+        <div data-svg="assets/img/math-wavefront.svg"><img src="assets/img/math-wavefront.svg" alt="Grid with the goal at zero, a block with an inflated margin, distance numbers growing around it, a robot and its carrot several cells ahead with a smooth heading arrow" loading="lazy" width="560" height="330"></div>
+        <figcaption class="cap">A distance field around one block, with the carrot 6 cells down the field and the rate-limited heading curving toward it.</figcaption>
+      </figure>
+      <div class="widget">
+        <h4>Try it: click to place blocks</h4>
+        <canvas id="wave" class="simcv-wave" width="420" height="420" role="img" aria-label="Interactive wavefront distance field: click cells to add obstacles; the robot's carrot path updates"></canvas>
+        <div class="btn-row"><button class="pill" id="wv-clear">Clear blocks</button><button class="pill" id="wv-demo">Example blocks</button><button class="pill" id="wv-infl" aria-pressed="true">Inflation: on</button></div>
+        <p class="cap">A 21&times;21 toy field (8-connected, same recurrence). Stronger blue is farther from the goal (green); grey cells are unreachable. Amber cells are blocks and their inflated margin. The teal path is the carrot descent from the robot; the dot is the carrot. Drag the robot or the goal.</p>
+      </div>
+    </div>
+  </div>
+  <div class="sowhat"><b>So what</b>Where obstacles can be avoided, awareness is decisive: with the same balance controller, blind driving fell 0.91 of the time and reached the goal 0.09; a perfect map gave 0.09 falls and 0.91 success; a modest ToF sensor 0.85 (S89). The remaining limit is disturbances near obstacles: with pushes even the perfect map falls 0.41, because a push can carry the robot into a block inside the planner's margin, and a wider margin closes the gaps instead (S89). Training with the planner in the loop changed nothing (S91).</div>
+</div>
+</section>
+
+<!-- ============================ 10. LIMITS AND CHECKS ============================ -->
+<section class="block block-anchor" id="s10">
+<div class="wrap">
+  <div class="eyebrow">10. Where the model stops being true, and how the page checks itself</div>
+  <h2 class="q">Honesty section</h2>
+  <div class="grid g3">
+    <div class="card"><h3>Soft contacts</h3><p>Instantaneous torque-step accelerations match for the ball (3.17 vs 3.01 rad/s&sup2; per 0.5 N m) but not for the body (0.73 vs 1.60), because MuJoCo's soft ball-floor contact allows initial creep (paper_v2, validation section). This is what the velocity integral of section 4 mops up.</p></div>
+    <div class="card"><h3>No traction in the plane</h3><p>The planar model has no slip and no edges. The traction limit of section 7 is a separate quasi-static argument, not a consequence of the Lagrangian; and the planar torque that friction can carry on flat ground is only about 1.74 N m against \(m_agl=4.94\) N m (<code>design_constraints.csv</code>).</p></div>
+    <div class="card"><h3>Light balls</h3><p>The body-to-ball mass ratio is 23 here; the model is least faithful for light balls. The light-ball design kb025 carries nearly all remaining flat-ground falls and LQR gains cannot fix it (S92, S93). See <code>docs/research/design_rules.md</code>.</p></div>
+  </div>
+
+  <h3 style="margin-top:2em">JavaScript versus Python</h3>
+  <p class="lead">The browser model is a re-implementation, so it is checked against the Python reference. The Python column is read from <code>site/data/designlab_tables.json</code>, a verbatim copy of <code>outputs/study/results/design_sweep.csv</code>; the JS column is computed live on this page. Pass means agreement within 1 percent.</p>
+  <div class="table-scroll"><table class="verify" id="vtab" style="min-width:860px"><thead></thead><tbody></tbody></table></div>
+  <h3 style="margin-top:1.6em;font-size:1.1rem">Structural identities and the paper's printed numbers (nominal robot)</h3>
+  <div class="table-scroll"><table class="verify" id="vtab2" style="min-width:760px"><thead><tr><th>Quantity</th><th class="num">JS (live)</th><th class="num">Reference</th><th>Reference source</th><th class="num">Rel. error</th><th>Status</th></tr></thead><tbody></tbody></table></div>
+  <p id="vsummary" style="margin-top:1em"></p>
+  <details class="adv"><summary>What is and is not checked</summary>
+    <p style="margin-top:.6em">Checked: poles, zero, lean law, Skogestad floor, LQR closed-loop pole and 3 degree peak torque, every row of the sweep. The LQR is solved in the browser by Newton-Kleinman iteration on the Riccati equation and compared with <code>scipy.linalg.solve_continuous_are</code> through the closed-loop poles and peak torque. Not checked here: the nonlinear RK4 simulator has no Python counterpart in the repo (the full MuJoCo environment is the reference and differs from this planar model, see above); the traction, Froude, authority and wavefront widgets are illustrations of closed-form rules and of the S-numbered measurements, not new computations.</p></details>
+</div>
+</section>
+
+</main>
+</body>
+</html>

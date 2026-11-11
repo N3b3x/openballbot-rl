@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this repository, please cite the upstream paper below, which introduced the ballbot environment and method this repository builds on."
+title: "openballbot-rl"
+abstract: "A simulation-only study of a three-omniwheel ballbot: a GPU pipeline on MuJoCo-Warp, an LQR base with a learned PPO residual, depth-sensor navigation, state estimation and an exported ROS 2 controller package. A fork of OpenBallBot-RL by Achkan Salehi. No physical robot exists; all results are simulated."
+authors:
+  - family-names: "Tadesse"
+    given-names: "Nebiyu"
+repository-code: "https://github.com/N3b3x/openballbot-rl"
+url: "https://n3b3x.github.io/openballbot-rl/"
+license: Apache-2.0
+keywords:
+  - ballbot
+  - reinforcement learning
+  - LQR
+  - MuJoCo
+  - ROS 2
+  - simulation
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Salehi"
+      given-names: "Achkan"
+  title: "Reinforcement Learning for Ballbot Navigation in Uneven Terrain"
+  journal: "arXiv preprint arXiv:2505.18417"
+  year: 2025
+  url: "https://arxiv.org/abs/2505.18417"

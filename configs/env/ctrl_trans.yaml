@@ -1,0 +1,36 @@
+camera:
+  enabled: false
+  disable_rgb: true
+  frame_rate: 90
+  height: 64
+  width: 64
+env:
+  max_allowed_tilt: 20
+  max_ep_steps: 800
+  action_repeat: 5
+  max_wheel_velocity: 10.0
+  fix_wheel_contacts: true
+  command_mode: true
+  cmd_resample_steps: 200
+  cmd_zero_prob: 0.1
+  wheel_damping: 0.8
+  cmd_vmax: 1.0
+  cmd_wmax: 0.0
+  obs_vel_clip: 2.0
+  cmd_reward: dot
+logging:
+  cams: false
+  reward_terms: false
+reward:
+  type: directional
+  config:
+    action_reg_coef: -0.0001
+    scale: 0.1
+    survival_bonus: 0.02
+    fall_penalty: 10.0
+    target_direction:
+    - 0.0
+    - 1.0
+terrain:
+  type: flat
+  config: {}

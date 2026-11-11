@@ -1,0 +1,135 @@
+[
+ {
+  "name": "settle",
+  "title": "Free fall onto the ball, open loop",
+  "description": "Robot dropped 1 cm onto the ball, zero wheel torque. The upright pose is unstable: both engines topple, timing depends on rounding.",
+  "file": "outputs/study/mjx_port/videos/mjx_settle.mp4",
+  "poster": "outputs/study/mjx_port/videos/mjx_settle.jpg",
+  "fps": 33.333333333333336,
+  "speed_factor": 1.0,
+  "frames": 44,
+  "fell": {
+   "cpu": false,
+   "warp": true
+  },
+  "final_tilt": {
+   "cpu": 55.666399632210144,
+   "warp": 91.709143494678
+  },
+  "mb": 0.19
+ },
+ {
+  "name": "torque_step",
+  "title": "Open-loop wheel-torque step",
+  "description": "2 N m on wheel 0 for 0.3 s (t = 0.5 to 0.8 s), no feedback. Forced response matches; later tilt diverges (unstable plant). Half speed.",
+  "file": "outputs/study/mjx_port/videos/mjx_torque_step.mp4",
+  "poster": "outputs/study/mjx_port/videos/mjx_torque_step.jpg",
+  "fps": 25.0,
+  "speed_factor": 0.5,
+  "frames": 30,
+  "fell": {
+   "cpu": false,
+   "warp": false
+  },
+  "final_tilt": {
+   "cpu": 53.69194519957853,
+   "warp": 52.23713204165296
+  },
+  "mb": 0.18
+ },
+ {
+  "name": "lqr_0.4",
+  "title": "LQR tracking 0.4 m/s",
+  "description": "Model-based LQR (dz_nom gains), command 0.4 m/s along +x.",
+  "file": "outputs/study/mjx_port/videos/mjx_lqr_0.4.mp4",
+  "poster": "outputs/study/mjx_port/videos/mjx_lqr_0.4.jpg",
+  "fps": 25.0,
+  "speed_factor": 1.0,
+  "frames": 75,
+  "fell": {
+   "cpu": false,
+   "warp": false
+  },
+  "final_tilt": {
+   "cpu": 2.191315582482396,
+   "warp": 1.5322926277287887
+  },
+  "mb": 0.42
+ },
+ {
+  "name": "lqr_0.8",
+  "title": "LQR tracking 0.8 m/s",
+  "description": "Model-based LQR (dz_nom gains), command 0.8 m/s along +x.",
+  "file": "outputs/study/mjx_port/videos/mjx_lqr_0.8.mp4",
+  "poster": "outputs/study/mjx_port/videos/mjx_lqr_0.8.jpg",
+  "fps": 25.0,
+  "speed_factor": 1.0,
+  "frames": 75,
+  "fell": {
+   "cpu": false,
+   "warp": false
+  },
+  "final_tilt": {
+   "cpu": 2.8623723022148773,
+   "warp": 0.9695366192041972
+  },
+  "mb": 0.48
+ },
+ {
+  "name": "push_survive",
+  "title": "Push: both engines recover",
+  "description": "1x body weight (39 N), 50 ms, direction 248 deg, while driving 0.4 m/s along +y. Half speed.",
+  "file": "outputs/study/mjx_port/videos/mjx_push_survive.mp4",
+  "poster": "outputs/study/mjx_port/videos/mjx_push_survive.jpg",
+  "fps": 25.0,
+  "speed_factor": 0.5,
+  "frames": 55,
+  "fell": {
+   "cpu": false,
+   "warp": false
+  },
+  "final_tilt": {
+   "cpu": 2.661987670423131,
+   "warp": 1.3893464450241255
+  },
+  "mb": 0.27
+ },
+ {
+  "name": "push_fall",
+  "title": "Push: both engines lose the ball",
+  "description": "1x body weight (39 N), 50 ms, direction 0 deg, while driving 0.4 m/s along +y. Half speed.",
+  "file": "outputs/study/mjx_port/videos/mjx_push_fall.mp4",
+  "poster": "outputs/study/mjx_port/videos/mjx_push_fall.jpg",
+  "fps": 25.0,
+  "speed_factor": 0.5,
+  "frames": 55,
+  "fell": {
+   "cpu": true,
+   "warp": true
+  },
+  "final_tilt": {
+   "cpu": 91.37921516236636,
+   "warp": 84.52426840003085
+  },
+  "mb": 0.42
+ },
+ {
+  "name": "push_disagree",
+  "title": "Push at the edge: engines disagree",
+  "description": "1x body weight, 50 ms, direction 90 deg: in the sweep run CPU falls, Warp recovers; in this render CPU falls, Warp falls. Borderline case (GPU run is not bit-reproducible). Half speed.",
+  "file": "outputs/study/mjx_port/videos/mjx_push_disagree.mp4",
+  "poster": "outputs/study/mjx_port/videos/mjx_push_disagree.jpg",
+  "fps": 25.0,
+  "speed_factor": 0.5,
+  "frames": 55,
+  "fell": {
+   "cpu": true,
+   "warp": true
+  },
+  "final_tilt": {
+   "cpu": 88.78788921323932,
+   "warp": 88.24463528838535
+  },
+  "mb": 0.41
+ }
+]

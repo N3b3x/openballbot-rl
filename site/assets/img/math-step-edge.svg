@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 330" class="d-edge" role="img" aria-labelledby="de-t">
+<title id="de-t">A ball of radius r pressed against a step of height h. The only support is the edge; its normal force N points from the edge to the ball centre at angle theta from vertical, where cos theta equals one minus h over r. The friction force F acts along the edge tangent. The vertical load W acts through the centre and the wheel torque T turns the ball.</title>
+<style>
+.d-edge text{font-family:Inter,system-ui,sans-serif;font-size:13px;fill:var(--text,#dfe6f0)}
+.d-edge .m{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;fill:var(--text-2,#9aa8bb)}
+.d-edge .k{fill:var(--text-3,#8a97ab);font-size:11px}
+</style>
+<defs>
+<marker id="de-aw" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--warn,#ffb454)"/></marker>
+<marker id="de-ag" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--good,#5ee08a)"/></marker>
+<marker id="de-ab" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--bad,#ff6b6b)"/></marker>
+</defs>
+<!-- floor and step: edge at (300,230), h = 50 px, r = 110 px -> cos theta = 1 - 50/110 = 0.545, theta = 56.9 deg -->
+<path d="M20 280 H300 V230 H540" fill="none" style="stroke:var(--line-2,#5a6b84);stroke-width:2.5"/>
+<path d="M300 230 H540 V300 H300 Z" style="fill:var(--bg-3,#161e2a);opacity:.6"/>
+<!-- h dimension -->
+<line x1="520" y1="230" x2="520" y2="280" style="stroke:var(--warn,#ffb454);stroke-width:1.4"/>
+<line x1="512" y1="230" x2="528" y2="230" style="stroke:var(--warn,#ffb454)"/><line x1="512" y1="280" x2="528" y2="280" style="stroke:var(--warn,#ffb454)"/>
+<text x="526" y="262" class="m" style="fill:var(--warn,#ffb454)">h</text>
+<!-- ball: centre such that distance to edge = r=110 and lifted slightly off the floor: centre at (300 - 110 sin th, 230 - 110 cos th) = (300-92.1, 230-60) = (208, 170) -->
+<circle cx="208" cy="170" r="110" style="fill:var(--bg-3,#161e2a);stroke:var(--model,#4aa8ff);stroke-width:2.5"/>
+<circle cx="208" cy="170" r="3" style="fill:var(--text,#dfe6f0)"/>
+<!-- radius to edge -->
+<line x1="208" y1="170" x2="300" y2="230" style="stroke:var(--line-2,#5a6b84);stroke-dasharray:4 3"/>
+<text x="238" y="195" class="m">r</text>
+<!-- vertical through centre and theta arc -->
+<line x1="208" y1="170" x2="208" y2="300" style="stroke:var(--line-2,#5a6b84);stroke-dasharray:2 5"/>
+<path d="M208 225 A55 55 0 0 0 254 200" fill="none" style="stroke:var(--warn,#ffb454);stroke-width:1.6"/>
+<text x="222" y="245" class="m" style="fill:var(--warn,#ffb454)">theta</text>
+<!-- W down at centre -->
+<line x1="208" y1="170" x2="208" y2="120" style="stroke:var(--warn,#ffb454);stroke-width:2.4" marker-end="url(#de-aw)" transform="rotate(180 208 145)"/>
+<text x="216" y="132" class="m" style="fill:var(--warn,#ffb454)">W = (m_a + m_k) g</text>
+<!-- N from edge toward centre -->
+<line x1="300" y1="230" x2="252" y2="199" style="stroke:var(--good,#5ee08a);stroke-width:2.6" marker-end="url(#de-ag)"/>
+<text x="268" y="236" class="m" style="fill:var(--good,#5ee08a)">N</text>
+<!-- F along tangent at edge: tangent direction perpendicular to radius, pointing "up the step" (toward +x, up): radius dir = (0.837, 0.545); tangent = (-0.545, 0.837) or (0.545,-0.837). Rolling over the edge: friction on the ball points up and to the right -> (0.545,-0.837). -->
+<line x1="300" y1="230" x2="327" y2="188" style="stroke:var(--bad,#ff6b6b);stroke-width:2.6" marker-end="url(#de-ab)"/>
+<text x="332" y="190" class="m" style="fill:var(--bad,#ff6b6b)">F &lt;= mu N</text>
+<!-- torque arrow -->
+<path d="M120 110 A100 100 0 0 1 180 70" fill="none" style="stroke:var(--warn,#ffb454);stroke-width:2.2" marker-end="url(#de-aw)"/>
+<text x="92" y="60" class="m" style="fill:var(--warn,#ffb454)">T = F r (wheel torque)</text>
+<!-- geometry label -->
+<text x="330" y="300" class="m">cos theta = (r - h) / r = 1 - h / r</text>
+<text x="20" y="318" class="k">Quasi-static: the floor contact has just lifted, so the edge carries the whole load. Horizontal balance forces F / N = tan theta.</text>
+</svg>

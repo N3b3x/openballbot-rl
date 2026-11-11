@@ -1,0 +1,12 @@
+# One-at-a-time variations around the nominal robot (specs/nominal.yaml). Simulation only.
+# Body COM height is held fixed while the body mass changes, so each row isolates one property.
+prefix: ota
+base: specs/nominal.yaml
+vary:
+  ball_mass_kg: [0.042, 0.084, 0.34, 0.67]
+  body_mass_kg: [2.0, 3.0, 5.0, 6.5]
+  body_com_height_m: [0.08, 0.10, 0.17, 0.22]
+  motor_torque_limit: [3.0, 6.0, 10.0, 15.0]
+  ball_radius_m: [0.07, 0.12]
+  rotor_inertia: [0.001, 0.02]
+  contact_zenith_deg: [41.0, 61.0]
