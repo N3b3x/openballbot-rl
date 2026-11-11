@@ -3,8 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- head:common -->
+<script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}</script>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<!-- /head:common -->
 <title>Physics engines | Ballbot control research</title>
 <meta name="description" content="Does the ballbot study survive a change of physics engine? Side-by-side checks of MuJoCo CPU against MuJoCo-Warp (GPU) and NVIDIA Isaac Sim (PhysX): fidelity, failure boundaries, speed.">
+<!-- og -->
+<link rel="canonical" href="https://n3b3x.github.io/openballbot-rl/engines.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ballbot control research">
+<meta property="og:title" content="Physics engines | Ballbot control research">
+<meta property="og:description" content="Does the ballbot study survive a change of physics engine? Side-by-side checks of MuJoCo CPU against MuJoCo-Warp (GPU) and NVIDIA Isaac Sim (PhysX): fidelity, failure boundaries, speed.">
+<meta property="og:url" content="https://n3b3x.github.io/openballbot-rl/engines.html">
+<meta property="og:image" content="https://n3b3x.github.io/openballbot-rl/assets/img/social-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A simulated ballbot: a cylindrical robot balanced on a basketball-textured ball, with the title of the study.">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /og -->
 <link rel="stylesheet" href="assets/css/site.css">
 <style>
 .vgrid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));list-style:none;margin:0;padding:0}
@@ -16,6 +38,7 @@
 <script type="module" src="assets/js/layout.js"></script>
 </head>
 <body>
+<!-- nojs --><noscript><nav class="nojs" aria-label="Main (JavaScript is off)"><a href="index.html">Overview</a><a href="learn/index.html">Learn</a><a href="generalist.html">Results</a><a href="videos.html">Videos</a><a href="design.html">Design guidelines</a><a href="deploy.html">ROS 2</a><a href="math.html">Physics</a><a href="architecture.html">Controller</a><a href="reproduce.html">Reproduce</a><a href="glossary.html">Glossary</a></nav></noscript><!-- /nojs -->
 <main>
 <section class="wrap" style="padding-top:clamp(40px,7vw,80px);padding-bottom:24px">
   <p class="eyebrow">Does the result depend on the engine?</p>

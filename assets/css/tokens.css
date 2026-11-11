@@ -1,20 +1,45 @@
-/* Design tokens. Semantic colours are part of the story: blue = model-based, violet = learned, teal = hybrid. */
+/* Design tokens. Semantic colours are part of the story: blue = model-based, violet = learned, teal = hybrid.
+   Colour roles: --model / --learned / --hybrid / --good / --warn / --bad are for marks, borders and large numbers;
+   for small text on the page background use --link (links, eyebrows) or the --*-text variants, which meet WCAG AA (4.5:1) in both themes. */
 :root{
-  --bg:#0a0e14; --bg-2:#10161f; --bg-3:#161e2a; --line:#243042; --line-2:#2f3e55;
-  --text:#e8eef7; --text-2:#a9b6c9; --text-3:#6f7f96;
+  color-scheme:dark;
+  /* surfaces */
+  --bg:#0a0e14; --bg-2:#10161f; --bg-3:#161e2a; --bg-elev:#121a25; --line:#243042; --line-2:#2f3e55;
+  /* text */
+  --text:#e8eef7; --text-2:#b0bccd; --text-3:#8090a6;
+  /* semantic hues */
   --model:#4aa8ff;      /* LQR / derived math */
   --learned:#a78bfa;    /* PPO / neural policies */
   --hybrid:#2ee6c4;     /* interleaved controller */
   --warn:#ffb454; --bad:#ff6b6b; --good:#5ee08a;
+  --model-text:var(--model); --learned-text:var(--learned); --hybrid-text:var(--hybrid); --warn-text:var(--warn); --bad-text:var(--bad); --good-text:var(--good);
+  --link:#4ff0d2; --on-accent:#04120f; --focus:#7cf5df;
+  /* elevation */
   --glow:0 0 0 1px rgba(46,230,196,.25),0 12px 40px -12px rgba(46,230,196,.35);
-  --radius:14px; --radius-sm:8px; --maxw:1180px; --gutter:clamp(16px,4vw,32px);
+  --shadow-1:0 1px 2px rgba(0,0,0,.35),0 2px 8px -2px rgba(0,0,0,.35);
+  --shadow-2:0 18px 50px -20px rgba(0,0,0,.65),0 2px 6px rgba(0,0,0,.25);
+  --hero-tint:radial-gradient(1200px 500px at 15% -10%,rgba(46,230,196,.10),transparent 60%),radial-gradient(900px 420px at 95% 0%,rgba(74,168,255,.09),transparent 60%);
+  /* shape and layout */
+  --radius:14px; --radius-sm:8px; --radius-lg:22px; --maxw:1180px; --gutter:clamp(16px,4vw,32px); --nav-h:60px;
+  /* spacing scale (4 px base) */
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:72px;
+  /* type */
   --font-sans:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   --font-display:'Fraunces','Iowan Old Style',Georgia,serif;
   --font-mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --fs-xs:.75rem; --fs-sm:.875rem; --fs-md:1rem; --fs-lg:1.2rem;
+  /* motion */
+  --ease:cubic-bezier(.2,.7,.2,1); --dur:.22s;
 }
 :root[data-theme="light"]{
-  --bg:#f6f8fb; --bg-2:#ffffff; --bg-3:#eef2f7; --line:#d9e0ea; --line-2:#c3cdda;
-  --text:#0f1722; --text-2:#3b4a5f; --text-3:#6b7a90;
-  --model:#1478d4; --learned:#6d4ae0; --hybrid:#0aa88c; --warn:#c77700; --bad:#d93a3a; --good:#1f9d55;
+  color-scheme:light;
+  --bg:#f6f8fb; --bg-2:#ffffff; --bg-3:#eef2f7; --bg-elev:#ffffff; --line:#d9e0ea; --line-2:#c3cdda;
+  --text:#0f1722; --text-2:#344358; --text-3:#56657b;
+  --model:#0d6fc4; --learned:#6d4ae0; --hybrid:#067a66; --warn:#955700; --bad:#c42f2f; --good:#16753f;  /* light marks are AA on every surface, so they are safe for small text too */
+  --model-text:#0e64b4; --learned-text:#5b37d1; --hybrid-text:#067a66; --warn-text:#955700; --bad-text:#b42727; --good-text:#16753f;
+  --link:#067a66; --on-accent:#ffffff; --focus:#067a66;
   --glow:0 0 0 1px rgba(10,168,140,.25),0 12px 40px -16px rgba(10,168,140,.35);
+  --shadow-1:0 1px 2px rgba(15,23,34,.06),0 2px 8px -2px rgba(15,23,34,.08);
+  --shadow-2:0 20px 50px -24px rgba(15,23,34,.28),0 2px 6px rgba(15,23,34,.06);
+  --hero-tint:radial-gradient(1200px 500px at 15% -10%,rgba(10,168,140,.10),transparent 60%),radial-gradient(900px 420px at 95% 0%,rgba(20,120,212,.08),transparent 60%);
 }
