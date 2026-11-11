@@ -1,6 +1,6 @@
 # ballbot_control: ROS 2 bridge for the ballbot controller
 
-Software stack for running the study's recommended balance controller on a real robot under ROS 2 and Nav2:
+Software stack intended for running the study's recommended balance controller under ROS 2 and Nav2 on a future real robot (none exists yet, see below):
 `g39_goalcentre_s0` (default), an LQR base + learned PPO residual with adaptive authority, trained on commands shaped by the
 motion-reference layer, with all goal logic on the true ball centre (study log S118, S121). The earlier `g34_mref_rsad_db_s0`
 (same recipe, goal logic on the ball body origin) is exported and installed as well.
@@ -255,7 +255,7 @@ g34: TorchScript 0, numpy 2.4e-07, ONNX 4.8e-07, recorded GPU actions 3.0e-07.
 * **Authority dead band**: in every run (g39 included) the simulator's adaptive-authority dead band compares the ball *body-origin*
   speed (qvel[9:11], which swings with the ball's rotation) with 0.05 m/s. In `ball_centre` mode the core uses the ball-centre
   speed, so on hardware the near-zero-command authority term can switch at different moments than in training. The parity test is
-  exact because it feeds the simulator's value. Retraining with the dead band on the centre velocity would remove the mismatch.
+  exact because it feeds the simulator's value. Retraining with the dead band on the centre velocity (`--db-centre`, S122) removes the mismatch: g41 seed 0 matched g39 on every number in the study log, seeds 1 and 2 are retraining, and the exported bundle stays g39 until three seeds agree.
 * **Motor-state observation quirk**: observation entries 9:12 are (base-origin y and z velocity, body x rate) / tau, an artefact of
   the training environment; the policy depends on them, so the core reproduces them from the estimator.
 * The rotation-vector observation includes yaw and is not wrapped; the estimator keeps quaternion continuity like the simulator.

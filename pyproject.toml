@@ -2,17 +2,19 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+# Packaging metadata for the legacy SB3 path (ballbot_gym, ballbot_rl). The current GPU pipeline (experiments/warp_ppo) is not
+# installed through this file; see the Quick start in Readme.md.
 [project]
 name = "openballbot-rl"
 version = "0.1.0"
-description = "Reinforcement Learning for Ballbot Navigation in Uneven Terrain"
+description = "Simulation-only ballbot study: GPU LQR + PPO-residual controller, ToF navigation and a ROS 2 package; fork of OpenBallBot-RL (Salehi, arXiv:2505.18417)"
 readme = "Readme.md"
 requires-python = ">=3.9"
 license = {text = "Apache-2.0"}
 authors = [
-    {name = "Nebiyu Tadesse", email = ""}
+    {name = "Nebiyu Tadesse"}
 ]
-keywords = ["reinforcement-learning", "robotics", "ballbot", "gymnasium"]
+keywords = ["reinforcement-learning", "robotics", "ballbot", "gymnasium", "mujoco", "ros2", "simulation"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
@@ -21,6 +23,11 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
+
+[project.urls]
+Homepage = "https://n3b3x.github.io/openballbot-rl/"
+Repository = "https://github.com/N3b3x/openballbot-rl"
+Upstream = "https://github.com/salehiac/OpenBallBot-RL"
 
 [project.optional-dependencies]
 dev = [

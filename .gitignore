@@ -220,3 +220,10 @@ outputs/study/warp_ppo/q*.sh
 outputs/study/warp_ppo/gpu_guard.csv
 scratch/
 .claude/
+
+# Model checkpoints and large run artefacts anywhere in the tree (exported ROS 2 bundles use .onnx/.ts/.npz and are tracked)
+*.pt
+*.pth
+*.ckpt
+# MuJoCo writes this next to wherever a script was started
+MUJOCO_LOG.TXT

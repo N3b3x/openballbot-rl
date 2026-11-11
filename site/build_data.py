@@ -32,6 +32,12 @@ SITE = ROOT / "site"
 WP = ROOT / "outputs/study/warp_ppo"
 RES = ROOT / "outputs/study/results"
 PAPER = ROOT / "paper_v2"
+# --site-only: rebuild the site without touching paper_v2/ or docs/ (paper tables and figures and the cross-check report go to a temp folder)
+SITE_ONLY = "--site-only" in sys.argv
+if SITE_ONLY:
+    import tempfile
+    PAPER = Path(tempfile.gettempdir()) / "ballbot_site_build" / "paper_v2"
+    PAPER.mkdir(parents=True, exist_ok=True)
 FIG = SITE / "figures/study"
 FIG.mkdir(parents=True, exist_ok=True)
 (PAPER / "figures").mkdir(exist_ok=True)
@@ -1401,6 +1407,273 @@ def build_s105_s116():
         check(cid, "Table 41", q, comp, l, tol)
 
 
+# ----------------------------------------------------------------------------------------------------------- S117 to S122
+# (run, short label, family, goal-test file measured at the true ball centre or None, history in ms)
+HG_RUNS = [("g34_mref_rsad_db_s0", "g34 s0", "g34", "motion_goal_ref_centre.json", 80), ("g34_mref_rsad_db_s1", "g34 s1", "g34", "motion_goal_ref_centre.json", 80),
+           ("g34_mref_rsad_db_s2", "g34 s2", "g34", "motion_goal_ref_centre.json", 80),
+           ("g38_hist24_s0", "g38 s0", "g38", "motion_goal_ref_centre.json", 240), ("g38_hist24_s1", "g38 s1", "g38", "motion_goal_ref.json", 240),
+           ("g38_hist48_s0", "g38 480 ms s0", "g38h48", None, 480),
+           ("g39_goalcentre_s0", "g39 s0", "g39", "motion_goal_ref.json", 80), ("g39_goalcentre_s1", "g39 s1", "g39", "motion_goal_ref.json", 80),
+           ("g39_goalcentre_s2", "g39 s2", "g39", "motion_goal_ref.json", 80),
+           ("g40_hist24_gc_s0", "g40 s0", "g40", "motion_goal_ref.json", 240), ("g40_hist24_gc_s1", "g40 s1", "g40", "motion_goal_ref.json", 240),
+           ("g40_hist24_gc_s2", "g40 s2", "g40", "motion_goal_ref.json", 240)]
+HG_LABEL = {"g34": "S113 recipe, goal logic at the ball body origin (g34)", "g38": "g34 + 240 ms history (g38)", "g38h48": "g34 + 480 ms history (g38)",
+            "g39": "g34 + goal logic at the true ball centre (g39, <b>recommended</b>)", "g40": "g34 + 240 ms history + goal centre (g40)"}
+# S119 design sweep: (spec name, property, value label, unit note)
+OTA = [("ota_ballmas_0p042", "ball mass", "0.042 kg"), ("ota_ballmas_0p084", "ball mass", "0.084 kg"), ("ota_ballmas_0p34", "ball mass", "0.34 kg"), ("ota_ballmas_0p67", "ball mass", "0.67 kg"),
+       ("ota_bodycom_0p08", "body COM height", "0.08 m"), ("ota_bodycom_0p1", "body COM height", "0.10 m"), ("ota_bodycom_0p17", "body COM height", "0.17 m"), ("ota_bodycom_0p22", "body COM height", "0.22 m"),
+       ("ota_bodymas_2", "body mass", "2.0 kg"), ("ota_bodymas_3", "body mass", "3.0 kg"), ("ota_bodymas_5", "body mass", "5.0 kg"), ("ota_bodymas_6p5", "body mass", "6.5 kg"),
+       ("ota_motortor_3", "wheel torque limit", "3 N m"), ("ota_motortor_6", "wheel torque limit", "6 N m"), ("ota_motortor_10", "wheel torque limit", "10 N m"), ("ota_motortor_15", "wheel torque limit", "15 N m"),
+       ("ota_rotorine_0p001", "rotor inertia", "0.001 kg m^2"), ("ota_rotorine_0p02", "rotor inertia", "0.02 kg m^2"),
+       ("ota_contactzen_41", "contact angle", "41 deg"), ("ota_contactzen_61", "contact angle", "61 deg"),
+       ("ota_ballrad_0p07", "ball radius", "7 cm"), ("ota_ballrad_0p12", "ball radius", "12 cm")]
+OTA_NOM = {"ball mass": "0.168 kg", "body COM height": "0.131 m", "body mass": "3.85 kg", "wheel torque limit": "30 N m", "rotor inertia": "0.005 kg m^2", "contact angle": "51 deg", "ball radius": "9 cm"}
+OTA_COLS = [("sim_goal_still_fall", "still"), ("sim_goal_pushes_fall", "pushes"), ("sim_goal_pulls_half_fall", "half pulls"), ("sim_drive_0.3_fall", "drive"), ("sim_goal_terrain_fall", "terrain")]
+
+
+def build_s117_s122():
+    """S117 to S122: a longer observation history (S117), the goal-point bug and its fix (S118), the design sweep (S119), the 240 ms history plus
+    goal-centre controller g40 and its trade-off (S120), the recommendation g39 (S121) and the dead band on the ball-centre speed (S122, training)."""
+    S["hg"], rows = {}, []
+    for run, lab, fam, gfile, hist in HG_RUNS:
+        D = WP / run
+        a = json.load(open(D / "args.json"))
+        assert int(a.get("hist", 8)) * 10 == hist and bool(a.get("goal_centre")) == (fam in ("g39", "g40")) and a.get("motion_ref") and a.get("rs_adapt") == "0.15,0.3,0.05", run
+        m = json.load(open(D / (gfile or "motion_goal_ref.json")))
+        assert m["scenario"] == "goal" and m["worlds"] == 528 and m["steps"] == 1500 and m["push_scale"] == 0.0 and m["mode"] == "ref" and not m.get("lqr_only"), run
+        if gfile:
+            assert m.get("goal_metric_point") == "ball_centre", run
+        b = json.load(open(D / "battery.json"))
+        g, v = b["goal"], b["vel"]
+        rec = dict(fam=fam, hist=hist, fall=m["fall"], rev=m["cmd_reversals_per_world"], hold=m["hold_speed_rms"], err=(m["hold_err_rms_m"] * 100 if gfile else None),
+                   over=(m["overshoot_median_m"] * 100 if gfile else None), arrived=m["arrived"], hard=float(np.mean([m["by_design"][k] for k in HARD])),
+                   goal={f"{sc}.{n}": g[f"drs{sc}_{nn}"]["overall"]["success"] for sc in SCALES for n, nn in (("u", "none"), ("d", "pushes+pulls"))},
+                   vel={f"{sc}.{n}": v[f"drs{sc}_{nn}"]["overall"]["fall"] for sc in SCALES for n, nn in (("u", "none"), ("d", "pushes+pulls"))},
+                   ach={sp: b["flat"][sp]["achieved"] for sp in SP})
+        S["hg"][run] = rec
+        for q in ("fall", "rev", "hold", "err", "over", "arrived", "hard"):
+            if rec[q] is not None:
+                V[f"hg.{run}.{q}"] = rec[q]
+        for k_, x in rec["goal"].items():
+            V[f"hg.{run}.goal.{k_}"] = x
+        for k_, x in rec["vel"].items():
+            V[f"hg.{run}.vel.{k_}"] = x
+        for sp in SP:
+            V[f"hg.{run}.ach.{sp}"] = rec["ach"][sp]
+        gc, vc = rec["goal"], rec["vel"]
+        rows.append([f"{HG_LABEL[fam]}<br><small>{run}</small>", f"{hist} ms", f"{rec['fall']:.3f}", ("n/a" if rec["err"] is None else f"{rec['err']:.1f}"), f"{rec['hold']:.3f}", f"{rec['rev']:.2f}",
+                     ("n/a" if rec["over"] is None else f"{rec['over']:.1f}"), f"{rec['hard']:.2f}",
+                     f"{gc['1.u']:.2f} / {gc['1.d']:.2f}", f"{gc['1.75.u']:.2f} / {gc['1.75.d']:.2f}", f"{gc['2.5.u']:.2f} / {gc['2.5.d']:.2f}", f"{vc['1.u']:.2f} / {vc['1.d']:.2f}", f"{rec['ach']['0.9']:.3f}"])
+    fams = {}
+    for run, rec in S["hg"].items():
+        fams.setdefault(rec["fam"], []).append(rec)
+    for fam, recs in fams.items():
+        for q in ("fall", "rev", "hold", "err", "over", "hard"):
+            xs = [r[q] for r in recs if r[q] is not None]
+            if xs:
+                V[f"hgf.{fam}.{q}.min"], V[f"hgf.{fam}.{q}.max"] = min(xs), max(xs)
+        for k_ in recs[0]["goal"]:
+            V[f"hgf.{fam}.goal.{k_}.min"], V[f"hgf.{fam}.goal.{k_}.max"] = min(r["goal"][k_] for r in recs), max(r["goal"][k_] for r in recs)
+        for k_ in recs[0]["vel"]:
+            V[f"hgf.{fam}.vel.{k_}.min"], V[f"hgf.{fam}.vel.{k_}.max"] = min(r["vel"][k_] for r in recs), max(r["vel"][k_] for r in recs)
+        V[f"hgf.{fam}.ach.min"] = min(min(r["ach"].values()) for r in recs)
+        V[f"hgf.{fam}.ach.max"] = max(max(r["ach"].values()) for r in recs)
+    V["hg.err_cut.min"] = V["hgf.g34.err.min"] / V["hgf.g39.err.max"]
+    V["hg.err_cut.max"] = V["hgf.g34.err.max"] / V["hgf.g39.err.min"]
+    head = ["Recipe (run)", "Observation history", "Goal test: falls", "Hold error RMS at the ball centre [cm]", "Hold speed RMS [m/s]", "Command reversals per world", "Median overshoot [cm]",
+            "Falls of the three hard designs (mean)", "Battery goal success DR 1: undisturbed / pushes + pulls", "DR 1.75", "DR 2.5", "Tile velocity falls DR 1: undisturbed / pushes + pulls", "Flat 0.9 m/s: achieved / commanded"]
+    cap = setup_cap(engine=ENG + "; wheel-ball free-rolling friction 0.01", dr="on at scale 1 unless a column says 1.75 or 2.5 (training: ramped to 1.75)", noise="on",
+                    worlds="goal test 528 per row (48 per design, 11 designs); battery 1760 per cell (16 per design and terrain kind)", seeds="one per row; three seeds each of g34, g39 and g40, two of g38 at 240 ms, one at 480 ms",
+                    protocol="goal test: eval_motion.py, goal 1.2 m away on flat interior tiles, 15 s, no pushes, motion layer in the loop; hold error, overshoot and arrival measured at the true ball centre for every row (files motion_goal_ref.json for runs evaluated after S118, motion_goal_ref_centre.json for the re-measured g34 and g38 s0); "
+                             "the 480 ms run was not re-measured at the centre, so its hold error and overshoot are n/a and its other goal-test numbers come from the original file. Battery: eval_battery.py as Table 38; goal success is judged at the true centre for g39 and g40 (their goal rule) and at the body origin for g34 and g38, so g39 and g40 face a slightly stricter test. All runs 200M steps, S113 recipe otherwise unchanged.")
+    inject("generalist.html", "tab_histgc", html_table(head, rows) + f'<p class="cap"><b>Table 42.</b> A longer memory and the goal point on the true ball centre. {cap}</p>')
+    tex_table("histgc", "A longer observation history and the goal point on the true ball centre (S117 to S121). " + tex_escape(cap), "tab:gen_histgc", head, rows, colspec="p{4.2cm}cccccccccccc", star=True)
+    # log values: (falls, hold err cm, hold speed, reversals, overshoot cm), battery goal cells, velocity falls cells, flat 0.9 m/s
+    L = {"g34_mref_rsad_db_s0": ("S118", (0.098, 12.6, 0.058, 0.62, 20.5), None, None, None),
+         "g34_mref_rsad_db_s1": ("S118", (0.089, 11.4, 0.062, 1.05, 16), None, None, None),
+         "g34_mref_rsad_db_s2": ("S118", (0.095, 13.6, 0.060, 0.54, 23), None, None, None),
+         "g38_hist24_s0": ("S117", (None, None, 0.041, None, None), (0.81, 0.53, 0.77, 0.47, 0.72, 0.39), (0.28, 0.48, 0.30, 0.51, 0.35, 0.60), 1.048),
+         "g38_hist24_s1": ("S118 addendum", (0.059, 8.5, None, 2.10, 11.4), (0.81, 0.51, 0.78, 0.46, 0.73, 0.39), (0.26, 0.50, 0.29, 0.51, 0.33, 0.60), 1.047),
+         "g38_hist48_s0": ("S117", (0.061, None, 0.064, 2.30, None), (0.81, 0.51, 0.77, 0.47, 0.74, 0.40), (0.28, 0.51, 0.30, 0.54, 0.36, 0.61), 1.035),
+         "g39_goalcentre_s0": ("S118", (0.070, 3.6, 0.025, 0.19, 9.9), (0.75, 0.49, 0.73, 0.44, 0.70, 0.37), (0.32, 0.50, 0.34, 0.53, 0.38, 0.59), 1.063),
+         "g39_goalcentre_s1": ("S118", (0.076, 4.6, 0.035, 0.07, None), (0.73, 0.49, 0.70, 0.44, 0.64, 0.38), (0.31, 0.47, 0.33, 0.52, 0.37, 0.57), None),
+         "g39_goalcentre_s2": ("S118", (0.093, 4.9, 0.026, 0.15, None), (0.77, 0.50, 0.74, 0.45, 0.69, 0.39), (0.31, 0.48, 0.32, 0.52, 0.36, 0.59), None),
+         "g40_hist24_gc_s0": ("S120", (0.062, 4.9, 0.031, 0.01, 10.0), (0.79, 0.55, 0.77, 0.48, 0.74, 0.42), (0.27, 0.47, 0.28, 0.51, 0.34, 0.59), 1.038),
+         "g40_hist24_gc_s1": ("S120 addendum", (0.062, 6.2, 0.034, 0.01, None), (0.79, 0.51, 0.76, 0.46, 0.72, 0.39), (0.29, 0.48, 0.30, 0.53, 0.34, 0.60), 1.045),
+         "g40_hist24_gc_s2": ("S121", (0.066, 5.5, None, 0.06, None), (0.80, 0.52, 0.77, 0.47, 0.73, 0.40), (0.27, 0.48, 0.30, 0.53, 0.36, 0.60), 1.026)}
+    for run, (cid, gt, gl, vl, a09) in L.items():
+        r = S["hg"][run]
+        for q, l, tol in zip(("fall", "err", "hold", "rev", "over"), gt, (0.0006, 0.06, 0.0006, 0.006, 0.6)):
+            if l is not None:
+                check(cid, "Table 42", f"{run} goal test {q}", r[q], l, tol)
+        if gl:
+            for k_, l in zip(("1.u", "1.d", "1.75.u", "1.75.d", "2.5.u", "2.5.d"), gl):
+                check(cid, "Table 42", f"{run} battery goal {k_}", r["goal"][k_], l, 0.006)
+        if vl:
+            for k_, l in zip(("1.u", "1.d", "1.75.u", "1.75.d", "2.5.u", "2.5.d"), vl):
+                check(cid, "Table 42", f"{run} velocity falls {k_}", r["vel"][k_], l, 0.006)
+        if a09:
+            check(cid, "Table 42", f"{run} flat 0.9 m/s achieved", r["ach"]["0.9"], a09, 0.0006)
+    # the S117 numbers were read from the origin-basis file of g38 s0 (before S118); check those against the same file
+    m0 = json.load(open(WP / "g38_hist24_s0/motion_goal_ref.json"))
+    check("S117", "text", "g38_hist24_s0 goal test falls (origin file)", m0["fall"], 0.064, 0.0006)
+    check("S117", "text", "g38_hist24_s0 reversals (origin file)", m0["cmd_reversals_per_world"], 1.00, 0.006)
+    check("S117", "text", "g38_hist24_s0 hard designs (origin file)", float(np.mean([m0["by_design"][k] for k in HARD])), 0.22, 0.006)
+    for run, l, cid in (("g39_goalcentre_s0", 0.26, "S120"), ("g40_hist24_gc_s0", 0.23, "S120"), ("g38_hist24_s1", 0.22, "S120"), ("g40_hist24_gc_s1", 0.23, "S120 addendum"), ("g40_hist24_gc_s2", 0.22, "S121"), ("g38_hist48_s0", 0.22, "S117")):
+        check(cid, "Table 42", f"{run} hard-design falls", S["hg"][run]["hard"], l, 0.006)
+    check("S118", "text", "g39 s0 arrived", S["hg"]["g39_goalcentre_s0"]["arrived"], 0.94, 0.006)
+    check("S118", "text", "g39 s0 flat 0.3 m/s achieved", S["hg"]["g39_goalcentre_s0"]["ach"]["0.3"], 0.996, 0.0006)
+    # S117 pull sweep on a flat map (eval_tiles2.py, TILES_FLAT=1, 352 worlds): none / pulls 1.5 to 6 N / pulls 3 to 12 N
+    S["hg_pull"] = {}
+    for run, logged in (("g34_mref_rsad_db_s0", (0.074, 0.139, 0.361)), ("g38_hist24_s0", (0.055, 0.118, 0.353)), ("g38_hist48_s0", (0.043, 0.116, 0.351))):
+        vals = []
+        for (key, f_), l in zip((("none", "eval2_goal_goal_dr_surf_ps0_flat_noexit.json"), ("half", "eval2_goal_goal_dr_surf_pull_ps0.5_flat_noexit.json"), ("full", "eval2_goal_goal_dr_surf_pull_flat_noexit.json")), logged):
+            d = json.load(open(WP / run / f_))
+            assert d["env_settings"]["tiles_flat"] and d["env_settings"]["no_exit"], (run, f_)
+            V[f"hgp.{run}.{key}"] = d["overall"]["fall"]
+            vals.append(d["overall"]["fall"])
+            check("S117", "text", f"{run} flat-map falls, {key}", d["overall"]["fall"], l, 0.0006)
+        S["hg_pull"][run] = vals
+
+    # navigation (S120 addendum, S121): eval_nav.py as Table 39, positions from env.ball_xy() (true centre for goal-centre runs)
+    NAV2 = [("g34", "g34_mref_rsad_db_s0", "", "g34 s0 (S113, origin logic; Table 39)"), ("g38", "g38_hist24_s0", "", "g38 s0, 240 ms history, origin logic"),
+            ("g39s0", "g39_goalcentre_s0", "", "<b>g39 s0, goal centre (recommended)</b>"), ("g39s1", "g39_goalcentre_s1", "", "<b>g39 s1</b>"), ("g39s2", "g39_goalcentre_s2", "", "<b>g39 s2</b>"),
+            ("g40", "g40_hist24_gc_s0", "", "g40 s0, 240 ms history + goal centre"), ("g40o", "g40_hist24_gc_s0", "_origin", "g40 s0, judged at the body origin (NAV_ORIGIN=1)")]
+    rows, S["nav2"] = [], {}
+    for key, run, suf, lab in NAV2:
+        cells = {}
+        for src in ("tof18", "tof18_pp", "oracle"):
+            f = WP / run / f"navS_{src}{suf}.json"
+            if not f.exists():
+                cells[src] = None
+                continue
+            d = json.load(open(f))
+            assert d["run"] == run and d["worlds"] == 528 and d["steps"] == 2000 and d["planner"]["kind"] == "smooth" and d.get("motion_ref") and d["push_scale"] == (1.0 if src.endswith("_pp") else 0.0), f
+            cells[src] = d["overall"]
+            for q in ("success", "fall", "stuck", "heading_rate_rms"):
+                V[f"n2.{key}.{src}.{q}"] = d["overall"][q]
+        S["nav2"][key] = cells
+        t, p, o = cells["tof18"], cells["tof18_pp"], cells["oracle"]
+        rows.append([lab, f"{t['success']:.3f} / {t['stuck']:.3f} / {t['fall']:.3f}", (f"{p['success']:.3f} / {p['fall']:.3f}" if p else "not run"),
+                     (f"{o['success']:.3f} / {o['stuck']:.3f} / {o['fall']:.3f}" if o else "not run")])
+    for q in ("success", "fall", "stuck"):
+        for src in ("tof18", "tof18_pp", "oracle"):
+            xs = [V[f"n2.{k}.{src}.{q}"] for k in ("g39s0", "g39s1", "g39s2")]
+            V[f"n2f.g39.{src}.{q}.min"], V[f"n2f.g39.{src}.{q}.max"] = min(xs), max(xs)
+    head = ["Controller", "ToF 18 x 14: reached / stuck / fell", "ToF, pushes and pulls: reached / fell", "Perfect map: reached / stuck / fell"]
+    cap = setup_cap(engine=ENG + "; wheel-ball free-rolling friction 0.01", dr="on at scale 1 (11 designs, floor classes)", noise="on (sensor ranges: noise 0.5 percent of range, 2 percent dropout)",
+                    worlds="528 (48 per design, 11 designs)", seeds="one controller seed per row, frozen; three seeds of g39",
+                    protocol="eval_nav.py as Table 39 (blocks map, goal 1.2 m away behind an 8 cm block, 20 s, smooth follower, motion layer in the loop). Since S120 eval_nav.py takes the robot position from env.ball_xy(): the true ball centre for goal-centre runs (g39, g40), the body origin otherwise, which makes the arrival criterion about 0.02 stricter for the goal-centre runs; the last row forces the origin. Files outputs/study/warp_ppo/RUN/navS_{tof18,tof18_pp,oracle}[_origin].json.")
+    inject("generalist.html", "tab_nav2", html_table(head, rows) + f'<p class="cap"><b>Table 43.</b> Navigation with the goal-centre and 240 ms controllers. {cap}</p>')
+    tex_table("nav2", "Navigation with the goal-centre and 240 ms controllers (S120, S121). " + tex_escape(cap), "tab:gen_nav2", head, rows, colspec="p{5cm}ccc", star=True)
+    NL = [("g39s0", "S121", (0.866, 0.077, 0.057), (0.544, 0.413), (0.953, 0.001, 0.045)), ("g39s1", "S121", (0.867, 0.076, 0.057), (0.545, 0.405), (0.949, 0.006, 0.045)),
+          ("g39s2", "S121", (0.892, 0.047, 0.061), (0.487, 0.460), (0.938, 0.008, 0.055)), ("g40", "S121", (0.824, 0.112, 0.064), (0.453, 0.472), (0.907, 0.028, 0.064)),
+          ("g40o", "S120 addendum", (0.847, 0.097, 0.057), (0.447, 0.491), None), ("g38", "S120 addendum", (0.854, 0.083, 0.063), (0.485, 0.449), None),
+          ("g34", "S121", (0.877, 0.044, 0.080), (0.557, 0.413), (0.938, 0.002, 0.061))]
+    for key, cid, t, p, o in NL:      # 3-decimal log values; tolerance one unit in the third decimal (the log rounds half-way cases either way)
+        for q, l in zip(("success", "stuck", "fall"), t):
+            check(cid, "Table 43", f"{key} ToF {q}", V[f"n2.{key}.tof18.{q}"], l, 0.0011)
+        for q, l in zip(("success", "fall"), p):
+            check(cid, "Table 43", f"{key} ToF pushes {q}", V[f"n2.{key}.tof18_pp.{q}"], l, 0.0011)
+        if o:
+            for q, l in zip(("success", "stuck", "fall"), o):
+                check(cid, "Table 43", f"{key} perfect map {q}", V[f"n2.{key}.oracle.{q}"], l, 0.0011)
+
+    # S119 design sweep (robot_spec.py, one property at a time around specs/nominal.yaml, g34 s0, 256 worlds per case)
+    SPEC = ROOT / "outputs/study/specs"
+    sim = {r["name"]: r for r in csv.DictReader(open(SPEC / "ota_sim.csv"))}
+    nom = next(csv.DictReader(open(SPEC / "spec_nominal_sim.csv")))
+    sim["spec_nominal"] = nom
+    S["ota"] = {}
+    rows = [["<b>nominal robot</b> (specs/nominal.yaml)", "ball 9 cm, 0.168 kg; body 3.85 kg, COM 0.131 m; 30 N m; rotor 0.005 kg m<sup>2</sup>; contact 51 deg"] + [f"{float(nom[c]):.3f}" for c, _ in OTA_COLS]]
+    for c, short in OTA_COLS:
+        V[f"ota.nom.{short.replace(' ', '_')}"] = float(nom[c])
+    S["ota"]["spec_nominal"] = {short: float(nom[c]) for c, short in OTA_COLS}
+    for name, prop, val in OTA:
+        r = sim[name]
+        S["ota"][name] = dict(prop=prop, value=val, **{short: float(r[c]) for c, short in OTA_COLS}, pull5=float(r["phys_pull_capacity_5deg_N"]))
+        for c, short in OTA_COLS:
+            V[f"ota.{name}.{short.replace(' ', '_')}"] = float(r[c])
+        rows.append([f"{prop} {val.replace('^2', '<sup>2</sup>')}", f"nominal {OTA_NOM[prop].replace('^2', '<sup>2</sup>')}"] + [f"{float(r[c]):.3f}" for c, _ in OTA_COLS])
+    V["ota.pull5.nom"] = float(nom["phys_pull_capacity_5deg_N"])
+    V["ota.pull5.bodymas_2"] = float(sim["ota_bodymas_2"]["phys_pull_capacity_5deg_N"])
+    lq = {}
+    for x in ("ballrad_0p07", "ballrad_0p12", "rotorine_0p001", "motortor_3"):
+        for suf, k in (("", "full"), ("_lqronly", "lqr")):
+            d = json.load(open(WP / "g34_mref_rsad_db_s0" / f"eval2_goal_goal_dr_surf_ps0_des-ota_{x}-ota_{x}_flat_noexit{suf}.json"))
+            assert d["env_settings"]["tiles_flat"] and d["env_settings"]["push_scale"] == 0.0, x
+            lq[(x, k)] = d["overall"]["fall"]
+            V[f"otaq.{x}.{k}"] = d["overall"]["fall"]
+    S["ota_lqr"] = {f"{x}.{k}": v for (x, k), v in lq.items()}
+    head = ["Variation (one property at a time)", "Nominal value", "Falls: standing at the goal", "with short pushes", "with half-strength pulls (1.5 to 6 N)", "driving at 0.3 m/s", "goals on terrain tiles"]
+    cap = setup_cap(engine=ENG + "; wheel-ball free-rolling friction 0.01", dr="on (standard ranges)", noise="on", worlds="256 per case", seeds="one controller checkpoint (g34_mref_rsad_db_s0, design-conditioned; every spec is a design it never trained on)",
+                    protocol="scripts/study/robot_spec.py maps a spec in physical units onto the parametric generator of design_space.py and, with --eval, runs the controller; cases on a fully flat map except the last column: goal hold without disturbance, with the short pushes, with half-strength sustained pulls, driving at 0.3 m/s, and goals on the standard terrain tiles. Files outputs/study/specs/ota_sim.csv and spec_nominal_sim.csv.")
+    inject("design.html", "tab_ota", html_table(head, rows) + f'<p class="cap"><b>Table 1.</b> The design sweep. {cap}</p>')
+    tex_table("ota", "Design sweep: one property at a time around the nominal robot (S119). " + tex_escape(cap), "tab:gen_ota", head, [[re.sub(r"<[^>]+>", " ", str(c)) for c in r] for r in rows], colspec="p{4.4cm}cccccc", star=True)
+    OL = {"spec_nominal": (0.007, 0.007, 0.017, 0.001, 0.138),
+          "ota_ballmas_0p042": (0.41, 0.41, 0.46, 0.39, 0.53), "ota_ballmas_0p084": (0.052, 0.052, 0.070, 0.006, 0.19), "ota_ballmas_0p34": (0.000, 0.000, 0.012, 0.000, 0.13), "ota_ballmas_0p67": (0.000, 0.000, 0.013, 0.000, 0.14),
+          "ota_bodycom_0p08": (0.037, 0.031, 0.051, 0.010, 0.20), "ota_bodycom_0p1": (0.020, 0.021, 0.031, 0.004, 0.17), "ota_bodycom_0p17": (0.004, 0.004, 0.018, 0.000, 0.13), "ota_bodycom_0p22": (0.003, 0.001, 0.013, 0.000, 0.125),
+          "ota_bodymas_2": (0.002, 0.003, 0.243, 0.000, 0.14), "ota_bodymas_3": (0.004, 0.007, 0.034, 0.000, 0.14), "ota_bodymas_5": (0.009, 0.013, 0.019, 0.001, 0.15), "ota_bodymas_6p5": (0.021, 0.018, 0.020, 0.001, 0.15),
+          "ota_motortor_3": (0.48, 0.48, 0.51, 0.001, 0.54), "ota_motortor_6": (0.13, 0.13, 0.12, 0.000, 0.23), "ota_motortor_10": (0.044, 0.052, 0.067, 0.000, 0.18), "ota_motortor_15": (0.009, 0.011, 0.041, 0.000, 0.145),
+          "ota_rotorine_0p001": (0.43, 0.44, 0.47, 0.37, 0.54), "ota_rotorine_0p02": (0.000, 0.000, 0.014, 0.000, 0.109),
+          "ota_contactzen_41": (0.015, 0.015, 0.034, 0.004, 0.14), "ota_contactzen_61": (0.025, 0.028, 0.031, 0.006, 0.17),
+          "ota_ballrad_0p07": (0.11, 0.11, 0.11, 0.025, 0.26), "ota_ballrad_0p12": (0.70, 0.70, 0.71, 0.76, 0.73)}
+    for name, logged in OL.items():
+        for (c, short), l in zip(OTA_COLS, logged):
+            nd = len(str(l).split(".")[1]) if "." in str(l) else 0
+            check("S119", "design.html Table 1", f"{name} {short}", float(sim[name][c]), l, 0.5 * 10 ** (-max(nd, 2)) + 1e-4)
+    for (x, k), l in ((("ballrad_0p12", "full"), 0.69), (("ballrad_0p12", "lqr"), 0.022), (("ballrad_0p07", "full"), 0.11), (("ballrad_0p07", "lqr"), 0.28),
+                      (("rotorine_0p001", "full"), 0.45), (("rotorine_0p001", "lqr"), 0.49), (("motortor_3", "full"), 0.48), (("motortor_3", "lqr"), 0.46)):
+        check("S119", "design.html", f"LQR-only check {x} {k}", lq[(x, k)], l, 0.006 if l >= 0.1 else 0.0006)
+    check("S119", "design.html", "pull capacity at 5 deg, nominal [N]", V["ota.pull5.nom"], 3.3, 0.06)
+    check("S119", "design.html", "pull capacity at 5 deg, 2 kg body [N]", V["ota.pull5.bodymas_2"], 1.7, 0.06)
+
+
+def fig_histgc(C, size):
+    """Hold precision against disturbed navigation, per seed: the S120/S121 trade-off."""
+    fig, ax = plt.subplots(figsize=size)
+    pts = [("g34", "g34_mref_rsad_db_s0", "g34", C["model"], "o"), ("g38", "g38_hist24_s0", "g38", C["mute"], "s"),
+           ("g39", "g39_goalcentre_s0", "g39s0", C["hybrid"], "D"), ("g39", "g39_goalcentre_s1", "g39s1", C["hybrid"], "D"), ("g39", "g39_goalcentre_s2", "g39s2", C["hybrid"], "D"),
+           ("g40", "g40_hist24_gc_s0", "g40", C["learned"], "^")]
+    lab = {"g34": "g34: origin goal logic", "g38": "g38: + 240 ms history", "g39": "g39: goal centre (recommended)", "g40": "g40: goal centre + 240 ms"}
+    seen = set()
+    for fam, run, nk, col, mk in pts:
+        x = S["hg"][run]["err"]; y = V[f"n2.{nk}.tof18_pp.success"]
+        ax.scatter([x], [y], s=70, color=col, marker=mk, edgecolor=C["fg"], linewidth=0.6, zorder=3, label=None if fam in seen else lab[fam])
+        seen.add(fam)
+    ax.set_xlabel("goal hold error RMS at the true ball centre [cm] (lower is better)")
+    ax.set_ylabel("ToF navigation with pushes and pulls:\nshare of 528 worlds reaching the goal")
+    ax.set_xlim(0, 15); ax.set_ylim(0.40, 0.60)
+    ax.annotate("better", xy=(1.0, 0.585), xytext=(4.0, 0.585), color=C["mute"], fontsize=8, va="center", arrowprops=dict(arrowstyle="->", color=C["mute"]))
+    ax.legend(loc="lower right", fontsize=7.5)
+    ax.set_title("one point per seed: precise holding (left) and robust pushed navigation (top)")
+    fig.tight_layout()
+    return fig
+
+
+def fig_ota(C, size):
+    """Design sweep small multiples: falls standing at the goal, with half-strength pulls and on terrain goals, per property (categorical x, nominal marked)."""
+    props = [("ball mass", "ball mass [kg]", [("ota_ballmas_0p042", "0.042"), ("ota_ballmas_0p084", "0.084"), ("spec_nominal", "0.168"), ("ota_ballmas_0p34", "0.34"), ("ota_ballmas_0p67", "0.67")]),
+             ("wheel torque limit", "torque limit [N m]", [("ota_motortor_3", "3"), ("ota_motortor_6", "6"), ("ota_motortor_10", "10"), ("ota_motortor_15", "15"), ("spec_nominal", "30")]),
+             ("rotor inertia", "rotor inertia [kg m$^2$]", [("ota_rotorine_0p001", "0.001"), ("spec_nominal", "0.005"), ("ota_rotorine_0p02", "0.02")]),
+             ("body COM height", "COM above ball centre [m]", [("ota_bodycom_0p08", "0.08"), ("ota_bodycom_0p1", "0.10"), ("spec_nominal", "0.131"), ("ota_bodycom_0p17", "0.17"), ("ota_bodycom_0p22", "0.22")]),
+             ("body mass", "body mass [kg]", [("ota_bodymas_2", "2.0"), ("ota_bodymas_3", "3.0"), ("spec_nominal", "3.85"), ("ota_bodymas_5", "5.0"), ("ota_bodymas_6p5", "6.5")]),
+             ("ball radius", "ball radius [cm]", [("ota_ballrad_0p07", "7"), ("spec_nominal", "9"), ("ota_ballrad_0p12", "12")])]
+    fig, axs = plt.subplots(2, 3, figsize=size, sharey=True)
+    for ax, (prop, xl, pts) in zip(axs.ravel(), props):
+        xs = list(range(len(pts)))
+        for key, col, lab in (("still", C["hybrid"], "standing at the goal"), ("half pulls", C["warn"], "half-strength pulls"), ("terrain", C["bad"], "goals on terrain")):
+            ax.plot(xs, [S["ota"][p[0]][key] for p in pts], "-o", color=col, ms=4, lw=1.6, label=lab)
+        ax.axvline([i for i, p in enumerate(pts) if p[0] == "spec_nominal"][0], color=C["mute"], lw=0.8, ls=":")
+        ax.set_xticks(xs); ax.set_xticklabels([p[1] for p in pts], fontsize=8)
+        ax.set_xlabel(xl, fontsize=8); ax.set_title(prop, fontsize=9)
+        ax.set_ylim(-0.02, 0.8)
+    axs[0, 0].set_ylabel("share of 256 robots that fall"); axs[1, 0].set_ylabel("share of 256 robots that fall")
+    axs[0, 0].legend(fontsize=7, loc="upper right")
+    fig.tight_layout()
+    return fig
+
+
 def fig_nav(C, size):
     fig, ax = plt.subplots(figsize=size)
     labs = ["blind", "perfect map", "ToF 18x14\nhead -25", "camera 32x24\nhead -25", "camera 32x24\nhead -40", "ToF 8x8\nhead -25", "ToF 18x14\nlow -10", "2 ToF on\nbody cones"]
@@ -2123,11 +2396,30 @@ def build_videos():
         sev = v["severity"]
         sevt = "" if v["kind"] in ("flat", "blocks") else (f", severity {sev:.1f} deg" if v["kind"].startswith("ramp") else f", severity {sev * 100:.1f} cm")
         outcome = ("fell" if v["seconds"] != v["seconds"] else f"fell after {v['seconds']:.1f} s") if v["fell"] else f"no fall in {v['seconds']:.0f} s"
-        cards.append(f'<li class="vcard"><video controls preload="none" playsinline poster="videos/{v["name"]}.jpg" src="videos/{v["name"]}.mp4" aria-label="{v["title"]}" style="width:100%"></video>'
+        cards.append(f'<li class="vcard"><video controls preload="none" playsinline data-poster="videos/{v["name"]}.jpg" src="videos/{v["name"]}.mp4" aria-label="{v["title"]}" style="width:100%;aspect-ratio:16/9;background:#000"></video>'
                      f'<div class="vbody"><h3>{v["title"]}</h3><p>{v["description"]}</p>'
                      f'<p class="vmeta">Policy {v["run"]}; {v["task"]} task; terrain {KIND_LABEL[v["kind"]]}{sevt}; {"nominal design" if v["design"] == "nom" else "design " + v["design"] + " (robot scaled " + v["design"][1:] + " times, Froude-scaled command)"}; Warp GPU physics, CPU MuJoCo renderer. Engine: Warp GPU, corrected. DR and noise: not recorded in the clip metadata (the renderer defaults to off). Worlds: 1 (a single clip). Seed: policy seed {v['run'][-1]}. Outcome: <b class="{"bad" if v["fell"] else "good"}">{outcome}</b>. One world is an anecdote, not a statistic; the tables carry the rates.</p></div></li>')
     inject("generalist.html", "videos", '<ul class="vgrid">' + "".join(cards) + "</ul>")
     return out
+
+
+# Clips shown on videos.html and the home page that are not part of CLIPS above (chapter 6 and 7 of the videos page).
+# c11_goal_bump_J02 was withdrawn (study log) and must not be published.
+FEATURED = ["c11_goal_hold_nom", "c11_step15_nom", "c11_step3cm_nom", "c11_ramp_zhigh", "c11_stepdown_kb4", "c11_stairs_nom",
+            "c12_nav_with_layer", "c12_nav_without_layer", "c13_push_pull_hold", "c14_g40_push_pull_hold"]
+
+
+def copy_featured_clips():
+    vsrc = WP / "videos"
+    for name in FEATURED:
+        assert "goal_bump" not in name
+        for ext in ("mp4", "jpg"):
+            src, dst = vsrc / f"{name}.{ext}", SITE / "videos" / f"{name}.{ext}"
+            if src.exists() and (not dst.exists() or dst.stat().st_size != src.stat().st_size):
+                shutil.copy2(src, dst)
+        js = vsrc / f"{name}.json"
+        if js.exists():
+            S.setdefault("featured_clips", {})[name] = json.load(open(js))
 
 
 # ----------------------------------------------------------------------------------------------------------- cross-check report
@@ -2135,6 +2427,10 @@ def write_report():
     ok = [c for c in CHECKS if abs(c[3] - c[4]) <= c[5] + 1e-9]
     bad = [c for c in CHECKS if abs(c[3] - c[4]) > c[5] + 1e-9]
     p = ROOT / "docs/research/site_crosscheck.md"
+    if SITE_ONLY:
+        src_p, p = p, PAPER.parent / "site_crosscheck.md"
+        if src_p.exists() and not p.exists():
+            shutil.copy2(src_p, p)
     head = (p.read_text(encoding="utf8").split("<!-- AUTO -->")[0] if p.exists() and "<!-- AUTO -->" in p.read_text(encoding="utf8") else "# Site and paper cross-check\n\n")
     L = [head.rstrip() + "\n\n<!-- AUTO -->", "## Automatic cross-check (written by site/build_data.py)\n",
          "Supersession note (S92): the flat-benchmark rows printed in log entries S59 to S91 were measured on border tiles; every battery.json flat row was re-run on interior tiles, and the files are taken as correct. The re-run is a fresh sample, so its steady-state error and achieved speed also differ slightly from the logged values (by 0.001 to 0.01 m/s and up to 0.02 in ratio); the automatic checks therefore no longer compare flat rows with those entries. The LQR-alone row is the interior-tile re-measurement of the S92 addendum (log values, dagger); the zero-shot arrestor flat row was not re-run and is shown with a caveat.\n",
@@ -2451,6 +2747,7 @@ def main():
     build_s90_s91()
     build_s104()
     build_s105_s116()
+    build_s117_s122()
     build_s92_s93()
     build_s94_s95()
     build_s98()
@@ -2472,10 +2769,13 @@ def main():
     render("traction", fig_traction, (9.0, 3.4), (7.0, 2.8))
     render("nav", fig_nav, (9.0, 3.4), (7.2, 2.8))
     render("ballsize", fig_ballsize, (9.4, 3.6), (7.2, 3.0))
+    render("histgc", fig_histgc, (8.0, 4.0), (6.6, 3.4))
+    render("ota", fig_ota, (9.6, 5.4), (7.2, 4.4))
     build_videos()
+    copy_featured_clips()
     collect_values()
     write_values_tex()
-    for pg in ("generalist.html", "method.html"):
+    for pg in ("generalist.html", "method.html", "index.html", "design.html", "deploy.html"):
         if (SITE / pg).exists():
             fill(pg)
     if MISSING:
@@ -2496,6 +2796,9 @@ def main():
     (SITE / "data/study.json").write_text(json.dumps(_clean(S), default=str, indent=1, allow_nan=False), encoding="utf8")
     n, nb = write_report()
     print(f"figures done; {n} checks, {nb} differ")
+    for c in CHECKS:
+        if abs(c[3] - c[4]) > c[5] + 1e-9:
+            print(f"  DIFF {c[0]} | {c[1]} | {c[2]} | data {c[3]:.4f} | log {c[4]}")
 
 
 if __name__ == "__main__":

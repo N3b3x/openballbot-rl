@@ -16,15 +16,20 @@ Truthfulness: every number on the site must come from `site/data/*.json` (genera
 file in the repo (log entries by S-number, in a `data-src` attribute or a footnote); label simulation-only results as such;
 no hardware claims; no invented citations. No em dashes in copy.
 
-## Reading order (2026-11-08 brief)
+## Navigation and chrome (2026-11-11 overhaul)
 
-The nav expresses it with numbers: 1 Start here (index), 2 Physics (math), 3 Controller (architecture), 4 Results (generalist),
-5 Rules and bounds (bounds), 6 Lessons (lessons), 7 Videos. Everything else sits under "More": Design space explorer, Live policy,
-Literature, Reproduce, then The journey (story), Setup and method (method), Data tables (results), Engines, Glossary.
-Pages in the order also get a prev/next pager above the footer. To change either list edit `ORDER` / `MORE` in `assets/js/layout.js`.
+Top bar: Overview, **Learn** (violet, links to learn/index.html), Results, Videos, Guidelines (design.html), ROS 2 (deploy.html) and an **Explore** mega menu
+(Read in order / Build and run / Reference) with inline SVG icons from `assets/img/icons.svg`; below 1100 px the bar becomes a full-height menu with a focus trap
+and Escape to close. Theme follows the system preference until the reader toggles it (stored in localStorage). The footer has four columns. Pages in the reading order
+(`ORDER` in `assets/js/layout.js`) get a prev/next pager. To change the menu edit `PRIMARY`, `GROUPS` and `ORDER` in layout.js; links are resolved against the site root, so pages in sub-folders (learn/) use the same chrome.
 
-Every page should open with: eyebrow, h1, one-paragraph `.lede`, then a `.tldr` box (with a `.readtime` chip), then, on long pages,
+Every page should open with a `.pagehead` (eyebrow, h1, one-paragraph `.lede`, `.meta` chips), then a `.tldr` box (with a `.readtime` chip), then, on long pages,
 a `nav.pagetoc`. Short lead-in first, detail inside `details.more`. Visuals before tables. Define a term on first use with `.term`.
+
+Tokens (`tokens.css`): surfaces `--bg --bg-2 --bg-3 --bg-elev`, text `--text --text-2 --text-3`, hues `--model --learned --hybrid --good --warn --bad` for marks and large numbers and the AA text variants
+`--model-text` etc. and `--link` for small text, elevation `--shadow-1 --shadow-2`, spacing `--s-1..--s-8`, `--nav-h`. Shared additions in `site.css`: `.badge-sim` (simulation-only pill), `.btn` (+ `.primary .ghost .sm`),
+`.ico` (SVG sprite icon), `.itile` (icon tile), `svg.diagram` (hand-drawn SVG text classes `.t .s .code`), click-to-play video (`.vplayer > button.vph`, mounted by layout.js, `[data-vpair]` with `button.vboth`).
+Page-specific CSS: `home.css` (landing page, reproduce), `pages.css` (design.html, deploy.html).
 
 ## Shared components (site.css + layout.js)
 
@@ -65,7 +70,7 @@ Each line: what it is, then a one-line usage example. All are theme-aware and ne
 - math/design agent: `math.html`, `design-space.html`, `assets/js/ballbot-model.js`, `assets/js/math.js`, `assets/js/design.js`
 - hero/3D + live agent: `live.html`, `reproduce.html`, `assets/js/hero3d.js`, `assets/js/live.js`, `site/live/*`
 - new pages (2026-11-08): `bounds.html`, `lessons.html`, `glossary.html` by their assigned agents
-- the lead owns `index.html`, `assets/css/*`, `assets/js/layout.js`, `DESIGN.md`, `.github/workflows/pages.yml`.
+- `design.html` and `deploy.html` (2026-11-11): numbers come from `site/build_data.py` (`build_s117_s122`, tokens `{{key:decimals}}`, tables `tab_ota`); the learn course lives in `learn/` (separate owner); the lead owns `index.html`, `assets/css/*`, `assets/js/layout.js`, `DESIGN.md`, `.github/workflows/pages.yml`.
 Shared CSS needs: put page-specific CSS in `<style>` inside your page or in `assets/css/<page>.css`; do not edit site.css.
 Name clashes to avoid in page CSS: `.toc` (reproduce chip row, home.css), `.stat` (site.css and study.css), `.term` (arch.css grid; the shared
 component is `.term[data-def]`), `.more` (shared `details.more`).

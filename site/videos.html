@@ -3,14 +3,36 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- head:common -->
+<script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}</script>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<!-- /head:common -->
 <title>Videos | Ballbot control research</title>
 <meta name="description" content="Chaptered simulation clips of the corrected-engine ballbot study: why the robot fell and what the ball arrestors change, the recommended controller, obstacle size against speed, and terrain-aware navigation with a perfect map or a time-of-flight sensor. Every clip is a single simulated run.">
+<!-- og -->
+<link rel="canonical" href="https://n3b3x.github.io/openballbot-rl/videos.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ballbot control research">
+<meta property="og:title" content="Videos | Ballbot control research">
+<meta property="og:description" content="Chaptered simulation clips of the corrected-engine ballbot study: why the robot fell and what the ball arrestors change, the recommended controller, obstacle size against speed, and terrain-aware navigation with a perfect map or a time-of-flight sensor. Every clip is a single simulated run.">
+<meta property="og:url" content="https://n3b3x.github.io/openballbot-rl/videos.html">
+<meta property="og:image" content="https://n3b3x.github.io/openballbot-rl/assets/img/social-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A simulated ballbot: a cylindrical robot balanced on a basketball-textured ball, with the title of the study.">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /og -->
 <link rel="stylesheet" href="assets/css/site.css">
 <script type="module" src="assets/js/layout.js"></script>
 <style>
+.chapnav a:focus-visible{outline:2px solid var(--focus)}
 .vhero{padding:clamp(40px,7vw,80px) 0 18px}
 .vhero h1{max-width:20ch}
-.badge-sim{display:inline-flex;gap:.5em;align-items:center;font:500 .75rem var(--font-mono);color:var(--warn);border:1px solid color-mix(in srgb,var(--warn) 50%,transparent);padding:.25em .8em;border-radius:99px;margin-bottom:1em}
 .howto{display:grid;gap:14px 22px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:18px 0 0;font-size:.9rem;color:var(--text-2)}
 .howto b{color:var(--text)}
 .howto i.sw{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:middle;margin-right:6px}
@@ -18,7 +40,7 @@
 .chapnav .wrap{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .chapnav a{display:inline-flex;gap:.5em;align-items:center;font:500 .76rem var(--font-mono);padding:.35em .85em;border-radius:99px;border:1px solid var(--line-2);color:var(--text-2)}
 .chapnav a:hover{color:var(--text);border-color:var(--hybrid);text-decoration:none}
-.chapnav a b{color:var(--hybrid);font-weight:500}
+.chapnav a b{color:var(--link);font-weight:500}
 .chap{padding:clamp(40px,6vw,72px) 0 10px;border-top:1px solid var(--line);scroll-margin-top:110px}
 .chap h2{margin:.2em 0 .4em;max-width:26ch}
 .chap .intro{max-width:72ch;color:var(--text-2);font-size:1.02rem;line-height:1.6}
@@ -64,12 +86,13 @@ button.both:focus-visible{outline:2px solid var(--hybrid);outline-offset:2px}
 </style>
 </head>
 <body>
+<!-- nojs --><noscript><nav class="nojs" aria-label="Main (JavaScript is off)"><a href="index.html">Overview</a><a href="learn/index.html">Learn</a><a href="generalist.html">Results</a><a href="videos.html">Videos</a><a href="design.html">Design guidelines</a><a href="deploy.html">ROS 2</a><a href="math.html">Physics</a><a href="architecture.html">Controller</a><a href="reproduce.html">Reproduce</a><a href="glossary.html">Glossary</a></nav></noscript><!-- /nojs -->
 <main>
 <header class="vhero wrap">
   <p class="eyebrow">Videos</p>
   <h1>Watch it balance, and watch it fall</h1>
-  <p class="lede">Thirty-two clips from the corrected engine, in six chapters that follow the study: why the robot fell and what three small rollers changed, the controller recommended at the time and its known weakness, why obstacle size and not speed decides a fall, how the ball radius sets the step a robot can climb, what seeing the terrain buys when the obstacle can be avoided, and the current controller with its motion layer.</p>
-  <p class="badge-sim">SIMULATION ONLY &middot; every clip is one simulated run, not a statistic</p>
+  <p class="lede">Thirty-three clips from the corrected engine, in six chapters that follow the study: why the robot fell and what three small rollers changed, the controller recommended at the time and its known weakness, why obstacle size and not speed decides a fall, how the ball radius sets the step a robot can climb, what seeing the terrain buys when the obstacle can be avoided, and the motion-layer controller (g34), compared with g40.</p>
+  <p class="badge-sim">Simulation only &middot; every clip is one simulated run, not a statistic</p>
   <div class="howto" aria-label="How to read a clip">
     <div><b>The scene.</b> MuJoCo-Warp GPU physics rendered with the MuJoCo renderer on a checkerboard floor. The robot is a green cylinder on an orange ball; the red sphere is the goal marker. Terrain features are drawn in the floor.</div>
     <div><b>The paths.</b> <i class="sw" style="background:#2ec4ff"></i>cyan is the commanded path, <i class="sw" style="background:#5ee08a"></i>green is the path actually driven. When the green line leaves the cyan line the controller is not keeping up.</div>
@@ -84,7 +107,7 @@ button.both:focus-visible{outline:2px solid var(--hybrid);outline-offset:2px}
   <a href="#size"><b>3</b> Obstacle size, not speed</a>
   <a href="#ball"><b>4</b> Ball size sets the step size</a>
   <a href="#nav"><b>5</b> Terrain-aware navigation</a>
-  <a href="#motion"><b>6</b> The current controller</a>
+  <a href="#motion"><b>6</b> Motion layer and adaptive authority</a>
 </div></nav>
 
 <!-- ============================================================ chapter 1 -->
@@ -426,8 +449,8 @@ button.both:focus-visible{outline:2px solid var(--hybrid);outline-offset:2px}
 <!-- ============================================================ chapter 6 -->
 <section class="chap" id="motion"><div class="wrap">
   <p class="eyebrow">Chapter 6</p>
-  <h2>The current controller: motion layer and adaptive authority</h2>
-  <p class="intro">The clips in this chapter use the recommended controller from the end of the study: the LQR plus a learned residual whose authority switches between 0.15 and 0.3, trained and run with a <b>motion layer</b> that smooths commands, brakes into the goal and holds position (checkpoint <code>g34_mref_rsad_db_s0</code>, S112 and S113). Randomisation and sensor noise are on in every clip. Across 528 worlds this controller reaches 0.877 of goals behind a block with the ToF sensor and wobbles about a quarter less than the previous one (S114); its full tables are in <a href="generalist.html#motion">chapter 10b of the results</a>.</p>
+  <h2>Motion layer and adaptive authority (g34, and g40 for comparison)</h2>
+  <p class="intro">The clips in this chapter use the controller recommended from S113 to S120: the LQR plus a learned residual whose authority switches between 0.15 and 0.3, trained and run with a <b>motion layer</b> that smooths commands, brakes into the goal and holds position (checkpoint <code>g34_mref_rsad_db_s0</code>, S112 and S113). Randomisation and sensor noise are on in every clip. Since this chapter was written the recommendation has moved to <a href="generalist.html#goalcentre">g39</a> (goal logic on the true ball centre, S121), and the last pair of clips below compares g34 with g40, the same recipe plus a 240 ms memory. Across 528 worlds the g34 controller reaches 0.877 of goals behind a block with the ToF sensor and wobbles about a quarter less than the previous one (S114); its full tables are in <a href="generalist.html#motion">chapter 10b of the results</a>.</p>
 
   <div class="pair" data-pair>
     <article class="clip ok" id="c12_nav_with_layer">
@@ -455,18 +478,33 @@ button.both:focus-visible{outline:2px solid var(--hybrid);outline-offset:2px}
     <div class="ph2"><button type="button" class="both">Play both together</button><span>Same checkpoint, same world and route; only the motion layer differs. One route, not a statistic.</span></div>
   </div>
 
-  <div class="solo">
+  <div class="pair" data-pair>
     <article class="clip ok" id="c13_push_pull_hold">
       <div class="player" data-src="videos/c13_push_pull_hold.mp4" data-poster="videos/c13_push_pull_hold.jpg" data-title="Holding a goal while being pushed and pulled">
         <button type="button" class="ph" aria-label="Play: holding a goal while being pushed and pulled"><img src="videos/c13_push_pull_hold.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot holding position on a flat tile at 6.0 s, 0.01 m/s, tilt 1.9 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">12.0 s &middot; no fall</span></button>
       </div>
       <div class="txt">
-        <h3>Holding a goal while being pushed and pulled</h3>
+        <h3>g34: holding a goal while being pushed and pulled</h3>
         <p class="lead">The robot drives to a goal on flat ground and holds it while short pushes and sustained pulls act on the body. A red arrow draws the applied force (3 cm per newton).</p>
         <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.15 / 0.3</span> g34_mref_rsad_db_s0, motion layer on</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>goal hold on a flat tile; short pushes (the clip title gives up to 25 N) plus sustained 3 to 12 N pulls for 0.5 to 2 s; DR on, noise on</dd><dt>Arrestors</dt><dd class="on">on (metadata: dr true, stride 2)</dd><dt>Clip</dt><dd>single run, 12.0 s, no fall; a typical clip: in four quick runs three survived 12 s</dd></dl>
         <p class="watch"><b>Watch for.</b> <span class="t">any time</span> the red arrow: short pushes are absorbed with little motion, while a sustained pull makes the robot lean and drift before it comes back. <span class="t">6.0 s</span> the HUD reads 0.01 m/s and 1.9 degrees of tilt. Over 352 worlds on a flat map, short pushes alone change nothing (falls 0.078 against 0.074 without) and pulls up to about 3 N are absorbed, but 0.36 fall at the full 3 to 12 N (S116 and its addendum).</p>
       </div>
     </article>
+    <article class="clip ok" id="c14_g40_push_pull_hold">
+      <div class="player" data-src="videos/c14_g40_push_pull_hold.mp4" data-poster="videos/c14_g40_push_pull_hold.jpg" data-title="Holding a goal while being pushed and pulled">
+        <button type="button" class="ph" aria-label="Play: holding a goal while being pushed and pulled"><img src="videos/c14_g40_push_pull_hold.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot holding position on a flat tile at 6.0 s, 0.03 m/s, tilt 2.0 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">12.0 s &middot; no fall</span></button>
+      </div>
+      <div class="txt">
+        <h3>g40: the same hold, 240 ms memory and true-centre goal</h3>
+        <p class="lead">The same world, seed and disturbances as the g34 clip beside it, with the g40 controller: the robot settles on the goal with almost no command reversals. <b>g40 is shown for comparison; the recommendation is g39</b> (S121), because the longer memory makes planner-driven navigation worse under pushes.</p>
+        <dl class="setup"><dt>Policy</dt><dd><span class="chip hybrid">LQR + residual 0.15 / 0.3</span> g40_hist24_gc_s0 (240 ms history, goal logic on the true ball centre), motion layer on</dd><dt>Design</dt><dd>nominal (9 cm ball)</dd><dt>Task</dt><dd>goal hold on a flat tile; short pushes (the clip title gives up to 25 N) plus sustained 3 to 12 N pulls for 0.5 to 2 s; DR on, noise on</dd><dt>Arrestors</dt><dd class="on">on (metadata: dr true, stride 2)</dd><dt>Clip</dt><dd>single run, 12.0 s, no fall; same seed as the g34 clip</dd></dl>
+        <p class="watch"><b>Watch for.</b> <span class="t">6.0 s</span> the HUD reads 0.03 m/s and 2.0 degrees of tilt while holding, against 0.01 m/s and 1.9 degrees for g34. <span class="t">8.5 s</span> a hard push tilts the body to about 23 degrees and it recovers; g34 is pushed to about 21 degrees at the same moment. Over three seeds and 528 worlds the goal test gives a hold error of 4.9 to 6.2 cm for g40 against 11 to 14 cm for g34, and 0.01 to 0.06 reversals against 0.5 to 1.1 (S118, S120). One world each: the tables, not these clips, carry the comparison.</p>
+      </div>
+    </article>
+    <div class="ph2"><button type="button" class="both">Play both together</button><span>Same seed and world, same disturbances; g34 (previous recommendation) against g40. Not the recommendation: that is g39. One world each, not a statistic.</span></div>
+  </div>
+
+  <div class="solo">
     <article class="clip ok" id="c11_goal_hold_nom">
       <div class="player" data-src="videos/c11_goal_hold_nom.mp4" data-poster="videos/c11_goal_hold_nom.jpg" data-title="Drive 1 m, brake, hold still">
         <button type="button" class="ph" aria-label="Play: drive 1 metre, brake, hold still"><img src="videos/c11_goal_hold_nom.jpg" loading="lazy" width="1280" height="720" alt="Poster frame: the robot braking beside the red goal marker at 5.0 s, 0.06 m/s against a 0.21 m/s command, tilt 6.9 degrees"><span class="play" aria-hidden="true"><i></i></span><span class="tag good">10.0 s &middot; no fall</span></button>
@@ -539,7 +577,7 @@ button.both:focus-visible{outline:2px solid var(--hybrid);outline-offset:2px}
     </article>
   </div>
 
-  <p class="note">Chapter 6 clips: MuJoCo-Warp float32 GPU physics, rendered one world at a time with the MuJoCo renderer by <code>experiments/warp_ppo/render_policy.py</code> (c11, c13) and <code>render_nav.py</code> (c12, from the recordings <code>rec_tof_ref_3</code> and <code>rec_tof_raw_3</code> of <code>eval_nav.py</code>); 1280 x 720, H.264. The c11 and c13 sidecars record randomisation on (dr true), arrestors, frame stride and commanded speed; the c12 pair has no sidecar, and its design, length and outcome come from the recordings. The rates quoted come from the study log entries cited and the tables in <a href="generalist.html#motion">chapter 10b</a>.</p>
+  <p class="note">Chapter 6 clips: MuJoCo-Warp float32 GPU physics, rendered one world at a time with the MuJoCo renderer by <code>experiments/warp_ppo/render_policy.py</code> (c11, c13) and <code>render_nav.py</code> (c12, from the recordings <code>rec_tof_ref_3</code> and <code>rec_tof_raw_3</code> of <code>eval_nav.py</code>); 1280 x 720, H.264. The c11, c13 and c14 sidecars record randomisation on (dr true), arrestors, frame stride and commanded speed; the c12 pair has no sidecar, and its design, length and outcome come from the recordings. The rates quoted come from the study log entries cited and the tables in <a href="generalist.html#motion">chapter 10b</a>.</p>
 </div></section>
 <div class="end"></div>
 </main>

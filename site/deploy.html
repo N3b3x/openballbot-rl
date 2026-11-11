@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- head:common -->
+<script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}</script>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<!-- /head:common -->
+<title>ROS 2 deployment: the controller as a package | Ballbot</title>
+<meta name="description" content="The recommended ballbot controller (g39) exported as a ROS 2 package: a pure-Python core with parity tests against the simulator, Nav2 interface, safety behaviour, and an honest list of what was not verified. No ROS build and no hardware yet.">
+<!-- og -->
+<link rel="canonical" href="https://n3b3x.github.io/openballbot-rl/deploy.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ballbot control research">
+<meta property="og:title" content="ROS 2 deployment: the controller as a package | Ballbot">
+<meta property="og:description" content="The recommended ballbot controller (g39) exported as a ROS 2 package: a pure-Python core with parity tests against the simulator, Nav2 interface, safety behaviour, and an honest list of what was not verified. No ROS build and no hardware yet.">
+<meta property="og:url" content="https://n3b3x.github.io/openballbot-rl/deploy.html">
+<meta property="og:image" content="https://n3b3x.github.io/openballbot-rl/assets/img/social-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A simulated ballbot: a cylindrical robot balanced on a basketball-textured ball, with the title of the study.">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /og -->
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/pages.css">
+<script type="module" src="assets/js/layout.js"></script>
+</head>
+<body>
+<!-- nojs --><noscript><nav class="nojs" aria-label="Main (JavaScript is off)"><a href="index.html">Overview</a><a href="learn/index.html">Learn</a><a href="generalist.html">Results</a><a href="videos.html">Videos</a><a href="design.html">Design guidelines</a><a href="deploy.html">ROS 2</a><a href="math.html">Physics</a><a href="architecture.html">Controller</a><a href="reproduce.html">Reproduce</a><a href="glossary.html">Glossary</a></nav></noscript><!-- /nojs -->
+<main>
+<header class="pagehead wrap">
+  <div class="eyebrow">ROS 2 deployment <span class="badge-sim">not run on ROS or hardware yet</span></div>
+  <h1>From the simulator to a ROS 2 robot</h1>
+  <p class="lede">The recommended controller is exported as a ROS 2 package, <code>ros2/ballbot_control</code>: a small numpy core that reproduces, tick for tick, what the controller did in training, wrapped in two thin ROS nodes for Nav2. It was built and tested on a machine without ROS, against recorded simulator data. There is no physical robot.</p>
+  <div class="meta"><span class="readtime"></span><span class="chip hybrid">default bundle g39_goalcentre_s0</span><span class="chip">S118, S121, S122</span><a class="chip" href="https://github.com/N3b3x/openballbot-rl/tree/master/ros2">ros2/README.md</a></div>
+</header>
+
+<div class="wrap">
+  <aside class="tldr"><ul>
+    <li><b>What exists.</b> A pure-Python control core (no ROS imports, enforced by a test), a controller node at 100 Hz and an estimator node, a launch file, parameters, and exported bundles of the recommended controller g39 (default) and the earlier g34.</li>
+    <li><b>What was checked.</b> Replaying 13,299 recorded simulator ticks of g39 across all 11 designs, the core reproduces the simulator's observations, actions and wheel torques to float32 rounding (largest torque difference 1.3e-3 N m); 37 tests run without ROS.</li>
+    <li><b>What was not.</b> No <code>colcon build</code>, no ROS run, no Nav2 integration, no timing on a robot computer, no hardware of any kind.</li>
+    <li><b>It changed the study.</b> Re-implementing every input found two quantities that were not what they were meant to be; one fix produced the recommended controller (S118), the other is training now (S122).</li>
+  </ul><span class="fine">Numbers on this page are quoted from <code>ros2/README.md</code> and the study log; <code>site/build_data.py</code> checks each quoted figure against that file.</span></aside>
+</div>
+
+<nav class="pagetoc" aria-label="On this page"></nav>
+
+<section class="block wrap" id="architecture" aria-labelledby="h-arch">
+  <div class="eyebrow">How it fits together</div>
+  <h2 id="h-arch">Architecture</h2>
+  <p class="lede">Nav2 plans and sends velocity commands at its own rate; the controller node shapes them with the same motion layer the policy was trained with, and runs the balance controller at 100 Hz.</p>
+  <figure class="figure" data-num="1">
+    <div class="media">
+      <svg class="diagram arch" viewBox="0 0 980 430" role="img" aria-labelledby="ar-t ar-d">
+        <title id="ar-t">ROS 2 architecture of the ballbot controller</title>
+        <desc id="ar-d">A behaviour tree drives Nav2, which publishes cmd_vel to the controller node. Inside the node a command gate feeds the motion layer, then the observation history and the PPO residual actor; an LQR base and an adaptive authority are mixed with the actor output, passed through a safety supervisor and sent as wheel torques to the motor driver. The IMU and wheel encoders feed a state estimator inside the controller and an estimator node that publishes odometry and TF back to Nav2.</desc>
+        <defs><marker id="ar-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--text-3)"/></marker></defs>
+        <!-- left column: mission and Nav2 -->
+        <g class="n"><rect x="20" y="40" width="150" height="56" rx="12" class="box"/><text x="95" y="66" text-anchor="middle" class="t">Behaviour tree</text><text x="95" y="84" text-anchor="middle" class="s">mission</text></g>
+        <g class="n"><rect x="20" y="140" width="150" height="70" rx="12" class="box model"/><text x="95" y="168" text-anchor="middle" class="t">Nav2</text><text x="95" y="186" text-anchor="middle" class="s">planner + controller</text></g>
+        <path d="M95 96V136" class="a" marker-end="url(#ar-ah)"/>
+        <!-- controller node -->
+        <rect x="230" y="20" width="520" height="290" rx="18" class="frame"/>
+        <text x="250" y="46" class="t">controller_node, 100 Hz</text>
+        <g><rect x="250" y="64" width="128" height="50" rx="10" class="box"/><text x="314" y="86" text-anchor="middle" class="t">Command gate</text><text x="314" y="103" text-anchor="middle" class="s">timeout, stop, hold</text></g>
+        <g><rect x="398" y="64" width="128" height="50" rx="10" class="box hybrid"/><text x="462" y="86" text-anchor="middle" class="t">Motion layer</text><text x="462" y="103" text-anchor="middle" class="s">as in training</text></g>
+        <g><rect x="546" y="64" width="186" height="50" rx="10" class="box"/><text x="639" y="86" text-anchor="middle" class="t">Observation + history</text><text x="639" y="103" text-anchor="middle" class="s">25-D, 8 steps, design vector</text></g>
+        <g><rect x="546" y="140" width="186" height="50" rx="10" class="box learned"/><text x="639" y="162" text-anchor="middle" class="t">PPO residual actor</text><text x="639" y="179" text-anchor="middle" class="s">255-512-512-512-3 MLP</text></g>
+        <g><rect x="250" y="140" width="128" height="50" rx="10" class="box model"/><text x="314" y="162" text-anchor="middle" class="t">LQR base</text><text x="314" y="179" text-anchor="middle" class="s">per-design gains</text></g>
+        <g><rect x="398" y="140" width="128" height="50" rx="10" class="box"/><text x="462" y="162" text-anchor="middle" class="t">Authority rs</text><text x="462" y="179" text-anchor="middle" class="s">0.15 to 0.3</text></g>
+        <g><rect x="398" y="216" width="186" height="50" rx="10" class="box hybrid"/><text x="491" y="238" text-anchor="middle" class="t">applied = clip(u + rs a)</text><text x="491" y="255" text-anchor="middle" class="s">mix</text></g>
+        <g><rect x="604" y="216" width="128" height="50" rx="10" class="box warn"/><text x="668" y="238" text-anchor="middle" class="t">Safety</text><text x="668" y="255" text-anchor="middle" class="s">HOLD / ACTIVE / FAULT</text></g>
+        <g><rect x="250" y="216" width="128" height="50" rx="10" class="box"/><text x="314" y="238" text-anchor="middle" class="t">State estimator</text><text x="314" y="255" text-anchor="middle" class="s">attitude, Kalman</text></g>
+        <path d="M170 175H210V89H246" class="a" marker-end="url(#ar-ah)"/><text x="150" y="194" class="s code">/cmd_vel</text>
+        <path d="M378 89H394" class="a" marker-end="url(#ar-ah)"/><path d="M526 89H542" class="a" marker-end="url(#ar-ah)"/>
+        <path d="M639 114V136" class="a" marker-end="url(#ar-ah)"/>
+        <path d="M639 190V202H520V212" class="a" marker-end="url(#ar-ah)"/>
+        <path d="M314 190V202H440V212" class="a" marker-end="url(#ar-ah)"/>
+        <path d="M462 190V212" class="a" marker-end="url(#ar-ah)"/>
+        <path d="M584 241H600" class="a" marker-end="url(#ar-ah)"/>
+        <path d="M314 216V194" class="a" marker-end="url(#ar-ah)"/>
+        <!-- right: motors -->
+        <g><rect x="800" y="200" width="160" height="82" rx="12" class="box warn"/><text x="880" y="230" text-anchor="middle" class="t">Motor driver / MCU</text><text x="880" y="250" text-anchor="middle" class="s">3 wheel torques</text><text x="880" y="266" text-anchor="middle" class="s code">/wheel_torque_cmd</text></g>
+        <path d="M732 241H796" class="a" marker-end="url(#ar-ah)"/>
+        <!-- sensors and estimator node -->
+        <g><rect x="800" y="40" width="160" height="56" rx="12" class="box"/><text x="880" y="66" text-anchor="middle" class="t">IMU + encoders</text><text x="880" y="84" text-anchor="middle" class="s">/imu, /joint_states</text></g>
+        <g><rect x="250" y="340" width="300" height="60" rx="12" class="box model"/><text x="400" y="366" text-anchor="middle" class="t">estimator_node, 100 Hz</text><text x="400" y="384" text-anchor="middle" class="s">same code as inside the controller</text></g>
+        <path d="M880 96V120H760" class="a"/><path d="M760 120H770V320H314V270" class="a" marker-end="url(#ar-ah)"/>
+        <path d="M770 320V370H554" class="a" marker-end="url(#ar-ah)"/>
+        <path d="M250 370H95V214" class="a" marker-end="url(#ar-ah)"/><text x="104" y="300" class="s code">/odom, TF</text>
+      </svg>
+    </div>
+    <figcaption><b>The deployment stack.</b> Redrawn from the architecture diagram in <code>ros2/README.md</code>. The controller runs its own copy of the estimator on the same IMU and encoder messages, so there is no transport delay inside the balance loop; the estimator node runs identical code for odometry and TF. <span class="src">ros2/README.md</span></figcaption>
+  </figure>
+</section>
+
+<section class="block wrap" id="parity" aria-labelledby="h-parity">
+  <div class="eyebrow">Does it compute the same thing?</div>
+  <h2 id="h-parity">Parity with the simulator</h2>
+  <p class="lede">The parity test feeds the core the simulator's exact state from a recorded rollout (33 worlds, three per design, 600 ticks, randomisation and pushes on, about half the episodes in goal mode) and compares every intermediate quantity. The simulator runs float32 on the GPU, the core float64, so differences of 1e-4 accumulate over 6 s.</p>
+  <div class="table" data-num="1"><p class="caption"><b>Core against simulator</b>: largest difference over all ticks / median difference.</p><div class="scroll"><table>
+    <thead><tr><th>Quantity</th><th class="n">g39_goalcentre_s0 (13,299 ticks)</th><th class="n">g34_mref_rsad_db_s0 (14,155 ticks)</th></tr></thead>
+    <tbody>
+      <tr><td>shaped command</td><td class="n">5.2e-05 / 3.5e-07</td><td class="n">6.4e-05 / 3.6e-07</td></tr>
+      <tr><td>observation (25 entries)</td><td class="n">1.1e-04 / 9.0e-07</td><td class="n">1.1e-04 / 8.6e-07</td></tr>
+      <tr><td>actor input (255 entries)</td><td class="n">1.1e-04 / 9.4e-07</td><td class="n">1.1e-04 / 9.1e-07</td></tr>
+      <tr><td>policy action</td><td class="n">1.1e-04 / 3.3e-07</td><td class="n">5.4e-05 / 2.9e-07</td></tr>
+      <tr><td>LQR action</td><td class="n">5.7e-05 / 3.8e-07</td><td class="n">2.4e-04 / 3.4e-07</td></tr>
+      <tr><td>applied action</td><td class="n">5.6e-05 / 4.1e-07</td><td class="n">2.4e-04 / 3.7e-07</td></tr>
+      <tr><td>wheel torque [N m]</td><td class="n">1.3e-03 / 1.2e-05</td><td class="n">1.5e-03 / 1.1e-05</td></tr>
+    </tbody></table></div><span class="src">ros2/README.md, Parity results; S118 note</span></div>
+  <p>The exported actor files agree with the training network on 29,700 recorded observations to below 1e-6 (TorchScript exactly, numpy 2.4e-07, ONNX 7.2e-07 for g39). A whole controller tick (estimator, motion layer, observation, network, LQR, safety) costs about 0.7 ms in numpy on the development PC; an ARM board will be slower.</p>
+</section>
+
+<section class="block wrap" id="findings" aria-labelledby="h-find">
+  <div class="eyebrow">What re-implementing it found</div>
+  <h2 id="h-find">Two inputs that were not what they seemed</h2>
+  <div class="grid g2">
+    <a class="card" href="generalist.html#goalpoint"><span class="itile"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-target"/></svg></span><h3>The goal point swung around the ball (S118)</h3><p>The goal logic used the ball's body origin, 0.14 m from its centre, which circles the centre as the ball rolls. A real robot would have had to dead-reckon the ball's orientation to reproduce it. Retraining with the goal on the true centre gave g39: hold error <span class="v" data-k="hgf.g39.err.min" data-f="1" data-m="1">3.6</span> to <span class="v" data-k="hgf.g39.err.max" data-f="1" data-m="1">4.9</span> cm instead of <span class="v" data-k="hgf.g34.err.min" data-f="1" data-m="1">11.4</span> to <span class="v" data-k="hgf.g34.err.max" data-f="1" data-m="1">13.6</span> cm, and removed that need.</p><span class="more-link">Chapter 10c of the results <svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-arrow"/></svg></span></a>
+    <a class="card" href="generalist.html#deadband"><span class="itile warn"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-gate"/></svg></span><h3>The authority dead band read a swinging speed (S122, in progress)</h3><p>In training, the adaptive-authority dead band compares the ball body-origin speed with 0.05 m/s; on a robot only the centre speed can be estimated, so near zero commands the authority can switch at different moments. A retraining on the centre speed (g41) matched g39 on every number for seed 0, as expected, since its value is consistency, not accuracy; seeds 1 and 2 are retraining, and the bundle stays g39 until three seeds agree. Until then this mismatch is a known open issue of the deployment.</p><span class="more-link">What is known so far <svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-arrow"/></svg></span></a>
+  </div>
+  <p class="src-note">A third quirk is reproduced on purpose: observation entries 9 to 11, meant as motor states, are base velocities and a body rate divided by the torque scale. The trained policies depend on them, so the core computes them the same way; a future retraining should use wheel rates, which a robot measures directly (S118 note).</p>
+</section>
+
+<section class="block wrap" id="interfaces" aria-labelledby="h-if">
+  <div class="eyebrow">For integrators</div>
+  <h2 id="h-if">Topics, services and safety</h2>
+  <div class="table" data-num="2"><p class="caption"><b>Message interfaces</b> of the two nodes.</p><div class="scroll"><table>
+    <thead><tr><th>Node</th><th>Direction</th><th>Topic or service</th><th>Type</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>controller</td><td>sub</td><td><code>/cmd_vel</code></td><td>geometry_msgs/Twist</td><td>holonomic x, y and yaw rate in <code>base_link</code>, capped by <code>max_speed</code> and <code>max_yaw_rate</code></td></tr>
+      <tr><td>controller</td><td>sub</td><td><code>/goal_pose</code> (optional)</td><td>geometry_msgs/PoseStamped</td><td>odom-frame goal with the trained arrival and hold; a new <code>/cmd_vel</code> cancels it</td></tr>
+      <tr><td>both</td><td>sub</td><td><code>/imu</code>, <code>/joint_states</code></td><td>sensor_msgs/Imu, JointState</td><td>gyro and specific force in <code>base_link</code>; wheel velocities</td></tr>
+      <tr><td>controller</td><td>pub</td><td><code>/wheel_torque_cmd</code></td><td>std_msgs/Float64MultiArray</td><td>three torques in N m every tick, zeros unless ACTIVE</td></tr>
+      <tr><td>controller</td><td>pub</td><td><code>/ballbot/diagnostics</code></td><td>diagnostic_msgs/DiagnosticArray</td><td>mode, tilt, authority, tick-interval statistics</td></tr>
+      <tr><td>controller</td><td>srv</td><td><code>/ballbot/enable</code>, <code>/ballbot/clear_fault</code></td><td>std_srvs</td><td>enable is granted only when upright with fresh sensor data</td></tr>
+      <tr><td>estimator</td><td>pub</td><td><code>/odom</code>, TF <code>odom</code> to <code>base_link</code></td><td>nav_msgs/Odometry</td><td>from IMU and encoders only, so it drifts; use AMCL or SLAM for <code>map</code> to <code>odom</code></td></tr>
+    </tbody></table></div><span class="src">ros2/README.md, Message interfaces</span></div>
+  <div class="grid g3 safety">
+    <div class="card"><span class="itile good"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-shield"/></svg></span><h3>Starts in HOLD</h3><p>Zero torque until enabled, and enabling needs the robot upright (tilt under 3 deg) with fresh data; it resets the controller exactly like the start of a training episode.</p></div>
+    <div class="card"><span class="itile bad"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-warn"/></svg></span><h3>Faults latch</h3><p>Tilt above 30 deg, no sensor data within 50 ms, or a non-finite torque or state: FAULT, zero torque, latched until cleared and re-enabled. Torque is always clamped to the trained 30 N m limit.</p></div>
+    <div class="card"><span class="itile"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-clock"/></svg></span><h3>Command timeout stops and holds</h3><p>No <code>/cmd_vel</code> for 0.5 s sets the desired velocity to zero and, optionally, holds position at the braking point. An upright ballbot must keep balancing, so a timeout never cuts torque.</p></div>
+  </div>
+</section>
+
+<section class="block wrap" id="run" aria-labelledby="h-run">
+  <div class="eyebrow">Try it</div>
+  <h2 id="h-run">Build, launch and test</h2>
+  <div class="grid g2">
+    <div><h3>With ROS 2 and Nav2 (not yet exercised)</h3>
+<pre class="cmd"><code>colcon build --packages-select ballbot_control
+source install/setup.bash
+ros2 launch ballbot_control ballbot_control.launch.py
+ros2 service call /ballbot/enable std_srvs/srv/SetBool "{data: true}"</code></pre>
+    <p>Use a holonomic Nav2 controller (MPPI with the Omni model, or DWB with lateral velocity) with limits at or below the motion layer's: acceleration 0.4 m/s<sup>2</sup>, braking 0.5 m/s<sup>2</sup>, yaw rate up to 1 rad/s.</p></div>
+    <div><h3>Without ROS (what was actually run)</h3>
+<pre class="cmd"><code>cd ros2/ballbot_control
+python -m pytest -q
+python test/parity_replay.py g39_goalcentre_s0
+python test/sim_closed_loop.py --speed 0.3</code></pre>
+    <p>The closed-loop check uses CPU MuJoCo without noise, latency, arrestors or an actuator model; it balanced and held after a command timeout with either bundle, but it is a different plant from the training simulator, so its speeds are not a comparison of the two policies.</p></div>
+  </div>
+  <div class="callout warn"><b>What was not verified.</b> No ROS build or run: <code>colcon</code>, launch, executors, QoS, TF, Nav2 and timing were never exercised; the nodes ran only against stand-in ROS classes. No hardware: motor signs, encoder directions, IMU mounting, torque mapping, driver latency, sensor noise and compute timing are all unverified. On a robot the state comes from the estimator, not the simulator; two parts of that mapping are approximate (the gyro is 2 ms newer than the rate the policy saw, and base velocities are reconstructed from the ball centre with rigid offsets, 1 cm/s median but 0.3 m/s at the 99th percentile during impacts). Python is not real-time; for a robot, run the tick in a real-time thread, port it to a ros2_control plugin, or run the balance loop on the microcontroller (about 0.66 M multiply-adds per tick).</div>
+</section>
+</main>
+</body>
+</html>

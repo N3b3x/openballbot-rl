@@ -5,6 +5,21 @@ flags and environment variables that matter. Everything is simulation; there is 
 reasons are in the study log ([research/tracking_study_log.md](research/tracking_study_log.md)); entry numbers (S-numbers)
 below point there.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/pipeline-dark.svg">
+  <img alt="Pipeline: robot spec, MuJoCo model and 11 designs, GPU training on MuJoCo-Warp, then evaluation, navigation, export and ROS 2" src="assets/pipeline-light.svg" width="100%">
+</picture>
+
+| Section | Stage | Main entry point |
+|---|---|---|
+| [1](#1-robot-spec-to-simulated-design) | Robot spec to simulated design | `scripts/study/robot_spec.py` |
+| [2](#2-simulation) | Simulation | `experiments/mjx_port/warp_sim.py` |
+| [3](#3-training-the-controller) | Training the controller | `experiments/warp_ppo/train_dev.py` |
+| [4](#4-evaluation) | Evaluation | `eval_battery.py`, `eval_motion.py`, `eval_tiles2.py` |
+| [5](#5-navigation-and-state-estimation) | Navigation and state estimation | `eval_nav.py`, `odometry.py` |
+| [6](#6-export-and-ros-2) | Export and ROS 2 | `export_policy.py`, `ros2/ballbot_control/` |
+| [7](#7-website-and-paper) | Website and paper | `site/build_data.py` |
+
 Conventions used in the commands:
 
 ```bash
@@ -58,6 +73,16 @@ The controller is an LQR base per design ([lqr_gpu.py](../experiments/warp_ppo/l
 planar model) plus a PPO residual: applied action = clip(LQR action + rs x policy action). The policy sees a stack of
 recent (observation, action) pairs and a 6-D design vector, so one network serves all 11 designs.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/controller-dark.svg">
+  <img alt="Controller: planner command into the motion-reference layer, LQR base plus PPO residual mixed by adaptive authority, safety and torque limits, wheels, and the state estimator feeding back" src="assets/controller-light.svg" width="100%">
+</picture>
+
+The diagram shows one control tick at 100 Hz. In training the state comes from the simulator; in the ROS 2 core it comes
+from the estimator (section 6). The authority values are those of `--rs-adapt 0.15,0.3,0.05`; the motion-layer limits are
+the defaults of [motion_ref.py](../experiments/warp_ppo/motion_ref.py) at the nominal size (they scale with the design's
+Froude factor).
+
 Recommended recipe (g39, S121), as launched for `g39_goalcentre_s0`:
 
 ```bash
@@ -68,7 +93,7 @@ $PY train_dev.py --name g39_goalcentre_s0 --seed 0 --nworld 4096 --steps 200e6 -
   --motion-ref --rs-adapt 0.15,0.3,0.05 --goal-centre
 ```
 
-The g41 runs in progress (S122) add `--db-centre` to the same command.
+The g41 runs (S122) add `--db-centre` to the same command. Seed 0 matched g39 on every number; seeds 1 and 2 are retraining, and the exported bundle stays g39 until three seeds agree.
 
 ### Training flags that define the recipe
 

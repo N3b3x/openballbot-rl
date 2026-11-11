@@ -3,8 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- head:common -->
+<script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}</script>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<!-- /head:common -->
 <title>Rules and bounds: what a ballbot can and cannot do | Ballbot</title>
 <meta name="description" content="The constraints established in the ballbot study, written as rules a robot builder can use: the traction limit, derailing and arrestors, the residual authority dial, the LQR validity envelope, motor headroom, Froude scaling, planner margins, sensor mounting, obstacle size and pushes near obstacles. Each with its equation, its evidence and its meaning for a small or a large robot.">
+<!-- og -->
+<link rel="canonical" href="https://n3b3x.github.io/openballbot-rl/bounds.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ballbot control research">
+<meta property="og:title" content="Rules and bounds: what a ballbot can and cannot do | Ballbot">
+<meta property="og:description" content="The constraints established in the ballbot study, written as rules a robot builder can use: the traction limit, derailing and arrestors, the residual authority dial, the LQR validity envelope, motor headroom, Froude scaling, planner margins, sensor mounting, obstacle size and pushes near obstacles. Each with its equation, its evidence and its meaning for a small or a large robot.">
+<meta property="og:url" content="https://n3b3x.github.io/openballbot-rl/bounds.html">
+<meta property="og:image" content="https://n3b3x.github.io/openballbot-rl/assets/img/social-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A simulated ballbot: a cylindrical robot balanced on a basketball-textured ball, with the title of the study.">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /og -->
 <link rel="stylesheet" href="assets/css/site.css">
 <link rel="stylesheet" href="assets/css/bounds.css?v=2">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
@@ -18,6 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </head>
 <body>
+<!-- nojs --><noscript><nav class="nojs" aria-label="Main (JavaScript is off)"><a href="index.html">Overview</a><a href="learn/index.html">Learn</a><a href="generalist.html">Results</a><a href="videos.html">Videos</a><a href="design.html">Design guidelines</a><a href="deploy.html">ROS 2</a><a href="math.html">Physics</a><a href="architecture.html">Controller</a><a href="reproduce.html">Reproduce</a><a href="glossary.html">Glossary</a></nav></noscript><!-- /nojs -->
 <main>
 
 <section class="wrap page-head">
@@ -56,14 +79,14 @@ document.addEventListener('DOMContentLoaded', () => {
     <p class="statement">A driven ball of radius \(r\) on a floor with friction coefficient \(\mu\) cannot roll up a step higher than \(h_{\max}=r\,(1-\cos(\arctan\mu))\), which is about \(0.29\,r\) when \(\mu\approx1\).</p>
     <div class="rule-grid">
       <div>
-        <h4>Why</h4>
+        <h4 aria-level="3">Why</h4>
         <p>To climb a step the <a class="term" href="glossary.html#ballbot" data-def="A robot that balances on a single ball and drives by rolling it with wheels.">ballbot</a>'s ball must lift off the floor and pivot on the step edge. The contact force at the edge points from the edge to the ball centre, and the steeper that direction, the more sideways (tangential) force the ball needs relative to the normal force.</p>
         <p>Friction supplies at most \(\mu\) times the normal force. Once the edge contact is steeper than \(\arctan\mu\), the ball slips instead of climbing, whatever the motors do. This is the <a class="term" href="glossary.html#traction-limit" data-def="The highest step a driven ball can roll up before friction at the edge gives way, about 0.29 times the ball radius.">traction limit</a> (S88).</p>
         <div class="eqn">$$\cos\theta = 1-\frac{h}{r},\qquad \tan\theta &lt; \mu \;\Rightarrow\; h &lt; h_{\max}=r\bigl(1-\cos(\arctan\mu)\bigr)$$</div>
         <p class="eqn-note">Quasi-static and simplified: no running start, no body lean. With \(\mu=1\), \(\theta=45^\circ\) and \(h_{\max}=0.29\,r\).</p>
       </div>
       <div>
-        <h4>Evidence</h4>
+        <h4 aria-level="3">Evidence</h4>
         <p>The recommended controller, trained only on 9 cm-ball designs, was run at 0.3 m/s over up-steps and bumps for 20 s on the nominal robot and on a never-trained 1.5x robot with a 13.5 cm ball (S88, 640 worlds per kind).</p>
         <div class="table-scroll"><table>
           <tr><th>feature, size half</th><th class="num">9 cm ball falls</th><th class="num">13.5 cm ball falls</th></tr>
@@ -76,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <p>The predicted limits are 2.6 cm for the 9 cm ball and 4.0 cm for the 13.5 cm ball. The large ball crosses steps and bumps the small one cannot, with no retraining. Drops, which are not a traction problem, change little. On the 9 cm ball, up-steps above 2.3 cm fail 0.95 and bumps above 2.4 cm fail 0.90 at 0.3 m/s, and the larger-half falls stay near 1 even at 0.1 m/s on the corrected contact model (S87, S100). <span class="cite">S87, S88, S100</span></p>
       </div>
       <div>
-        <h4>For a real robot</h4>
+        <h4 aria-level="3">For a real robot</h4>
         <div class="robot">
           <p><b>Small robot.</b> The climbable step shrinks with the ball: the 6.75 cm ball of the 0.75x design has a limit of 1.95 cm (S93). A floor friction of 0.4, the low end of the simulated floor classes (S88), gives \(h_{\max}=0.07\,r\) from the equation, about 6 mm on a 9 cm ball (computed, not measured).</p>
           <p><b>Large robot.</b> The 18 cm ball of the 2x design has a limit of 5.2 cm (S93). Ball radius and ball-floor friction set the climbable height; the controller does not. If the robot must cross a 4 cm sill, choose the ball first.</p>
@@ -96,13 +119,13 @@ document.addEventListener('DOMContentLoaded', () => {
     <p class="statement">A ballbot held on its ball only by gravity and three wheel contacts falls by sliding off the ball at about 15 degrees of tilt; three passive arrestors placed just below the ball's equator at the loaded seat remove that failure.</p>
     <div class="rule-grid">
       <div>
-        <h4>Why</h4>
+        <h4 aria-level="3">Why</h4>
         <p>The body sits on the ball; nothing holds it there except its own weight pressing the wheels down. When the body tilts, the wheel contacts shift and, past a point, the body and ball axes separate. We call this <a class="term" href="glossary.html#derailing" data-def="The body sliding off the ball, detected when body axis and ball-to-body direction differ by more than 5 degrees.">derailing</a> (S79).</p>
         <p>An <a class="term" href="glossary.html#arrestor" data-def="A small passive roller on the body that touches the ball only when the body starts to lift or slide off it.">arrestor</a> is a small passive roller that just touches the ball when the robot stands still. It carries no force while seated and only acts when the body starts to lift or slide. Any contact force on a sphere passes through its centre, so the arrestors add no torque about the ball and leave the <a class="term" href="glossary.html#planar-model" data-def="The ballbot reduced to one vertical plane: ball and body coupled by rolling and the motor torque.">planar model</a>, and the LQR built on it, untouched.</p>
         <p>Mounts between 90 and 100 degrees from the top of the ball are equal within noise; 100 degrees was chosen because only a mount below the equator resists the body lifting off. A mount diametrically opposite the wheel (135 degrees) sits 1.2 cm above the floor and would touch it at about 21 degrees of tilt, so it is not buildable on this ball (S79).</p>
       </div>
       <div>
-        <h4>Evidence</h4>
+        <h4 aria-level="3">Evidence</h4>
         <p>A per-step fall diagnosis over 1760 worlds (S79): in 0.95 of undisturbed falls the episode ended by the body-ball offset limit with the body still below 70 degrees, 0.78 of them derailed before 25 degrees, the median tilt at derailing was 14.7 degrees, and the wheels were at their torque limit in 0.7 percent of the last second. Pulls were active in 58 percent of disturbed falls, pushes in 3 percent.</p>
         <p>Adding the arrestors to a policy trained without them (zero-shot), goal task at DR scale 1 (S79):</p>
         <div class="table-scroll"><table>
@@ -116,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <p>Trained with the arrestors, the recommended controller reaches 0.71 to 0.76 undisturbed and 0.42 to 0.44 with pushes and pulls over three <a class="term" href="glossary.html#seed" data-def="The number that starts a run's random choices; runs differing only in seed show how much of a result is chance.">seeds</a>, against 0.58 to 0.60 and 0.29 to 0.30 without (S84). The gain holds on <a class="term" href="glossary.html#held-out-terrain" data-def="Terrain tiles drawn with a different random seed from the ones the policy trained on.">held-out terrain</a> (S80, S84). Roller friction of 0, 0.05 or 0.2 makes no difference, because seated arrestors carry no load (S79). <span class="cite">S79, S80, S84</span></p>
       </div>
       <div>
-        <h4>For a real robot</h4>
+        <h4 aria-level="3">For a real robot</h4>
         <div class="robot">
           <p><b>Any size.</b> Fit arrestors before tuning the controller: this was the only change in the study that moved disturbance robustness. Place them at the pose the robot settles into under its own weight, not at the CAD rest pose (see <a href="lessons.html#lesson-settle">lesson 6</a>).</p>
           <p><b>Small robot.</b> Floor clearance is the constraint. At 100 degrees the arrestor bottom is 6.5 cm above the floor on the 9 cm ball and touches only beyond 57 degrees of tilt; lower mounts lose clearance fast (3.3 cm at 120 degrees). Clearance scales with the ball radius, so a smaller ball forbids low mounts sooner.</p>
@@ -132,13 +155,13 @@ document.addEventListener('DOMContentLoaded', () => {
     <p class="statement">How much the learned residual may override the LQR is a dial between speed-tracking accuracy and push robustness; with arrestors, authority 0.25 keeps the LQR's tracking exactly and gains most of the robustness.</p>
     <div class="rule-grid">
       <div>
-        <h4>Why</h4>
+        <h4 aria-level="3">Why</h4>
         <p>The applied action is the <a class="term" href="glossary.html#lqr" data-def="A controller whose gains are computed once from a linear model by weighing state error against control effort.">LQR</a> command plus a scaled <a class="term" href="glossary.html#residual-policy" data-def="A learned network whose output is added to the LQR command rather than replacing it.">residual</a> from the <a class="term" href="glossary.html#ppo" data-def="The reinforcement-learning algorithm that trains every policy here by trial, reward and small updates.">PPO</a> policy. The scale is the <a class="term" href="glossary.html#authority" data-def="The factor that scales the learned residual before it is added to the LQR command; 0.25 is recommended.">residual authority</a> \(\alpha\):</p>
         <div class="eqn">$$a=\operatorname{clip}\bigl(a_{\mathrm{LQR}}+\alpha\,a_{\pi},\,-1,\,1\bigr)$$</div>
         <p>The LQR is what tracks a commanded speed precisely. The residual learns what the LQR cannot: recovering from pushes, pulls and terrain. The more it may act, the more it also disturbs the LQR's tracking; at \(\alpha=1\) the sum is clipped to the same range as the policy's own exploration noise, so the residual can cancel the stabilising action outright. Authorities above 0.5 were not measured on the corrected engine, so the table below is the whole evidence.</p>
       </div>
       <div>
-        <h4>Evidence</h4>
+        <h4 aria-level="3">Evidence</h4>
         <p>All with arrestors, LQR base R 1, flat tracking on the nominal design, goal task at DR scale 1 (S82, S83):</p>
         <div class="table-scroll"><table>
           <tr><th>authority</th><th class="num">achieved / commanded speed</th><th class="num">goal success</th><th class="num">with pushes and pulls</th></tr>
@@ -152,7 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <p><b>Update: the dial can move during a run (S112, S113).</b> The recommended controller now uses <a class="term" href="glossary.html#adaptive-authority" data-def="Residual authority 0.15 while cruising, rising to 0.3 on fast command changes, near-zero commands or tilt above 4 degrees, decaying over about 0.5 s.">adaptive authority</a>: 0.15 while cruising and 0.3 when the command changes fast, nears zero or the body tilts, with a <a class="term" href="glossary.html#dead-band" data-def="Near the goal, the higher authority stays on only while the ball still moves faster than 0.05 m/s.">goal dead band</a>, trained with the <a class="term" href="glossary.html#motion-layer" data-def="A layer between planner and balance controller that limits acceleration, braking and turn rate, brakes into the goal and holds position on arrival.">motion layer</a>. Over three seeds (g34; MuJoCo-Warp float32 GPU, DR and noise on, 1760 worlds per cell) it reaches 0.77 to 0.79 of battery goals undisturbed and 0.51 to 0.52 with pushes and pulls, against 0.73 to 0.74 and 0.45 to 0.46 for authority 0.25 on the same contact model, and achieves 0.96 to 1.06 of the commanded flat speed (a slight overshoot at 0.6 and 0.9 m/s). Full table: <a href="generalist.html#motion">results, chapter 10b</a>. <span class="cite">S111 to S113</span></p>
       </div>
       <div>
-        <h4>For a real robot</h4>
+        <h4 aria-level="3">For a real robot</h4>
         <div class="robot">
           <p><b>Pick the authority for the job.</b> A robot that must hold a commanded speed (following a person, docking) wants 0.25. A robot that mostly has to survive shoves and does not care about exact speed can go to 0.5 or to pure learning, and pays 10 to 30 percent of its commanded speed for a further 0.05 to 0.08 of push success.</p>
           <p><b>Stay at or below 0.5.</b> That is the range measured on the corrected engine; above it the structure stops being an LQR with a correction and becomes pure learning with an offset, which is the row that tracks worst.</p>
@@ -168,14 +191,14 @@ document.addEventListener('DOMContentLoaded', () => {
     <p class="statement">The planar-model LQR with per-design gains is only as good as the modelled ball-to-body mass ratio: with a quarter-mass ball the body unseats within the first second, and with four times the base mass it falls in about a fifth of driving worlds; the earlier 20 s standing comparison of Q, R and the integral term was a simulator artefact and is void (S98).</p>
     <div class="rule-grid">
       <div>
-        <h4>Why</h4>
+        <h4 aria-level="3">Why</h4>
         <p>The LQR gains come from the <a class="term" href="glossary.html#planar-model" data-def="The ballbot reduced to one vertical plane: ball and body coupled by rolling and the motor torque.">planar model</a>: one vertical plane, ball and body as two rigid bodies coupled through rolling and the motor torque. The gains minimise the quadratic cost with the <a class="term" href="glossary.html#q-r" data-def="The LQR weights: Q prices each state error, R prices control effort.">Q and R weights</a> below, and a velocity integral term removes slow drift.</p>
         <div class="eqn">$$J=\int_0^\infty \bigl(s^\top Q\,s+R\,\tau^2\bigr)\,dt,\qquad Q=\mathrm{diag}(10^{-6},\,50,\,1,\,1),\; R=1,\; k_i=1$$</div>
         <p class="eqn-note">State \(s=(\varphi,\theta,\dot\varphi,\dot\theta)\): ball angle, body tilt and their rates. The derivation is on the <a href="math.html">math page</a>.</p>
         <p>When the ball is very light compared with the body, the real contact dynamics stop matching the model; an earlier analytic check in the log (design-space section) found the planar model least faithful when the body is more than about 60 times heavier than the ball. The 0.25x design puts a 42 g ball under a 3.9 kg body (S93), a ratio of about 93 (computed from those two masses).</p>
       </div>
       <div>
-        <h4>Evidence</h4>
+        <h4 aria-level="3">Evidence</h4>
         <div class="callout bad" style="margin-top:0">
           <p><strong>Void: the 20 s standing comparison (S93, S94, S96, S97).</strong> An LQR gain sweep standing still for 20 s appeared to show that no choice of R or integral gain rescues the quarter-mass or four-times ball and that the integral term is essential. S98 found that most of those "falls" were the simulator's state going non-finite in one 10 ms step while the robot stood upright at 1 to 2 degrees of tilt: the wheel-ball contacts use a 1000 to 1 anisotropic friction ratio, which the float32 contact solver cannot hold at a near-stationary contact, preferentially on heavy-ball designs. The table that stood here has been removed; see <a href="lessons.html#lesson-blowup">lesson 8</a> and the <a class="term" href="glossary.html#nan-termination" data-def="A world whose simulated state becomes NaN or infinite; the training termination counted it as a fall.">non-finite termination</a> entry.</p>
         </div>
@@ -189,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <p><b>Update: the learned residual is what makes goal arrival work (S114 addendum).</b> On a fully flat map (goal 1.2 m, 15 s, 528 worlds, MuJoCo-Warp float32 GPU, DR and noise on, one seed of the current recommendation g34) the full controller falls 0.07 and the LQR alone 0.32. Per design, full controller against LQR alone: the light ball kb025 (0.25 times the ball mass) 0.38 against 0.96, the heavy body bal4 (4 times the ballast) 0.23 against 0.38, the weak motors tau6 (6 N m torque limit) 0.12 against 0.15, every other design at most 0.02 against 0.17 to 0.35. Giving the three hard designs twice the training share did not change their falls (three seeds, S114 addendum): they look like a limit of the design for this manoeuvre more than a training gap. <span class="cite">S114</span></p>
       </div>
       <div>
-        <h4>For a real robot</h4>
+        <h4 aria-level="3">For a real robot</h4>
         <div class="robot">
           <p><b>Keep the ball mass near what the model says.</b> If the real ball is much lighter or heavier than the modelled one (a hollow shell, a filled bowling ball), re-derive the gains from measured masses before blaming the controller.</p>
           <p><b>Keep the velocity integral as designed.</b> In the model it removes steady drift. The simulated evidence that it is essential for a 20 s hold was part of the void comparison and awaits re-measurement, so treat its value as a modelling argument for now, not a measured one.</p>
@@ -206,13 +229,13 @@ document.addEventListener('DOMContentLoaded', () => {
     <p class="statement">A design with a tenth of the nominal wheel torque reaches the goal at most 0.30 of the time under every controller, and adding it to training does not help: the limit is the motor, not the policy.</p>
     <div class="rule-grid">
       <div>
-        <h4>Why</h4>
+        <h4 aria-level="3">Why</h4>
         <p>Balancing an <a class="term" href="glossary.html#inverted-pendulum" data-def="A mass balanced above its pivot; any lean grows exponentially unless the pivot moves under it.">inverted pendulum</a> means producing enough torque fast enough to catch a growing lean. The torque needed to hold a lean grows with body weight times the height of its centre of mass, \(m_a g l\); the earlier analytic sweep in the log found the LQR-recoverable tilt drops below 20 degrees when the torque authority \(\tau_{\max}/(m_a g l)\) falls to about 6.9, a threshold the sweep states with 6 N m per wheel for the nominal robot (design-space section of the log). In the simulator the nominal torque limit is 30 per wheel (<code>configs/env/dz_nom.yaml</code>, in its actuator units; Table C of the setup page), and 6 is the limit of the weak-motor design tau6. The analytic sweep and the simulator use different torque scales that the log does not reconcile, so the 6.9 threshold should not be compared directly with the simulator designs.</p>
         <div class="eqn">$$\text{torque authority}=\frac{\tau_{\max}}{m_a\,g\,l}$$</div>
         <p>With a tenth of the torque the recoverable lean is tiny, and no policy, model-based or learned, can command torque that is not there.</p>
       </div>
       <div>
-        <h4>Evidence</h4>
+        <h4 aria-level="3">Evidence</h4>
         <p>Goal task on two <a class="term" href="glossary.html#held-out-design" data-def="A robot design the policy never trained on, used to test transfer to unknown parameters.">held-out designs</a>, 160 worlds each, with the corrected design vector (S85-R):</p>
         <div class="table-scroll"><table>
           <tr><th>controller</th><th class="num">1.5x robot</th><th class="num">tenth torque</th><th class="num">1.5x, pushes and pulls</th><th class="num">tenth torque, pushes and pulls</th></tr>
@@ -224,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <p>The LQR-based controllers keep 0.61 to 0.71 on the unseen larger robot; pure learning, the most robust controller on its own training designs, collapses to 0.09 to 0.15. The tenth-torque design stays below 0.30 for every controller, trained on it or not. <span class="cite">S85-R</span></p>
       </div>
       <div>
-        <h4>For a real robot</h4>
+        <h4 aria-level="3">For a real robot</h4>
         <div class="robot">
           <p><b>Size the motors from the lean, not the speed.</b> Torque is a hard ceiling: check \(\tau_{\max}\) against \(m_a g l\) before anything else. The design-space page's <a href="design-space.html#rules">rules</a> give the authority gauge per design.</p>
           <p><b>Large robot.</b> For geometric similarity the torque requirement scales with \(s^4\) (Rule 6): a 2x robot needs 16 times the wheel torque, computed from the scaling law. Motors are usually the first thing that stops a ballbot from scaling up.</p>
@@ -240,19 +263,19 @@ document.addEventListener('DOMContentLoaded', () => {
     <p class="statement">Scaling a ballbot by a geometric factor \(s\) scales its natural speeds by \(\sqrt{s}\), its masses by \(s^3\), its wheel torque by \(s^4\) and its fall rate (the unstable pole) by \(1/\sqrt{s}\); commands, pushes and evaluation speeds in this study are scaled the same way.</p>
     <div class="rule-grid">
       <div>
-        <h4>Why</h4>
+        <h4 aria-level="3">Why</h4>
         <p><a class="term" href="glossary.html#froude" data-def="Comparing robots of different size under the same gravity: speeds scale with the square root of the scale.">Froude scaling</a> keeps the ratio of inertial to gravitational effects fixed. Gravity does not scale, so a robot that is \(s\) times longer has pendulum dynamics \(\sqrt{s}\) times slower, and the speed at which it behaves "the same" is \(\sqrt{s}\) times higher.</p>
         <div class="eqn">$$v\propto\sqrt{s},\qquad m\propto s^{3},\qquad \tau\propto s^{4},\qquad p\propto s^{-1/2}$$</div>
         <p class="eqn-note">\(p\) is the unstable pole of the linearised model; \(\tau\propto s^4\) follows from \(m_a g l\propto s^3\cdot s\). Damping is scaled with \(s^{2.5}\) and rotor inertia with \(s^5\) in <code>scripts/study/design_space.py</code>.</p>
         <p>The lean law, how many degrees the body leans per m/s\(^2\) of acceleration, is nearly scale independent, so a scaled robot looks the same in slow motion.</p>
       </div>
       <div>
-        <h4>Evidence</h4>
+        <h4 aria-level="3">Evidence</h4>
         <p>The log's design-space analysis gives \(p\propto s^{-1/2}\): a half-size robot must be controlled \(\sqrt2\) times faster. The command range in every design's environment file is \(1.2\sqrt{s}\) m/s and pushes scale with the robot's weight (<code>design_space.py</code>).</p>
         <p>On the corrected engine: the LQR alone is re-derived per scale from the same planar model for the 0.75x, 1.5x and 2x robots (S93; their standing numbers are not stated until the fixed contact model of S98 has been re-run on them); the recommended controller, trained only at scale 1, reaches 0.71 of goals on the never-seen 1.5x robot and 0.66 with pushes and pulls (S85-R). The scale study on crossing success per scale is in progress (S93). <span class="cite">S85-R, S93, log design-space section</span></p>
       </div>
       <div>
-        <h4>For a real robot</h4>
+        <h4 aria-level="3">For a real robot</h4>
         <div class="robot">
           <p><b>Convert every speed.</b> A result quoted at 0.3 m/s for the 9 cm-ball robot corresponds to about 0.37 m/s on a 1.5x robot and 0.26 m/s on a 0.75x robot (computed from \(\sqrt{s}\)).</p>
           <p><b>Small robot.</b> Faster dynamics mean the same control latency is a larger fraction of the fall time; budget sensor and loop delay in Froude-scaled time, not milliseconds.</p>
@@ -268,14 +291,14 @@ document.addEventListener('DOMContentLoaded', () => {
     <p class="statement">The obstacle inflation margin must leave the narrowest gap in the environment open on the planner grid; on 0.7 m gaps with 5 cm cells, 0.22 m works and 0.30 m or more turns a solved course into one where most robots get stuck.</p>
     <div class="rule-grid">
       <div>
-        <h4>Why</h4>
+        <h4 aria-level="3">Why</h4>
         <p>A <a class="term" href="glossary.html#wavefront" data-def="A grid planner that computes the distance to the goal around inflated obstacles and descends it.">wavefront planner</a> treats every cell within the margin of an obstacle as blocked. Two blocks a distance \(g\) apart leave a corridor of \(g-2m\), and on a grid of cell size \(c\) that corridor must still contain cells the robot can pass through.</p>
         <div class="eqn">$$g-2m \;\gtrsim\; \text{a few cells}\qquad (g=0.7\ \mathrm{m},\ c=0.05\ \mathrm{m}:\ m=0.22 \Rightarrow 0.26\ \mathrm{m},\ m=0.30 \Rightarrow 0.10\ \mathrm{m})$$</div>
         <p class="eqn-note">The corridor widths are computed from the margins the log tested; the pass/stuck outcome is measured.</p>
         <p>A margin that looks safer on paper therefore fails in a different way: instead of brushing blocks the robot sees no route and stands still, which the protocol counts as failure.</p>
       </div>
       <div>
-        <h4>Evidence</h4>
+        <h4 aria-level="3">Evidence</h4>
         <p>Blocks course, frozen recommended controller, 528 worlds, 20 s (S89 continued):</p>
         <div class="table-scroll"><table>
           <tr><th>margin</th><th>sensor</th><th class="num">reached goal</th><th class="num">stuck</th></tr>
@@ -286,7 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <p>With the smooth follower, margins of 0.26 or 0.28 m already close the 0.7 m gaps on the 5 cm grid (0.78 to 0.94 stuck), so the margin stays at 0.22 m (S90). An earlier map version with gaps of about 0.5 m, less than the robot width plus margin, nearly closed the ring and was replaced before any result was kept (S89). <span class="cite">S89, S90</span></p>
       </div>
       <div>
-        <h4>For a real robot</h4>
+        <h4 aria-level="3">For a real robot</h4>
         <div class="robot">
           <p><b>Measure the narrowest doorway first.</b> Set the margin from \((g_{\min}-\text{robot width})/2\) minus a cell or two, not from how much clearance feels comfortable.</p>
           <p><b>Small robot.</b> A smaller footprint allows a smaller margin for the same gaps, but the grid cell should shrink with it or the corridor rounds to zero cells.</p>
@@ -303,12 +326,12 @@ document.addEventListener('DOMContentLoaded', () => {
     <p class="statement">Mount the range sensor on a stabilised head, pitch it about 25 degrees down, and let the navigation layer aim it at the planner's target heading; where the sensor looks matters more than how many pixels it has.</p>
     <div class="rule-grid">
       <div>
-        <h4>Why</h4>
+        <h4 aria-level="3">Why</h4>
         <p>The planner only knows about obstacles the sensor has seen. A <a class="term" href="glossary.html#tof" data-def="A cheap range sensor that measures distance in a grid of zones by timing a light pulse.">time-of-flight sensor</a> rigid with a leaning body sweeps up and down with every correction; one aimed too steeply sees mostly the near ground and blocks enter view late, so the memory <a class="term" href="glossary.html#occupancy-map" data-def="A grid around the robot marking which cells hold an obstacle.">occupancy map</a> stays incomplete and the robot gets stuck or rolls onto a block.</p>
         <p>With a smooth, rate-limited path follower the commanded heading turns slowly, so a sensor yawed to the command direction looks at where the robot is going now, not where the planner is about to send it. Aiming it at the planner's target heading brings side blocks into view in time (S90).</p>
       </div>
       <div>
-        <h4>Evidence</h4>
+        <h4 aria-level="3">Evidence</h4>
         <p>Blocks course, same planner and controller, undisturbed, 528 worlds (S89 continued, jerky wavefront planner):</p>
         <div class="table-scroll"><table>
           <tr><th>sensor and mount</th><th class="num">reached goal</th><th class="num">stuck</th><th class="num">rolled onto a block</th></tr>
@@ -324,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <p>With the smooth follower (heading-rate RMS 1.8 rad/s against about 14 for the jerky planner), aiming the ToF along the command gives 0.72 reached and 0.16 rolled onto a block; aiming it at the planner target gives 0.78 and 0.03 (S90). A proximity slow-down (0.44 or 0.26 reached), faster turning (0.74) and faster replanning (0.69) were tried and rejected. <span class="cite">S89, S90</span></p>
       </div>
       <div>
-        <h4>For a real robot</h4>
+        <h4 aria-level="3">For a real robot</h4>
         <div class="robot">
           <p><b>Buy a gimbal before buying pixels.</b> An 18 x 14 zone ToF on a stabilised head gets within 6 points of a perfect map; a denser depth camera at the same mount is no better, and the best camera on the body cones is the worst configuration tested.</p>
           <p><b>Let the planner own the aim.</b> On hardware the navigation layer commands the gimbal yaw to its target heading; in simulation this is the <code>yaw_override</code> hook (S90).</p>
@@ -341,12 +364,12 @@ document.addEventListener('DOMContentLoaded', () => {
     <p class="statement">Obstacle size sets what is crossable (traction, Rule 1); slowing down before a feature buys little (0.03 to 0.05 of falls, mostly stairs, S103); route around what cannot be crossed and size the ball for the steps you need.</p>
     <div class="rule-grid">
       <div>
-        <h4>Why</h4>
+        <h4 aria-level="3">Why</h4>
         <p>Rule 1 says a step above \(0.29\,r\) cannot be climbed, however slowly it is approached. Below that height the controller can manage, and there the approach matters: arriving slowly gives the balance loop time to absorb the jolt. An earlier conclusion that speed made no difference rested on two artefacts in turn: an 8 s test in which slow robots never reached the feature (the <a class="term" href="glossary.html#exposure" data-def="A false rate caused by counting worlds that never met the feature being measured.">exposure artefact</a>, S86, <a href="lessons.html#lesson-exposure">lesson 3</a>), and then the solver blow-up of S98, which inflated the falls of a creeping, nearly stationary robot most of all (<a href="lessons.html#lesson-blowup">lesson 8</a>).</p>
         <p>Foresight given to the balance policy alone did not help: a perfect height scan or a depth sensor as policy input left the obstacle falls where they were (S84, S88). Using the map to slow down before the feature buys little once the slowed robot is given time to reach it (S103): a 15 s test had shown a halving, but slowed robots there covered only 0.96 to 1.07 m against features from 0.6 m out, the exposure artefact again.</p>
       </div>
       <div>
-        <h4>Evidence</h4>
+        <h4 aria-level="3">Evidence</h4>
         <p>Recommended controller on the corrected contact model (free-rolling friction 0.01), velocity task on tiles, 20 s episodes, 176 worlds per kind (S100); every robot still reaches its feature at 0.1 m/s (2 m in 20 s against features starting 0.6 m out):</p>
         <div class="table-scroll"><table>
           <tr><th>commanded speed</th><th class="num">all tiles</th><th class="num">step up</th><th class="num">bump</th><th class="num">large drop</th><th class="num">stairs</th><th class="num">flat</th></tr>
@@ -368,7 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <p><span class="cite">S84, S87, S88, S100, S103</span></p>
       </div>
       <div>
-        <h4>For a real robot</h4>
+        <h4 aria-level="3">For a real robot</h4>
         <div class="robot">
           <p><b>Route around what you cannot cross.</b> Above the traction limit no speed helps, so choose the ball first (Rule 1) and plan around (Rule 8). A slow-down layer near features is worth only 0.03 to 0.05 of falls and is not worth a hardware sensor on its own (S103).</p>
           <p><b>Terrain sensing is for routing.</b> A perfect map turned 0.91 falls into 0.09 where obstacles could be avoided (S89). Feeding it to the balance policy alone buys nothing (S84, S88).</p>
@@ -385,12 +408,12 @@ document.addEventListener('DOMContentLoaded', () => {
     <p class="statement">A push beside an unclimbable block can carry the robot into it before any planner reacts; this is a balance-recovery limit, and neither a wider planner margin nor training the policy with the planner in the loop reduces it.</p>
     <div class="rule-grid">
       <div>
-        <h4>Why</h4>
+        <h4 aria-level="3">Why</h4>
         <p>The planner replans every 0.2 s and keeps a 0.22 m margin from blocks. A 5 to 20 N <a class="term" href="glossary.html#push-pull" data-def="Simulated shoves: a push is 5 to 20 N for 50 ms, a pull is 3 to 12 N for 0.5 to 2 s.">push</a> for 50 ms, or a 3 to 12 N pull for up to 2 s, moves the robot further than that margin before the recovery finishes, and once a wheel rolls onto an 8 cm block (3 times the traction limit) the fall is decided.</p>
         <p>A wider margin cannot help because it closes the gaps (Rule 7). Teaching the balance policy about blocks cannot help because the frozen policy already follows the planner's smooth commands; what it loses is the push recovery itself.</p>
       </div>
       <div>
-        <h4>Evidence</h4>
+        <h4 aria-level="3">Evidence</h4>
         <p>Blocks course, 528 worlds, 20 s, pushes 5 to 20 N and pulls 3 to 12 N as in training (S89 continued, S91):</p>
         <div class="table-scroll"><table>
           <tr><th>setting</th><th class="num">reached goal</th><th class="num">falls</th><th class="num">rolled onto a block</th></tr>
@@ -405,7 +428,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <p><b>Update: it is the sustained pulls, not the short pushes (S116).</b> On a fully flat map with the current recommended controller (one seed, 352 worlds, MuJoCo-Warp float32 GPU, DR and noise on), short pushes alone leave the goal-task falls where they are without disturbance (0.078 against 0.074), sustained pulls up to about 3 N are absorbed as well, and at the standard 3 to 12 N 0.36 fall. Training on 1.5 or 2 times stronger pushes and pulls did not help (S116). The current controller with the motion layer reaches 0.56 of block-course goals with the ToF sensor under pushes and pulls (S114). <span class="cite">S114, S116</span></p>
       </div>
       <div>
-        <h4>For a real robot</h4>
+        <h4 aria-level="3">For a real robot</h4>
         <div class="robot">
           <p><b>Budget for it.</b> In cluttered spaces with people, expect roughly four in ten runs to end in a fall under this disturbance level even with a perfect map, and design the body to survive falling.</p>
           <p><b>What would move it.</b> More push recovery from the balance layer: a higher residual authority (Rule 3, at the cost of tracking), a heavier or lower body, or a push-aware planner that keeps extra distance only on the side a push would come from. None of these is tested yet. A steady pull needs a steady lean against a force the controller cannot see, which may need integral action; a policy with a longer observation history is being trained to test this (S116 addendum).</p>

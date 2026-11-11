@@ -3,8 +3,30 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- head:common -->
+<script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}</script>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<!-- /head:common -->
 <title>Setup and method | Ballbot control research</title>
 <meta name="description" content="The verified setup of the ballbot study: physics model and derivations, LQR design, the MuJoCo-Warp GPU engine and its validation, GPU-resident PPO, observations, reward, terrain, designs, domain randomisation and evaluation protocols. Simulation only.">
+<!-- og -->
+<link rel="canonical" href="https://n3b3x.github.io/openballbot-rl/method.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ballbot control research">
+<meta property="og:title" content="Setup and method | Ballbot control research">
+<meta property="og:description" content="The verified setup of the ballbot study: physics model and derivations, LQR design, the MuJoCo-Warp GPU engine and its validation, GPU-resident PPO, observations, reward, terrain, designs, domain randomisation and evaluation protocols. Simulation only.">
+<meta property="og:url" content="https://n3b3x.github.io/openballbot-rl/method.html">
+<meta property="og:image" content="https://n3b3x.github.io/openballbot-rl/assets/img/social-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A simulated ballbot: a cylindrical robot balanced on a basketball-textured ball, with the title of the study.">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /og -->
 <link rel="stylesheet" href="assets/css/site.css">
 <link rel="stylesheet" href="assets/css/math.css">
 <link rel="stylesheet" href="assets/css/study.css">
@@ -14,6 +36,7 @@
 <script type="module" src="assets/js/layout.js"></script>
 </head>
 <body>
+<!-- nojs --><noscript><nav class="nojs" aria-label="Main (JavaScript is off)"><a href="index.html">Overview</a><a href="learn/index.html">Learn</a><a href="generalist.html">Results</a><a href="videos.html">Videos</a><a href="design.html">Design guidelines</a><a href="deploy.html">ROS 2</a><a href="math.html">Physics</a><a href="architecture.html">Controller</a><a href="reproduce.html">Reproduce</a><a href="glossary.html">Glossary</a></nav></noscript><!-- /nojs -->
 <main>
 <section class="wrap" style="padding-top:clamp(40px,7vw,80px);padding-bottom:24px">
   <p class="eyebrow">Setup and method</p>
@@ -166,7 +189,7 @@
   <h2>Terrain tiles, floor materials and robot designs</h2>
   <h3>Terrain tile library</h3>
   <p class="lead">The GPU engine holds one height field shared by all worlds, so per-world terrain comes from one 24 m <span class="term"><a href="glossary.html#tile-map">tile map</a></span> of 8 by 8 tiles. Each world picks a tile at reset; features sit symmetrically around the tile centre so that any heading meets them; a world is truncated, not penalised, when it leaves the 2.9 m square around its tile centre. <b>Figure M1</b> and <b>Table A</b> show the ten kinds.</p>
-  <figure class="sfig"><img class="fig-light" src="figures/study/tiles_light.svg" alt="Cross-sections of the ten terrain tile types at a representative severity" loading="lazy"><img class="fig-dark" src="figures/study/tiles_dark.svg" alt="Cross-sections of the ten terrain tile types at a representative severity" loading="lazy">
+  <figure class="sfig"><img class="fig-light" src="figures/study/tiles_light.svg" alt="Cross-sections of the ten terrain tile types at a representative severity" loading="lazy" width="672" height="282"><img class="fig-dark" src="figures/study/tiles_dark.svg" alt="Cross-sections of the ten terrain tile types at a representative severity" loading="lazy" width="672" height="282">
     <figcaption><b>Figure M1. Terrain tile library, cross-section through the tile centre (green dot).</b> Representative severities are drawn; each title gives the training range. Illustration generated from <code>experiments/warp_ppo/tiles.py</code>; no simulation. Engine: not applicable (geometry only). Domain randomisation: not applicable. Seeds: map seed 0, the same 64 tiles in training and evaluation. Worlds: not applicable.</figcaption></figure>
   <!-- BUILD:tab_tiles -->
 <div class="table" data-num="A"><p class="caption" data-num="A">Terrain kinds. Map 24 m, 3.4 cm cells, tiles of 3 m, truncation outside 2.9 m. Source: experiments/warp_ppo/tiles.py (seed 0). Geometry only: no engine, randomisation, noise or seeds apply.</p><div class="scroll"><table><thead><tr><th>Terrain kind</th><th>Severity range</th><th>Profile</th><th>Tiles of 64</th></tr></thead><tbody class=""><tr><td>flat</td><td>none</td><td>no feature</td><td>7</td></tr><tr><td>step up</td><td>1 to 6 cm</td><td>single raised step 0.6 m from the centre on each axis</td><td>7</td></tr><tr><td>step down</td><td>1 to 6 cm</td><td>robot stands on a plateau, floor drops by the severity</td><td>7</td></tr><tr><td>small drop</td><td>3 to 8 cm</td><td>drop of 3 to 8 cm</td><td>7</td></tr><tr><td>large drop</td><td>10 to 20 cm</td><td>drop of 10 to 20 cm</td><td>6</td></tr><tr><td>ramp up</td><td>3 to 12 deg</td><td>slope over 1.0 m starting 0.5 m from the centre</td><td>6</td></tr><tr><td>ramp down</td><td>3 to 12 deg</td><td>descending slope over 1.0 m</td><td>6</td></tr><tr><td>stairs</td><td>1 to 4 cm</td><td>2 to 3 treads of 0.4 m, riser = severity</td><td>6</td></tr><tr><td>bump</td><td>1 to 5 cm</td><td>slab 0.3 m wide, 0.6 m from the centre</td><td>6</td></tr><tr><td>rough</td><td>0.5 to 3 cm</td><td>smooth two-octave noise outside a flat 0.5 m start zone</td><td>6</td></tr></tbody></table></div></div>
