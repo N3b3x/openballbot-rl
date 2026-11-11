@@ -42,7 +42,7 @@ D = len(designs); n = a.n; N = D * n; dev = "cuda"
 env = T.GpuBallbot(N, seed=11, dr=True, design=designs[0], designs=designs if D > 1 or ck.get("ddim", 0) else None, tiles=True,
                    hist_k=ck.get("hist", 0), asym=ck.get("asym", False), surfaces=True, pull=False, goal_p=1.0, design_cond=ck.get("ddim", 0) > 0)
 env.push_scale = float(os.environ.get("PUSH_SCALE", "0"))
-env.goal_centre = bool(_a0.get("goal_centre"))      # S118: goal logic on the true ball centre if the run was trained that way
+env.goal_centre = bool(_a0.get("goal_centre")); env.db_centre = bool(_a0.get("db_centre"))      # S118: goal logic on the true ball centre if the run was trained that way
 if _a0.get("lqr_base", 0) > 0:
     from lqr_gpu import GpuLQR
     env.lqr, env.rs = GpuLQR(env, designs, a_max=_a0.get("lqr_amax", 0.5), r=_a0.get("lqr_r", 1.0)), _a0["lqr_base"]

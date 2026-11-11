@@ -62,7 +62,7 @@ def simulate(a):
         from lqr_gpu import GpuLQR
         env.lqr, env.rs = GpuLQR(env, env.design_names, a_max=_args.get("lqr_amax", 0.5), r=_args.get("lqr_r", 1.0)), _args["lqr_base"]
         if _args.get("rs_adapt"): env.rs_adapt = [float(x) for x in _args["rs_adapt"].split(",")]      # S111 adaptive authority, as in the evals
-    env.goal_centre = bool(_args.get("goal_centre"))      # S118: goal logic on the true ball centre if the run was trained that way
+    env.goal_centre = bool(_args.get("goal_centre")); env.db_centre = bool(_args.get("db_centre"))      # S118: goal logic on the true ball centre if the run was trained that way
     if _args.get("motion_ref") and not os.environ.get("NO_MREF"):      # S105 motion layer the run was trained with
         env.enable_motion_ref(curve_p=0.0)
     # choose the tile

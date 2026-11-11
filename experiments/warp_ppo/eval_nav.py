@@ -52,7 +52,7 @@ env = T.GpuBallbot(N, seed=11, dr=True, design=designs[0], designs=designs if D 
 SD = env.sdim
 pol = lambda o: net(((torch.cat([o[:, :T.OBS_DIM], o[:, T.OBS_DIM + SD:]], 1) - mean) / torch.sqrt(var + 1e-8)).clamp(-10, 10)).clamp(-1, 1)
 env.push_scale = float(os.environ.get("PUSH_SCALE", "1"))
-env.goal_centre = bool(_a0.get("goal_centre"))
+env.goal_centre = bool(_a0.get("goal_centre")); env.db_centre = bool(_a0.get("db_centre"))
 if os.environ.get("NAV_ORIGIN"): env.goal_centre = False      # diagnostic: planner, motion-layer hold and success on the ball body origin even for goal-centre runs      # S118: goal logic on the true ball centre if the run was trained that way
 if _a0.get("lqr_base", 0) > 0:
     from lqr_gpu import GpuLQR

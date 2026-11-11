@@ -41,7 +41,7 @@ env = T.GpuBallbot(N, seed=7, dr=a.dr, design=ev_designs[0], designs=ev_designs 
 dev = "cuda"
 import os
 env.push_scale = float(os.environ.get("PUSH_SCALE", "1"))
-env.goal_centre = bool(_a0.get("goal_centre"))      # S118: goal logic on the true ball centre if the run was trained that way
+env.goal_centre = bool(_a0.get("goal_centre")); env.db_centre = bool(_a0.get("db_centre"))      # S118: goal logic on the true ball centre if the run was trained that way
 _args = json.load(open(RUN / a.run / "args.json")) if (RUN / a.run / "args.json").exists() else {}
 if _args.get("lqr_base", 0) > 0:      # the policy is a residual on the LQR base controller: rebuild it exactly as in training
     from lqr_gpu import GpuLQR

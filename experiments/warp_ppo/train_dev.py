@@ -6,7 +6,7 @@ command-tracking task, reward "err" with lean term, obs = orientation rotvec, an
 heading, velocity-error integral (22-D). Domain randomisation kept: obs noise, 1-step latency (p=0.2), torque scale +-15 %, random pushes.
 NOT randomised (needs per-world model fields, untested in Warp): mass, ball friction, wheel damping.
 
-  python train.py --name wp_nom_s0 --nworld 2048 --steps 50e6
+  python train_dev.py --name wp_nom_s0 --nworld 2048 --steps 50e6
 """
 import os, argparse, json, sys, time
 from pathlib import Path
@@ -110,6 +110,7 @@ class GpuBallbot:
         # +-0.14 m as the ball rolls; with goal_centre=True the goal logic uses the true centre (ball_xy).
         self.ball_off_tab = torch.tensor(np.stack([mk.geom_pos[mk.geom('the_ball').id] for mk, _ in loaded]), dtype=torch.float32, device=DEV)
         self.goal_centre = False
+        self.db_centre = False
         if tiles:
             terrain = True
         self.mjm = m
@@ -386,6 +387,16 @@ class GpuBallbot:
         t = 2.0 * torch.cross(u, o, dim=1)
         c = self.qpos[:, 10:13] + o + w * t + torch.cross(u, t, dim=1)
         return c[:, :2]
+
+    def ball_vxy(self):
+        """Planar velocity of the true ball centre: v_origin + omega_world x (R @ offset). The free joint's linear velocity is
+        in the world frame and its angular velocity in the body frame (MuJoCo convention)."""
+        q = self.qpos[:, 13:17]; w, u = q[:, :1], q[:, 1:4]
+        def rot(v):
+            t = 2.0 * torch.cross(u, v, dim=1)
+            return v + w * t + torch.cross(u, t, dim=1)
+        r = rot(self.ball_off_tab[self.didx]); om = rot(self.qvel[:, 12:15])
+        return (self.qvel[:, 9:12] + torch.cross(om, r, dim=1))[:, :2]
 
     def goal_feat(self):
         e = ((self.goal - self.ball_xy()) / 2).clamp(-2, 2) * self.goal_mode[:, None]
@@ -665,7 +676,8 @@ class GpuBallbot:
             tilt = torch.rad2deg(torch.acos((1 - 2 * (qv[:, 1] ** 2 + qv[:, 2] ** 2)).clamp(-1, 1)))
             near0 = (1 - c2.norm(dim=1) / (0.1 * self.f_w)).clamp(0, 1)
             if v_db > 0:
-                near0 = near0 * (self.qvel[:, 9:11].norm(dim=1) > v_db * self.f_w).float()
+                _vb = self.ball_vxy() if getattr(self, "db_centre", False) else self.qvel[:, 9:11]      # S122: --db-centre uses the ball-centre speed
+                near0 = near0 * (_vb.norm(dim=1) > v_db * self.f_w).float()
             need = torch.maximum(torch.maximum((dc / 0.3).clamp(0, 1), near0), ((tilt - 4.0) / 6.0).clamp(0, 1))
             w = getattr(self, "_rs_w", torch.ones_like(need))
             w = torch.maximum(need, w * 0.98)      # rise at once, decay with a 0.5 s time constant
@@ -896,7 +908,7 @@ def main():
     ap.add_argument("--zero-p", type=float, default=0.1, help="probability that a resampled velocity command is zero (standing still); the default 0.1 gives little long-horizon standing practice")
     ap.add_argument("--ep-steps", type=int, default=800, help="episode length in control steps (100 Hz); 2000 = 20 s, trains long-horizon balance")
     ap.add_argument("--nav-frac", type=float, default=0.0, help="fraction of worlds on obstacle (blocks) tiles driven by the smooth wavefront planner (nav.py, privileged map); the policy learns to follow its commands near obstacles")
-    ap.add_argument("--retainer", default=None, help='Rezero-style ball arrestors (retainer.py): "gap_mm,fric", e.g. "0,0"; recorded in args.json, evaluation scripts re-apply it')
+    ap.add_argument("--retainer", default=None, help='Rezero-style ball arrestors (retainer.py): "gap_mm,fric[,floor,polar_deg]" (floor collision 1/0, mount polar angle in deg), e.g. "0,0,0,100"; recorded in args.json, evaluation scripts re-apply it')
     ap.add_argument("--rs-adapt", default=None, help="S111: adaptive residual authority 'lo,hi' (e.g. 0.15,0.3): lo while cruising, hi when the command changes or nears zero or the body tilts; recorded in args.json and re-applied by the evaluation scripts")
     ap.add_argument("--motion-ref", action="store_true", help="S105: train on commands shaped by the motion-reference layer (motion_ref.py), including arrival, position hold and curving commands")
     ap.add_argument("--curve-p", type=float, default=0.5, help="with --motion-ref: fraction of resampled velocity commands that turn steadily (up to 1 rad/s)")
@@ -904,6 +916,7 @@ def main():
     ap.add_argument("--pair-mu1", type=float, default=0.01, help="wheel-ball free-rolling friction coefficient; default 0.01 since S98 (the xml's 0.001 blows up the float32 solver when standing). Recorded in args.json, evaluation scripts re-apply it; runs before S98 have no entry and keep 0.001")
     ap.add_argument("--push-train", type=float, default=1.0, help="S116: push/pull strength multiplier during training (1 = the evaluation strength); with --push-ramp the ramp ends at this value")
     ap.add_argument("--goal-centre", action="store_true", help="S118: goal logic (goal rule, goal observation, motion-layer hold, navigation) on the true ball centre instead of the ball body origin, which swings by up to 0.14 m as the ball rolls; recorded in args.json, evaluation scripts re-apply it")
+    ap.add_argument("--db-centre", action="store_true", help="S122: the adaptive-authority hold dead band (third --rs-adapt value) reads the true ball-centre speed instead of the ball body-origin speed, which swings as the ball rolls; recorded in args.json, evaluation scripts re-apply it")
     ap.add_argument("--design-w", default=None, help="S114: per-design sampling weights 'name:w,...' (others 1), e.g. 'bal4:2,tau6:2,kb025:2'; training only, the evaluations stay uniform per design")
     a = ap.parse_args()
     if a.retainer:
@@ -924,6 +937,7 @@ def main():
     if a.rs_adapt:
         env.rs_adapt = [float(x) for x in a.rs_adapt.split(",")]
     env.goal_centre = bool(a.goal_centre)
+    env.db_centre = bool(a.db_centre)
     if a.design_w and env.K > 1:
         wd = {k: float(v) for k, v in (p.split(":") for p in a.design_w.split(","))}
         assert set(wd) <= set(env.design_names), f"--design-w names must be among {env.design_names}"

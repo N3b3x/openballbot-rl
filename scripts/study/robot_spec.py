@@ -52,7 +52,7 @@ import design_constraints as dc  # noqa: E402
 
 OUT = ROOT / "outputs" / "study" / "specs"
 PY = ROOT / "experiments" / "mjx_port" / ".venv" / "Scripts" / "python.exe"
-EVAL_RUN = "g34_mref_rsad_db_s0"
+EVAL_RUN = os.environ.get("SPEC_RUN", "g34_mref_rsad_db_s0")      # controller used for --eval; S119 used g34; SPEC_RUN=g39_goalcentre_s0 for the S121 recommendation
 KEYS = ("ball_radius_m", "ball_mass_kg", "body_mass_kg", "body_com_height_m", "motor_torque_limit", "rotor_inertia",
         "wheel_damping", "contact_zenith_deg")
 NOMINAL_ZENITH = 51.0
