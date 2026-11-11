@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 330" class="d-arr" role="img" aria-labelledby="da-t">
+<title id="da-t">Cross-section through the ball and one wheel. The drive wheel touches the ball 51 degrees from the top. On the opposite side, below the equator at 100 degrees from the top, a small passive roller (the arrestor) just touches the ball. Its contact force is normal to the sphere, so it points straight at the ball centre and exerts no torque about it.</title>
+<style>
+.d-arr text{font-family:Inter,system-ui,sans-serif;font-size:13px;fill:var(--text,#dfe6f0)}
+.d-arr .m{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11.5px;fill:var(--text-2,#9aa8bb)}
+.d-arr .k{fill:var(--text-3,#8a97ab);font-size:11px}
+</style>
+<defs>
+<marker id="da-ag" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--good,#5ee08a)"/></marker>
+<marker id="da-aw" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--warn,#ffb454)"/></marker>
+</defs>
+<!-- ball centre (250,190), R = 110 -->
+<line x1="20" y1="300" x2="540" y2="300" style="stroke:var(--line-2,#5a6b84);stroke-width:2"/>
+<circle cx="250" cy="190" r="110" style="fill:var(--bg-3,#161e2a);stroke:var(--model,#4aa8ff);stroke-width:2.5"/>
+<circle cx="250" cy="190" r="3" style="fill:var(--text,#dfe6f0)"/>
+<!-- vertical axis -->
+<line x1="250" y1="60" x2="250" y2="300" style="stroke:var(--line-2,#5a6b84);stroke-dasharray:2 5"/>
+<!-- equator -->
+<line x1="130" y1="190" x2="370" y2="190" style="stroke:var(--line-2,#5a6b84);stroke-dasharray:2 5"/>
+<text x="374" y="194" class="k">equator (90 deg)</text>
+<!-- wheel contact at 51.2 deg from top on the right: point = (250 + 110 sin51.2, 190 - 110 cos51.2) = (335.7, 121.1). wheel centre further out along the normal by 22: (352.9,107.3) -->
+<circle cx="353" cy="107" r="22" style="fill:var(--bg-3,#161e2a);stroke:var(--model,#4aa8ff);stroke-width:2"/>
+<text x="382" y="98" class="m">drive wheel</text><text x="382" y="114" class="k">51 deg from the top</text>
+<path d="M250 80 A110 110 0 0 1 336 121" fill="none" style="stroke:var(--warn,#ffb454);stroke-width:1.4"/>
+<!-- body frame holding the wheel -->
+<path d="M353 85 V40 H250" fill="none" style="stroke:var(--model,#4aa8ff);stroke-width:2"/>
+<!-- arrestor at 100 deg from top on the left: point = (250 - 110 sin100, 190 - 110 cos100) = (250-108.3, 190+19.1) = (141.7, 209.1). arrestor centre 8 px further: direction (-0.985, 0.174) -> (133.8, 210.5) -->
+<circle cx="134" cy="210.5" r="8" style="fill:var(--good,#5ee08a)"/>
+<path d="M134 202 V40 H250" fill="none" style="stroke:var(--model,#4aa8ff);stroke-width:2"/>
+<text x="28" y="240" class="m" style="fill:var(--good,#5ee08a)">arrestor</text><text x="28" y="256" class="k">8 mm roller, 100 deg</text>
+<text x="28" y="270" class="k">from the top, zero gap</text>
+<path d="M250 80 A110 110 0 0 0 142 209" fill="none" style="stroke:var(--good,#5ee08a);stroke-width:1.4;stroke-dasharray:3 3"/>
+<!-- normal force from arrestor through centre -->
+<line x1="142" y1="209" x2="236" y2="192.5" style="stroke:var(--good,#5ee08a);stroke-width:2.6" marker-end="url(#da-ag)"/>
+<text x="150" y="186" class="m" style="fill:var(--good,#5ee08a)">normal force aims at the centre</text>
+<!-- wheel normal force also through centre -->
+<line x1="336" y1="121" x2="268" y2="176" style="stroke:var(--warn,#ffb454);stroke-width:1.8;stroke-dasharray:4 3" marker-end="url(#da-aw)"/>
+<!-- caption -->
+<text x="20" y="322" class="k">Any contact force on a frictionless sphere is radial: it passes through the centre, so its moment about the centre is zero.</text>
+<text x="252" y="56" class="k">body (rigid with wheels and arrestors)</text>
+</svg>

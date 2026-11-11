@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 330" class="d-planar" role="img" aria-labelledby="dp-t">
+<title id="dp-t">Side view of the planar ballbot model: a ball of radius r rolls without slip, the body leans by theta about the ball centre with its centre of mass at height l, and the motor torque tau acts between body and ball.</title>
+<style>
+.d-planar text{font-family:Inter,system-ui,sans-serif;font-size:13px;fill:var(--text,#dfe6f0)}
+.d-planar .m{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;fill:var(--text-2,#9aa8bb)}
+.d-planar .k{fill:var(--text-3,#8a97ab);font-size:11px}
+.d-planar .model{stroke:var(--model,#4aa8ff)}
+.d-planar .warn{stroke:var(--warn,#ffb454)}
+.d-planar .line{stroke:var(--line-2,#5a6b84)}
+</style>
+<defs>
+<marker id="dp-ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--warn,#ffb454)"/></marker>
+<marker id="dp-arm" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--model,#4aa8ff)"/></marker>
+</defs>
+<!-- floor -->
+<line x1="20" y1="290" x2="500" y2="290" class="line" stroke-width="2"/>
+<g class="k"><text x="22" y="308">floor, rolling without slip</text><text x="420" y="308">x = r phi</text></g>
+<!-- x axis arrow -->
+<line x1="250" y1="270" x2="330" y2="270" class="model" stroke-width="2" marker-end="url(#dp-arm)"/>
+<text x="334" y="274" class="m" style="fill:var(--model,#4aa8ff)">+x</text>
+<!-- ball -->
+<circle cx="250" cy="226" r="64" style="fill:var(--bg-3,#161e2a);stroke:var(--model,#4aa8ff);stroke-width:2.5"/>
+<!-- spokes to show phi -->
+<g class="model" stroke-width="1.5" opacity=".7">
+<line x1="250" y1="226" x2="305" y2="193"/><line x1="250" y1="226" x2="217" y2="281"/><line x1="250" y1="226" x2="195" y2="259"/><line x1="250" y1="226" x2="283" y2="171"/>
+</g>
+<path d="M250 162 A64 64 0 0 1 305 193" fill="none" class="warn" stroke-width="1.6" marker-end="url(#dp-ar)"/>
+<text x="292" y="156" class="m">phi (ball rotation)</text>
+<!-- radius r -->
+<line x1="250" y1="226" x2="250" y2="290" class="line" stroke-dasharray="4 3"/>
+<text x="256" y="262" class="m">r</text>
+<!-- body: rotated by theta about the ball centre; theta = 18 deg to the right -->
+<g transform="translate(250 226) rotate(18)">
+<rect x="-22" y="-215" width="44" height="170" rx="12" style="fill:var(--bg-3,#161e2a);stroke:var(--model,#4aa8ff);stroke-width:2.5"/>
+<!-- wheel pair -->
+<rect x="-30" y="-58" width="16" height="22" rx="5" style="fill:var(--bg-3,#161e2a);stroke:var(--model,#4aa8ff);stroke-width:1.5"/>
+<rect x="14" y="-58" width="16" height="22" rx="5" style="fill:var(--bg-3,#161e2a);stroke:var(--model,#4aa8ff);stroke-width:1.5"/>
+<!-- COM -->
+<circle cx="0" cy="-150" r="6" style="fill:var(--warn,#ffb454)"/>
+<!-- l dimension -->
+<line x1="38" y1="0" x2="38" y2="-150" class="line" stroke-dasharray="4 3"/>
+<line x1="30" y1="0" x2="46" y2="0" class="line"/><line x1="30" y1="-150" x2="46" y2="-150" class="line"/>
+<!-- body axis -->
+<line x1="0" y1="0" x2="0" y2="-230" class="warn" stroke-width="1.2" stroke-dasharray="3 4"/>
+</g>
+<text x="305" y="150" class="m">l</text>
+<text x="222" y="60" class="m" style="fill:var(--warn,#ffb454)">COM</text>
+<!-- vertical reference and theta arc -->
+<line x1="250" y1="226" x2="250" y2="20" class="line" stroke-dasharray="2 5"/>
+<path d="M250 70 A156 156 0 0 1 298 78" fill="none" class="warn" stroke-width="1.6" marker-end="url(#dp-ar)"/>
+<text x="258" y="100" class="m">theta (lean, + toward +x)</text>
+<!-- torque pair -->
+<path d="M300 258 A58 58 0 0 1 282 283" fill="none" class="warn" stroke-width="2.2" marker-end="url(#dp-ar)"/>
+<text x="312" y="262" class="m">tau on the ball</text>
+<path d="M190 118 A70 70 0 0 0 176 150" fill="none" class="warn" stroke-width="2.2" marker-end="url(#dp-ar)"/>
+<text x="40" y="128" class="m">-tau on the body</text>
+<text x="40" y="146" class="k">(the motor is an internal pair)</text>
+<!-- gravity -->
+<line x1="100" y1="200" x2="100" y2="250" class="line" stroke-width="1.6" marker-end="url(#dp-ar)"/>
+<text x="108" y="230" class="m">g</text>
+</svg>

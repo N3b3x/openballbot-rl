@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reproduce | Ballbot control research</title>
+<meta name="description" content="Environment setup, training and evaluation commands, repo map, protocols, licences and citation for the ballbot study.">
+<meta name="color-scheme" content="dark light">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark'}catch(e){}</script>
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/home.css?v=5">
+<script type="module" src="assets/js/layout.js"></script>
+</head>
+<body>
+<main>
+<header class="wrap pagehead">
+  <div class="eyebrow">Reproduce</div>
+  <h1>Run everything yourself</h1>
+  <p class="lede">All results are simulation. Every command below exists in the repository; paths are relative to the repo root. Outputs land in <code>outputs/study/</code> and are not committed except small samples.</p>
+  <nav class="toc" aria-label="On this page">
+    <a href="#credit">Credit</a><a href="#setup">Setup</a><a href="#train">Train</a><a href="#eval">Evaluate</a><a href="#design">Design tools</a><a href="#paper">Paper and site</a><a href="#map">Repo map</a><a href="#configs">Configs</a><a href="#runtime">Runtimes</a><a href="#protocols">Protocols</a><a href="#data">Data index</a><a href="#cite">Cite</a><a href="#license">Licences</a>
+  </nav>
+</header>
+
+<section class="block wrap doc" id="credit">
+  <div class="credit">
+    <h3>Built on OpenBallBot-RL</h3>
+    <p>This study extends <strong>OpenBallBot-RL</strong> by Achkan Salehi: <em>Reinforcement Learning for Ballbot Navigation in Uneven Terrain</em>, arXiv:2505.18417 (2025), <a href="https://arxiv.org/abs/2505.18417">arxiv.org/abs/2505.18417</a>, released under the Apache License 2.0. The MuJoCo ballbot model, the environment and the original PPO pipeline are his; we added the fixes, controllers, studies and this site on top. Please cite the upstream work whenever you use the simulator.</p>
+  </div>
+</section>
+
+<section class="block wrap doc" id="setup">
+  <h2>Environment setup</h2>
+  <p>Python 3.9 or newer (<code>pyproject.toml</code>). The study runs on CPU with stock <code>pip install mujoco</code>: the omniwheel contact-frame fix that upstream applies as a MuJoCo patch (<code>tools/mujoco_fix.patch</code>) is re-implemented in <code>ballbot_gym/utils/contact_frame.py</code>.</p>
+  <pre class="cmd"><code>python -m venv .venv &amp;&amp; source .venv/bin/activate     # Windows: .venv\Scripts\activate
+pip install -r requirements.txt                       # torch, stable_baselines3, mujoco deps, scipy, matplotlib
+pip install -e ballbot_gym/ -e ballbot_rl/
+python scripts/setup/verify_installation.py           # sanity check
+pytest tests/ -v                                      # unit tests, including the contact-frame fix</code></pre>
+  <p class="callout">The upstream installer <code>bash scripts/setup/install.sh</code> instead builds MuJoCo with the patch (<code>install_mujoco.sh</code>). You do not need it for this study.</p>
+</section>
+
+<section class="block wrap doc" id="train">
+  <h2>Training</h2>
+  <p>One entry point, <code>scripts/study/train_ppo.py</code>. It takes a run name, an observation variant and an env config from <code>configs/env/</code>, and writes <code>outputs/study/runs/&lt;name&gt;/</code> (<code>final_model.zip</code>, <code>summary.json</code>).</p>
+  <pre class="cmd"><code>python scripts/study/train_ppo.py --name trk_demo_s0 --variant proprio \
+    --env-config configs/env/rob_a.yaml --total-timesteps 10e6 --gamma 0.995 \
+    --n-envs 7 --n-steps 512 --batch-size 1792 --seed 0
+# fine-tune from a checkpoint, or start a residual-on-LQR policy near zero:
+#   --init-from outputs/study/runs/trk_g_s0/final_model.zip
+#   --log-std-init -1.5 [--zero-init-actor]</code></pre>
+  <p>The training queues used for the study are shell scripts that launch several runs in parallel and wait on earlier runs. Read one before running it; they assume the earlier checkpoints exist.</p>
+  <div class="tblwrap"><table class="tbl"><thead><tr><th>Script</th><th>What it queues</th></tr></thead><tbody>
+    <tr><td><code>scripts/study/run_queue_round10.sh</code></td><td>Robustness (domain randomisation and pushes) from <code>trk_g</code>, residual-on-LQR policies</td></tr>
+    <tr><td><code>scripts/study/run_queue_robust.sh</code></td><td>Robust-recipe training rounds</td></tr>
+    <tr><td><code>scripts/study/run_queue_design.sh</code></td><td>From-scratch PPO on each morphology variant (<code>dz_*</code> configs); <code>STEPS=5e6</code> by default; pass batches as arguments</td></tr>
+    <tr><td><code>scripts/study/run_queue_book.sh</code>, <code>run_queue_book2.sh</code></td><td>Book-climbing terrain with proprioception, ToF and scan observations</td></tr>
+    <tr><td><code>scripts/study/run_queue_ctrl.sh</code>, <code>run_ctrl_curriculum.sh</code></td><td>Command-tracking curriculum</td></tr>
+    <tr><td><code>scripts/study/run_queue.sh</code>, <code>run_queue2.sh</code>, <code>run_queue_long.sh</code></td><td>Earlier perception study rounds</td></tr>
+  </tbody></table></div>
+  <pre class="cmd"><code>bash scripts/study/run_queue_design.sh "nom zlow" "zhigh kb4"     # two batches of parallel runs
+python scripts/study/watch.py --runs trk_g_s0 rob_a_s0 --every 500000   # progress lines until summaries exist</code></pre>
+</section>
+
+<section class="block wrap doc" id="eval">
+  <h2>Evaluation</h2>
+  <div class="tblwrap"><table class="tbl"><thead><tr><th>Script</th><th>Measures</th><th>Key flags</th></tr></thead><tbody>
+    <tr><td><code>eval_control.py</code></td><td>Velocity tracking: speed ratio, heading error, falls, action rate</td><td><code>--run --config --out</code>, <code>--repeats</code>, <code>--perlin-amp</code>, <code>--dr</code></td></tr>
+    <tr><td><code>eval_falls.py</code></td><td>30 random-command episodes, falls and the command active at each</td><td><code>&lt;run&gt; &lt;config&gt;</code></td></tr>
+    <tr><td><code>eval_push.py</code></td><td>Lateral push recovery by force</td><td><code>--runs</code>, <code>--trials 10</code>, <code>--forces</code>, <code>--dr-params</code>, <code>--dr-key</code></td></tr>
+    <tr><td><code>eval_step.py</code></td><td>Step-edge crossing by height and speed</td><td><code>--runs --configs</code>, <code>--speeds</code>, <code>--heights</code>, <code>--fric-scale</code></td></tr>
+    <tr><td><code>eval_design.py</code></td><td>Any controller on morphology variants</td><td><code>--run --designs --mode {lqr,ppo,ppo_ctx,hybrid,residual_ctx}</code></td></tr>
+    <tr><td><code>analyze_theory.py</code></td><td>Reverse-motion (non-minimum phase) and lean-law slope vs model</td><td><code>--runs lqr trk_g_s0 --config trk_d_if</code></td></tr>
+    <tr><td><code>test_rate.py</code></td><td>LQR at several control rates</td><td><code>--design nom --repeats 5 2 1 --speeds 0.5 1.0</code></td></tr>
+    <tr><td><code>evaluate.py</code>, <code>analyze.py</code></td><td>Original perception study: held-out terrains, depth noise and occlusion, paired statistics</td><td>see <code>scripts/study/README.md</code></td></tr>
+  </tbody></table></div>
+  <pre class="cmd"><code>python scripts/study/eval_control.py --run lqr --config trk_d_if --out outputs/study/results/lqr.csv
+python scripts/study/eval_push.py --runs lqr rob_b_s0 --trials 10
+python scripts/study/eval_step.py --runs lqr robs_c_s0 --configs trk_d_if --speeds 0.7 --trials 10
+python scripts/study/eval_design.py --run lqr --designs nom zhigh --mode lqr --trials 8
+python scripts/study/make_tracking_report.py          # tracking_summary.csv, tab_tracking.tex, paper_v2 figures</code></pre>
+  <p>The run name <code>lqr</code> selects the model-based baseline (<code>ballbot_gym/controllers/lqr.py</code>, designed only on the derived model). Run directory names and config names above follow the study log; check <code>outputs/study/runs/</code> and <code>configs/env/</code> for what exists on your machine. To render a video: <code>python scripts/study/render_control.py --run &lt;run&gt; --config &lt;config&gt; --out outputs/study/preview/x.mp4</code> (book terrain: <code>render_book.py</code>).</p>
+</section>
+
+<section class="block wrap doc" id="design">
+  <h2>Design-space tools</h2>
+  <pre class="cmd"><code>python scripts/study/design_space.py sweep                       # analytic sweep -> outputs/study/results/design_sweep.csv
+python scripts/study/design_space.py build my_robot --s 1.0      # nominal s=1 (scale); derive model + write a variant model/config (see --help for parameters)
+python scripts/study/design_space.py pool my_pool --mode hybrid  # morphology pool for the interleaved controller
+python scripts/study/design_constraints.py                       # feasibility margins (traction, torque authority, delay, structure)
+python scripts/study/make_design_report.py                       # analytic figure from the sweep</code></pre>
+  <p>Generated variants go under <code>ballbot_gym/models/variants/</code>. The design rules derived from these tools are in <code>docs/research/design_rules.md</code>.</p>
+</section>
+
+<section class="block wrap doc" id="paper">
+  <h2>Paper and this site</h2>
+  <pre class="cmd"><code>tectonic paper_v2/main.tex                  # builds paper_v2/main.pdf (IEEEtran, self-contained, downloads packages on first run)
+python scripts/site/build_data.py           # regenerates site/data/*.json from the result CSVs (added by the site data pipeline)
+python -m http.server 8105 --directory site # preview the site locally at http://localhost:8105</code></pre>
+  <p>The site is static HTML and ES modules with no build step; GitHub Pages publishes the <code>site/</code> folder through <code>.github/workflows/pages.yml</code>. Every number on the site comes from <code>site/data/*.json</code> or a cited repo file.</p>
+</section>
+
+<section class="block wrap doc" id="map">
+  <h2>Repo map</h2>
+  <div class="tree">openballbot-rl/
+  ballbot_gym/          environment (upstream) + our changes
+    envs/ballbot_env.py     env: command tracking, pushes, DR, hybrid gate, ToF
+    controllers/lqr.py      LQR baseline on the derived model
+    models/ballbot.xml      MuJoCo model; models/variants/ generated designs
+    terrain/  sensors/  rewards/  utils/contact_frame.py
+  ballbot_rl/           upstream training package
+  configs/env/          90 env configs, one per experiment
+  scripts/study/        train, evaluate, analyse, render, design tools
+  scripts/site/         site data and export helpers
+  scripts/setup/        installers and verification
+  paper_v2/             LaTeX paper (main.tex), tables, figures
+  paper/, notebooks/    earlier perception-study draft and notebook
+  docs/research/        study log, literature notes, design rules, roadmap
+  outputs/study/        runs, results CSVs, preview videos (git-ignored mostly)
+  site/                 this website
+  tests/                unit and integration tests</div>
+  <p>The running lab notebook is <code>docs/research/tracking_study_log.md</code> (sections S1 to S16). Literature notes: <code>docs/research/lit_ballbot_*.md</code>.</p>
+</section>
+
+<section class="block wrap doc" id="configs">
+  <h2>Config files explained</h2>
+  <p>Each file in <code>configs/env/</code> is one experiment. It sets the terrain or step, the command distribution, reward weights, pushes, domain randomisation and optional features. Related experiments share a name prefix:</p>
+  <div class="tblwrap"><table class="tbl"><thead><tr><th>Prefix</th><th>Use</th></tr></thead><tbody>
+    <tr><td><code>ctrl_*</code>, <code>lean_*</code></td><td>Command-tracking curriculum and the lean-based teacher</td></tr>
+    <tr><td><code>rob_*</code>, <code>res_*</code></td><td>Robust (domain randomised, pushed) policies and residual-on-LQR policies</td></tr>
+    <tr><td><code>climb_*</code></td><td>Step-edge training</td></tr>
+    <tr><td><code>dz_*</code></td><td>One morphology variant each (scale, ball mass, motor, contact angle and so on)</td></tr>
+    <tr><td><code>pool_hyb*</code></td><td>Interleaved hybrid controller over a pool of designs (<code>hybrid_gate</code>, <code>morph_pool</code>)</td></tr>
+    <tr><td><code>book*</code></td><td>Book-climbing terrain with proprioceptive, ToF and height-scan observations</td></tr>
+  </tbody></table></div>
+  <p>Open a file for the exact fields; this table is a guide to the naming only, and the log names the config behind each result.</p>
+</section>
+
+<section class="block wrap doc" id="runtime">
+  <h2>Expected runtimes</h2>
+  <p>The study log records about <strong>800 environment steps per second per run</strong> on CPU (<code>tracking_study_log.md</code>, Open problems). That is a measured rate for one run; parallel runs share cores. Arithmetic from that rate, not separate measurements:</p>
+  <div class="tblwrap"><table class="tbl"><thead><tr><th>Job</th><th>Steps</th><th>Time at 800 steps/s</th></tr></thead><tbody>
+    <tr><td>Morphology run (<code>run_queue_design.sh</code>)</td><td>5M</td><td>about 1.7 h</td></tr>
+    <tr><td>Robust or residual run (round 10)</td><td>10M</td><td>about 3.5 h</td></tr>
+    <tr><td>Evaluations</td><td>10 to 30 episodes per cell</td><td>minutes per policy</td></tr>
+  </tbody></table></div>
+  <p>A GPU simulator port is listed as future work in the log; it would need the contact-frame fix reimplemented.</p>
+</section>
+
+<section class="block wrap doc" id="protocols">
+  <h2>Evaluation protocols</h2>
+  <ul>
+    <li><strong>Tracking.</strong> Constant commanded speeds from 0.25 to 1.0 m/s on flat ground; report speed ratio (achieved over commanded), heading error, falls and action rate. Falls are counted by the episode-termination rule in the environment.</li>
+    <li><strong>Pushes.</strong> 0.5 m/s drive, one 50 ms push at t = 2 s, forces 0, 10, 20, 30, 40, 50 N, 10 trials per force, any fall counts (<code>eval_push.py</code>). Nominal physics and randomised physics are reported separately.</li>
+    <li><strong>Steps.</strong> Raised floor at y = 1 m with a 2 cm bevel on the edge; heights 0 to 3 cm (<code>--heights</code>); success means cross, stop and hold for 2 s. 10 trials per height and speed (0.4 and 0.7 m/s).</li>
+    <li><strong>Designs.</strong> Controller re-derived or retrained per variant; speed ratio at fractions of a Froude-scaled speed and pushes in multiples of body weight.</li>
+    <li><strong>Seeds.</strong> Held-out evaluation seeds start at 100000 in the original perception study (<code>evaluate.py</code>). Training mostly uses seed 0, so treat single-run differences with caution.</li>
+  </ul>
+  <p>Exact definitions live in the docstrings of the <code>eval_*.py</code> scripts and in the paper's evaluation section.</p>
+</section>
+
+<section class="block wrap doc" id="data">
+  <h2>Data and figure index</h2>
+  <div class="tblwrap"><table class="tbl"><thead><tr><th>Item</th><th>Location</th></tr></thead><tbody>
+    <tr><td>Tracking summary table</td><td><code>outputs/study/results/tracking_summary.csv</code></td></tr>
+    <tr><td>Analytic design sweep</td><td><code>outputs/study/results/design_sweep.csv</code></td></tr>
+    <tr><td>Per-run evaluation CSVs and logs</td><td><code>outputs/study/results/*.csv</code>, <code>*_falls.log</code></td></tr>
+    <tr><td>Push, step, design evaluations (default outputs)</td><td><code>outputs/study/results/push.csv</code>, <code>step.csv</code>, <code>design_eval.csv</code></td></tr>
+    <tr><td>Paper figures and tables</td><td><code>paper_v2/figures/*.pdf</code>, <code>paper_v2/tab_tracking.tex</code>, <code>paper_v2/tab_push.tex</code></td></tr>
+    <tr><td>Rollout videos and trajectories</td><td><code>outputs/study/preview/*.mp4</code>, <code>*_traj.npz</code></td></tr>
+    <tr><td>Site data (JSON)</td><td><code>site/data/</code> (built by <code>scripts/site/build_data.py</code>)</td></tr>
+    <tr><td>Site videos and figures</td><td><code>site/videos/</code>, <code>site/figures/</code></td></tr>
+    <tr><td>Study log, literature, design rules</td><td><code>docs/research/</code></td></tr>
+  </tbody></table></div>
+</section>
+
+<section class="block wrap doc" id="cite">
+  <h2>How to cite</h2>
+  <p>Cite the working paper and the upstream simulator. The paper is a draft; check <code>paper_v2/main.tex</code> for the current title and status.</p>
+  <pre class="cmd"><code>@unpublished{tadesse2026ballbot,
+  author = {Tadesse, Nebiyu},
+  title  = {Derived Dynamics Meet Learned Control: Omnidirectional Velocity Tracking for a Small Ballbot},
+  note   = {Working draft, simulation study},
+  year   = {2026}
+}
+
+@article{salehi2025ballbot,
+  author  = {Salehi, Achkan},
+  title   = {Reinforcement Learning for Ballbot Navigation in Uneven Terrain},
+  journal = {arXiv preprint arXiv:2505.18417},
+  year    = {2025}
+}</code></pre>
+</section>
+
+<section class="block wrap doc" id="license">
+  <h2>Licences</h2>
+  <ul>
+    <li>Repository code: Apache License 2.0, see <code>LICENSE</code> at the repo root. The simulator, environment and original training pipeline are by Achkan Salehi (OpenBallBot-RL, Apache-2.0).</li>
+    <li>Third-party libraries (MuJoCo, PyTorch, Stable-Baselines3, three.js on this site) keep their own licences. The site loads fonts from Google Fonts and three.js from jsDelivr and sends no analytics.</li>
+    <li>Literature PDFs under <code>docs/research/papers/</code> belong to their authors.</li>
+  </ul>
+</section>
+</main>
+<script type="module">
+document.querySelectorAll('pre.cmd').forEach((pre) => {
+  const b = document.createElement('button'); b.className = 'copy'; b.type = 'button'; b.textContent = 'copy';
+  b.setAttribute('aria-label', 'Copy command');
+  b.onclick = async () => { try { await navigator.clipboard.writeText(pre.innerText.replace(/^copy\n?/, '')); b.textContent = 'copied'; } catch (e) { b.textContent = 'press Ctrl+C'; } setTimeout(() => (b.textContent = 'copy'), 1500); };
+  pre.append(b);
+});
+</script>
+</body>
+</html>

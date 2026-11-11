@@ -1,0 +1,872 @@
+{
+ "provenance": [
+  "scripts/site/build_videos.py",
+  "outputs/study/preview/*.mp4",
+  "outputs/study/preview/*_traj.npz"
+ ],
+ "notes": [
+  "Videos are MuJoCo renders of the simulated robot; no hardware.",
+  "Trajectory time bases: path_err 100 Hz (stored here at 10 Hz), real path 10 Hz, planned path 100 Hz (stored at 10 Hz); video clock equals simulation time.",
+  "Controller and command names were read from the on-screen HUD of each video.",
+  "best_perlin8_nav_trim is the first 24.1 s of best_perlin8_nav (60 s); its plan is a waypoint polyline and not time indexed.",
+  "Push schedules (time and force) are not stored with the push videos."
+ ],
+ "scenarios": {
+  "flat": "Flat tracking",
+  "square": "Square course",
+  "push": "Pushes",
+  "perlin": "Rough floor (Perlin)",
+  "climb": "Step climb",
+  "book": "Book / perception",
+  "history": "Study history",
+  "compare": "Side by side"
+ },
+ "controllers": {
+  "lqr": {
+   "label": "LQR",
+   "family": "model"
+  },
+  "res_c": {
+   "label": "res_c (residual on LQR)",
+   "family": "hybrid"
+  },
+  "robs_c": {
+   "label": "robs_c + integral",
+   "family": "learned"
+  },
+  "robs_b": {
+   "label": "robs_b + integral",
+   "family": "learned"
+  },
+  "trk_g": {
+   "label": "trk_g (PPO)",
+   "family": "learned"
+  },
+  "trk_h": {
+   "label": "trk_h (PPO, smooth)",
+   "family": "learned"
+  },
+  "trk_f": {
+   "label": "trk_f (PPO)",
+   "family": "learned"
+  },
+  "book": {
+   "label": "PPO, book study",
+   "family": "learned"
+  },
+  "early": {
+   "label": "early PPO",
+   "family": "learned"
+  }
+ },
+ "videos": [
+  {
+   "id": "best_tour",
+   "title": "Tour on a flat floor",
+   "see": "robs_c with the outer velocity integral follows a 24.5 s sequence of velocity commands (forward, sideways, turning, stop) on a checkerboard; green is the planned path, red the actual one.",
+   "controller": "robs_c + integral",
+   "family": "learned",
+   "scenario": "flat",
+   "scenario_label": "Flat tracking",
+   "duration_s": 24.5,
+   "setup": "robs_c_s0@ki=1.0, tour sequence, flat floor",
+   "video": "videos/best_tour.mp4",
+   "poster": "videos/best_tour.jpg",
+   "size_kb": 1444,
+   "sources": [
+    "outputs/study/preview/best_tour.mp4",
+    "outputs/study/preview/best_tour_traj.npz"
+   ],
+   "traj": "data/traj/best_tour.json",
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall over 24.5 s; mean path error 0.41 m, max 0.94 m, final 0.08 m."
+  },
+  {
+   "id": "trk_f_final",
+   "title": "trk_f: scratch policy with a 1 rad/s spin cap",
+   "see": "The first policy that really tracks speed (ratio 0.98 at 0.5 m/s) runs the standard command sequence, ending with a +2 rad/s spin command above its trained limit.",
+   "controller": "trk_f (PPO)",
+   "family": "learned",
+   "scenario": "history",
+   "scenario_label": "Study history",
+   "duration_s": 20.3,
+   "setup": "trk_f_s0, full command sequence",
+   "video": "videos/trk_f_final.mp4",
+   "poster": "videos/trk_f_final.jpg",
+   "size_kb": 1189,
+   "sources": [
+    "outputs/study/preview/trk_f_final.mp4"
+   ],
+   "traj": null,
+   "fell": null,
+   "outcome": "Rendered before the video fix described in the study log (the 8 s episode limit silently reset the robot to the start while the commanded path kept going), so treat it as an illustration of behaviour; no trajectory file was stored."
+  },
+  {
+   "id": "trk_g_final",
+   "title": "trk_g: refined tracking policy",
+   "see": "trk_g (trk_f continued, action-rate 0.147 to 0.013) runs the standard command sequence including a 1.0 m/s leg.",
+   "controller": "trk_g (PPO)",
+   "family": "learned",
+   "scenario": "history",
+   "scenario_label": "Study history",
+   "duration_s": 19.7,
+   "setup": "trk_g_s0, full command sequence",
+   "video": "videos/trk_g_final.mp4",
+   "poster": "videos/trk_g_final.jpg",
+   "size_kb": 1121,
+   "sources": [
+    "outputs/study/preview/trk_g_final.mp4"
+   ],
+   "traj": null,
+   "fell": null,
+   "outcome": "Rendered before the video fix described in the study log (the 8 s episode limit silently reset the robot to the start while the commanded path kept going), so treat it as an illustration of behaviour; no trajectory file was stored."
+  },
+  {
+   "id": "lean_c_final",
+   "title": "lean_c: the lean-reward policy",
+   "see": "An early policy rewarded for leaning into the command; it balances but moves slowly (ratio about 0.3). Grey floor, no path overlay.",
+   "controller": "early PPO",
+   "family": "learned",
+   "scenario": "history",
+   "scenario_label": "Study history",
+   "duration_s": 22.0,
+   "setup": "lean_c_s0, full command sequence",
+   "video": "videos/lean_c_final.mp4",
+   "poster": "videos/lean_c_final.jpg",
+   "size_kb": 233,
+   "sources": [
+    "outputs/study/preview/lean_c_final.mp4"
+   ],
+   "traj": null,
+   "fell": null,
+   "outcome": "Rendered before the video fix described in the study log (the 8 s episode limit silently reset the robot to the start while the commanded path kept going), so treat it as an illustration of behaviour; no trajectory file was stored."
+  },
+  {
+   "id": "ballc_freed_final",
+   "title": "ballc_freed: first honest on-ball balance",
+   "see": "After adding the off-ball termination the policy balances on the ball but barely follows commands (ratio 0.21 to 0.33).",
+   "controller": "early PPO",
+   "family": "learned",
+   "scenario": "history",
+   "scenario_label": "Study history",
+   "duration_s": 19.8,
+   "setup": "ballc_freed_s0, full command sequence",
+   "video": "videos/ballc_freed_final.mp4",
+   "poster": "videos/ballc_freed_final.jpg",
+   "size_kb": 202,
+   "sources": [
+    "outputs/study/preview/ballc_freed_final.mp4"
+   ],
+   "traj": null,
+   "fell": null,
+   "outcome": "Rendered before the video fix described in the study log (the 8 s episode limit silently reset the robot to the start while the commanded path kept going), so treat it as an illustration of behaviour; no trajectory file was stored."
+  },
+  {
+   "id": "ctrl_free_c_final",
+   "title": "ctrl_free_c: the exploit (void result)",
+   "see": "With free limits and no off-ball check the policy leaves the ball and stands on its wheels; the tilt check never fires, so the reward looked good. Kept as a warning.",
+   "controller": "early PPO",
+   "family": "learned",
+   "scenario": "history",
+   "scenario_label": "Study history",
+   "duration_s": 31.5,
+   "setup": "ctrl_free_c_s0; result declared void in the study log",
+   "video": "videos/ctrl_free_c_final.mp4",
+   "poster": "videos/ctrl_free_c_final.jpg",
+   "size_kb": 404,
+   "sources": [
+    "outputs/study/preview/ctrl_free_c_final.mp4"
+   ],
+   "traj": null,
+   "fell": null,
+   "outcome": "Result declared void in the study log: the policy leaves the ball within 0.2 to 0.6 s and balances on its wheels."
+  },
+  {
+   "id": "lqr_square",
+   "title": "LQR on the square course",
+   "see": "The model-based LQR drives a square course of 0.5 m/s legs with 1 rad/s turns, 26 s plan; it tracks the 0.5 m/s legs closely.",
+   "controller": "LQR",
+   "family": "model",
+   "scenario": "square",
+   "scenario_label": "Square course",
+   "duration_s": 17.8,
+   "setup": "lqr (no training), square sequence",
+   "video": "videos/lqr_square.mp4",
+   "poster": "videos/lqr_square.jpg",
+   "size_kb": 980,
+   "sources": [
+    "outputs/study/preview/lqr_square.mp4",
+    "outputs/study/preview/lqr_square_traj.npz"
+   ],
+   "traj": "data/traj/lqr_square.json",
+   "fell": true,
+   "fall_t_s": 16.3,
+   "outcome": "Falls at t = 16.3 s (path error 0.68 m when it ends); mean path error before the fall 0.35 m."
+  },
+  {
+   "id": "robs_b_ki1_square",
+   "title": "robs_b + integral on the square course",
+   "see": "A domain-randomised PPO policy with an outer velocity integral on the square course of 0.5 m/s legs with 1 rad/s turns, 26 s plan.",
+   "controller": "robs_b + integral",
+   "family": "learned",
+   "scenario": "square",
+   "scenario_label": "Square course",
+   "duration_s": 18.2,
+   "setup": "robs_b_s0@ki=1.0, square sequence",
+   "video": "videos/robs_b_ki1_square.mp4",
+   "poster": "videos/robs_b_ki1_square.jpg",
+   "size_kb": 990,
+   "sources": [
+    "outputs/study/preview/robs_b_ki1_square.mp4",
+    "outputs/study/preview/robs_b_ki1_square_traj.npz"
+   ],
+   "traj": "data/traj/robs_b_ki1_square.json",
+   "fell": true,
+   "fall_t_s": 16.6,
+   "outcome": "Falls at t = 16.6 s (path error 1.28 m when it ends); mean path error before the fall 0.46 m."
+  },
+  {
+   "id": "trk_g_square_guide0",
+   "title": "trk_g on the square, velocity tracking only",
+   "see": "Pure velocity commands along the square course of 0.5 m/s legs with 1 rad/s turns, 26 s plan; position drift is not corrected.",
+   "controller": "trk_g (PPO)",
+   "family": "learned",
+   "scenario": "square",
+   "scenario_label": "Square course",
+   "duration_s": 17.8,
+   "setup": "trk_g_s0, square sequence, guidance 0",
+   "video": "videos/trk_g_square_guide0.mp4",
+   "poster": "videos/trk_g_square_guide0.jpg",
+   "size_kb": 967,
+   "sources": [
+    "outputs/study/preview/trk_g_square_guide0.mp4",
+    "outputs/study/preview/trk_g_square_guide0_traj.npz"
+   ],
+   "traj": "data/traj/trk_g_square_guide0.json",
+   "fell": true,
+   "fall_t_s": 16.2,
+   "outcome": "Falls at t = 16.2 s (path error 0.78 m when it ends); mean path error before the fall 0.44 m."
+  },
+  {
+   "id": "trk_g_square_guide1.5",
+   "title": "trk_g on the square, position guidance 1.5",
+   "see": "The same course with a position-feedback gain of 1.5 1/s toward the planned path (square course of 0.5 m/s legs with 1 rad/s turns, 26 s plan).",
+   "controller": "trk_g (PPO)",
+   "family": "learned",
+   "scenario": "square",
+   "scenario_label": "Square course",
+   "duration_s": 19.5,
+   "setup": "trk_g_s0, square sequence, guidance 1.5",
+   "video": "videos/trk_g_square_guide1.5.mp4",
+   "poster": "videos/trk_g_square_guide1.5.jpg",
+   "size_kb": 1128,
+   "sources": [
+    "outputs/study/preview/trk_g_square_guide1.5.mp4",
+    "outputs/study/preview/trk_g_square_guide1.5_traj.npz"
+   ],
+   "traj": "data/traj/trk_g_square_guide1.5.json",
+   "fell": true,
+   "fall_t_s": 18.0,
+   "outcome": "Falls at t = 18.0 s (path error 0.49 m when it ends); mean path error before the fall 0.32 m."
+  },
+  {
+   "id": "trk_h_square_guide0",
+   "title": "trk_h on the square, velocity tracking only",
+   "see": "The smoother trk_h completes the full course (square course of 0.5 m/s legs with 1 rad/s turns, 26 s plan) without falling but drifts off the planned path.",
+   "controller": "trk_h (PPO, smooth)",
+   "family": "learned",
+   "scenario": "square",
+   "scenario_label": "Square course",
+   "duration_s": 26.0,
+   "setup": "trk_h_s0, square sequence, guidance 0",
+   "video": "videos/trk_h_square_guide0.mp4",
+   "poster": "videos/trk_h_square_guide0.jpg",
+   "size_kb": 1248,
+   "sources": [
+    "outputs/study/preview/trk_h_square_guide0.mp4",
+    "outputs/study/preview/trk_h_square_guide0_traj.npz"
+   ],
+   "traj": "data/traj/trk_h_square_guide0.json",
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall over 26.0 s; mean path error 0.58 m, max 1.61 m, final 1.61 m."
+  },
+  {
+   "id": "trk_h_square_guide1.5",
+   "title": "trk_h on the square, position guidance 1.5",
+   "see": "Same policy with position guidance; it survives but the path error grows, so position feedback does not fix drift (open problem in the study log).",
+   "controller": "trk_h (PPO, smooth)",
+   "family": "learned",
+   "scenario": "square",
+   "scenario_label": "Square course",
+   "duration_s": 26.0,
+   "setup": "trk_h_s0, square sequence, guidance 1.5",
+   "video": "videos/trk_h_square_guide1.5.mp4",
+   "poster": "videos/trk_h_square_guide1.5.jpg",
+   "size_kb": 1347,
+   "sources": [
+    "outputs/study/preview/trk_h_square_guide1.5.mp4",
+    "outputs/study/preview/trk_h_square_guide1.5_traj.npz"
+   ],
+   "traj": "data/traj/trk_h_square_guide1.5.json",
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall over 26.0 s; mean path error 0.63 m, max 2.31 m, final 2.30 m."
+  },
+  {
+   "id": "best_push",
+   "title": "Pushes during a straight drive (robs_c)",
+   "see": "The robot drives forward at 0.5 m/s while an on-screen overlay announces pushes in random directions.",
+   "controller": "robs_c + integral",
+   "family": "learned",
+   "scenario": "push",
+   "scenario_label": "Pushes",
+   "duration_s": 12.7,
+   "setup": "robs_c_s0@ki=1.0, push sequence, nominal physics",
+   "video": "videos/best_push.mp4",
+   "poster": "videos/best_push.jpg",
+   "size_kb": 578,
+   "sources": [
+    "outputs/study/preview/best_push.mp4",
+    "outputs/study/preview/best_push_traj.npz"
+   ],
+   "traj": "data/traj/best_push.json",
+   "fell": true,
+   "fall_t_s": 11.2,
+   "outcome": "Falls at t = 11.2 s (path error 0.19 m when it ends); mean path error before the fall 0.32 m."
+  },
+  {
+   "id": "best_push_recover",
+   "title": "Pushes: recovery then a fall (robs_b)",
+   "see": "robs_b with the integral follows a 0.5 m/s command while being pushed in random directions; the clip ends with a fall.",
+   "controller": "robs_b + integral",
+   "family": "learned",
+   "scenario": "push",
+   "scenario_label": "Pushes",
+   "duration_s": 19.5,
+   "setup": "robs_b_s0@ki=1.0, push sequence, nominal physics",
+   "video": "videos/best_push_recover.mp4",
+   "poster": "videos/best_push_recover.jpg",
+   "size_kb": 1102,
+   "sources": [
+    "outputs/study/preview/best_push_recover.mp4",
+    "outputs/study/preview/best_push_recover_traj.npz"
+   ],
+   "traj": "data/traj/best_push_recover.json",
+   "fell": true,
+   "fall_t_s": 18.0,
+   "outcome": "Falls at t = 18.0 s (path error 0.17 m when it ends); mean path error before the fall 0.52 m."
+  },
+  {
+   "id": "cand_push_robs_b",
+   "title": "Pushes during a straight drive (robs_b)",
+   "see": "A second push run of robs_b on a straight 0.5 m/s drive with random-direction pushes; the clip ends with a fall.",
+   "controller": "robs_b + integral",
+   "family": "learned",
+   "scenario": "push",
+   "scenario_label": "Pushes",
+   "duration_s": 13.3,
+   "setup": "robs_b_s0@ki=1.0, push sequence, nominal physics",
+   "video": "videos/cand_push_robs_b.mp4",
+   "poster": "videos/cand_push_robs_b.jpg",
+   "size_kb": 590,
+   "sources": [
+    "outputs/study/preview/cand_push_robs_b.mp4",
+    "outputs/study/preview/cand_push_robs_b_traj.npz"
+   ],
+   "traj": "data/traj/cand_push_robs_b.json",
+   "fell": true,
+   "fall_t_s": 11.8,
+   "outcome": "Falls at t = 11.8 s (path error 0.48 m when it ends); mean path error before the fall 0.39 m."
+  },
+  {
+   "id": "cand_perlin8_res_c",
+   "title": "res_c on 8 cm Perlin terrain",
+   "see": "The residual-on-LQR controller completes the 24.5 s tour on an uneven floor (Perlin amplitude 8 cm, no terrain training).",
+   "controller": "res_c (residual on LQR)",
+   "family": "hybrid",
+   "scenario": "perlin",
+   "scenario_label": "Rough floor (Perlin)",
+   "duration_s": 24.5,
+   "setup": "res_c_s0, tour sequence, Perlin amplitude 0.08 m",
+   "video": "videos/cand_perlin8_res_c.mp4",
+   "poster": "videos/cand_perlin8_res_c.jpg",
+   "size_kb": 1258,
+   "sources": [
+    "outputs/study/preview/cand_perlin8_res_c.mp4",
+    "outputs/study/preview/cand_perlin8_res_c_traj.npz"
+   ],
+   "traj": "data/traj/cand_perlin8_res_c.json",
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall over 24.5 s; mean path error 0.43 m, max 1.21 m, final 0.38 m."
+  },
+  {
+   "id": "cand_perlin12_res_c",
+   "title": "res_c on 12 cm Perlin terrain",
+   "see": "The same controller on a rougher floor (amplitude 12 cm); no fall, path error peaks at 1.2 m.",
+   "controller": "res_c (residual on LQR)",
+   "family": "hybrid",
+   "scenario": "perlin",
+   "scenario_label": "Rough floor (Perlin)",
+   "duration_s": 24.5,
+   "setup": "res_c_s0, tour sequence, Perlin amplitude 0.12 m",
+   "video": "videos/cand_perlin12_res_c.mp4",
+   "poster": "videos/cand_perlin12_res_c.jpg",
+   "size_kb": 1265,
+   "sources": [
+    "outputs/study/preview/cand_perlin12_res_c.mp4",
+    "outputs/study/preview/cand_perlin12_res_c_traj.npz"
+   ],
+   "traj": "data/traj/cand_perlin12_res_c.json",
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall over 24.5 s; mean path error 0.44 m, max 1.22 m, final 0.40 m."
+  },
+  {
+   "id": "cand_perlin8_lqr",
+   "title": "LQR on 8 cm Perlin terrain",
+   "see": "Plain LQR on the same rough floor; it also finishes the tour at 0.5 m/s.",
+   "controller": "LQR",
+   "family": "model",
+   "scenario": "perlin",
+   "scenario_label": "Rough floor (Perlin)",
+   "duration_s": 24.5,
+   "setup": "lqr, tour sequence, Perlin amplitude 0.08 m",
+   "video": "videos/cand_perlin8_lqr.mp4",
+   "poster": "videos/cand_perlin8_lqr.jpg",
+   "size_kb": 1271,
+   "sources": [
+    "outputs/study/preview/cand_perlin8_lqr.mp4",
+    "outputs/study/preview/cand_perlin8_lqr_traj.npz"
+   ],
+   "traj": "data/traj/cand_perlin8_lqr.json",
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall over 24.5 s; mean path error 0.40 m, max 1.15 m, final 0.33 m."
+  },
+  {
+   "id": "best_perlin8_tour",
+   "title": "robs_c on 8 cm Perlin terrain (fails)",
+   "see": "robs_c with the integral on the 8 cm floor tracks for a while and then leaves the ball while turning at 0.8 rad/s.",
+   "controller": "robs_c + integral",
+   "family": "learned",
+   "scenario": "perlin",
+   "scenario_label": "Rough floor (Perlin)",
+   "duration_s": 24.3,
+   "setup": "robs_c_s0@ki=1.0, tour sequence, Perlin amplitude 0.08 m",
+   "video": "videos/best_perlin8_tour.mp4",
+   "poster": "videos/best_perlin8_tour.jpg",
+   "size_kb": 1149,
+   "sources": [
+    "outputs/study/preview/best_perlin8_tour.mp4",
+    "outputs/study/preview/best_perlin8_tour_traj.npz"
+   ],
+   "traj": "data/traj/best_perlin8_tour.json",
+   "fell": true,
+   "fall_t_s": 22.8,
+   "outcome": "Falls at t = 22.8 s (path error 0.51 m when it ends); mean path error before the fall 0.49 m."
+  },
+  {
+   "id": "best_perlin12_tour",
+   "title": "robs_c on 12 cm Perlin terrain (fails early)",
+   "see": "On the 12 cm floor robs_c falls within about 3 s (the terrain evaluation of robs_c covers 4 and 8 cm only).",
+   "controller": "robs_c + integral",
+   "family": "learned",
+   "scenario": "perlin",
+   "scenario_label": "Rough floor (Perlin)",
+   "duration_s": 4.6,
+   "setup": "robs_c_s0@ki=1.0, tour sequence, Perlin amplitude 0.12 m",
+   "video": "videos/best_perlin12_tour.mp4",
+   "poster": "videos/best_perlin12_tour.jpg",
+   "size_kb": 164,
+   "sources": [
+    "outputs/study/preview/best_perlin12_tour.mp4",
+    "outputs/study/preview/best_perlin12_tour_traj.npz"
+   ],
+   "traj": "data/traj/best_perlin12_tour.json",
+   "fell": true,
+   "fall_t_s": 3.1,
+   "outcome": "Falls at t = 3.1 s (path error 1.05 m when it ends); mean path error before the fall 0.51 m."
+  },
+  {
+   "id": "best_perlin8_nav_trim",
+   "title": "Waypoint navigation on 8 cm terrain (first 24 s)",
+   "see": "robs_c is commanded to navigate a list of waypoints at 0.5 m/s on the 8 cm Perlin floor; the clip is the first 24 s of a 60 s run.",
+   "controller": "robs_c + integral",
+   "family": "learned",
+   "scenario": "perlin",
+   "scenario_label": "Rough floor (Perlin)",
+   "duration_s": 24.1,
+   "setup": "robs_c_s0@ki=1.0, nav sequence, Perlin amplitude 0.08 m",
+   "video": "videos/best_perlin8_nav_trim.mp4",
+   "poster": "videos/best_perlin8_nav_trim.jpg",
+   "size_kb": 1194,
+   "sources": [
+    "outputs/study/preview/best_perlin8_nav_trim.mp4",
+    "outputs/study/preview/best_perlin8_nav_traj.npz"
+   ],
+   "traj": "data/traj/best_perlin8_nav_trim.json",
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall in the first 24 s shown (the full 60 s run also ends without a fall); mean path error over this clip 0.77 m, max 1.92 m."
+  },
+  {
+   "id": "climb_2cm_robs_c",
+   "title": "Climbing a 2 cm step (robs_c)",
+   "see": "Side view: robs_c approaches a 2 cm raised floor at 0.7 m/s, crosses it and stops on top.",
+   "controller": "robs_c + integral",
+   "family": "learned",
+   "scenario": "climb",
+   "scenario_label": "Step climb",
+   "duration_s": 6.5,
+   "setup": "robs_c_s0@ki=1.0, climb sequence, step 0.02 m",
+   "video": "videos/climb_2cm_robs_c.mp4",
+   "poster": "videos/climb_2cm_robs_c.jpg",
+   "size_kb": 272,
+   "sources": [
+    "outputs/study/preview/climb_2cm_robs_c.mp4",
+    "outputs/study/preview/climb_2cm_robs_c_traj.npz"
+   ],
+   "traj": "data/traj/climb_2cm_robs_c.json",
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall over 6.5 s; mean path error 0.44 m, max 0.79 m, final 0.26 m."
+  },
+  {
+   "id": "climb_3cm_robs_c",
+   "title": "A 3 cm step (robs_c fails)",
+   "see": "Same approach at 3 cm: the robot leaves the ball at the step. The study attributes this limit to wheel-ball traction (friction-scaling tests, 4 trials per cell).",
+   "controller": "robs_c + integral",
+   "family": "learned",
+   "scenario": "climb",
+   "scenario_label": "Step climb",
+   "duration_s": 5.4,
+   "setup": "robs_c_s0@ki=1.0, climb sequence, step 0.03 m",
+   "video": "videos/climb_3cm_robs_c.mp4",
+   "poster": "videos/climb_3cm_robs_c.jpg",
+   "size_kb": 194,
+   "sources": [
+    "outputs/study/preview/climb_3cm_robs_c.mp4",
+    "outputs/study/preview/climb_3cm_robs_c_traj.npz"
+   ],
+   "traj": "data/traj/climb_3cm_robs_c.json",
+   "fell": true,
+   "fall_t_s": 3.9,
+   "outcome": "Falls at t = 3.9 s (path error 0.76 m when it ends); mean path error before the fall 0.38 m."
+  },
+  {
+   "id": "book_proprio_0.02",
+   "title": "Book study: proprioceptive policy, 2 cm",
+   "see": "Side view of the book-climbing study with a proprioception-only policy and a 2 cm step.",
+   "controller": "PPO, book study",
+   "family": "learned",
+   "scenario": "book",
+   "scenario_label": "Book / perception",
+   "duration_s": 8.0,
+   "setup": "book_proprio policy, render_book.py, height 0.02 m",
+   "video": "videos/book_proprio_0.02.mp4",
+   "poster": "videos/book_proprio_0.02.jpg",
+   "size_kb": 68,
+   "sources": [
+    "outputs/study/preview/book_proprio_0.02.mp4"
+   ],
+   "traj": null,
+   "fell": null,
+   "outcome": "The video alone does not show a success or a fall banner. The matching evaluation (outputs/study/results/book2_*.csv, rough-floor amplitude sweep) reports 0 percent goal success for every perception variant at amplitude 1 cm and above."
+  },
+  {
+   "id": "book_scan_0.02",
+   "title": "Book study: height-scan policy, 2 cm",
+   "see": "The same task for a policy that also sees a height scan of the ground ahead (teacher observation).",
+   "controller": "PPO, book study",
+   "family": "learned",
+   "scenario": "book",
+   "scenario_label": "Book / perception",
+   "duration_s": 8.0,
+   "setup": "book_scan policy, render_book.py, height 0.02 m",
+   "video": "videos/book_scan_0.02.mp4",
+   "poster": "videos/book_scan_0.02.jpg",
+   "size_kb": 65,
+   "sources": [
+    "outputs/study/preview/book_scan_0.02.mp4"
+   ],
+   "traj": null,
+   "fell": null,
+   "outcome": "The video alone does not show a success or a fall banner. The matching evaluation (outputs/study/results/book2_*.csv, rough-floor amplitude sweep) reports 0 percent goal success for every perception variant at amplitude 1 cm and above."
+  },
+  {
+   "id": "book_tof_0.02",
+   "title": "Book study: ToF policy, 2 cm",
+   "see": "The same task for a policy that sees the simulated 8x8 time-of-flight sensor.",
+   "controller": "PPO, book study",
+   "family": "learned",
+   "scenario": "book",
+   "scenario_label": "Book / perception",
+   "duration_s": 8.0,
+   "setup": "book_tof policy, render_book.py, height 0.02 m",
+   "video": "videos/book_tof_0.02.mp4",
+   "poster": "videos/book_tof_0.02.jpg",
+   "size_kb": 78,
+   "sources": [
+    "outputs/study/preview/book_tof_0.02.mp4"
+   ],
+   "traj": null,
+   "fell": null,
+   "outcome": "The video alone does not show a success or a fall banner. The matching evaluation (outputs/study/results/book2_*.csv, rough-floor amplitude sweep) reports 0 percent goal success for every perception variant at amplitude 1 cm and above."
+  },
+  {
+   "id": "cine_climb2cm_robs_c",
+   "title": "Crossing a 2 cm step (cinematic)",
+   "see": "Side view: the robot drives at 0.7 m/s onto a 2 cm raised floor (shown at 0.5x slow motion). 2 cm step at y = 1 m",
+   "controller": "robs_c_s0@ki=1.0",
+   "family": "learned",
+   "scenario": "climb2cm",
+   "scenario_label": "climb2cm",
+   "duration_s": 25.3,
+   "setup": "python scripts/study/render_cinematic.py --job climb2cm_robs_c",
+   "video": "videos/cine_climb2cm_robs_c.mp4",
+   "poster": "videos/cine_climb2cm_robs_c.jpg",
+   "size_kb": 1203,
+   "sources": [
+    "outputs/study/cine/cine_climb2cm_robs_c.mp4"
+   ],
+   "traj": null,
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall. Mean position error 43.2 cm, max 78.4 cm, final 25.9 cm; max off-ball angle 6.7 deg. Simulation only."
+  },
+  {
+   "id": "cine_climb3cm_robs_c",
+   "title": "Crossing a 3 cm step (cinematic)",
+   "see": "Side view: the same approach at 3 cm; the robot loses the ball at the step (shown at 0.5x slow motion). 3 cm step at y = 1 m",
+   "controller": "robs_c_s0@ki=1.0",
+   "family": "learned",
+   "scenario": "climb3cm",
+   "scenario_label": "climb3cm",
+   "duration_s": 16.6,
+   "setup": "python scripts/study/render_cinematic.py --job climb3cm_robs_c",
+   "video": "videos/cine_climb3cm_robs_c.mp4",
+   "poster": "videos/cine_climb3cm_robs_c.jpg",
+   "size_kb": 805,
+   "sources": [
+    "outputs/study/cine/cine_climb3cm_robs_c.mp4"
+   ],
+   "traj": null,
+   "fell": true,
+   "fall_t_s": 3.88,
+   "outcome": "Fell at t = 3.88 s (left the ball). Mean position error 38.0 cm, max 76.9 cm, final 75.8 cm; max off-ball angle 30.8 deg. Simulation only."
+  },
+  {
+   "id": "cine_compare_perlin8_tour_lqr_vs_res_c",
+   "title": "Tour on 8 cm Perlin terrain: LQR vs res_c (hybrid) (cinematic)",
+   "see": "Two controllers on the same scenario and terrain, simulated separately and replayed in sync. Perlin floor, 8 cm amplitude",
+   "controller": "lqr vs res_c_s0",
+   "family": "learned",
+   "scenario": "compare",
+   "scenario_label": "Side by side",
+   "duration_s": 28.5,
+   "setup": "python scripts/study/render_cinematic.py --compare perlin8_tour_lqr perlin8_tour_res_c",
+   "video": "videos/cine_compare_perlin8_tour_lqr_vs_res_c.mp4",
+   "poster": "videos/cine_compare_perlin8_tour_lqr_vs_res_c.jpg",
+   "size_kb": 3096,
+   "sources": [
+    "outputs/study/cine/cine_compare_perlin8_tour_lqr_vs_res_c.mp4"
+   ],
+   "traj": null,
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "LQR: no fall, mean error 40.1 cm, max 116.0 cm; res_c (hybrid): no fall, mean error 42.4 cm, max 120.4 cm Simulation only."
+  },
+  {
+   "id": "cine_compare_square_lqr_vs_robs_b",
+   "title": "Square course: LQR vs robs_b (cinematic)",
+   "see": "Two controllers on the same scenario and terrain, simulated separately and replayed in sync. flat floor, no relief",
+   "controller": "lqr vs robs_b_s0@ki=1.0",
+   "family": "learned",
+   "scenario": "compare",
+   "scenario_label": "Side by side",
+   "duration_s": 30.0,
+   "setup": "python scripts/study/render_cinematic.py --compare square_lqr square_robs_b",
+   "video": "videos/cine_compare_square_lqr_vs_robs_b.mp4",
+   "poster": "videos/cine_compare_square_lqr_vs_robs_b.jpg",
+   "size_kb": 1718,
+   "sources": [
+    "outputs/study/cine/cine_compare_square_lqr_vs_robs_b.mp4"
+   ],
+   "traj": null,
+   "fell": true,
+   "fall_t_s": null,
+   "outcome": "LQR: no fall, mean error 35.5 cm, max 101.8 cm; robs_b: fell at 16.64 s, mean error 45.9 cm, max 127.4 cm Simulation only."
+  },
+  {
+   "id": "cine_perlin12_tour_res_c",
+   "title": "Tour on 12 cm Perlin terrain (cinematic)",
+   "see": "The same controller on a rougher Perlin floor (12 cm amplitude). Perlin floor, 12 cm amplitude",
+   "controller": "res_c_s0",
+   "family": "hybrid",
+   "scenario": "perlin12_tour",
+   "scenario_label": "perlin12_tour",
+   "duration_s": 28.1,
+   "setup": "python scripts/study/render_cinematic.py --job perlin12_tour_res_c",
+   "video": "videos/cine_perlin12_tour_res_c.mp4",
+   "poster": "videos/cine_perlin12_tour_res_c.jpg",
+   "size_kb": 4819,
+   "sources": [
+    "outputs/study/cine/cine_perlin12_tour_res_c.mp4"
+   ],
+   "traj": null,
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall. Mean position error 43.9 cm, max 121.8 cm, final 40.2 cm; max off-ball angle 18.0 deg. Simulation only."
+  },
+  {
+   "id": "cine_perlin8_nav_robs_c",
+   "title": "Waypoint navigation on 8 cm Perlin terrain (cinematic)",
+   "see": "The robot is steered through numbered waypoints at 0.5 m/s on the 8 cm Perlin floor. Perlin floor, 8 cm amplitude",
+   "controller": "robs_c_s0@ki=1.0",
+   "family": "learned",
+   "scenario": "perlin8_nav",
+   "scenario_label": "perlin8_nav",
+   "duration_s": 26.2,
+   "setup": "python scripts/study/render_cinematic.py --job perlin8_nav_robs_c",
+   "video": "videos/cine_perlin8_nav_robs_c.mp4",
+   "poster": "videos/cine_perlin8_nav_robs_c.jpg",
+   "size_kb": 4218,
+   "sources": [
+    "outputs/study/cine/cine_perlin8_nav_robs_c.mp4"
+   ],
+   "traj": null,
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall. Mean position error 19.1 cm, max 61.3 cm, final 22.4 cm; max off-ball angle 10.6 deg. Simulation only."
+  },
+  {
+   "id": "cine_perlin8_tour_lqr",
+   "title": "Tour on 8 cm Perlin terrain (cinematic)",
+   "see": "Plain LQR on the same 8 cm Perlin floor and command tour. Perlin floor, 8 cm amplitude",
+   "controller": "lqr",
+   "family": "model",
+   "scenario": "perlin8_tour",
+   "scenario_label": "perlin8_tour",
+   "duration_s": 28.1,
+   "setup": "python scripts/study/render_cinematic.py --job perlin8_tour_lqr",
+   "video": "videos/cine_perlin8_tour_lqr.mp4",
+   "poster": "videos/cine_perlin8_tour_lqr.jpg",
+   "size_kb": 4354,
+   "sources": [
+    "outputs/study/cine/cine_perlin8_tour_lqr.mp4"
+   ],
+   "traj": null,
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall. Mean position error 40.1 cm, max 116.0 cm, final 33.5 cm; max off-ball angle 13.1 deg. Simulation only."
+  },
+  {
+   "id": "cine_perlin8_tour_res_c",
+   "title": "Tour on 8 cm Perlin terrain (cinematic)",
+   "see": "Low raking camera on a bumpy Perlin floor (8 cm amplitude, no terrain training). Perlin floor, 8 cm amplitude",
+   "controller": "res_c_s0",
+   "family": "hybrid",
+   "scenario": "perlin8_tour",
+   "scenario_label": "perlin8_tour",
+   "duration_s": 28.1,
+   "setup": "python scripts/study/render_cinematic.py --job perlin8_tour_res_c",
+   "video": "videos/cine_perlin8_tour_res_c.mp4",
+   "poster": "videos/cine_perlin8_tour_res_c.jpg",
+   "size_kb": 4383,
+   "sources": [
+    "outputs/study/cine/cine_perlin8_tour_res_c.mp4"
+   ],
+   "traj": null,
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall. Mean position error 42.4 cm, max 120.4 cm, final 37.9 cm; max off-ball angle 15.0 deg. Simulation only."
+  },
+  {
+   "id": "cine_push_robs_b",
+   "title": "Pushes during a square loop (cinematic)",
+   "see": "The robot loops a 1.5 m square at 0.5 m/s while pushed in random horizontal directions (30 to 40 N, 0.05 s). flat floor, no relief",
+   "controller": "robs_b_s0@ki=1.0",
+   "family": "learned",
+   "scenario": "push",
+   "scenario_label": "Pushes",
+   "duration_s": 29.6,
+   "setup": "python scripts/study/render_cinematic.py --job push_robs_b",
+   "video": "videos/cine_push_robs_b.mp4",
+   "poster": "videos/cine_push_robs_b.jpg",
+   "size_kb": 2289,
+   "sources": [
+    "outputs/study/cine/cine_push_robs_b.mp4"
+   ],
+   "traj": null,
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall. Mean position error 50.5 cm, max 87.7 cm, final 23.4 cm; max off-ball angle 8.6 deg. Simulation only."
+  },
+  {
+   "id": "cine_square_lqr",
+   "title": "Square course (cinematic)",
+   "see": "Model-based LQR drives the square course (0.5 m/s legs, one fast leg, one turning leg). flat floor, no relief",
+   "controller": "lqr",
+   "family": "model",
+   "scenario": "square",
+   "scenario_label": "Square course",
+   "duration_s": 29.6,
+   "setup": "python scripts/study/render_cinematic.py --job square_lqr",
+   "video": "videos/cine_square_lqr.mp4",
+   "poster": "videos/cine_square_lqr.jpg",
+   "size_kb": 2075,
+   "sources": [
+    "outputs/study/cine/cine_square_lqr.mp4"
+   ],
+   "traj": null,
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall. Mean position error 35.5 cm, max 101.8 cm, final 20.4 cm; max off-ball angle 9.3 deg. Simulation only."
+  },
+  {
+   "id": "cine_square_robs_b",
+   "title": "Square course (cinematic)",
+   "see": "PPO (robs_b + integral) on the same square course. flat floor, no relief",
+   "controller": "robs_b_s0@ki=1.0",
+   "family": "learned",
+   "scenario": "square",
+   "scenario_label": "Square course",
+   "duration_s": 20.3,
+   "setup": "python scripts/study/render_cinematic.py --job square_robs_b",
+   "video": "videos/cine_square_robs_b.mp4",
+   "poster": "videos/cine_square_robs_b.jpg",
+   "size_kb": 1509,
+   "sources": [
+    "outputs/study/cine/cine_square_robs_b.mp4"
+   ],
+   "traj": null,
+   "fell": true,
+   "fall_t_s": 16.64,
+   "outcome": "Fell at t = 16.64 s (left the ball). Mean position error 45.9 cm, max 127.4 cm, final 127.4 cm; max off-ball angle 31.5 deg. Simulation only."
+  },
+  {
+   "id": "cine_tour_flat_robs_c",
+   "title": "Velocity tour on a flat floor (cinematic)",
+   "see": "Chase camera follows a scripted tour of velocity commands (forward, sideways, diagonal, turning) on a flat floor. flat floor, no relief",
+   "controller": "robs_c_s0@ki=1.0",
+   "family": "learned",
+   "scenario": "tour_flat",
+   "scenario_label": "tour_flat",
+   "duration_s": 28.1,
+   "setup": "python scripts/study/render_cinematic.py --job tour_flat_robs_c",
+   "video": "videos/cine_tour_flat_robs_c.mp4",
+   "poster": "videos/cine_tour_flat_robs_c.jpg",
+   "size_kb": 2227,
+   "sources": [
+    "outputs/study/cine/cine_tour_flat_robs_c.mp4"
+   ],
+   "traj": null,
+   "fell": false,
+   "fall_t_s": null,
+   "outcome": "No fall. Mean position error 41.1 cm, max 93.0 cm, final 7.8 cm; max off-ball angle 12.9 deg. Simulation only."
+  }
+ ]
+}

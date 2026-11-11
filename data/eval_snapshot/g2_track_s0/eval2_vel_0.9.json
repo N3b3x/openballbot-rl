@@ -1,0 +1,103 @@
+{
+ "run": "g2_track_s0",
+ "args": {
+  "run": "g2_track_s0",
+  "task": "vel",
+  "speed": 0.9,
+  "n": 32,
+  "dr": false,
+  "surfaces": false,
+  "pull": false,
+  "eval_designs": "nom,nom",
+  "steps": 800,
+  "tile_seed": 0
+ },
+ "by_kind": {
+  "flat": {
+   "fall": 0.125,
+   "success": 0.0,
+   "track_err": 0.5277411341667175,
+   "late_err": 0.5026168823242188,
+   "late_speed_ratio": 0.44438210129737854
+  },
+  "step_up": {
+   "fall": 0.078125,
+   "success": 0.0,
+   "track_err": 0.5294097065925598,
+   "late_err": 0.5050462484359741,
+   "late_speed_ratio": 0.44185712933540344
+  },
+  "step_down": {
+   "fall": 0.09375,
+   "success": 0.0,
+   "track_err": 0.5254514813423157,
+   "late_err": 0.4974989891052246,
+   "late_speed_ratio": 0.45062124729156494
+  },
+  "small_drop": {
+   "fall": 0.078125,
+   "success": 0.0,
+   "track_err": 0.5275841355323792,
+   "late_err": 0.5029951333999634,
+   "late_speed_ratio": 0.4445599615573883
+  },
+  "large_drop": {
+   "fall": 0.078125,
+   "success": 0.0,
+   "track_err": 0.5328671336174011,
+   "late_err": 0.5059128999710083,
+   "late_speed_ratio": 0.4417790174484253
+  },
+  "ramp_up": {
+   "fall": 0.15625,
+   "success": 0.0,
+   "track_err": 0.5319095253944397,
+   "late_err": 0.5048282146453857,
+   "late_speed_ratio": 0.44172778725624084
+  },
+  "ramp_down": {
+   "fall": 0.0625,
+   "success": 0.0,
+   "track_err": 0.5268391966819763,
+   "late_err": 0.50114506483078,
+   "late_speed_ratio": 0.4461710751056671
+  },
+  "stairs": {
+   "fall": 0.203125,
+   "success": 0.0,
+   "track_err": 0.5328922271728516,
+   "late_err": 0.5047387480735779,
+   "late_speed_ratio": 0.44229668378829956
+  },
+  "bump": {
+   "fall": 0.109375,
+   "success": 0.0,
+   "track_err": 0.5285645723342896,
+   "late_err": 0.5047337412834167,
+   "late_speed_ratio": 0.4419708847999573
+  },
+  "rough": {
+   "fall": 0.09375,
+   "success": 0.0,
+   "track_err": 0.5253341794013977,
+   "late_err": 0.4996500015258789,
+   "late_speed_ratio": 0.4488206207752228
+  }
+ },
+ "by_design": {
+  "nom": {
+   "fall": 0.11250000447034836,
+   "success": 0.0,
+   "track_err": 0.5283412933349609,
+   "late_err": 0.5026975870132446,
+   "late_speed_ratio": 0.44453519582748413
+  }
+ },
+ "overall": {
+  "fall": 0.10781250149011612,
+  "success": 0.0,
+  "track_err": 0.528830885887146,
+  "late_err": 0.5028930306434631,
+  "late_speed_ratio": 0.4444485604763031
+ }
+}

@@ -1,0 +1,226 @@
+[
+ {
+  "id": "mjx_settle",
+  "group": "warp",
+  "title": "Free fall onto the ball, open loop",
+  "description": "Robot dropped 1 cm onto the ball, zero wheel torque. The upright pose is unstable: both engines topple, timing depends on rounding.",
+  "outcome": "Both engines topple (open-loop unstable plant); first 0.6 s agree (early tilt RMS error ~1.9 deg), later timing differs.",
+  "engines": [
+   "MuJoCo 3.17 CPU (float64, ContactFrameStepper)",
+   "MuJoCo-Warp 3.17 GPU (float32, contact-frame kernel)"
+  ],
+  "scenario": "settle",
+  "video": "videos/engines/mjx_settle.mp4",
+  "poster": "videos/engines/mjx_settle.jpg"
+ },
+ {
+  "id": "mjx_torque_step",
+  "group": "warp",
+  "title": "Open-loop wheel-torque step",
+  "description": "2 N m on wheel 0 for 0.3 s (t = 0.5 to 0.8 s), no feedback. Forced response matches; later tilt diverges (unstable plant). Half speed.",
+  "outcome": "Forced ball-speed response agrees to 5% of peak over the 0.3 s pulse; later tilt diverges as the plant is unstable.",
+  "engines": [
+   "MuJoCo 3.17 CPU (float64, ContactFrameStepper)",
+   "MuJoCo-Warp 3.17 GPU (float32, contact-frame kernel)"
+  ],
+  "scenario": "torque_step",
+  "video": "videos/engines/mjx_torque_step.mp4",
+  "poster": "videos/engines/mjx_torque_step.jpg"
+ },
+ {
+  "id": "mjx_lqr_0.4",
+  "group": "warp",
+  "title": "LQR tracking 0.4 m/s",
+  "description": "Model-based LQR (dz_nom gains), command 0.4 m/s along +x.",
+  "outcome": "Both track 0.4 m/s with no fall; speed ratio 0.99 (CPU) vs 0.98 (Warp).",
+  "engines": [
+   "MuJoCo 3.17 CPU (float64, ContactFrameStepper)",
+   "MuJoCo-Warp 3.17 GPU (float32, contact-frame kernel)"
+  ],
+  "scenario": "lqr_0.4",
+  "video": "videos/engines/mjx_lqr_0.4.mp4",
+  "poster": "videos/engines/mjx_lqr_0.4.jpg"
+ },
+ {
+  "id": "mjx_lqr_0.8",
+  "group": "warp",
+  "title": "LQR tracking 0.8 m/s",
+  "description": "Model-based LQR (dz_nom gains), command 0.8 m/s along +x.",
+  "outcome": "Both track 0.8 m/s with no fall; speed ratio 1.03 (CPU) vs 1.04 (Warp).",
+  "engines": [
+   "MuJoCo 3.17 CPU (float64, ContactFrameStepper)",
+   "MuJoCo-Warp 3.17 GPU (float32, contact-frame kernel)"
+  ],
+  "scenario": "lqr_0.8",
+  "video": "videos/engines/mjx_lqr_0.8.mp4",
+  "poster": "videos/engines/mjx_lqr_0.8.jpg"
+ },
+ {
+  "id": "mjx_push_survive",
+  "group": "warp",
+  "title": "Push: both engines recover",
+  "description": "1x body weight (39 N), 50 ms, direction 248 deg, while driving 0.4 m/s along +y. Half speed.",
+  "outcome": "Both recover from a 1x body-weight, 50 ms push in this direction.",
+  "engines": [
+   "MuJoCo 3.17 CPU (float64, ContactFrameStepper)",
+   "MuJoCo-Warp 3.17 GPU (float32, contact-frame kernel)"
+  ],
+  "scenario": "push_survive",
+  "video": "videos/engines/mjx_push_survive.mp4",
+  "poster": "videos/engines/mjx_push_survive.jpg"
+ },
+ {
+  "id": "mjx_push_fall",
+  "group": "warp",
+  "title": "Push: both engines lose the ball",
+  "description": "1x body weight (39 N), 50 ms, direction 0 deg, while driving 0.4 m/s along +y. Half speed.",
+  "outcome": "Both lose the ball after a 1x body-weight, 50 ms push in this direction.",
+  "engines": [
+   "MuJoCo 3.17 CPU (float64, ContactFrameStepper)",
+   "MuJoCo-Warp 3.17 GPU (float32, contact-frame kernel)"
+  ],
+  "scenario": "push_fall",
+  "video": "videos/engines/mjx_push_fall.mp4",
+  "poster": "videos/engines/mjx_push_fall.jpg"
+ },
+ {
+  "id": "mjx_push_disagree",
+  "group": "warp",
+  "title": "Push at the edge: engines disagree",
+  "description": "1x body weight, 50 ms, direction 90 deg: in the sweep run CPU falls, Warp recovers; in this render CPU falls, Warp falls. Borderline case (GPU run is not bit-reproducible). Half speed.",
+  "outcome": "Borderline push direction: in the 16-direction sweep CPU falls and Warp recovers (14 vs 12-13 of 16 directions fall in total); in this render both fall. The GPU run is not bit-reproducible, so the outcome of edge cases varies between runs.",
+  "engines": [
+   "MuJoCo 3.17 CPU (float64, ContactFrameStepper)",
+   "MuJoCo-Warp 3.17 GPU (float32, contact-frame kernel)"
+  ],
+  "scenario": "push_disagree",
+  "video": "videos/engines/mjx_push_disagree.mp4",
+  "poster": "videos/engines/mjx_push_disagree.jpg"
+ },
+ {
+  "id": "isaac_nom_settle",
+  "group": "physx",
+  "title": "LQR hold, robot dropped 2 cm onto the ball",
+  "description": "Robot and ball dropped 2 cm from the settled pose with the LQR holding zero command. Compares the ball and wheel contact transient and the contact forces.",
+  "outcome": "MuJoCo: stays upright, mean speed 0.00 m/s (cmd 0.00), max tilt 1.3 deg, mean wheel-ball normal force 17.6 N; PhysX: stays upright, mean speed 0.00 m/s (cmd 0.00), max tilt 0.4 deg, mean wheel-ball normal force 18.5 N",
+  "engines": [
+   "MuJoCo 3.13 CPU (ContactFrameStepper)",
+   "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+  ],
+  "scenario": "settle",
+  "video": "videos/engines/nom_settle.mp4",
+  "poster": "videos/engines/nom_settle.jpg"
+ },
+ {
+  "id": "isaac_nom_pulse",
+  "group": "physx",
+  "title": "Open-loop torque pulse, 0.5 Nm on wheels 0 and 2 for 0.1 s (0.3x speed)",
+  "description": "No feedback: 0.5 Nm on wheels 0 and 2 for 0.1 s after 0.1 s of rest. The unstable plant is only comparable for the first 0.3 s; ball and body response is the check.",
+  "outcome": "MuJoCo: stays upright, mean speed 0.05 m/s (cmd 0.00), max tilt 13.7 deg, mean wheel-ball normal force 17.5 N; PhysX: stays upright, mean speed 0.07 m/s (cmd 0.00), max tilt 14.9 deg, mean wheel-ball normal force 18.3 N",
+  "engines": [
+   "MuJoCo 3.13 CPU (ContactFrameStepper)",
+   "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+  ],
+  "scenario": "torque_step",
+  "video": "videos/engines/nom_pulse.mp4",
+  "poster": "videos/engines/nom_pulse.jpg"
+ },
+ {
+  "id": "isaac_nom_track04",
+  "group": "physx",
+  "title": "LQR, 0.4 scaled speed",
+  "description": "LQR (nominal gains) tracking 0.4 of the scaled speed along +x for 5 s.",
+  "outcome": "MuJoCo: stays upright, mean speed 0.40 m/s (cmd 0.40), max tilt 9.8 deg, mean wheel-ball normal force 17.8 N; PhysX: stays upright, mean speed 0.40 m/s (cmd 0.40), max tilt 8.5 deg, mean wheel-ball normal force 18.8 N",
+  "engines": [
+   "MuJoCo 3.13 CPU (ContactFrameStepper)",
+   "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+  ],
+  "scenario": "lqr_0.4",
+  "video": "videos/engines/nom_track04.mp4",
+  "poster": "videos/engines/nom_track04.jpg"
+ },
+ {
+  "id": "isaac_nom_track08",
+  "group": "physx",
+  "title": "LQR, 0.8 scaled speed",
+  "description": "LQR tracking 0.8 of the scaled speed along +x for 5 s.",
+  "outcome": "MuJoCo: stays upright, mean speed 0.79 m/s (cmd 0.80), max tilt 10.0 deg, mean wheel-ball normal force 18.0 N; PhysX: stays upright, mean speed 0.80 m/s (cmd 0.80), max tilt 8.8 deg, mean wheel-ball normal force 20.5 N",
+  "engines": [
+   "MuJoCo 3.13 CPU (ContactFrameStepper)",
+   "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+  ],
+  "scenario": "lqr_0.8",
+  "video": "videos/engines/nom_track08.mp4",
+  "poster": "videos/engines/nom_track08.jpg"
+ },
+ {
+  "id": "isaac_nom_push",
+  "group": "physx",
+  "title": "LQR, 1x body-weight 50 ms push at 1.5 s",
+  "description": "One horizontal 50 ms push of 1x total weight (35 degrees from +x) while driving at 0.4 scaled speed.",
+  "outcome": "MuJoCo: fell at 2.24 s, mean wheel-ball normal force 18.9 N; PhysX: fell at 1.89 s, mean wheel-ball normal force 20.4 N",
+  "engines": [
+   "MuJoCo 3.13 CPU (ContactFrameStepper)",
+   "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+  ],
+  "scenario": "push_1x",
+  "video": "videos/engines/nom_push.mp4",
+  "poster": "videos/engines/nom_push.jpg"
+ },
+ {
+  "id": "isaac_zeta66_push",
+  "group": "physx",
+  "title": "Contact zenith 66 deg, same 1x push",
+  "description": "Design variant with the wheels at 66 degrees zenith (more upright contact) under the same push.",
+  "outcome": "MuJoCo: stays upright, mean speed 0.38 m/s (cmd 0.40), max tilt 15.5 deg, mean wheel-ball normal force 25.1 N; PhysX: stays upright, mean speed 0.39 m/s (cmd 0.40), max tilt 15.8 deg, mean wheel-ball normal force 26.0 N",
+  "engines": [
+   "MuJoCo 3.13 CPU (ContactFrameStepper)",
+   "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+  ],
+  "scenario": "push_1x_zeta66",
+  "video": "videos/engines/zeta66_push.mp4",
+  "poster": "videos/engines/zeta66_push.jpg"
+ },
+ {
+  "id": "isaac_zeta41_push",
+  "group": "physx",
+  "title": "Contact zenith 41 deg, same 1x push",
+  "description": "Design variant with the wheels at 41 degrees zenith under the same push (known to fall more often in MuJoCo).",
+  "outcome": "MuJoCo: fell at 1.87 s, mean wheel-ball normal force 15.6 N; PhysX: fell at 1.93 s, mean wheel-ball normal force 18.2 N",
+  "engines": [
+   "MuJoCo 3.13 CPU (ContactFrameStepper)",
+   "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+  ],
+  "scenario": "push_1x_zeta41",
+  "video": "videos/engines/zeta41_push.mp4",
+  "poster": "videos/engines/zeta41_push.jpg"
+ },
+ {
+  "id": "isaac_zeta41_track08",
+  "group": "physx",
+  "title": "Contact zenith 41 deg, 0.8 scaled speed",
+  "description": "Zenith 41 degree design at 0.8 scaled speed; MuJoCo with the same LQR loses balance.",
+  "outcome": "MuJoCo: fell at 2.65 s, mean wheel-ball normal force 16.2 N; PhysX: stays upright, mean speed 0.79 m/s (cmd 0.80), max tilt 8.4 deg, mean wheel-ball normal force 21.3 N",
+  "engines": [
+   "MuJoCo 3.13 CPU (ContactFrameStepper)",
+   "PhysX 5 (Isaac Sim 6.2), roller-ring omni wheel emulation"
+  ],
+  "scenario": "lqr_0.8_zeta41",
+  "video": "videos/engines/zeta41_track08.mp4",
+  "poster": "videos/engines/zeta41_track08.jpg"
+ },
+ {
+  "id": "isaac_naive_track04",
+  "group": "physx",
+  "title": "PhysX naive import (isotropic capsule wheels), 0.4 scaled speed",
+  "description": "What a plain MJCF to PhysX conversion gives: capsule wheels with one isotropic friction coefficient (the anisotropic <pair friction> cannot be represented). Failure case.",
+  "outcome": "MuJoCo: stays upright, mean speed 0.40 m/s (cmd 0.40), max tilt 9.8 deg, mean wheel-ball normal force 17.8 N; PhysX naive: fell at 0.39 s, mean wheel-ball normal force nan N",
+  "engines": [
+   "MuJoCo 3.13 CPU (ContactFrameStepper)",
+   "PhysX 5 (Isaac Sim 6.2), naive import"
+  ],
+  "scenario": "naive_import_lqr_0.4",
+  "video": "videos/engines/naive_track04.mp4",
+  "poster": "videos/engines/naive_track04.jpg"
+ }
+]

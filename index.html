@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ballbot: a robot on a ball, controlled by physics plus a little learning</title>
+<meta name="description" content="Simulation study of a ballbot: a derived planar model and LQR, a small learned residual, passive ball arrestors and a navigation layer. Headline numbers, what we built, and the reading order.">
+<meta name="color-scheme" content="dark light">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark'}catch(e){}</script>
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/home.css?v=6">
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module" src="assets/js/layout.js"></script>
+<script type="module" src="assets/js/hero3d.js?v=3"></script>
+</head>
+<body>
+<main>
+
+<!-- 1. One sentence: what and why. 2. The hero visual. -->
+<section class="hero" aria-labelledby="h1">
+  <div id="hero-canvas"></div>
+  <div id="hero-fallback" class="hero-fallback"><img src="assets/img/hero-poster.svg" alt="Illustration of a ballbot: a cylindrical body balanced on a basketball-textured ball" width="800" height="600"></div>
+  <div id="hero-toast" role="status" aria-live="polite"></div>
+  <div class="hero-copy">
+    <div class="eyebrow">Start here &middot; simulation study</div>
+    <h1 id="h1">A robot on a ball, steered by physics <em>plus a little learning</em></h1>
+    <p class="lede"><b>What:</b> a <a class="term" href="glossary.html#ballbot" data-def="A robot that balances and drives on a single ball, like an inverted pendulum on a sphere. It cannot stand still without active control.">ballbot</a> controller that is a textbook <a class="term" href="glossary.html#lqr" data-def="Linear quadratic regulator: the optimal linear feedback for a linearised model with quadratic costs on state and effort.">LQR</a> with a small learned correction on top. <b>Why:</b> the physics alone is precise but fragile, learning alone is robust but inexact, and the combination keeps the best of both when the robot is pushed, driven over bumps or rebuilt in a different size.</p>
+    <div class="hero-cta">
+      <a class="btn primary" href="#tldr">Read the summary</a>
+      <a class="btn" href="generalist.html">Results</a>
+      <a class="btn" href="videos.html">Videos</a>
+    </div>
+  </div>
+  <div class="hero-ui">
+    <div id="hero-hud" aria-hidden="true">a =  0.00 m/s&sup2;   lean =  0.0&deg;</div>
+    <p class="hero-note">Drag to orbit. Click the robot to poke it. <strong>Illustration, not a simulation:</strong> the lean follows the derived law &theta; = &kappa;a and the wobble is a scripted damped oscillator.</p>
+    <button id="hero-play" class="btn" hidden type="button">Play animation</button>
+  </div>
+</section>
+
+<!-- TL;DR -->
+<section class="block wrap home-tldr" aria-labelledby="tldr">
+  <aside class="tldr" id="tldr">
+    <span class="readtime"></span>
+    <ul>
+      <li><b>The robot</b> is a ballbot: a body balanced on one ball, driven by three omniwheels. To move right it must first roll the ball left. Everything on this site is MuJoCo simulation; nothing was built.</li>
+      <li><b>The controller</b> is an LQR designed on a derived planar model, plus a PPO residual whose authority switches between 0.15 while cruising and 0.3 when manoeuvring, plus three passive ball arrestors on the robot, plus a planner that steers around obstacles it sees with a small time-of-flight sensor, with a motion layer between planner and controller that smooths the commands, brakes into the goal and holds it.</li>
+      <li><b>It works</b> in simulation: it tracks commanded speed closely, reaches a 1.1 m goal across ten terrain kinds about four times in five when undisturbed, and reaches goals behind unclimbable blocks nearly nine times in ten.</li>
+      <li><b>It fails</b> honestly: sustained pulls above about 3 N are what cut goal success under disturbance (short pushes are absorbed), steps taller than a traction limit set by ball size and friction are not climbed at any speed, and three designs (a light ball, a heavy body, weak motors) stay hard even on flat ground.</li>
+    </ul>
+    <span class="fine">Numbers below are cited to entries S79 to S116 of <code>docs/research/tracking_study_log.md</code>, the corrected-engine era. Each card shows its entry.</span>
+  </aside>
+</section>
+
+<!-- 3. Three key numbers -->
+<section class="block wrap" aria-labelledby="numbers">
+  <div class="eyebrow">Three headline numbers</div>
+  <h2 id="numbers">What the recommended controller does</h2>
+  <p class="lede">Each number is a range over training seeds, measured on 11 robot designs with randomised mass, friction, torque, damping, latency and noise. Hover a dotted term for its definition.</p>
+  <div class="keynums home" role="list">
+    <div class="keynum model reveal" role="listitem" data-src="S113; S99 close-out">
+      <b>0.96 <small>to 1.06</small></b>
+      <span class="what">of the commanded speed, achieved on flat ground</span>
+      <p>Speed <a class="term" href="glossary.html#tracking" data-def="Achieved speed divided by commanded speed, measured once the robot has settled. 1.00 is exact.">tracking</a> at 0.3 to 0.9 m/s over the 3 recommended checkpoints (g34; values in data/study.json, key motion), with zero falls; above 1.00 means a slight overshoot at 0.6 and 0.9 m/s, when the higher authority is switched on by the start-up acceleration (S112). The previous checkpoints (g26) reached 0.85 to 1.00. This is the LQR's precision, kept because the learned part has limited authority.</p>
+    </div>
+    <div class="keynum hybrid reveal" role="listitem" data-src="S113; S99, S84">
+      <b>0.77 <small>to 0.79</small></b>
+      <span class="what">goal success undisturbed; 0.51 to 0.52 under pushes and pulls</span>
+      <p><a class="term" href="glossary.html#goal-success" data-def="Fraction of worlds in which the robot reaches a 1.1 m goal and stays upright, over 11 designs and ten terrain kinds.">Goal success</a> over the 3 recommended checkpoints (g34: motion layer, adaptive authority, goal dead band). The previous checkpoints (g26) reached 0.73 to 0.74 and 0.45 to 0.46. Without the ball arrestors the earlier recipe reached 0.58 to 0.60 and 0.29 to 0.30; pure learning 0.44 to 0.51 and 0.26 to 0.27 (both on the old contact model, a valid 8 s comparison).</p>
+    </div>
+    <div class="keynum warn reveal" role="listitem" data-src="S114; S104, S89, S90">
+      <b>0.88</b>
+      <span class="what">of goals behind unclimbable blocks reached with a small ToF sensor</span>
+      <p>A forward <a class="term" href="glossary.html#tof" data-def="Time-of-flight sensor: a low-resolution depth sensor (here 18 by 14 zones) that measures distance to what is in front of it.">ToF</a> sensor on the head, a planner with smooth motion and the <a class="term" href="glossary.html#motion-layer" data-def="A layer between planner and balance controller that limits acceleration, braking and turn rate, brakes into the goal and holds position on arrival.">motion layer</a>, on a recommended checkpoint (one seed). A quarter less heading wobble than without the layer (1.31 against 1.74 rad/s for the previous checkpoint). A perfect map reaches 0.94, the previous checkpoint 0.84, a blind controller 0.09. With pushes and pulls 0.56.</p>
+    </div>
+  </div>
+  <p class="src-note">Protocol: MuJoCo-Warp float32 GPU engine, 100 Hz, domain randomisation and observation noise on, goal task with pushes of 5 to 20 N for 50 ms and pulls of 3 to 12 N for 0.5 to 2 s; seeds as stated on each card. Full tables on <a href="generalist.html#motion">Results, chapter 10b</a>; definitions on <a href="method.html">Setup and method</a>.</p>
+</section>
+
+<!-- 4. What we built -->
+<section class="block wrap" aria-labelledby="built">
+  <div class="eyebrow">What we built</div>
+  <h2 id="built">Four pieces, one recipe</h2>
+  <p class="thesis">Derive the physics <span class="m">first</span>, let a network <span class="l">correct what the model gets wrong</span>, keep the body <span class="h">on the ball mechanically</span>, and plan around what cannot be climbed.</p>
+  <div class="built reveal">
+    <div class="piece m"><span class="k">1 &middot; model-based</span><h3>LQR on a derived model</h3>
+      <p>A planar Euler-Lagrange model of ball, body and wheels, linearised and given per-design gains. A velocity reference governor limits acceleration to 0.5 m/s<sup>2</sup>, an integral term removes steady error, and a yaw loop turns the robot.</p>
+      <code class="eq">Q = diag(1e-6, 50, 1, 1), R = 1</code></div>
+    <div class="piece l"><span class="k">2 &middot; learned</span><h3>A bounded PPO residual</h3>
+      <p>A policy trained with PPO adds a correction to the LQR action, scaled by an <a class="term" href="glossary.html#authority" data-def="The scale on the learned correction. At 0.25 the policy may move the applied action by at most a quarter of the full range.">authority</a> that switches between 0.15 while cruising and 0.3 when manoeuvring (S112). It learns what the planar model leaves out: contact, saturation, the differences between designs.</p>
+      <code class="eq">a = clip(a_LQR + &alpha;(t) a_policy), &alpha; in [0.15, 0.3]</code></div>
+    <div class="piece mech"><span class="k">3 &middot; mechanism</span><h3>Three ball arrestors</h3>
+      <p>In 95 percent of falls before this change the body derailed off the ball at about 15 deg of tilt; motor saturation was under 1 percent. Three passive 8 mm rollers at a 100 deg polar angle, touching the ball only at the loaded seat, keep it on.</p>
+      <code class="eq">Rezero-style, passive, S79</code></div>
+    <div class="piece nav"><span class="k">4 &middot; navigation</span><h3>A planner over a sensed map</h3>
+      <p>Steps above the traction limit cannot be climbed, so a planner builds a map from a forward ToF sensor and steers around them with a smooth follower, aiming the sensor where it is going next. A motion layer between planner and controller smooths the commands, brakes into the goal and holds it.</p>
+      <code class="eq">heading-rate RMS 1.31 rad/s with the layer, S114</code></div>
+  </div>
+  <div class="recipe">
+    <code class="eq"><span class="m">LQR</span> + (0.15 to 0.3) &times; <span class="l">residual</span> + <span class="h">arrestors</span> + motion layer + planner</code>
+    <p>Trained on 11 robot designs with <a class="term" href="glossary.html#domain-randomisation" data-def="Randomising simulator parameters (mass, friction, torque, damping, latency, noise) during training so the policy does not overfit one robot.">domain randomisation</a> at scale 1.75, 200M steps, with the motion layer in the loop (checkpoints g34, S113). How the pieces talk to each other is on the <a href="architecture.html">Controller</a> page.</p>
+  </div>
+</section>
+
+<!-- 5. Reading order -->
+<section class="block wrap" aria-labelledby="order">
+  <div class="eyebrow">Reading order</div>
+  <h2 id="order">Seven pages, in the order they make sense</h2>
+  <p class="lede">Each page opens with its own TL;DR. Read in order, or jump to what you came for; the nav keeps the numbering.</p>
+  <div class="order">
+    <a class="card" href="math.html"><span class="k"><b>02</b> physics</span><h3>The robot and its physics</h3><p>The derived planar model, Froude scaling, the LQR and the lean law, with live plots.</p></a>
+    <a class="card" href="architecture.html"><span class="k"><b>03</b> controller</span><h3>The controller</h3><p>LQR, learned residual, arrestors and navigation layer: how the pieces talk, and the training setup.</p></a>
+    <a class="card" href="generalist.html"><span class="k"><b>04</b> results</span><h3>Results, chapter by chapter</h3><p>The journey from the baseline to the recommended controller, with the honest nulls.</p></a>
+    <a class="card" href="bounds.html"><span class="k"><b>05</b> rules</span><h3>Rules and bounds</h3><p>The constraints we established as rules: each with its equation, its evidence and what it means for a real robot.</p></a>
+    <a class="card" href="lessons.html"><span class="k"><b>06</b> lessons</span><h3>Lessons</h3><p>Development lessons worth carrying forward, from engine invariants to where a sensor should look.</p></a>
+    <a class="card" href="videos.html"><span class="k"><b>07</b> media</span><h3>Videos</h3><p>Rollouts of the controllers with the command and the achieved velocity shown.</p></a>
+    <a class="card" href="glossary.html"><span class="k"><b>&#9733;</b> reference</span><h3>Glossary</h3><p>Every defined term in one place. Dotted terms across the site link here.</p></a>
+  </div>
+  <div class="order-more">More: <a href="design-space.html">Design space explorer</a><a href="live.html">Live policy</a><a href="literature.html">Literature</a><a href="reproduce.html">Reproduce</a><a href="story.html">The journey</a><a href="method.html">Setup and method</a><a href="results.html">Data tables</a></div>
+</section>
+
+<!-- 6. Honesty note -->
+<section class="block wrap" aria-labelledby="honest">
+  <div class="honest reveal">
+    <div class="eyebrow" style="color:var(--warn)">What is honest here</div>
+    <h2 id="honest">Simulation only, with the failures left in</h2>
+    <div class="cols">
+      <div class="c-sim"><h4>Scope</h4><ul>
+        <li>Everything is MuJoCo simulation (MuJoCo-Warp, float32, GPU). No hardware was built or tested, and nothing here is a hardware claim.</li>
+        <li>Results before the engine correction (log entries S69 and S70) are not used; an earlier randomisation step had corrupted the physics.</li>
+        <li>Most rows are 1 to 3 training seeds. A fall rate over 64 worlds has a standard error up to 0.06.</li></ul></div>
+      <div class="c-fail"><h4>What failed</h4><ul>
+        <li>Pushes and pulls cut goal success by about 0.27, 0.77 to 0.79 down to 0.51 to 0.52. Short pushes are absorbed fully and sustained pulls up to about 3 N too; at 3 to 12 N, 36 percent fall even on flat ground. Training on 1.5 and 2 times stronger disturbances did not help <sup class="ref"><a href="#src-S116" data-src="S113, S116">S113, S116</a></sup>.</li>
+        <li>Steps and bumps above the traction limit h<sub>max</sub> = r(1 &minus; cos(arctan &mu;)), about 0.29 r, fail 90 to 98 percent at any speed. A perfect height map or a depth sensor does not reduce those falls <sup class="ref"><a href="#src-S87" data-src="S87, S88">S87, S88</a></sup>.</li>
+        <li>A tenth-torque design is motor limited for every controller, at most 0.30 <sup class="ref"><a href="#src-S85R" data-src="S85-R">S85-R</a></sup>; the light-ball design kb025 falls on flat ground by sliding off its ball within the first second, the one flat-ground weakness that survived the S98 correction <sup class="ref"><a href="#src-S93" data-src="S92, S98">S92, S98</a></sup>.</li>
+        <li>Training the policy with the planner in the loop changed nothing <sup class="ref"><a href="#src-S91" data-src="S91">S91</a></sup>.</li>
+        <li>Three designs stay hard on flat ground: the light ball kb025 (0.25 times the ball mass), the heavy body bal4 (4 times the ballast) and the weak motors of tau6 (6 N m against 30). A higher tracking reward, extra training share for these designs, twice the training steps and harder training pushes all failed to improve on the recommended recipe <sup class="ref"><a href="#src-S114" data-src="S113, S114, S115, S116">S113 to S116</a></sup>.</li></ul></div>
+      <div class="c-open"><h4>What held up</h4><ul>
+        <li>The LQR base carries the policy to an unseen 1.5x robot: 0.61 to 0.71 goal success, where pure learning collapses to 0.09 to 0.15 <sup class="ref"><a href="#src-S85R" data-src="S85-R">S85-R</a></sup>.</li>
+        <li>The authority dial is a real trade-off: 0.15 gives tracking 1.01 and robust success 0.35; 0.5 gives 0.85 and 0.47; pure learning 0.74 and 0.50 <sup class="ref"><a href="#src-S83" data-src="S82, S83">S82, S83</a></sup>.</li>
+        <li>Obstacle falls depend mostly on obstacle size; on the corrected contact model they also rise with approach speed (0.28 at 0.1 m/s to 0.51 at 0.9 m/s); whether a speed layer that slows before a feature reduces them is under re-test, because the first measurement used episodes too short for a slowed robot to reach its feature <sup class="ref"><a href="#src-S87" data-src="S87, S100, S103">S87, S100, S103</a></sup>.</li></ul></div>
+    </div>
+    <div class="sources src-note" id="sources">Sources, all in <code>docs/research/tracking_study_log.md</code>:
+      <ol>
+        <li id="src-S79">S79: why the robot falls, and the Rezero-style ball arrestors.</li>
+        <li id="src-S83">S82, S83: the authority curve with the arrestors, and the recommended controller.</li>
+        <li id="src-S84">S84: three seeds of the recommended controller; depth sensor on top of it.</li>
+        <li id="src-S99">S98, S99, S102: the contact-model correction (wheel-ball free-rolling friction 0.001 to 0.01) and the three recommended g26 checkpoints retrained on it; headline tracking and goal numbers are their ranges.</li>
+        <li id="src-S85R">S85-R: unseen robot designs, corrected design vector.</li>
+        <li id="src-S87">S87, S88, S100, S103: obstacle falls against size and speed; the traction limit and ball size; the speed correction on the corrected contact model; the speed layer (worth 0.03 to 0.05 of falls once exposure is controlled).</li>
+        <li id="src-S104">S104 (with S89, S90): navigation around unclimbable blocks with the ToF head sensor on the recommended checkpoint.</li>
+        <li id="src-S89">S89, S90: navigation around unclimbable blocks; smooth motion with a real sensor.</li>
+        <li id="src-S91">S91: training with the planner in the loop, a null result.</li>
+        <li id="src-S110">S105, S106, S110 to S113: why the paths wobbled; the motion layer, bolted on (worse) and trained with (better); adaptive authority and the goal dead band; the recommended g34 checkpoints and their flat tracking and battery ranges.</li>
+        <li id="src-S114">S114, S115, S116 and their addenda: navigation with the motion layer; the contact escape on the new controller; the hard designs on flat ground; the variants that did not help; the sustained-pull sweep.</li>
+        <li id="src-S116">S116 addendum: short pushes are absorbed; sustained pulls are absorbed up to about 3 N; at 3 to 12 N 36 percent fall on flat ground.</li>
+        <li id="src-S93">S92, S98: flat-ground driving rate after the map-edge correction; the light-ball design's unseating, the one flat-ground weakness left after the S98 contact-model correction (the 20 s standing numbers of S93 to S97 are void).</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+</main>
+</body>
+</html>

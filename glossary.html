@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Glossary | Ballbot</title>
+<meta name="description" content="Plain-language definitions of every technical term used on the ballbot site, with symbols and links to where each is used: ballbot, inverted pendulum, LQR, planar model, Froude scaling, residual policy and authority, PPO, domain randomisation, arrestors, derailing, tasks, terrain, pushes, seeds, traction limit, planners, sensors, held-out tests and evaluation artefacts.">
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/bounds.css?v=2">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script type="module" src="assets/js/layout.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.renderMathInElement) renderMathInElement(document.body, { delimiters: [{ left: '\\(', right: '\\)', display: false }], throwOnError: false });
+});
+</script>
+</head>
+<body>
+<main>
+
+<section class="wrap page-head">
+  <div class="eyebrow">Glossary</div>
+  <h1>Every term, in two sentences</h1>
+  <p class="lede">Each entry says what the thing is in plain language, gives its symbol where it has one, and links to the page where it is used. Link to any entry with <code>glossary.html#id</code>; the id is shown in the entry's "where" line.</p>
+  <div class="tagrow"><span class="chip sim">Simulation only, no hardware</span><span class="chip model">Blue symbol: model quantity</span></div>
+  <aside class="tldr"><span class="readtime"></span><ul>
+    <li><b>About 50 entries</b>, alphabetical, each two sentences long with a symbol where one exists and links to the pages that use the term.</li>
+    <li><b>Stable anchors.</b> Every entry has an id, and common synonyms (retainer, residual authority, Froude scaling, goal success, tracking, wavefront planner, domain randomisation, design vector, smooth follower) resolve to the same entry.</li>
+  </ul><span class="fine">Numbers inside definitions are cited to the study log by S-number.</span></aside>
+  <nav class="alpha" aria-label="Jump to letter">
+    <a href="#A">A</a><a href="#B">B</a><a href="#C">C</a><a href="#D">D</a><a href="#E">E</a><a href="#F">F</a><a href="#G">G</a><a href="#H">H</a><a href="#I">I</a><a href="#L">L</a><a href="#M">M</a><a href="#N">N</a><a href="#O">O</a><a href="#P">P</a><a href="#Q">Q</a><a href="#R">R</a><a href="#S">S</a><a href="#T">T</a><a href="#U">U</a><a href="#V">V</a><a href="#W">W</a>
+  </nav>
+</section>
+
+<section class="wrap" style="padding-bottom:80px">
+<dl class="gloss">
+
+<div class="letter" id="A">A</div>
+
+<div class="entry" id="achieved-speed"><dt>Achieved speed ratio <span class="cat">metric</span></dt><dd>
+<p>The robot's steady forward speed divided by the speed it was asked for, measured after the first 3 s of a flat-ground run. A value of 1.00 means it drives exactly as fast as commanded; the recommended controller reaches 0.99 to 1.01 up to 0.9 m/s (S83).</p>
+<p class="where">Used in: <a href="generalist.html#tracking">generalist study, tracking</a> <a href="bounds.html#rule-authority">rules, authority</a> <code>#achieved-speed</code></p></dd></div>
+
+<div class="entry" id="adaptive-authority"><dt>Adaptive authority <span class="cat">controller</span></dt><dd>
+<p>A residual authority that changes during a run: 0.15 while cruising, rising at once to 0.3 when the command changes faster than 0.3 m/s per second, nears zero, or the body tilts beyond 4 degrees, then decaying over about 0.5 s. It is part of the recommended recipe (S112).</p>
+<p class="where">Used in: <a href="generalist.html#motion">generalist study, motion layer</a> <code>#adaptive-authority</code></p></dd></div>
+
+<div class="entry" id="anisotropic-friction"><span id="elliptic-cone"></span><dt>Anisotropic friction, elliptic cone <span class="sym">"0.001 1.0"</span> <span class="cat">simulation</span></dt><dd>
+<p>A contact whose friction differs by direction: the wheel-ball pairs here are nearly free to roll along the roller axis and grip across it, and the elliptic cone is the solver's shape for that two-valued friction. A 1000 to 1 ratio turned out to be ill-conditioned in the float32 solver at a near-stationary contact, so the free-rolling value is now 0.01, which leaves the real fall count unchanged (S98).</p>
+<p class="where">Used in: <a href="lessons.html#lesson-blowup">lesson 8</a> <a href="bounds.html#rule-lqr">rules, LQR envelope</a> <code>#anisotropic-friction</code></p></dd></div>
+
+<div class="entry" id="arrestor"><span id="retainer"></span><dt>Arrestor (ball arrestor, ball retainer) <span class="cat">mechanism</span></dt><dd>
+<p>A small passive roller fixed to the body that just touches the ball when the robot stands still, and pushes back only when the body starts to lift or slide off the ball. This study uses three, 8 mm radius, placed 100 degrees from the top of the ball at the loaded seat, after the retainers of the ETH Zurich Rezero ballbot (S79).</p>
+<p class="where">Used in: <a href="bounds.html#rule-derail">rules, derailing</a> <a href="generalist.html#retainer">generalist study, retainer</a> <a href="lessons.html#lesson-settle">lesson 6</a> <code>#arrestor</code></p></dd></div>
+
+<div class="entry" id="asym-critic"><span id="asymmetric-critic"></span><dt>Asymmetric critic <span class="cat">learning</span></dt><dd>
+<p>In <a href="#ppo">PPO</a> the critic is a second network that estimates how good a state is, used only during training. An asymmetric critic is given privileged information the policy cannot see (true velocities, terrain), which makes its estimate better without letting the policy depend on sensors it will not have.</p>
+<p class="where">Used in: <a href="method.html#learning">setup, learning</a> (<code>--asym</code> in <code>experiments/warp_ppo/train_dev.py</code>) <code>#asym-critic</code></p></dd></div>
+
+<div class="entry" id="authority"><span id="residual-authority"></span><dt>Residual authority <span class="sym">\(\alpha\)</span> <span class="cat">controller</span></dt><dd>
+<p>The factor that scales the learned residual before it is added to the LQR command: applied action = clip(LQR + \(\alpha\) times policy, -1, 1). Low authority keeps the LQR's exact tracking; higher authority lets the policy override it and buys push robustness at the cost of speed accuracy, measured from 0.15 to 0.5 on the corrected engine (S82, S83).</p>
+<p class="where">Used in: <a href="bounds.html#rule-authority">rules, the authority dial</a> <a href="architecture.html#stack">architecture</a> <a href="generalist.html#residual">generalist study, residual</a> <code>#authority</code></p></dd></div>
+
+<div class="letter" id="B">B</div>
+
+<div class="entry" id="ballbot"><dt>Ballbot <span class="cat">robot</span></dt><dd>
+<p>A robot that balances on top of a single ball and drives by rolling that ball with wheels pressed against it. Because it stands on one point it can move in any direction and must balance continuously, like a person on a unicycle that can also roll sideways.</p>
+<p class="where">Used in: <a href="index.html">overview</a> <a href="math.html">math lab</a> <code>#ballbot</code></p></dd></div>
+
+<div class="entry" id="battery"><dt>Evaluation battery <span class="cat">protocol</span></dt><dd>
+<p>The fixed set of evaluations run on every trained policy: the flat benchmark at three speeds, the goal task and the velocity task on tiles at domain-randomisation scales 1, 1.75 and 2.5, each with and without pushes and pulls. It is written as one <code>battery.json</code> per run with every setting recorded (S65).</p>
+<p class="where">Used in: <a href="method.html#eval">setup, evaluation</a> <a href="lessons.html#lesson-filenames">lesson 2</a> <code>#battery</code></p></dd></div>
+
+<div class="entry" id="blocks-map"><dt>Blocks map <span class="cat">terrain</span></dt><dd>
+<p>A navigation course where every tile is flat ground with four 8 cm blocks (three times the traction limit of the 9 cm ball) placed so that the straight line to the goal is blocked and the robot must go around a block end through gaps of at least 0.7 m (S89). It is the test bed for the planner, the sensors and pushes near obstacles.</p>
+<p class="where">Used in: <a href="generalist.html#nav">generalist study, navigation</a> <a href="bounds.html#rule-margin">rules 7, 8, 10</a> <code>#blocks-map</code></p></dd></div>
+
+<div class="letter" id="C">C</div>
+
+<div class="entry" id="carrot"><span id="smooth-follower"></span><dt>Carrot following (smooth follower) <span class="cat">navigation</span></dt><dd>
+<p>A way to turn a planner's distance field into smooth commands: the robot steers toward a point a fixed distance down the field (the carrot, here 0.3 m), with its heading allowed to turn at most 2 rad/s and its speed to change at most 0.6 m/s\(^2\). It replaced a planner that picked the best neighbour every step and jumped its heading at 14 rad/s RMS (S90).</p>
+<p class="where">Used in: <a href="lessons.html#lesson-aim">lesson 7</a> <a href="bounds.html#rule-sensor">rules, sensor aim</a> (<code>experiments/warp_ppo/nav.py</code>) <code>#carrot</code></p></dd></div>
+
+<div class="entry" id="corrected-engine"><dt>Corrected engine <span class="cat">simulation</span></dt><dd>
+<p>The GPU simulator after the stale subtree-mass fix of S69 and S70, in which randomised masses no longer corrupt the physics. Every randomised result from S71 onward is on the corrected engine; randomised results before S69 are void.</p>
+<p class="where">Used in: <a href="lessons.html#lesson-invariants">lesson 1</a> <a href="generalist.html#summary">generalist study</a> <code>#corrected-engine</code></p></dd></div>
+
+<div class="letter" id="D">D</div>
+
+<div class="entry" id="dead-band"><dt>Goal dead band <span class="cat">controller</span></dt><dd>
+<p>A rule added to adaptive authority: near the goal the higher authority stays on only while the ball still moves faster than 0.05 m/s, so the learned correction has no room to fidget once the robot has stopped. Over three seeds it removed a goal-hunting behaviour that one earlier seed showed, at no measured cost (S113).</p>
+<p class="where">Used in: <a href="generalist.html#motion">generalist study, motion layer</a> <code>#dead-band</code></p></dd></div>
+
+<div class="entry" id="depth-sensor"><dt>Depth sensor (simulated) <span class="cat">perception</span></dt><dd>
+<p>A simulated camera that returns a grid of distances to the nearest surface, here 18 x 14 or 32 x 24 pixels with range noise and dropout. Given to the balance policy it did not reduce obstacle falls (S78, S84); given to the planner on a stabilised head it enables routing around blocks (S89).</p>
+<p class="where">Used in: <a href="generalist.html#perception">generalist study, perception</a> <a href="architecture.html#percep">architecture, perception</a> <code>#depth-sensor</code></p></dd></div>
+
+<div class="entry" id="derailing"><dt>Derailing <span class="cat">failure</span></dt><dd>
+<p>The body sliding off the ball, detected when the body axis and the ball-to-body direction disagree by more than 5 degrees (normally 0.1 to 0.3 degrees). Without arrestors it ends 0.95 of falls, typically at about 15 degrees of body tilt and with the motors far from their limit (S79).</p>
+<p class="where">Used in: <a href="bounds.html#rule-derail">rules, derailing</a> <a href="generalist.html#retainer">generalist study, retainer</a> <code>#derailing</code></p></dd></div>
+
+<div class="entry" id="design-conditioning"><span id="design-vector"></span><dt>Design conditioning (design vector) <span class="cat">learning</span></dt><dd>
+<p>Giving the policy a 6-number description of the robot it is controlling, so one network can serve 11 designs: the logarithms of the Froude speed scale \(f=\sqrt{r/0.09}\), the total-mass ratio, the wheel-torque-limit ratio, the ball-mass ratio, the wheel-rotor-inertia (armature) ratio and the body-mass ratio, each relative to the nominal design (<code>dvec_tab</code> in <code>experiments/warp_ppo/train_dev.py</code>). The reference design is part of the model: computing the vector relative to the wrong design invalidated a held-out test (S87, S85-R).</p>
+<p class="where">Used in: <a href="method.html#learning">setup, learning</a> <a href="lessons.html#lesson-reference">lesson 5</a> <a href="generalist.html#designs">generalist study, designs</a> <code>#design-conditioning</code></p></dd></div>
+
+<div class="entry" id="dr"><span id="domain-randomisation"></span><dt>Domain randomisation (DR) <span class="cat">learning</span></dt><dd>
+<p>Training and testing over many slightly different robots and worlds so the policy does not overfit one set of parameters. Here each world draws its own mass (plus or minus 15 percent), friction (20 percent), torque (15 percent), wheel damping, control latency (20 percent probability) and sensor noise (standard deviation 0.01) (S64).</p>
+<p class="where">Used in: <a href="method.html#dr">setup, randomisation</a> <a href="lessons.html#lesson-invariants">lesson 1</a> <code>#dr</code></p></dd></div>
+
+<div class="entry" id="dr-scale"><dt>DR scale <span class="cat">protocol</span></dt><dd>
+<p>A single multiplier applied to every randomisation range at once: scale 1 is the training range, 1.75 and 2.5 are wider than the policy ever saw. Goal success of the recommended controller degrades gracefully with it, 0.71 to 0.76 at scale 1 and 0.60 to 0.66 at 2.5 (S83).</p>
+<p class="where">Used in: <a href="generalist.html#robust">generalist study, robustness</a> <a href="method.html#dr">setup</a> <code>#dr-scale</code></p></dd></div>
+
+<div class="letter" id="E">E</div>
+
+<div class="entry" id="exposure"><dt>Exposure artefact <span class="cat">evaluation fault</span></dt><dd>
+<p>A false rate caused by counting worlds that never met the thing being measured. Eight-second episodes made slow robots look safe on obstacles because at 0.1 m/s many never reached the feature; with 20 s episodes most of that advantage vanished (S86 withdrawn, S87). The exposure correction stands; the residual claim that speed does not matter at all was later superseded on the corrected contact model (S100).</p>
+<p class="where">Used in: <a href="lessons.html#lesson-exposure">lesson 3</a> <a href="bounds.html#rule-size">rules, obstacle size</a> <code>#exposure</code></p></dd></div>
+
+<div class="letter" id="F">F</div>
+
+<div class="entry" id="fall-rate"><dt>Fall rate <span class="cat">metric</span></dt><dd>
+<p>The fraction of worlds in which the episode ended by the termination check: the ball-to-body offset angle beyond 30 degrees, or the body tilt beyond 70 degrees (S79), and until S98 also any <a href="#nan-termination">non-finite state</a>. The first fall of a world freezes it, so a fall rate is per world, not per step.</p>
+<p class="where">Used in: <a href="method.html#eval">setup, evaluation</a> <a href="lessons.html#lesson-maps">lesson 4</a> <code>#fall-rate</code></p></dd></div>
+
+<div class="entry" id="flat-benchmark"><dt>Flat benchmark <span class="cat">protocol</span></dt><dd>
+<p>The clean tracking test: the nominal robot on perfectly flat ground, no randomisation, no disturbances, 64 worlds, asked to hold 0.3, 0.6 and 0.9 m/s. It reports steady-state error, achieved speed ratio and falls; since S92 it uses interior tiles only so the map edge cannot be counted as a fall.</p>
+<p class="where">Used in: <a href="generalist.html#tracking">generalist study, tracking</a> <a href="lessons.html#lesson-maps">lesson 4</a> <code>#flat-benchmark</code></p></dd></div>
+
+<div class="entry" id="froude"><span id="froude-scaling"></span><dt>Froude scaling <span class="sym">\(v\propto\sqrt{s}\)</span> <span class="cat">physics</span></dt><dd>
+<p>The rule for comparing robots of different size under the same gravity: a robot scaled by \(s\) has natural speeds \(\sqrt{s}\) times higher, masses \(s^3\) times larger and falls \(\sqrt{s}\) times more slowly. All commands, pushes and test speeds in the study are Froude scaled per design so results are comparable across scales.</p>
+<p class="where">Used in: <a href="bounds.html#rule-froude">rules, Froude scaling</a> <a href="design-space.html">design space</a> <a href="math.html">math lab</a> <code>#froude</code></p></dd></div>
+
+<div class="letter" id="G">G</div>
+
+<div class="entry" id="goal-task"><span id="goal-success"></span><dt>Goal task (goal success) <span class="cat">task</span></dt><dd>
+<p>The robot starts at the centre of a terrain tile and must reach a point about 1.1 m away, crossing whatever feature lies between, within the episode. Success is the fraction of worlds that arrive; it is reported undisturbed and with pushes and pulls (S71 onward).</p>
+<p class="where">Used in: <a href="generalist.html#goal">generalist study, goal task</a> <a href="method.html#eval">setup, evaluation</a> <code>#goal-task</code></p></dd></div>
+
+<div class="letter" id="H">H</div>
+
+<div class="entry" id="height-scan"><dt>Height scan (privileged) <span class="cat">perception</span></dt><dd>
+<p>A grid of true terrain heights ahead of the robot (7 x 5 points) read straight from the simulator and given to the policy, which no real sensor could provide so exactly. It is the upper bound for any terrain sensor; as a direct policy input it did not reduce obstacle falls (S88). The same map driving a <a href="#speed-governor">speed governor</a> is worth only 0.03 to 0.05 of obstacle falls (S103); its value is in routing around blocks (S89).</p>
+<p class="where">Used in: <a href="generalist.html#perception">generalist study, perception</a> <a href="bounds.html#rule-size">rules, obstacle size</a> <code>#height-scan</code></p></dd></div>
+
+<div class="entry" id="held-out-design"><dt>Held-out design <span class="cat">protocol</span></dt><dd>
+<p>A robot design the policy never trained on, used to test whether the controller transfers to a robot whose parameters differ from the training set. The two used here are a 1.5x scaled robot and a design with a tenth of the wheel torque (S85-R).</p>
+<p class="where">Used in: <a href="generalist.html#designs">generalist study, designs</a> <a href="bounds.html#rule-torque">rules, motor headroom</a> <a href="lessons.html#lesson-reference">lesson 5</a> <code>#held-out-design</code></p></dd></div>
+
+<div class="entry" id="held-out-terrain"><dt>Held-out terrain <span class="cat">protocol</span></dt><dd>
+<p>Terrain tiles drawn with a different random seed (tile seed 1) from the ones the policy trained on (tile seed 0), so every feature's position and size is new. The recommended controller loses about 0.05 to 0.07 goal success on it (S76, S84).</p>
+<p class="where">Used in: <a href="generalist.html#tiles">generalist study, tiles</a> <code>#held-out-terrain</code></p></dd></div>
+
+<div class="entry" id="hybrid"><dt>Hybrid controller (LQR + residual) <span class="cat">controller</span></dt><dd>
+<p>The study's recommended structure: a model-based LQR provides the stabilising and tracking action and a learned PPO residual, scaled by its authority, adds what the model misses. Shown in teal on the site; the LQR part is blue and the learned part violet.</p>
+<p class="where">Used in: <a href="architecture.html#stack">architecture</a> <a href="index.html#layers">overview</a> <code>#hybrid</code></p></dd></div>
+
+<div class="letter" id="I">I</div>
+
+<div class="entry" id="integral"><dt>Velocity integral term <span class="sym">\(k_i\)</span> <span class="cat">controller</span></dt><dd>
+<p>A part of the LQR command proportional to the accumulated speed error, which in the model slowly removes any steady drift that the proportional gains leave behind. The simulated 20 s standing comparison that seemed to show it is essential (S93) is void under S98, so its contribution to a long hold is a modelling argument until it is re-measured.</p>
+<p class="where">Used in: <a href="bounds.html#rule-lqr">rules, LQR envelope</a> <a href="method.html#lqr">setup, LQR</a> <code>#integral</code></p></dd></div>
+
+<div class="entry" id="inverted-pendulum"><dt>Inverted pendulum <span class="cat">physics</span></dt><dd>
+<p>A mass balanced above its pivot, like a broom on a fingertip: left alone, any lean grows exponentially. A ballbot is an inverted pendulum whose pivot (the ball) can be driven, so it can only stay up by moving the ball under its falling body.</p>
+<p class="where">Used in: <a href="math.html#lab">math lab</a> <a href="bounds.html#rule-torque">rules, motor headroom</a> <code>#inverted-pendulum</code></p></dd></div>
+
+<div class="letter" id="L">L</div>
+
+<div class="entry" id="latency"><dt>Control latency <span class="cat">simulation</span></dt><dd>
+<p>A delay between sensing and acting, randomised per world with a 20 percent probability at DR scale 1 (S64). It matters more on a small robot, whose fall time is shorter in absolute terms.</p>
+<p class="where">Used in: <a href="method.html#dr">setup, randomisation</a> <a href="bounds.html#rule-froude">rules, Froude scaling</a> <code>#latency</code></p></dd></div>
+
+<div class="entry" id="lean-law"><dt>Lean law <span class="sym">\(\kappa\)</span> <span class="cat">physics</span></dt><dd>
+<p>How many degrees the body must lean to hold a given acceleration, derived from the planar model. It is nearly the same for every design in the sweep (7.3 to 14.8 degrees per m/s\(^2\)), and is why a scaled robot looks the same in slow motion.</p>
+<p class="where">Used in: <a href="math.html">math lab</a> <a href="design-space.html#rules">design space, rules</a> <code>#lean-law</code></p></dd></div>
+
+<div class="entry" id="loaded-seat"><dt>Loaded seat <span class="cat">mechanism</span></dt><dd>
+<p>The pose the body settles into on the ball under its own weight, about 1 cm higher than the model's reset pose, with the wheels pressed 2.2 mm into the ball (S79). Anything that touches the ball when the robot stands still, such as the arrestors, must be placed at this pose, not at the reset pose.</p>
+<p class="where">Used in: <a href="lessons.html#lesson-settle">lesson 6</a> <a href="bounds.html#rule-derail">rules, derailing</a> (<code>experiments/warp_ppo/retainer.py</code>) <code>#loaded-seat</code></p></dd></div>
+
+<div class="entry" id="lqr"><dt>LQR (linear quadratic regulator) <span class="sym">\(u=-K s\)</span> <span class="cat">controller</span></dt><dd>
+<p>A controller that computes its gains once from a linear model of the robot by minimising a weighted sum of state error and control effort, then applies torque proportional to the state. Here one LQR is derived per design from the planar model with weights Q = diag(1e-6, 50, 1, 1) and R = 1, plus a velocity reference governor and an integral term.</p>
+<p class="where">Used in: <a href="method.html#lqr">setup, LQR</a> <a href="math.html">math lab</a> <a href="bounds.html#rule-lqr">rules, LQR envelope</a> <code>#lqr</code></p></dd></div>
+
+<div class="letter" id="M">M</div>
+
+<div class="entry" id="map-edge"><dt>Map-edge artefact <span class="cat">evaluation fault</span></dt><dd>
+<p>A fall counted when the robot drove off the edge of the finite 24 m height field rather than tipping over. It inflated flat-ground fall rates in every battery since S59 (97 percent of recorded flat falls at 0.9 m/s were at the edge) until the benchmark moved to interior tiles and began recording where each fall happened (S92).</p>
+<p class="where">Used in: <a href="lessons.html#lesson-maps">lesson 4</a> <a href="bounds.html#rule-lqr">rules, LQR envelope</a> <code>#map-edge</code></p></dd></div>
+
+<div class="entry" id="motion-layer"><span id="motion-reference"></span><dt>Motion layer (motion reference) <span class="cat">navigation</span></dt><dd>
+<p>A small layer between the planner and the balance controller (<code>experiments/warp_ppo/motion_ref.py</code>) that turns raw planner commands into smooth ones: acceleration, braking and turn-rate limits, a braking profile into the goal and a position hold on arrival. Added to an unchanged policy it made things worse (S106); trained with it, the policy arrives and holds better (S110), and in navigation it removes about a quarter of the heading wobble (S114).</p>
+<p class="where">Used in: <a href="generalist.html#motion">generalist study, motion layer</a> <code>#motion-layer</code></p></dd></div>
+
+<div class="entry" id="warp"><dt>MuJoCo-Warp <span class="cat">simulation</span></dt><dd>
+<p>The GPU version of the MuJoCo physics engine used for every result from S59 on, running 4096 worlds in parallel in single precision at 100 Hz control rate. Its parity with the CPU engine is documented on the engines page.</p>
+<p class="where">Used in: <a href="engines.html#warp">engines</a> <a href="method.html#stack">setup, stack</a> <code>#warp</code></p></dd></div>
+
+<div class="letter" id="N">N</div>
+
+<div class="entry" id="nan-termination"><span id="non-finite-state"></span><dt>Non-finite state (NaN) termination <span class="cat">evaluation fault</span></dt><dd>
+<p>A world whose simulated position or velocity becomes NaN or infinite, which the training termination counted as a fall. Standing still, these were 91 percent of the "falls" on the worst seed and made every 20 s standing rate from S93 to S97 void; they are now classified apart from tips and unseatings (S98).</p>
+<p class="where">Used in: <a href="lessons.html#lesson-blowup">lesson 8</a> <a href="bounds.html#rule-lqr">rules, LQR envelope</a> (<code>experiments/warp_ppo/fall_cause.py --stand</code>) <code>#nan-termination</code></p></dd></div>
+
+<div class="entry" id="nmp-zero"><span id="non-minimum-phase"></span><dt>Non-minimum-phase zero <span class="sym">\(z\)</span> <span class="cat">physics</span></dt><dd>
+<p>A property of the ballbot's dynamics that forces the ball to first roll the wrong way before the robot can move toward a goal, because tipping the body forward requires pushing the ball backward. It sets a floor on how robust any controller for this robot can be.</p>
+<p class="where">Used in: <a href="math.html#lab">math lab</a> <code>#nmp-zero</code></p></dd></div>
+
+<div class="letter" id="O">O</div>
+
+<div class="entry" id="observation-noise"><dt>Observation noise <span class="sym">\(\sigma=0.01\)</span> <span class="cat">simulation</span></dt><dd>
+<p>Random error added to the first nine numbers the policy sees (its body and ball state) when randomisation is on, with standard deviation 0.01 and scaled with the DR scale. It stands in for imperfect sensors.</p>
+<p class="where">Used in: <a href="method.html#learning">setup, learning</a> <a href="method.html#dr">setup, randomisation</a> <code>#observation-noise</code></p></dd></div>
+
+<div class="entry" id="occupancy-map"><dt>Occupancy map <span class="cat">navigation</span></dt><dd>
+<p>A grid around the robot (64 x 64 cells of 5 cm) marking which cells hold an obstacle, here anything more than 3 cm above the ground under the ball. With a real sensor it is built from a memory of up to 600 hit points per world and rasterised for the planner every 0.2 s (S89).</p>
+<p class="where">Used in: <a href="generalist.html#nav">generalist study, navigation</a> <a href="bounds.html#rule-sensor">rules, sensor aim</a> <code>#occupancy-map</code></p></dd></div>
+
+<div class="letter" id="P">P</div>
+
+<div class="entry" id="planar-model"><dt>Planar model <span class="cat">physics</span></dt><dd>
+<p>The ballbot reduced to one vertical plane: a ball and a body as two rigid bodies, joined by rolling without slip and a motor torque between them, derived from a Lagrangian. The 3-D linearised robot decouples into two such planes plus yaw, so the planar model supplies the LQR gains and the scaling laws.</p>
+<p class="where">Used in: <a href="math.html">math lab</a> <a href="method.html#model">setup, model</a> <a href="bounds.html#rule-lqr">rules, LQR envelope</a> <code>#planar-model</code></p></dd></div>
+
+<div class="entry" id="inflation"><dt>Planner margin (obstacle inflation) <span class="sym">\(m\)</span> <span class="cat">navigation</span></dt><dd>
+<p>The distance by which every obstacle is grown on the planner grid so the robot's body keeps clear of it; here 0.22 m. Too small and the robot clips corners, too large and the gaps close and the robot gets stuck (0.30 m closes 0.7 m gaps, S89).</p>
+<p class="where">Used in: <a href="bounds.html#rule-margin">rules, planner margin</a> <code>#inflation</code></p></dd></div>
+
+<div class="entry" id="ppo"><dt>PPO (proximal policy optimisation) <span class="cat">learning</span></dt><dd>
+<p>The reinforcement-learning algorithm used to train every policy here: it tries actions, scores them by reward, and nudges the network toward better actions while limiting how far each update may move. Runs are 200M environment steps over 4096 parallel worlds (S83).</p>
+<p class="where">Used in: <a href="method.html#learning">setup, learning</a> <a href="architecture.html#rl">architecture, training</a> <code>#ppo</code></p></dd></div>
+
+<div class="entry" id="pure-learning"><dt>Pure learning <span class="cat">controller</span></dt><dd>
+<p>A policy trained with PPO alone, with no LQR underneath, so the network must learn balance, tracking and recovery from scratch. It is the most robust controller on its training designs with arrestors but tracks at 66 to 83 percent of the command and collapses on unseen designs (S82, S85-R).</p>
+<p class="where">Used in: <a href="generalist.html#residual">generalist study</a> <a href="bounds.html#rule-torque">rules, motor headroom</a> <code>#pure-learning</code></p></dd></div>
+
+<div class="entry" id="push-pull"><dt>Push and pull <span class="cat">disturbance</span></dt><dd>
+<p>Simulated shoves applied to the body during training and evaluation: a push is 5 to 20 N for 50 ms, a pull is 3 to 12 N for 0.5 to 2 s, both scaled with the robot's weight. "Disturbed" results have both on; pulls were active in 58 percent of disturbed falls, pushes in 3 percent (S79).</p>
+<p class="where">Used in: <a href="generalist.html#robust">generalist study, robustness</a> <a href="bounds.html#rule-push">rules, pushes near obstacles</a> <code>#push-pull</code></p></dd></div>
+
+<div class="letter" id="Q">Q</div>
+
+<div class="entry" id="q-r"><dt>Q and R weights <span class="sym">\(Q,\;R\)</span> <span class="cat">controller</span></dt><dd>
+<p>The two knobs of an LQR: Q says how much each state error costs and R how much control effort costs, and the gains minimise their weighted sum over time. Here Q = diag(1e-6, 50, 1, 1) puts almost all weight on body tilt, and R = 1; tripling R gives the "soft" base, which gains a little goal success and loses tracking (S82).</p>
+<p class="where">Used in: <a href="method.html#lqr">setup, LQR</a> <a href="bounds.html#rule-lqr">rules, LQR envelope</a> <code>#q-r</code></p></dd></div>
+
+<div class="letter" id="R">R</div>
+
+<div class="entry" id="governor"><span id="reference-governor"></span><dt>Velocity reference governor <span class="sym">\(a_{\max}\)</span> <span class="cat">controller</span></dt><dd>
+<p>A filter between the commanded speed and the LQR that limits how fast the reference may change, here 0.5 m/s\(^2\), so a step command does not demand an impossible lean. Lowering it to 0.3 is part of the "soft" base and slows the approach to a goal (S66, S72).</p>
+<p class="where">Used in: <a href="method.html#lqr">setup, LQR</a> <a href="math.html">math lab</a> <code>#governor</code></p></dd></div>
+
+<div class="entry" id="residual-policy"><span id="residual"></span><dt>Residual policy <span class="sym">\(a_\pi\)</span> <span class="cat">controller</span></dt><dd>
+<p>A learned network whose output is added to a model-based controller's command rather than replacing it, so it only has to learn the correction. Here the residual sits on the LQR and learns push recovery and terrain handling that the planar model does not cover.</p>
+<p class="where">Used in: <a href="architecture.html#stack">architecture</a> <a href="generalist.html#residual">generalist study, residual</a> <a href="bounds.html#rule-authority">rules, authority</a> <code>#residual-policy</code></p></dd></div>
+
+<div class="letter" id="S">S</div>
+
+<div class="entry" id="seed"><dt>Seed <span class="cat">protocol</span></dt><dd>
+<p>The number that starts a run's random choices: network initialisation, world parameters, disturbance timing. Two runs that differ only in seed show how much of a result is chance; here the headline goal-success numbers agree to about 0.02 across seeds (S73), so differences smaller than that are noise.</p>
+<p class="where">Used in: <a href="method.html#eval">setup, evaluation</a> <a href="generalist.html#summary">generalist study</a> <code>#seed</code></p></dd></div>
+
+<div class="entry" id="scale-study"><dt>Scale study <span class="cat">protocol</span></dt><dd>
+<p>One policy trained on the 11 designs plus the robot at 0.75, 1.5 and 2 times nominal size (ball radius 6.75, 13.5 and 18 cm; masses scaled by the cube, commands Froude scaled, arrestors re-fitted), then driven over the same absolute obstacle sizes, with a 0.5x robot (4.5 cm ball) held out (S95). It is the direct test of the traction limit and the source of the ball-size design rule: two training seeds, trained at free-rolling friction 0.001 and evaluated on the corrected contact model at 0.01 (S98, S99 addendum), which changed the small robots not at all and the two large robots by 0.05 to 0.06 of overall falls.</p>
+<p class="where">Used in: <a href="generalist.html#ballsize">generalist study, ball size</a> <a href="bounds.html#design-for-your-ballbot">rules, design for your ballbot</a> <code>#scale-study</code></p></dd></div>
+
+<div class="entry" id="speed-governor"><span id="foresight"></span><dt>Speed governor (terrain-aware speed layer) <span class="cat">navigation</span></dt><dd>
+<p>A rule above the balance controller that lowers the commanded speed when the height map shows a discontinuity ahead, then restores it. The layer is real but worth only 0.03 to 0.05 of obstacle falls, mostly on stairs, once slowed robots are given 40 s to reach the feature (0.38 with no layer, 0.33 with the perfect map, 0.35 with the ToF sensor, S103); an earlier 15 s "halving" was an exposure artefact.</p>
+<p class="where">Used in: <a href="bounds.html#rule-size">rules, obstacle size and speed</a> <a href="lessons.html#lesson-blowup">lesson 8</a> (<code>experiments/warp_ppo/governor.py</code>) <code>#speed-governor</code></p></dd></div>
+
+<div class="entry" id="seed-noise"><dt>Seed noise <span class="cat">metric</span></dt><dd>
+<p>How much a result moves between runs that differ only in their random seed, which is the smallest difference worth reading. On the corrected engine it is about 0.02 for goal success over 176 worlds per kind (S73); for the 64-world flat benchmark the binomial standard error alone is about 0.05 (S73), and two accidental repeats of one depth battery differed by up to 0.02 (S78).</p>
+<p class="where">Used in: <a href="generalist.html#summary">generalist study</a> <a href="method.html#eval">setup, evaluation</a> <code>#seed-noise</code></p></dd></div>
+
+<div class="entry" id="tracking-error"><span id="tracking"></span><span id="steady-state-error"></span><dt>Steady-state tracking error (tracking) <span class="cat">metric</span></dt><dd>
+<p>The mean absolute difference between the commanded and the actual speed after the first 3 s of a flat run, in m/s, over surviving worlds. The recommended controller holds it at or below 0.04 to 0.06 m/s up to 0.9 m/s (S83).</p>
+<p class="where">Used in: <a href="generalist.html#tracking">generalist study, tracking</a> <code>#tracking-error</code></p></dd></div>
+
+<div class="entry" id="surfaces"><dt>Surfaces (floor classes) <span class="cat">simulation</span></dt><dd>
+<p>Per-world floor friction drawn from a set of surface classes, roughly 0.4 to 1.2, so the policy meets slippery and grippy floors. Because the traction limit depends on friction, the climbable step height varies per world (S88).</p>
+<p class="where">Used in: <a href="method.html#world">setup, world</a> <a href="bounds.html#rule-traction">rules, traction</a> <code>#surfaces</code></p></dd></div>
+
+<div class="letter" id="T">T</div>
+
+<div class="entry" id="terrain-kinds"><dt>Terrain kinds <span class="cat">terrain</span></dt><dd>
+<p>The ten feature types a tile can carry: flat, step up, step down, small drop, large drop, ramp up, ramp down, stairs, bump and rough, each with a drawn size range (for example up-steps 1 to 6 cm). Results are reported per kind, and since S87 also by size within a kind.</p>
+<p class="where">Used in: <a href="generalist.html#tiles">generalist study, tiles</a> <a href="method.html#world">setup, world</a> (<code>experiments/warp_ppo/tiles.py</code>) <code>#terrain-kinds</code></p></dd></div>
+
+<div class="entry" id="tiles"><span id="tile-map"></span><dt>Tiles (tile map) <span class="cat">terrain</span></dt><dd>
+<p>The world is a 24 m height field divided into square tiles, each carrying one terrain kind, with the robot starting at a tile centre. Eleven designs by ten kinds by 16 repeats gives the standard 1760 worlds; a <a href="#held-out-terrain">different tile seed</a> gives unseen layouts.</p>
+<p class="where">Used in: <a href="method.html#world">setup, world</a> <a href="generalist.html#tiles">generalist study, tiles</a> <code>#tiles</code></p></dd></div>
+
+<div class="entry" id="tof"><dt>Time-of-flight (ToF) sensor <span class="cat">perception</span></dt><dd>
+<p>A small, cheap range sensor that measures distance in a grid of zones (here 18 x 14 zones over 55 x 42 degrees, or 8 x 8) by timing a light pulse, simulated with 0.5 percent range noise and 2 percent dropout. On a stabilised head it gets the planner within 6 points of a perfect map (S89).</p>
+<p class="where">Used in: <a href="bounds.html#rule-sensor">rules, sensor aim</a> <a href="architecture.html#percep">architecture, perception</a> <a href="generalist.html#nav">generalist study, navigation</a> <code>#tof</code></p></dd></div>
+
+<div class="entry" id="traction-limit"><dt>Traction limit <span class="sym">\(h_{\max}=r(1-\cos\arctan\mu)\)</span> <span class="cat">physics</span></dt><dd>
+<p>The highest step a driven ball can roll up before the edge contact becomes too steep for friction to hold: about 0.29 times the ball radius when friction is about 1, so 2.6 cm for the 9 cm ball. Steps and bumps above it fail 90 to 98 percent at 0.3 m/s, and the larger-half falls stay near 1 even at 0.1 m/s on the corrected contact model (S87, S88, S100).</p>
+<p class="where">Used in: <a href="bounds.html#rule-traction">rules, traction</a> <a href="generalist.html#perception">generalist study</a> <code>#traction-limit</code></p></dd></div>
+
+<div class="entry" id="traction-p50"><span id="measured-50-percent-point"></span><dt>Traction limit, measured 50 percent point <span class="sym">\(\approx 0.24\,r\)</span> <span class="cat">metric</span></dt><dd>
+<p>The step height at which half of the worlds fall, read from the fall-against-height curve of each ball size; on the corrected contact model (free-rolling friction 0.01, two training seeds) it sits at 0.17 to 0.29 times the ball radius (mean 0.24 r) for the four trained sizes and both up-steps and bumps (S99 addendum; the earlier 0.15 to 0.26 r, mean 0.21 r, of S95 included solver blow-ups on the large robots). It lies below the nominal 0.29 r because floor friction is randomised from 0.4 to 1.2 per world, so the measured curve is the traction limit averaged over that friction spread; the design rule it gives is a ball radius of 3.4 to 4.2 times the tallest step.</p>
+<p class="where">Used in: <a href="generalist.html#ballsize">generalist study, ball size</a> <a href="bounds.html#design-for-your-ballbot">rules, design for your ballbot</a> <code>#traction-p50</code></p></dd></div>
+
+<div class="letter" id="U">U</div>
+
+<div class="entry" id="unstable-pole"><dt>Unstable pole <span class="sym">\(p\)</span> <span class="cat">physics</span></dt><dd>
+<p>The rate at which an unattended lean grows, in inverse seconds: a lean multiplies by e every \(1/p\) seconds. It scales with \(1/\sqrt{s}\), so a half-size robot falls \(\sqrt2\) times faster and must be controlled that much faster.</p>
+<p class="where">Used in: <a href="math.html#lab">math lab</a> <a href="bounds.html#rule-froude">rules, Froude scaling</a> <code>#unstable-pole</code></p></dd></div>
+
+<div class="letter" id="V">V</div>
+
+<div class="entry" id="velocity-task"><dt>Velocity task <span class="cat">task</span></dt><dd>
+<p>The robot is commanded a speed (0.3 m/s in the standard battery) in a random heading across a terrain tile and must hold it without falling. It reports fall rate and tracking error per terrain kind; it is where the per-obstacle and by-size results come from.</p>
+<p class="where">Used in: <a href="generalist.html#tiles">generalist study, tiles</a> <a href="method.html#eval">setup, evaluation</a> <code>#velocity-task</code></p></dd></div>
+
+<div class="letter" id="W">W</div>
+
+<div class="entry" id="wavefront"><span id="wavefront-planner"></span><dt>Wavefront planner <span class="cat">navigation</span></dt><dd>
+<p>A grid planner that computes, for every free cell, the distance to the goal around the inflated obstacles, like a wave spreading out from the goal. The robot descends this distance field; recomputed every 0.2 s on a 64 x 64 grid, it turned 0.91 falls into 0.09 on the blocks map with a perfect map (S89).</p>
+<p class="where">Used in: <a href="generalist.html#nav">generalist study, navigation</a> <a href="bounds.html#rule-margin">rules, planner margin</a> <a href="lessons.html#lesson-aim">lesson 7</a> <code>#wavefront</code></p></dd></div>
+
+<div class="entry" id="world"><dt>World <span class="cat">simulation</span></dt><dd>
+<p>One independent copy of the robot and its tile inside the parallel GPU simulation, with its own randomised parameters, disturbances and outcome. Rates on this site are fractions of worlds: 1760 in the standard terrain battery, 528 on the blocks map, 64 in the flat benchmark.</p>
+<p class="where">Used in: <a href="method.html#eval">setup, evaluation</a> <code>#world</code></p></dd></div>
+
+</dl>
+</section>
+
+</main>
+</body>
+</html>

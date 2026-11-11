@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 250" class="d-sense" role="img" aria-labelledby="dn-t">
+<title id="dn-t">Sensing pipeline, left to right: a time-of-flight sensor with 18 by 14 zones returns noisy ranges; with the known sensor pose each range becomes a 3-D hit point; hits more than 3 cm above the ground are kept in a memory of 600 points per world; the memory is rasterised into a 64 by 64 occupancy grid of 5 cm cells and inflated by 0.22 m; a distance-to-goal field is propagated over free cells every 0.2 s; the carrot follower reads the field.</title>
+<style>
+.d-sense text{font-family:Inter,system-ui,sans-serif;font-size:13px;fill:var(--text,#dfe6f0)}
+.d-sense .m{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;fill:var(--text-2,#9aa8bb)}
+.d-sense .k{fill:var(--text-3,#8a97ab);font-size:11px}
+.d-sense .h{font-size:14px;font-weight:600}
+.d-sense .bx{fill:var(--bg-3,#161e2a);stroke-width:1.8;stroke:var(--model,#4aa8ff)}
+.d-sense .w{fill:none;stroke:var(--line-2,#5a6b84);stroke-width:1.6}
+</style>
+<defs><marker id="dn-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L8 4L0 8z" style="fill:var(--line-2,#5a6b84)"/></marker></defs>
+<g data-d="tof" class="node" tabindex="0" role="button" aria-label="ToF sensor">
+<rect x="14" y="60" width="150" height="104" rx="10" class="bx" style="stroke:var(--warn,#ffb454)"/>
+<text x="26" y="84" class="h">ToF ranges</text>
+<text x="26" y="104" class="m">18 x 14 zones</text><text x="26" y="120" class="m">55 x 42 deg view</text><text x="26" y="136" class="m">noise 0.5%, drop 2%</text><text x="26" y="154" class="k">head, pitch -25 deg</text>
+</g>
+<path d="M164 112H194" class="w" marker-end="url(#dn-a)"/>
+<g data-d="hits" class="node" tabindex="0" role="button" aria-label="Hit points">
+<rect x="196" y="60" width="140" height="104" rx="10" class="bx"/>
+<text x="208" y="84" class="h">Hit points</text>
+<text x="208" y="104" class="m">range x direction</text><text x="208" y="120" class="m">+ sensor pose</text><text x="208" y="136" class="m">= point, world xy</text>
+</g>
+<path d="M336 112H366" class="w" marker-end="url(#dn-a)"/>
+<g data-d="mem" class="node" tabindex="0" role="button" aria-label="Memory">
+<rect x="368" y="60" width="140" height="104" rx="10" class="bx"/>
+<text x="380" y="84" class="h">Memory</text>
+<text x="380" y="104" class="m">keep hits &gt; 3 cm</text><text x="380" y="120" class="m">above the ground</text><text x="380" y="136" class="m">600 points/world</text>
+</g>
+<path d="M508 112H538" class="w" marker-end="url(#dn-a)"/>
+<g data-d="occ" class="node" tabindex="0" role="button" aria-label="Occupancy grid">
+<rect x="540" y="60" width="150" height="104" rx="10" class="bx"/>
+<text x="552" y="84" class="h">Occupancy</text>
+<text x="552" y="104" class="m">64 x 64 cells, 5 cm</text><text x="552" y="120" class="m">inflated by 0.22 m</text><text x="552" y="136" class="k">(half width + margin)</text>
+</g>
+<path d="M690 112H720" class="w" marker-end="url(#dn-a)"/>
+<g data-d="field" class="node" tabindex="0" role="button" aria-label="Distance field">
+<rect x="722" y="60" width="184" height="104" rx="10" class="bx" style="stroke:var(--hybrid,#2ee6c4)"/>
+<text x="734" y="84" class="h">Distance field</text>
+<text x="734" y="104" class="m">goal = 0, 8-connected</text><text x="734" y="120" class="m">110 min-plus sweeps</text><text x="734" y="136" class="m">replanned every 0.2 s</text><text x="734" y="154" class="k">read by the carrot follower</text>
+</g>
+<!-- aim arrow back to sensor -->
+<path d="M814 164V206H89V166" class="w" marker-end="url(#dn-a)" style="stroke-dasharray:5 4"/>
+<text x="300" y="224" class="k">the planner aims the sensor gimbal at its target heading, not along the current command (S90)</text>
+<text x="14" y="30" class="k">Everything right of the sensor is deterministic code: no learning in the map. The balance controller never sees the map, only the velocity command.</text>
+</svg>

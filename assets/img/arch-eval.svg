@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 300" class="d-eval" role="img" aria-labelledby="dv-t">
+<title id="dv-t">Evaluation protocol as four columns: the goal task, the velocity task, the flat tracking test, and the conditions every test is crossed with: randomisation scales 1, 1.75 and 2.5, undisturbed or with pushes and pulls, three training seeds, and held-out terrain and robot designs.</title>
+<style>
+.d-eval text{font-family:Inter,system-ui,sans-serif;font-size:13px;fill:var(--text,#dfe6f0)}
+.d-eval .m{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;fill:var(--text-2,#9aa8bb)}
+.d-eval .k{fill:var(--text-3,#8a97ab);font-size:11px}
+.d-eval .h{font-size:14px;font-weight:600}
+.d-eval .bx{fill:var(--bg-3,#161e2a);stroke-width:1.8}
+</style>
+<g data-d="goal" class="node" tabindex="0" role="button" aria-label="Goal task">
+<rect x="14" y="14" width="210" height="150" rx="10" class="bx" style="stroke:var(--good,#5ee08a)"/>
+<text x="28" y="40" class="h">Goal task</text>
+<text x="28" y="62" class="m">reach a point 1.1 m away</text><text x="28" y="78" class="m">across a terrain tile</text>
+<text x="28" y="100" class="m">11 designs, 176 worlds per</text><text x="28" y="116" class="m">terrain kind</text>
+<text x="28" y="140" class="k">score: success, falls, time</text>
+</g>
+<g data-d="vel" class="node" tabindex="0" role="button" aria-label="Velocity task">
+<rect x="240" y="14" width="210" height="150" rx="10" class="bx" style="stroke:var(--model,#4aa8ff)"/>
+<text x="254" y="40" class="h">Velocity task</text>
+<text x="254" y="62" class="m">hold 0.3 m/s across tiles</text><text x="254" y="78" class="m">for 20 s (or 8 s battery)</text>
+<text x="254" y="100" class="m">per obstacle kind and size</text>
+<text x="254" y="140" class="k">score: falls, crossed</text>
+</g>
+<g data-d="flat" class="node" tabindex="0" role="button" aria-label="Flat tracking">
+<rect x="466" y="14" width="210" height="150" rx="10" class="bx" style="stroke:var(--model,#4aa8ff)"/>
+<text x="480" y="40" class="h">Flat tracking</text>
+<text x="480" y="62" class="m">0.3, 0.6, 0.9 m/s commands</text><text x="480" y="78" class="m">nominal robot, no DR/noise</text>
+<text x="480" y="100" class="m">64 worlds, interior tiles</text>
+<text x="480" y="140" class="k">score: achieved / command, error</text>
+</g>
+<g data-d="cond" class="node" tabindex="0" role="button" aria-label="Conditions">
+<rect x="692" y="14" width="214" height="150" rx="10" class="bx" style="stroke:var(--warn,#ffb454)"/>
+<text x="706" y="40" class="h">Crossed with</text>
+<text x="706" y="62" class="m">DR scale 1 / 1.75 / 2.5</text>
+<text x="706" y="80" class="m">undisturbed / pushes + pulls</text>
+<text x="706" y="98" class="m">3 training seeds</text>
+<text x="706" y="116" class="m">surfaces: friction 0.4 to 1.2</text>
+<text x="706" y="140" class="k">one JSON per setting</text>
+</g>
+<g data-d="held" class="node" tabindex="0" role="button" aria-label="Held-out sets">
+<rect x="14" y="184" width="892" height="100" rx="10" class="bx" style="stroke:var(--line-2,#5a6b84);stroke-dasharray:6 4"/>
+<text x="28" y="210" class="h">Held-out sets (never trained on)</text>
+<text x="28" y="234" class="m">terrain: tile seed 1 (training used seed 0)</text>
+<text x="28" y="252" class="m">robot designs: 1.5x scale (13.5 cm ball), a lower torque limit (tau3), a tenth-torque design</text>
+<text x="28" y="272" class="k">The same frozen controller runs every cell; nothing is retuned per test. Simulation only.</text>
+</g>
+</svg>

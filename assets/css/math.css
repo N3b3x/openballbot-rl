@@ -1,0 +1,70 @@
+/* Shared by math.html and design-space.html (lab widgets). Colour semantics follow DESIGN.md. */
+.lab-ctl{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);padding:14px 18px;margin:0 0 28px}
+.lab-ctl.sticky{background:var(--bg-2)}
+@media (min-width:1100px) and (min-height:760px){.lab-ctl.sticky{position:sticky;top:64px;z-index:20;padding:10px 16px;background:color-mix(in srgb,var(--bg-2) 94%,transparent);backdrop-filter:blur(10px)}.lab-ctl.sticky .ctl-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px 18px}.lab-ctl.sticky .ctl label{font-size:.74rem}.lab-ctl.sticky .ctl input[type=range]{min-height:18px}}
+.ctl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:10px 22px}
+.ctl label{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font:500 .8rem var(--font-sans);color:var(--text-2);margin-bottom:2px}
+.ctl label b{font:500 .8rem var(--font-mono);color:var(--text)}
+.ctl input[type=range]{width:100%;accent-color:var(--model);margin:0;min-height:26px}
+.ctl .hint{font-size:.72rem;color:var(--text-3);line-height:1.3}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pill{font:500 .8rem var(--font-sans);padding:.38em .9em;border-radius:99px;border:1px solid var(--line-2);background:var(--bg-3);color:var(--text);cursor:pointer;min-height:34px}
+.pill:hover{border-color:var(--model)}
+.pill:focus-visible,.ctl input:focus-visible,.seg button:focus-visible{outline:2px solid var(--model);outline-offset:2px}
+.pill.on{background:color-mix(in srgb,var(--model) 22%,var(--bg-3));border-color:var(--model)}
+.pill.warn{border-color:color-mix(in srgb,var(--warn) 60%,transparent)}
+.lab-block{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(18px,3vw,40px);align-items:start;margin:0 0 56px}
+@media (max-width:900px){.lab-block{grid-template-columns:minmax(0,1fr)}}
+.widget{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);padding:14px 14px 10px;min-width:0}
+.widget h4{font:600 .78rem var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);margin:0 0 8px}
+.widget .cap{font-size:.82rem;color:var(--text-3);margin:6px 2px 0}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;margin:10px 0 2px}
+.readout div{background:var(--bg-3);border-radius:var(--radius-sm);padding:6px 10px}
+.readout small{display:block;color:var(--text-3);font:400 .68rem var(--font-sans)}
+.readout b{font:500 1rem var(--font-mono);color:var(--text)}
+.readout b.bad{color:var(--bad)} .readout b.warn{color:var(--warn)} .readout b.good{color:var(--good)} .readout b.model{color:var(--model)}
+.simcv{width:100%;display:block;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--line);touch-action:manipulation}
+.eqn{overflow-x:auto;padding:2px 0}
+.prop{border-left:3px solid var(--model);background:var(--bg-2);padding:12px 18px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:1.1em 0}
+.prop .tag{font:500 .72rem var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--model)}
+.prop p:last-child{margin-bottom:0}
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius-sm)}
+.table-scroll table{min-width:640px;font-size:.86rem} .table-scroll td,.table-scroll th{white-space:nowrap}
+td.num,th.num{text-align:right;font-family:var(--font-mono)}
+td.ok{color:var(--good);font-weight:600} td.no{color:var(--bad);font-weight:600}
+.tagrow{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 .6em}
+.chip.sim{color:var(--text);border-color:var(--text-3)} .chip.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 50%,transparent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font:400 .76rem var(--font-mono);color:var(--text-2);margin:6px 2px 0}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+/* gauges */
+.gauges{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.gauge{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px 14px}
+.gauge.bind{border-color:var(--text-3)}
+.gauge .gh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.gauge .gh span{font:600 .9rem var(--font-sans);color:var(--text)}
+.gauge .gh b{font:600 1rem var(--font-mono)}
+.gauge.ok .gh b{color:var(--good)} .gauge.amber .gh b{color:var(--warn)} .gauge.red .gh b{color:var(--bad)}
+.gbar{position:relative;height:10px;border-radius:99px;background:var(--bg-3);margin:8px 0 6px;overflow:hidden}
+.gbar i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;transition:width .15s}
+.gauge.ok .gbar i{background:var(--good)} .gauge.amber .gbar i{background:var(--warn)} .gauge.red .gbar i{background:var(--bad)}
+.gbar u{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--text);opacity:.8;text-decoration:none}
+.gauge .gd{font-size:.76rem;color:var(--text-3);line-height:1.35}
+.explorer{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,8fr);gap:24px;align-items:start}
+@media (max-width:980px){.explorer{grid-template-columns:minmax(0,1fr)}}
+.explorer .lab-ctl{margin:0}
+.explorer .ctl{margin-bottom:12px}
+.rule-card h3{font-size:1.05rem;margin-bottom:.35em}
+.rule-card p{font-size:.92rem;margin-bottom:.6em}
+.rule-card .live{font:500 .85rem var(--font-mono);color:var(--model)}
+.simtab td,.simtab th{padding:6px 9px}
+.simtab tr.grp th{border-bottom:2px solid var(--line-2);color:var(--text);font-weight:600}
+.simtab tr.grp th.m{color:var(--model)}
+.mism{color:var(--bad);font-weight:600}
+details.adv{margin-top:8px} details.adv summary{cursor:pointer;color:var(--text-2);font-size:.85rem}
+.sel{background:var(--bg-3);color:var(--text);border:1px solid var(--line-2);border-radius:var(--radius-sm);padding:.35em .6em;font:500 .85rem var(--font-sans)}
+.verify td,.verify th{padding:6px 10px}
+.pass{color:var(--good);font-weight:600} .fail{color:var(--bad);font-weight:600}
+.kx{font-size:.95em}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+main code{overflow-wrap:anywhere}
+.eqn{max-width:100%}
