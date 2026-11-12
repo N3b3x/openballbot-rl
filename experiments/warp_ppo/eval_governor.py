@@ -51,6 +51,9 @@ if _a0.get("lqr_base", 0) > 0:
     from lqr_gpu import GpuLQR
     env.lqr, env.rs = GpuLQR(env, designs, a_max=_a0.get("lqr_amax", 0.5), r=_a0.get("lqr_r", 1.0)), _a0["lqr_base"]
     if _a0.get("rs_adapt"): env.rs_adapt = [float(x) for x in _a0["rs_adapt"].split(",")]      # S111 adaptive authority
+env.goal_centre = bool(_a0.get("goal_centre")); env.db_centre = bool(_a0.get("db_centre"))      # S118 / S122, as the other evaluation scripts
+if _a0.get("motion_ref") and not os.environ.get("NO_MREF"):      # S115: the motion layer the run was trained with (before this, S95 to S104 evaluations of motion-layer runs had no layer)
+    env.enable_motion_ref(curve_p=0.0)
 env.resample, env.max_steps = 10 ** 9, 10 ** 9
 env.reset(torch.ones(N, dtype=torch.bool, device=dev)); env.steps[:] = 0
 w = torch.arange(N, device=dev); did, kid = w // (K * n), (w // n) % K
@@ -71,6 +74,9 @@ if a.task == "vel":
     env.goal_mode[:] = False
     env.cmd = torch.stack([a.speed * env.f_w * torch.cos(ang), a.speed * env.f_w * torch.sin(ang), torch.zeros(N, device=dev)], 1)
     user_cmd = env.cmd.clone()
+    if getattr(env, "mref", None) is not None:      # desired command = the scenario's, shaped from rest with the robot facing it (as eval_tiles2.py)
+        env.cmd_des = env.cmd[:, :2].clone(); env.cmd_w[:] = 0
+        env.mref.reset(torch.ones(N, dtype=torch.bool, device=dev), heading=ang)
 else:
     env.goal_mode[:] = True; env.path_left[:] = 0
     env.goal[:, 0] = xs + 1.1 * torch.cos(ang); env.goal[:, 1] = ys + 1.1 * torch.sin(ang)
@@ -160,7 +166,7 @@ def cell(m):
     return r
 
 
-res = dict(run=a.run, task=a.task, speed=a.speed, source=a.source, steps=a.steps, push_scale=env.push_scale, pull=a.pull, tile_seed=a.tile_seed,
+res = dict(run=a.run, motion_ref=getattr(env, "mref", None) is not None, task=a.task, speed=a.speed, source=a.source, steps=a.steps, push_scale=env.push_scale, pull=a.pull, tile_seed=a.tile_seed,
            mode=a.mode, governor=dict(rise_max=a.rise_max, drop_max=a.drop_max, v_slow=a.v_slow, gain=a.gain, thr=a.thr, hold=a.hold, d_near=a.d_near) if gov else None,
            mean_speed_scale=float(np.mean(gov.scale_log)) if gov else 1.0, retainer=os.environ.get("RETAINER"), pair_mu1=(float(os.environ["PAIR_MU1"]) if os.environ.get("PAIR_MU1") else None),
            overall=cell(torch.ones(N, dtype=torch.bool, device=dev)), by_kind={kinds[k]: cell(kid == k) for k in range(K)})
