@@ -9,104 +9,113 @@
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/learn.css">
+<link rel="stylesheet" href="../assets/css/viz.css">
 <script type="module" src="assets/js/learn.js"></script>
 </head>
 <body>
 <main>
 <header class="lhead"><div class="wrap">
-  <div class="eyebrow"><span>Lesson 4 of 10</span><span class="t">18 min</span><span class="t">Learning</span></div>
+  <div class="eyebrow"><span>Lesson 4 of 10</span><span class="t">10 min</span><span class="t">Learning</span></div>
   <h1>Adding learning</h1>
-  <p class="lede">The recommended controller is an LQR with a small learned correction. This lesson shows what the correction adds, why it is kept small, and how its size is scheduled.</p>
+  <p class="lede">The recommended controller is an LQR plus a small learned correction. The correction fixes what the model leaves out. It is kept small on purpose.</p>
   <div class="chips"><span class="chip sim">Simulation only, no hardware</span></div>
-  <section class="goals" aria-labelledby="g1"><h2 id="g1">You will be able to</h2><ul><li>describe the residual policy and write the rule that combines the LQR and the network;</li><li>explain the tracking against robustness trade-off and why 0.25 is the knee;</li><li>describe adaptive authority and the goal dead band, and why one seed was not enough to justify the latter.</li></ul></section>
+  <section class="goals" aria-labelledby="g1"><h2 id="g1">You will be able to</h2><ul><li>write the rule that combines the LQR and the network;</li><li>explain the trade-off between tracking and robustness;</li><li>describe adaptive authority and how the network is trained.</li></ul></section>
 </div></header>
 
 <section class="lsec"><div class="wrap">
-  <h2><span class="k">4.1</span>Why not just learn everything?</h2>
-
-  <p>Reinforcement learning, here <dfn>PPO</dfn> (proximal policy optimisation), trains a neural network by trial and error in simulation. Each 10 ms the network sees a 25-number observation (tilt, rates, velocities, the last action, the command, the goal), the last 8 steps of history (80 ms) and a 6-number description of which robot it is driving, and outputs three wheel commands. The network has three hidden layers of 512 units. It trains for 200 million simulated steps on 4096 robots in parallel on one GPU, in MuJoCo-Warp.</p>
-  <p>A policy trained from scratch can balance, and with the right training it is the most robust controller <i>on the robots it was trained on</i> (S82). But it has no physics built in, so it cannot extrapolate: on an unseen robot, 1.5 times larger than any in training, pure learning succeeded in 9 percent of goal trials, while the LQR-based controllers still reached 71 percent (S85-R).</p>
-
-</div></section>
-<figure class="widget" data-widget="l04:heldout">
-    <header><h3>An unseen robot: learning alone against learning on top of LQR</h3><span class="tag">S85-R</span></header>
-    <div class="stage ph"></div>
-    <div class="body"></div>
-    <figcaption><b>The LQR base carries the policy to a robot it never saw.</b> Goal task on a robot scaled 1.5 times (ball radius 13.5 cm), DR scale 1, 160 worlds, one seed for each controller.<span class="src">docs/research/tracking_study_log.md S85-R; values read by scripts/site/build_learn_data.py</span></figcaption>
-    <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
-  </figure>
-<section class="lsec"><div class="wrap">
-  <h2><span class="k">4.2</span>The residual: learn only what the LQR gets wrong</h2>
-
-  <p>The deployed controller is a <b>residual policy</b>. Each tick the LQR computes its action <i>u</i>, the network computes a correction <i>a</i> in [&minus;1, 1], and the applied action is</p>
-  <div class="eq">applied = clip( u + rs &middot; a , &minus;1, 1 ) &nbsp;<span class="cm">// rs is the residual authority</span></div>
-  <p>With rs = 0 the robot is the plain LQR of lesson 3. With rs = 1 the network can override the LQR completely. In between, the network can only nudge. This is what makes the combination robust: the physics-based part gives a safe default for any robot and any situation the network has not seen, and the learned part handles friction, latency, slip, pushes and steps that the linear model ignores.</p>
-
-</div></section>
-<figure class="widget" data-widget="l04:mix">
+  <h2><span class="k">4.1</span>The residual: learn only what the LQR gets wrong</h2>
+  <figure class="dia"><div class="media" tabindex="0" role="group" aria-label="Diagram (scrolls sideways on narrow screens)"><svg class="diagram" viewBox="0 0 760 250" role="img" aria-labelledby="a1t a1d"><title id="a1t">The residual controller: LQR base plus a bounded learned correction</title><desc id="a1d">Measurements feed two blocks. The LQR, built from the physics model, outputs an action u. The PPO network outputs a correction a between minus one and one, which is scaled by the authority rs, 0.15 to 0.3. The two are added and clipped, and the result drives the three wheels.</desc><defs><marker id="a1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="bx " x="10" y="92" width="130" height="60" rx="8"/><text class="t mid" x="75" y="111.5">measurements</text><text class="s mid" x="75" y="126.5">tilt, rates, speed,</text><text class="s mid" x="75" y="141.5">command, goal</text><rect class="bx model" x="200" y="26" width="190" height="60" rx="8"/><text class="t mid" x="295" y="45.5">LQR base</text><text class="s mid" x="295" y="60.5">from the physics model</text><text class="s mid" x="295" y="75.5">safe default on any robot</text><rect class="bx learned" x="200" y="160" width="190" height="60" rx="8"/><text class="t mid" x="295" y="179.5">PPO network</text><text class="s mid" x="295" y="194.5">trained in simulation</text><text class="s mid" x="295" y="209.5">correction a in [&minus;1, 1]</text><rect class="bx learned" x="440" y="160" width="110" height="60" rx="8"/><text class="t mid" x="495" y="187">&times; authority rs</text><text class="s mid" x="495" y="202">0.15 to 0.3</text><circle class="bx hybrid" cx="600" cy="122" r="20"/><text class="big mid" x="600" y="129">+</text><rect class="bx hybrid" x="650" y="92" width="100" height="60" rx="8"/><text class="t mid" x="700" y="119">clip</text><text class="s mid" x="700" y="134">to 3 wheels</text><path class="ar" d="M140 110C170 100 170 60 198 56" marker-end="url(#a1a)"/><path class="ar" d="M140 134C170 144 170 186 198 190" marker-end="url(#a1a)"/><path class="ar" d="M390 56C520 56 590 70 598 100" marker-end="url(#a1a)"/><path class="ar" d="M390 190H438" marker-end="url(#a1a)"/><path class="ar" d="M550 190C580 190 596 170 599 144" marker-end="url(#a1a)"/><path class="ar" d="M620 122H648" marker-end="url(#a1a)"/><text class="code mid" x="470" y="44">u</text><text class="code mid" x="586" y="196">rs &middot; a</text><text class="code mid" x="600" y="236">applied = clip(u + rs &middot; a, &minus;1, 1)</text></svg></div><figcaption><b>Blue is physics, violet is learned, teal is what the robot gets.</b> With rs = 0 it is the plain LQR. With rs = 1 the network could override it. In between it can only nudge.<span class="src">bundle.json action.combine; experiments/warp_ppo (GpuBallbot.step)</span></figcaption></figure>
+  <div class="cards">
+    <div class="hybrid"><b>The recommended controller</b><span><code>g39_goalcentre_s0</code>: LQR base + PPO residual, authority 0.25 with adaptive 0.15 to 0.3, motion-reference layer (lesson 5), goal logic on the true ball centre (lesson 9), 11 designs.</span><span class="cite">study log S121</span></div>
+  </div>
+  <p>The LQR is a safe default for any robot. The network handles what the linear model ignores: friction, latency, slip, pushes, steps.</p>
+  <figure class="widget" data-widget="l04:mix">
     <header><h3>How rs scales the learned part</h3><span class="tag">toy illustration</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>The learned signal here is made up for illustration</b>; it is not an output of the trained policy. Move rs and watch how much of the applied action the learned part can contribute.<span class="src">Combination rule: bundle.json action.combine; experiments/warp_ppo (GpuBallbot.step)</span></figcaption>
+    <figcaption><b>The learned signal here is made up for illustration</b>; it is not an output of the trained policy.<span class="src">Combination rule: bundle.json action.combine</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<section class="lsec"><div class="wrap">
-  <h2><span class="k">4.3</span>Authority is a dial between tracking and recovery</h2>
-
-  <p>How much authority should the network get? The study mapped the curve (S82, S83) and found a trade-off. A small residual keeps the LQR's exact speed tracking and still gains most of the robustness. A larger one gains a little more robustness under pushes but follows commands less well, because the network pulls the robot away from what the LQR would do. Pure learning is at the far end.</p>
-
 </div></section>
-<figure class="widget" data-widget="l04:authority">
+
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">4.2</span>Why not just learn everything?</h2>
+  <p>A network trained from scratch balances well <i>on the robots it trained on</i> (S82). It has no physics built in, so it cannot extrapolate.</p>
+  <p>On an unseen robot 1.5 times larger, pure learning reached 9 percent of goals. Controllers built on the LQR reached 71 percent (S85-R).</p>
+  <figure class="widget" data-widget="l04:heldout">
+    <header><h3>An unseen robot: learning alone against learning on top of LQR</h3><span class="tag">S85-R</span></header>
+    <div class="stage ph"></div>
+    <div class="body"></div>
+    <figcaption><b>Goal task on a robot scaled 1.5 times</b> (ball radius 13.5 cm), DR scale 1, 160 worlds, one seed per controller.<span class="src">docs/research/tracking_study_log.md S85-R; values read by scripts/site/build_learn_data.py</span></figcaption>
+    <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
+  </figure>
+</div></section>
+
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">4.3</span>Authority is a dial</h2>
+  <p>Low authority keeps the LQR's exact speed tracking. High authority recovers better from pushes but follows commands less well. The study mapped the curve and found a knee at <b>0.25</b> (S82, S83).</p>
+  <figure class="widget" data-widget="l04:authority">
     <header><h3>The authority dial</h3><span class="tag">S82, S83</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Pick a level.</b> Blue dots: how closely the robot achieves the commanded speed on flat ground (1 is exact; the bar is the range over the runs). Violet bars: share of goals reached with pushes and pulls on, at domain-randomisation scale 1. Authority 0.25 is the knee.<span class="src">docs/research/tracking_study_log.md S82, S83; checked by scripts/site/build_learn_data.py</span></figcaption>
+    <figcaption><b>Pick a level.</b> Blue: achieved over commanded speed on flat ground (1 is exact). Violet: goals reached with pushes and pulls on, DR scale 1.<span class="src">docs/research/tracking_study_log.md S82, S83; checked by scripts/site/build_learn_data.py</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<div class="tryit"><div class="lbl">Try it</div><p>Select 0.15, then 0.5, then pure learning. Which level would you choose for a robot that must follow Nav2 velocity commands closely and survive being bumped? What does the single number hide?</p><details class="answer"><summary>Show the answer</summary><div><p>0.25 is a reasonable answer: exact tracking and most of the robustness. The chart hides seed noise (the ranges are over only one or two runs), the effects on goal arrival and holding (S111: authority 0.15 fell three times as often at goals as 0.25, 0.30 against 0.11 to 0.12) and the robot design. Which is exactly why the next step is not a single number but a rule.</p></div></details></div><section class="lsec"><div class="wrap">
-  <h2><span class="k">4.4</span>Adaptive authority and the goal dead band</h2>
-
-  <p>Instead of one level, the deployed controller changes authority with the situation (S112). It uses <b>0.15 while cruising</b> (exact tracking) and rises at once to <b>0.3</b> whenever the robot needs the network's help: when the command changes faster than 0.3 m/s per second, when the command is near zero (the robot is stopping or holding), or when the body tilts beyond 4 degrees. After the need passes it decays back over about 0.5 s. Training with this rule gave the lowest training fall rate of the study (0.0016, S112).</p>
-  <p>The first version had a flaw. Near a goal the command goes to zero, the rule raised authority, and one training seed hunted around the goal, reversing its command 4.9 times per run. The fix (S113) is a <b>dead band</b>: the near-zero term only counts while the ball still moves faster than 0.05 m/s. Then a later finding corrected the diagnosis: the hunting was one unlucky seed, not a property of the recipe (S113). The dead band stays because it is harmless and removes a seed-dependent failure at no measured cost.</p>
-
-</div></section>
-<figure class="widget" data-widget="l04:adaptive">
+  <div class="tryit"><div class="lbl">Try it</div><p>Select 0.15, then 0.5, then pure learning. Which would you choose for a robot that must follow velocity commands closely and survive being bumped? What does the single number hide?</p><details class="answer"><summary>Show the answer</summary><div><p>0.25 is a reasonable answer: exact tracking and most of the robustness. The chart hides seed noise (the ranges are over only one or two runs), the effects on goal arrival and holding (S111: authority 0.15 fell three times as often at goals as 0.25, 0.30 against 0.11 to 0.12) and the robot design. Which is why the next step is not a single number but a rule.</p></div></details></div>
+  <p>So the dial now moves by itself (S112):</p>
+  <div class="cards">
+    <div class="model"><b>0.15 while cruising</b><span>exact tracking</span></div>
+    <div class="learned"><b>0.3 at once when help is needed</b><span>the command changes faster than 0.3 m/s per second, the command is near zero, or the tilt passes 4 degrees</span></div>
+    <div><b>Back down over about 0.5 s</b><span>when the need has passed</span></div>
+  </div>
+  <figure class="widget" data-widget="l04:adaptive">
     <header><h3>The rule on a simulated run</h3><span class="tag">rule from the deployed code</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>The rule is the real one; the plant is the LQR-only planar model.</b> Command: stop, 0.4 m/s at 1 s, 0.9 m/s at 3 s, stop at 6 s; optional push at 9 s. Watch authority rise on every command change, at the stop, and on the tilt from the push. Turn the dead band off to see the near-zero term fire while the robot is still creeping. There is no learned policy in this figure; it shows only how authority would be scheduled.<span class="src">Rule: ros2 core/authority.py; settings: bundle.json action.rs_adapt (0.15, 0.3, dead band 0.05)</span></figcaption>
+    <figcaption><b>The rule is the real one; the plant is the LQR-only planar model.</b> There is no learned policy in this figure. It shows only how authority would be scheduled.<span class="src">Rule: ros2 core/authority.py; settings: bundle.json action.rs_adapt (0.15, 0.3, dead band 0.05)</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<section class="lsec"><div class="wrap">
-  <h2><span class="k">4.5</span>Domain randomisation across 11 designs</h2>
-
-  <p>A policy trained on one robot in one world memorises it. So every training world is different: <dfn>domain randomisation</dfn> varies the masses (15 percent), floor friction (20 percent), wheel damping (0.07 to 0.15), motor torque (15 percent), the observation noise and a one-step latency (20 percent probability), and applies random pushes of 5 to 20 N every 2 to 4 s (configs/env/dz_nom.yaml). The randomisation range is also widened during training (to 1.75 times in the study recipe) so the evaluation range sits inside what was seen.</p>
-  <p>On top of that, the 6-number design vector tells the policy which of <b>11 robot designs</b> it is in: the nominal one, a high and a low centre of mass, a heavy and a light ball, a heavy and a light body, a large rotor inertia, weak motors, and two wheel-contact angles. The same network drives all of them.</p>
-
+  <details class="more"><summary>The goal dead band, and a finding that was one seed</summary><div>
+    <p>Near a goal the command goes to zero, the rule raised authority, and one training seed hunted around the goal, reversing its command 4.9 times per run. The fix (S113) is a <b>dead band</b>: the near-zero term only counts while the ball still moves faster than 0.05 m/s.</p>
+    <p>A later finding corrected the diagnosis: the hunting was one unlucky seed, not a property of the recipe (S113). The dead band stays because it is harmless. Training with the adaptive rule gave the lowest training fall rate of the study (0.0016, S112).</p>
+  </div></details>
 </div></section>
-<figure class="widget" data-widget="l04:designs">
+
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">4.4</span>How the network is trained</h2>
+  <figure class="dia"><div class="media" tabindex="0" role="group" aria-label="Diagram (scrolls sideways on narrow screens)"><svg class="diagram" viewBox="0 0 780 270" role="img" aria-labelledby="a2t a2d"><title id="a2t">The training pipeline</title><desc id="a2d">Eleven robot designs, ten kinds of terrain tile and randomised physics are combined into 4096 simulated worlds on one GPU. PPO trains one network on them for 200 million steps. The result is evaluated over several seeds and written to the study log. Results feed back into the next recipe.</desc><defs><marker id="a2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="bx " x="10" y="14" width="170" height="52" rx="8"/><text class="t mid" x="95" y="37">11 robot designs</text><text class="s mid" x="95" y="52">one 6-number design vector</text><rect class="bx " x="10" y="84" width="170" height="52" rx="8"/><text class="t mid" x="95" y="107">10 kinds of terrain tile</text><text class="s mid" x="95" y="122">flat, steps, ramps, stairs &hellip;</text><rect class="bx " x="10" y="154" width="170" height="52" rx="8"/><text class="t mid" x="95" y="169.5">randomisation</text><text class="s mid" x="95" y="184.5">mass, friction, torque,</text><text class="s mid" x="95" y="199.5">latency, noise, pushes</text><text class="big mid" x="196" y="115">&times;</text><rect class="bx model" x="230" y="70" width="150" height="80" rx="8"/><text class="t mid" x="305" y="99.5">4096 worlds</text><text class="s mid" x="305" y="114.5">MuJoCo-Warp</text><text class="s mid" x="305" y="129.5">on one GPU</text><rect class="bx learned" x="420" y="70" width="140" height="80" rx="8"/><text class="t mid" x="490" y="99.5">PPO</text><text class="s mid" x="490" y="114.5">200 million steps</text><text class="s mid" x="490" y="129.5">one network</text><rect class="bx hybrid" x="600" y="70" width="170" height="80" rx="8"/><text class="t mid" x="685" y="99.5">evaluation</text><text class="s mid" x="685" y="114.5">fixed test battery,</text><text class="s mid" x="685" y="129.5">several seeds, ranges</text><rect class="bx good" x="600" y="196" width="170" height="52" rx="8"/><text class="t mid" x="685" y="219">study log</text><text class="s mid" x="685" y="234">one S-entry per result</text><path class="ar" d="M180 40C205 40 215 80 228 92" marker-end="url(#a2a)"/><path class="ar" d="M180 110H228" marker-end="url(#a2a)"/><path class="ar" d="M180 180C205 180 215 140 228 128" marker-end="url(#a2a)"/><path class="ar" d="M380 110H418" marker-end="url(#a2a)"/><path class="ar" d="M560 110H598" marker-end="url(#a2a)"/><path class="ar" d="M685 150V194" marker-end="url(#a2a)"/><path class="ar dash" d="M600 222H495V152" marker-end="url(#a2a)"/><text class="s mid" x="400" y="240">what was learned changes the next recipe</text></svg></div><figcaption><b>One network, many robots, many worlds.</b> Every world differs, so the network cannot memorise one.<span class="src">experiments/warp_ppo/train_dev.py; configs/env/dz_nom.yaml; tile kinds: tiles.py, S123</span></figcaption></figure>
+  <p><dfn>PPO</dfn> (proximal policy optimisation) learns by trial and error. <dfn>Domain randomisation</dfn> makes every world a little different.</p>
+  <details class="more"><summary>The numbers: network, observation, randomisation ranges</summary><div>
+    <p>Every 10 ms the network sees a 25-number observation (tilt, rates, velocities, the last action, the command, the goal), the last 8 steps of history (80 ms) and a 6-number description of which robot it drives. It outputs three wheel commands. It has three hidden layers of 512 units.</p>
+    <p>Randomised: masses (15 percent), floor friction (20 percent), wheel damping (0.07 to 0.15), motor torque (15 percent), observation noise, a one-step latency (20 percent probability), and pushes of 5 to 20 N every 2 to 4 s (configs/env/dz_nom.yaml). The range is widened during training (to 1.75 times in the study recipe).</p>
+    <p>The 11 designs: the nominal one, a high and a low centre of mass, a heavy and a light ball, a heavy and a light body, a large rotor inertia, weak motors, and two wheel-contact angles.</p>
+  </div></details>
+  <figure class="widget" data-widget="l04:designs">
     <header><h3>Where the learning matters: falls per design</h3><span class="tag">S114 addendum</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>The residual rescues the designs the LQR cannot hold.</b> Flat goal test, 48 worlds per design (528 in all), 15 s, domain randomisation and noise on. The light ball (kb025) is nearly impossible for the LQR alone (96 percent fall) and the residual saves most of it; the heavy body (bal4) and weak motors (tau6) stay close to their LQR level, which points to a physical limit of the build (lesson 8).<span class="src">outputs/study/warp_ppo/g34_mref_rsad_db_s0/motion_goal_ref_allflat{,_lqronly}.json</span></figcaption>
+    <figcaption><b>The residual rescues the designs the LQR cannot hold.</b> Checkpoint g34, flat goal test, 48 worlds per design (528 in all), 15 s, domain randomisation and noise on. The heavy body (bal4) and weak motors (tau6) stay near their LQR level: a physical limit (lesson 8).<span class="src">outputs/study/warp_ppo/g34_mref_rsad_db_s0/motion_goal_ref_allflat{,_lqronly}.json</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<figure class="widget" data-widget="l04:seeds">
+  <figure class="widget" data-widget="l04:seeds">
     <header><h3>One seed is not a result</h3><span class="tag">S112, S113</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Command reversals per world, by training seed.</b> Only one of seven runs hunted at the goal. A single seed would have suggested a recipe flaw and a fix for it; seven seeds say it was luck. This is the habit behind the numbers of the next lessons: several seeds, ranges, and withdrawing claims that do not replicate.<span class="src">docs/research/tracking_study_log.md S112, S113</span></figcaption>
+    <figcaption><b>Command reversals per world, by training seed.</b> Only one of seven runs hunted at the goal.<span class="src">docs/research/tracking_study_log.md S112, S113</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<div class="tryit"><div class="lbl">Check yourself</div><p>The residual policy is trained with authority 0.3 and the robot is then put on a ball of a size never seen in training. Which part of the controller still does something sensible?</p><div class="opts"><button>Neither: both were trained on the same robots</button><button data-ok>The LQR, because it is built from the physics of the new robot, even if the learned correction is unfamiliar</button><button>Only the learned part, because it adapts online</button></div><details class="answer"><summary>Why</summary><div><p>The LQR gains come from the model of the actual robot, so they stay meaningful as designs change (S85-R: LQR-based controllers 0.61 to 0.71 on the unseen 1.5x robot). The learned part has no online adaptation and can be wrong on an unfamiliar ball: S119 found a 12 cm ball failed 69 percent with the learned controller but only 2 percent with the LQR alone. The residual limits the damage; it does not remove it.</p></div></details></div>
+  <div class="tryit"><div class="lbl">Check yourself</div><p>The residual policy is put on a ball of a size never seen in training. Which part of the controller still does something sensible?</p><div class="opts"><button>Neither: both were trained on the same robots</button><button data-ok>The LQR, because it is built from the physics of the new robot</button><button>Only the learned part, because it adapts online</button></div><details class="answer"><summary>Why</summary><div><p>The LQR gains come from the model of the actual robot, so they stay meaningful as designs change (S85-R: LQR-based controllers 0.61 to 0.71 on the unseen 1.5x robot). The learned part has no online adaptation and can be wrong on an unfamiliar ball: S119 found a 12 cm ball failed 69 percent with the learned controller (g34) but only 2 percent with the LQR alone. The residual limits the damage; it does not remove it.</p></div></details></div>
+</div></section>
+
 <section class="lsec"><div class="wrap">
   <h2><span class="k">Summary</span>Key takeaways</h2>
-  <div class="takeaways"><ul><li>PPO trains a network by trial and error in simulation; on its own it does not transfer to an unseen robot (0.09 on a 1.5x robot).</li><li>The residual keeps the LQR as a safe base and lets the network nudge it: applied = clip(lqr + rs a).</li><li>Authority is a dial: low is exact tracking, high is more robust to pushes; 0.25 is the knee.</li><li>Adaptive authority uses 0.15 while cruising and 0.3 when needed (command change, near-zero command, tilt), with a dead band at the goal.</li><li>Domain randomisation over masses, friction, torque, latency, noise and pushes, plus 11 designs, makes one network fit many robots.</li></ul></div>
-  <h3 style="margin-top:1.6em">Code and evidence</h3>
-  <div class="sources">
+  <div class="takeaways"><ul><li>The residual keeps the LQR as a safe base and lets the network nudge it: applied = clip(u + rs a).</li><li>Pure learning does not transfer to an unseen robot (0.09 on a 1.5x robot, against 0.71 with an LQR base).</li><li>Authority is a dial: low is exact tracking, high is more robust to pushes. It now adapts between 0.15 and 0.3.</li><li>Training: 11 designs, ten kinds of terrain tile and randomised physics, 4096 worlds on one GPU, 200 million steps.</li><li>The recommended controller is <code>g39_goalcentre_s0</code> (S121).</li></ul></div>
+  <details class="more"><summary>Code and evidence</summary><div><div class="sources">
     <div><h3>Code</h3><ul><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/ros2/ballbot_control/ballbot_control/core/authority.py"><code>ros2/ballbot_control/ballbot_control/core/authority.py</code></a>: the adaptive rule</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/experiments/warp_ppo/train_dev.py"><code>experiments/warp_ppo/train_dev.py</code></a>: the GPU environment, PPO, domain randomisation, <code>--rs-adapt</code></li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/experiments/warp_ppo/lqr_gpu.py"><code>experiments/warp_ppo/lqr_gpu.py</code></a>: batched LQR base</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/configs/env/dz_nom.yaml"><code>configs/env/dz_nom.yaml</code></a>: randomisation ranges</li></ul></div>
-    <div><h3>Study log and docs</h3><ul><li>S82, S83: the authority curve and the recommended 0.25</li><li>S85-R: held-out robot designs, LQR base against pure learning</li><li>S110, S111: motion layer and the tracking-robustness dial</li><li>S112: adaptive authority</li><li>S113: dead band, hard-design weighting, the one-seed finding</li><li>S114 addendum: where the hard designs fall</li><li>On the main site: <a href="../architecture.html">The controller</a>, <a href="../generalist.html">Results</a></li></ul></div>
-  </div>
+    <div><h3>Study log and docs</h3><ul><li>S82, S83: the authority curve and the knee at 0.25</li><li>S85-R: held-out robot designs, LQR base against pure learning</li><li>S110, S111: motion layer and the tracking-robustness dial</li><li>S112: adaptive authority</li><li>S113: dead band, hard-design weighting, the one-seed finding</li><li>S114 addendum: where the hard designs fall</li><li>S121: the recommendation, g39_goalcentre_s0</li><li>On the main site: <a href="../architecture.html">The controller</a>, <a href="../generalist.html">Results</a></li></ul></div>
+  </div></div></details>
 </div></section>
 </main>
 </body>

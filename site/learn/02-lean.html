@@ -9,63 +9,69 @@
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/learn.css">
+<link rel="stylesheet" href="../assets/css/viz.css">
 <script type="module" src="assets/js/learn.js"></script>
 </head>
 <body>
 <main>
 <header class="lhead"><div class="wrap">
-  <div class="eyebrow"><span>Lesson 2 of 10</span><span class="t">12 min</span><span class="t">Physics</span></div>
+  <div class="eyebrow"><span>Lesson 2 of 10</span><span class="t">7 min</span><span class="t">Physics</span></div>
   <h1>Lean to accelerate</h1>
-  <p class="lede">A ballbot accelerates by leaning, and to lean it must first roll the ball the wrong way. Two consequences, one law and one limit, explain most of the control design that follows.</p>
+  <p class="lede">A ballbot speeds up by leaning. To lean, it first rolls the ball the wrong way. One law and one limit follow from that.</p>
   <div class="chips"><span class="chip sim">Simulation only, no hardware</span></div>
-  <section class="goals" aria-labelledby="g1"><h2 id="g1">You will be able to</h2><ul><li>state the lean law and compute the lean needed for a given acceleration;</li><li>explain the backward dip of a step response through the non-minimum-phase zero;</li><li>say why the stack slews commands instead of passing steps to the balance controller.</li></ul></section>
+  <section class="goals" aria-labelledby="g1"><h2 id="g1">You will be able to</h2><ul><li>state the lean law and use it;</li><li>explain the backward dip after a command;</li><li>say why commands are slewed, never stepped.</li></ul></section>
 </div></header>
 
 <section class="lsec"><div class="wrap">
   <h2><span class="k">2.1</span>To go forward, fall forward</h2>
-
-  <p>A wheeled robot accelerates by pushing its wheels against the ground. A ballbot cannot do that: the ball is its only contact, and a torque on the ball just pushes the body the other way. The way it speeds up is by <b>leaning</b>. When the body's centre of mass sits ahead of the contact point, gravity pulls the whole robot forward, and the controller rolls the ball to follow it.</p>
-  <p>This has an exact form. Add the two equations of motion from lesson 1: the motor torque and the wheel damping appear with opposite signs in the two equations, so they cancel and what is left contains no motor at all. For small tilt and a body that is not turning:</p>
-  <div class="eq">sin &theta; = &kappa; a, &nbsp; &kappa; = ((m<sub>k</sub> + m<sub>a</sub>) r<sup>2</sup> + I<sub>k</sub> + m<sub>a</sub> l r) / (m<sub>a</sub> g l r)</div>
-  <p>For the nominal robot &kappa; = 0.176 rad per m/s<sup>2</sup>, which is <b>10.1 degrees of lean for every 1 m/s<sup>2</sup></b> of acceleration. It is a statement about gravity and mass, not about the motors: a stronger motor cannot change how far the robot has to lean to accelerate, it can only get there faster.</p>
-
+  <p>A wheeled robot pushes against the ground. A ballbot cannot: a torque on the ball just pushes the body the other way. So it <b>leans</b>, gravity pulls it forward, and the ball rolls to keep up.</p>
+  <figure class="dia"><div class="media" tabindex="0" role="group" aria-label="Diagram (scrolls sideways on narrow screens)"><svg class="diagram" viewBox="0 0 720 260" role="img" aria-labelledby="q1t q1d"><title id="q1t">The lean law: acceleration needs lean</title><desc id="q1d">Left: a ballbot leaning forward by an angle theta while it accelerates forward. Right: lean against acceleration is nearly a straight line; 1 metre per second squared needs 10.1 degrees, and the largest recoverable lean of 20.6 degrees gives a top acceleration of 1.98 metres per second squared.</desc><defs><marker id="q1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<path class="ln" d="M40 214H300"/><circle class="bx hybrid" cx="150" cy="160" r="54"/><g transform="rotate(16 150 160)"><rect class="bx model" x="114.9" y="-21.44" width="70.2" height="135" rx="11.88"/><circle class="bx" cx="108.034" cy="119.537" r="10.8"/><circle class="bx" cx="191.966" cy="119.537" r="10.8"/><circle class="m-warn" cx="150" cy="82.24" r="4.86"/></g><path class="ar dash" d="M150 160V20"/><path class="thin st-warn" d="M150 50A110 110 0 0 1 180.3 54.3"/><text class="t f-warn" x="176" y="40">lean &theta;</text><path class="ar" d="M230 120H300" marker-end="url(#q1a)"/><text class="t mid" x="266" y="110">acceleration a</text><text class="s mid" x="150" y="240">gravity pulls the leaning body forward</text><path class="ln" d="M380 210H679.0M380 210V42"/><polyline class="thick st-model" points="380,210.0 445,174.7 510,139.0 575,102.8 637,67.2 666,50.5"/><circle class="m-model" cx="510" cy="139.3" r="5"/><text class="t" x="520" y="155.3">1 m/s&#178; needs 10.1&deg;</text><path class="ar dash" d="M380 65.79999999999998H679.0"/><text class="s f-warn" x="386" y="59.79999999999998">20.6&deg;: most lean it can recover from</text><circle class="m-warn" cx="637.4" cy="65.79999999999998" r="5"/><path class="ar dash" d="M637.4 65.79999999999998V210"/><text class="t f-warn mid" x="637.4" y="226">1.98 m/s&#178;</text><text class="s mid" x="497.0" y="226">acceleration</text><text class="s end" x="372" y="36">lean</text></svg></div><figcaption><b>The lean law.</b> For the nominal robot: <b>10.1 degrees of lean per 1 m/s<sup>2</sup></b>. The lean it can recover from sets the top acceleration.<span class="src">kappa 0.176 rad per m/s&#178;: ballbot_model.py; 20.6 deg and 1.98 m/s&#178;: S119 physics table</span></figcaption></figure>
+  <p>The law has <b>no motor term</b>. A stronger motor does not reduce the lean. It only gets there faster.</p>
+  <p>The motors alone could give 113 m/s<sup>2</sup>. The lean allows 1.98 m/s<sup>2</sup>. Lean is the limit, not torque.</p>
+  <details class="more"><summary>Where the law comes from</summary><div>
+    <p>Add the two equations of motion of lesson 1. Motor torque and wheel damping appear with opposite signs, so they cancel. For small tilt and a body that is not turning:</p>
+    <div class="eq">sin &theta; = &kappa; a, &nbsp; &kappa; = ((m<sub>k</sub> + m<sub>a</sub>) r<sup>2</sup> + I<sub>k</sub> + m<sub>a</sub> l r) / (m<sub>a</sub> g l r)</div>
+    <p>For the nominal robot &kappa; = 0.176 rad per m/s<sup>2</sup>.</p>
+  </div></details>
 </div></section>
-<figure class="widget" data-widget="l02:step">
+
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">2.2</span>Why it moves backward first</h2>
+  <figure class="dia"><div class="media" tabindex="0" role="group" aria-label="Diagram (scrolls sideways on narrow screens)"><svg class="diagram" viewBox="0 0 720 230" role="img" aria-labelledby="q2t q2d"><title id="q2t">Sketch of the backward dip after a step command</title><desc id="q2d">Ball position against time after a forward speed command. The curve first dips slightly below zero, then rises. Three phases are marked: the ball rolls back, the body leans, the ball rolls forward.</desc><defs><marker id="q2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<path class="ln" d="M60 120H680"/><text class="s" x="684" y="124">time</text><path class="ln" d="M60 30V200"/><text class="s" x="56" y="34">ball position</text><path class="thick st-model" d="M60 120C110 120 120 150 160 150C210 150 240 110 300 80C380 44 520 30 660 22"/><rect class="bx bad" x="96" y="124" width="120" height="40" rx="6" style="fill-opacity:.35"/><text class="t f-bad mid" x="156" y="184">1. ball rolls back</text><text class="s mid" x="156" y="200">the dip: wrong way first</text><text class="t mid" x="290" y="132">2. body leans</text><text class="t f-model mid" x="480" y="70">3. ball rolls forward</text><path class="ln" d="M60 120V112"/><text class="code" x="64" y="214">command arrives</text></svg></div><figcaption><b>A sketch of the start of a move, not data.</b> The real curve is in the interactive figure below.</figcaption></figure>
+  <p>The dip grows with how hard you ask. A gentle command dips about a centimetre. An abrupt one dips several times more and needs a bigger lean.</p>
+  <p>So the stack never passes a raw step to the balance controller. It slews the speed reference at <b>0.5 m/s<sup>2</sup></b> (<code>a_max</code>), and lesson 5 shapes commands further.</p>
+  <figure class="widget" data-widget="l02:step">
     <header><h3>Step response of the balanced robot</h3><span class="tag">planar simulation</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Command a speed and watch the lean.</b> The controller is the deployed LQR with its command governor (lesson 3). The dashed amber line is the lean law computed from the ball's measured acceleration: &kappa; a plus a small correction for the body's own tilt acceleration (&theta;&Prime;/z<sup>2</sup>, with z the zero of lesson 1). It lies on the tilt: the law is exact for the linear model, whatever the controller does. Wheel damping in the model drags the ball, so without the velocity integral the robot settles at a speed above the command; the integral (on by default, as deployed) removes that.<span class="src">Model: ballbot_planar_model.json; gains: designed on it as in lqr_gpu.py (matches bundle.json); command governor and integral: ros2 core/lqr.py</span></figcaption>
+    <figcaption><b>Command a speed and watch the lean.</b> Controller: the deployed LQR with its command governor (lesson 3). The dashed amber line is the lean law computed from the ball's measured acceleration; it lies on the tilt.<span class="src">Model: ballbot_planar_model.json; gains as in lqr_gpu.py (matches bundle.json); governor and integral: ros2 core/lqr.py</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
+  <div class="tryit"><div class="lbl">Try it</div><p>Set the speed command to 1.0 m/s and the acceleration limit to 4 m/s<sup>2</sup> (nearly a raw step). Compare the dip and the peak tilt with the default. Then lower the limit to 0.5.</p><p>Which setting would a robot with a 30 degree tilt cutoff survive?</p><details class="answer"><summary>Show the answer</summary><div><p>In this planar model the raw step makes the dip several times larger and drives the tilt well beyond 30 degrees (about 33 degrees at a limit of 2 m/s<sup>2</sup> for a 1 m/s command, more at 4), which is where the deployed safety supervisor cuts the torque (lesson 10). At 0.5 m/s<sup>2</sup> the tilt stays near the 10 degrees the lean law predicts for the acceleration actually achieved. Slow commands are what keeps the lean inside what the robot can recover from.</p></div></details></div>
+</div></section>
+
 <section class="lsec"><div class="wrap">
-  <h2><span class="k">2.2</span>Why it moves backwards first</h2>
-
-  <p>Look at the zoomed plot. Right after the command the ball moves a little <i>backward</i>, then reverses. To make the body lean forward, the controller must roll the ball backward under it (the tilt equation is driven by the ball's acceleration). Only once the body is leaning can the ball roll forward to chase it. This is the non-minimum-phase zero of lesson 1 seen in the time domain: the response begins in the wrong direction.</p>
-  <p>The size of the dip depends on how hard you ask. A gentle command produces a dip of a centimetre or so; an abrupt one makes it several times larger and demands a larger lean. That is why the deployed stack never passes raw steps to the balance controller. It slews the reference velocity at a fixed acceleration (0.5 m/s<sup>2</sup> in the deployed LQR, <code>a_max</code>) and, as lesson 5 shows, shapes the commands before they get there.</p>
-
-</div></section>
-<div class="tryit"><div class="lbl">Try it</div><p>Set the speed command to 1.0 m/s and the acceleration limit to 4 m/s<sup>2</sup> (a nearly raw step). Compare the backward dip and the peak tilt with the default. Then lower the limit to 0.5.</p><p>Which setting would a robot with a 30 degree tilt cutoff survive?</p><details class="answer"><summary>Show the answer</summary><div><p>In this planar model the raw step makes the dip several times larger and drives the tilt well beyond 30 degrees (about 33 degrees at a limit of 2 m/s<sup>2</sup> for a 1 m/s command, more at 4), which is where the deployed safety supervisor cuts the torque (lesson 10). At 0.5 m/s<sup>2</sup> the tilt stays near the 10 degrees the lean law predicts for the acceleration actually achieved. Slow commands are not timidity: they are what keeps the lean inside what the robot can recover from.</p></div></details></div><section class="lsec"><div class="wrap">
-  <h2><span class="k">2.3</span>How much lean does each design need?</h2>
-
-  <p>Because &kappa; depends on masses and lengths only, it changes little across the 11 designs the controller was trained on. A heavier ball needs a bit more lean, a higher body a bit less. The lean also sets the robot's top acceleration: with the traction-limited recoverable tilt of 20.6 degrees, the nominal robot's lean-limited maximum acceleration is 1.98 m/s<sup>2</sup> (S119 physics table), well below what the motors could deliver (113 m/s<sup>2</sup> by the torque limit alone).</p>
-
-</div></section>
-<figure class="widget" data-widget="l02:lean">
+  <h2><span class="k">2.3</span>Every design leans about the same</h2>
+  <p>The law depends on masses and lengths only. Across the 11 training designs it changes little: a heavier ball needs a bit more lean, a higher body a bit less.</p>
+  <figure class="widget" data-widget="l02:lean">
     <header><h3>Lean per unit of acceleration, by design</h3><span class="tag">11 training designs</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Every design needs 8 to 12 degrees per m/s<sup>2</sup>.</b> Bars: &kappa; computed from each design's planar model. Move the slider to see how much lean a given acceleration costs the nominal robot. Design names are those of the training pool (lesson 4).<span class="src">ballbot_gym/models/variants/dz_*.json; limits: outputs/study/specs/ota_sweep.csv (S119)</span></figcaption>
+    <figcaption><b>Every design needs 8 to 12 degrees per m/s<sup>2</sup>.</b> Bars: &kappa; from each design's planar model. The slider shows what a given acceleration costs the nominal robot.<span class="src">ballbot_gym/models/variants/dz_*.json; limits: outputs/study/specs/ota_sweep.csv (S119)</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<div class="tryit"><div class="lbl">Check yourself</div><p>A designer doubles the motor torque limit. What happens to the lean needed for 1 m/s<sup>2</sup>?</p><div class="opts"><button>It halves, because the motors push twice as hard</button><button data-ok>It does not change: the lean law contains no motor term</button><button>It doubles, because the body is heavier</button></div><details class="answer"><summary>Why</summary><div><p>The torque cancels in the sum of the two equations, so &kappa; depends on masses and lengths only. Stronger motors change how fast the robot can reach the lean and how well it recovers (lesson 8), not how much lean it needs.</p></div></details></div>
+  <div class="tryit"><div class="lbl">Check yourself</div><p>A designer doubles the motor torque limit. What happens to the lean needed for 1 m/s<sup>2</sup>?</p><div class="opts"><button>It halves, because the motors push twice as hard</button><button data-ok>It does not change: the lean law contains no motor term</button><button>It doubles, because the body is heavier</button></div><details class="answer"><summary>Why</summary><div><p>The torque cancels in the sum of the two equations, so &kappa; depends on masses and lengths only. Stronger motors change how fast the robot can reach the lean and how well it recovers (lesson 8), not how much lean it needs.</p></div></details></div>
+</div></section>
+
 <section class="lsec"><div class="wrap">
   <h2><span class="k">Summary</span>Key takeaways</h2>
-  <div class="takeaways"><ul><li>Acceleration needs lean: about 10.1 degrees per m/s<sup>2</sup> for the nominal robot, and the law has no motor term.</li><li>A step command is answered by a small move in the wrong direction first, then the lean builds and the ball follows.</li><li>The harder the acceleration the larger the dip and the lean, so the command must be limited and shaped.</li><li>Lean sets the top acceleration (1.98 m/s<sup>2</sup> nominal), far below what the motors alone could give.</li></ul></div>
-  <h3 style="margin-top:1.6em">Code and evidence</h3>
-  <div class="sources">
+  <div class="takeaways"><ul><li>Acceleration needs lean: about 10.1 degrees per m/s<sup>2</sup>, with no motor term.</li><li>A command is answered by a small move the wrong way, then the lean builds and the ball follows.</li><li>Harder acceleration means a larger dip and lean, so commands are limited and shaped.</li><li>Lean sets the top acceleration (1.98 m/s<sup>2</sup> nominal), far below what the motors could give.</li></ul></div>
+  <details class="more"><summary>Code and evidence</summary><div><div class="sources">
     <div><h3>Code</h3><ul><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/scripts/study/ballbot_model.py"><code>scripts/study/ballbot_model.py</code></a>: <code>structural()</code>: the lean law and the zero</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/ros2/ballbot_control/ballbot_control/core/lqr.py"><code>ros2/ballbot_control/ballbot_control/core/lqr.py</code></a>: velocity governor <code>a_max</code> and the integral</li></ul></div>
     <div><h3>Study log and docs</h3><ul><li>Stages and decisions: lean law, kappa 0.176 rad per m/s<sup>2</sup></li><li>S16: kappa across the design sweep, 7.3 to 14.8 degrees per m/s<sup>2</sup></li><li>S105: why paths oscillate: a ballbot must lean before it can accelerate</li><li>S119: lean-limited maximum acceleration in the physics table</li><li>On the main site: <a href="../math.html">The robot and its physics</a></li></ul></div>
-  </div>
+  </div></div></details>
 </div></section>
 </main>
 </body>

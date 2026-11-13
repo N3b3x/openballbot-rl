@@ -28,6 +28,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <!-- /og -->
 <link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/viz.css">
 <link rel="stylesheet" href="assets/css/arch.css">
 <script type="module" src="assets/js/layout.js"></script>
 <script type="module" src="assets/js/arch.js"></script>
@@ -61,7 +62,7 @@
 <div class="arch-hero"><div class="wrap">
   <div class="eyebrow">The controller</div>
   <h1>How the whole stack fits together</h1>
-  <p class="lede">Four pictures explain the system: how a goal becomes wheel torques, how a depth sensor becomes a map, how the learned part is trained, and how every controller is judged. Click or tab to any block for what it does, its numbers and where in the repository it lives. Everything here is simulation; no hardware is involved.</p>
+  <p class="lede">One diagram of the stack, then four you can click: control, sensing, training, evaluation. Simulation only.</p>
   <div class="legend" aria-label="Colour legend">
     <span class="chip model"><i></i> model-based: LQR, derived math</span>
     <span class="chip learned"><i></i> learned: PPO, neural networks</span>
@@ -72,13 +73,44 @@
   <div class="tldr">
     <h2>In short</h2>
     <ol>
-      <li>A navigation layer turns a goal and a map into a smooth velocity command. The balance controller never sees the map.</li>
-      <li>The balance controller is an LQR on the derived planar model plus a learned residual with authority 0.25: applied action = clip(a<sub>LQR</sub> + 0.25 a<sub>policy</sub>). The current recommendation (S112, S113) switches the authority between 0.15 while cruising and 0.3 when manoeuvring, with a goal dead band, and puts a motion layer between the navigation layer and the controller (<a href="generalist.html#motion">results, chapter 10b</a>).</li>
-      <li>The robot carries three passive ball arrestors; they, not the controller, fixed most falls.</li>
-      <li>The policy is trained on 4096 GPU worlds, 11 robot designs, wide randomisation, pushes and pulls, with a critic that sees more than the policy.</li>
-      <li>Every controller is scored on the same goal, velocity and flat tests, at three randomisation scales, with and without disturbances, on three seeds, and on held-out terrain and designs.</li>
+      <li><b>Layers above, balance below.</b> A goal layer and a motion-reference layer make a smooth velocity command. The balance controller never sees the map.</li>
+      <li><b>LQR plus a bounded residual.</b> applied = clip(a<sub>LQR</sub> + &alpha; a<sub>policy</sub>), with &alpha; 0.15 while cruising and 0.3 when manoeuvring (S112).</li>
+      <li><b>Three passive arrestors</b> keep the body on the ball (S79).</li>
+      <li><b>Trained on 4096 GPU worlds</b>, 11 robot designs, randomised physics, pushes and pulls.</li>
+      <li><b>One evaluation protocol</b> for every controller: three randomisation scales, with and without disturbances, three seeds.</li>
     </ol>
   </div>
+  <div class="ctrl-id"><span><b>Recommended controller:</b> <code>g39_goalcentre_s0</code></span><span>LQR base + PPO residual (authority 0.25, adaptive 0.15 to 0.3), motion-reference layer, goal logic on the true ball centre, 11 designs. S121. <a href="history.html">How it got here</a></span></div>
+  <figure class="figure" id="stack-today">
+    <div class="media">
+<svg class="diagram" viewBox="0 0 940 400" role="img" aria-labelledby="cs-t cs-d">
+<title id="cs-t">The control stack of the recommended controller</title>
+<desc id="cs-d">A goal passes through a goal layer and a motion-reference layer and becomes a velocity command. The balance controller adds a bounded learned residual to an LQR action and drives three omniwheels on a ball that is held by three passive arrestors. Terrain sensing feeds the goal layer. A heading command is in progress.</desc>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="bx" x="170" y="14" width="190" height="62" rx="10"/><text x="184" y="35" class="t">Terrain sensing</text><text x="184" y="52" class="s">ToF 18 x 14, map memory</text><text x="184" y="68" class="code">S89, S103</text>
+<rect class="bx dash" x="400" y="14" width="210" height="62" rx="10"/><text x="414" y="35" class="t">Heading command</text><text x="414" y="52" class="s">in progress, no log entry yet</text>
+<path class="ar" d="M265 76V110" marker-end="url(#ah)"/><path class="ar dash" d="M505 76V110" marker-end="url(#ah)"/>
+<rect class="bx" x="20" y="112" width="110" height="62" rx="10"/><text x="75" y="140" class="t mid">Goal</text><text x="75" y="157" class="s mid">a point (x, y)</text>
+<rect class="bx hybrid" x="170" y="112" width="190" height="62" rx="10"/><text x="184" y="133" class="t">Goal layer</text><text x="184" y="150" class="s">path, speed cap, braking</text><text x="184" y="166" class="code">S89, S136</text>
+<rect class="bx hybrid" x="400" y="112" width="210" height="62" rx="10"/><text x="414" y="133" class="t">Motion-reference layer</text><text x="414" y="150" class="s">shapes speed, turns, arrival</text><text x="414" y="166" class="code">S110</text>
+<path class="ar" d="M130 143H168" marker-end="url(#ah)"/><path class="ar" d="M360 143H398" marker-end="url(#ah)"/>
+<path class="ar" d="M505 174V194H100V335H168" marker-end="url(#ah)"/><path class="ar" d="M100 261H168" marker-end="url(#ah)"/>
+<text x="112" y="188" class="s">velocity command, every 10 ms</text>
+<rect class="zone" x="140" y="212" width="780" height="180" rx="12"/>
+<text x="904" y="231" class="k end">Balance controller, 100 Hz</text><text x="904" y="247" class="code end">g39_goalcentre_s0</text>
+<rect class="bx model" x="170" y="230" width="190" height="62" rx="10"/><text x="184" y="251" class="t">LQR base</text><text x="184" y="268" class="s">gains per design, governor</text><text x="184" y="284" class="code">derived model</text>
+<rect class="bx learned" x="170" y="304" width="190" height="62" rx="10"/><text x="184" y="325" class="t">PPO residual</text><text x="184" y="342" class="s">authority 0.15 to 0.3</text><text x="184" y="358" class="code">S112, S121</text>
+<path class="ar" d="M360 261L416 290" marker-end="url(#ah)"/><path class="ar" d="M360 335L416 306" marker-end="url(#ah)"/>
+<circle class="bx hybrid" cx="432" cy="298" r="16"/><text x="432" y="303" class="t mid">+</text>
+<path class="ar" d="M448 298H468" marker-end="url(#ah)"/>
+<rect class="bx" x="470" y="267" width="120" height="62" rx="10"/><text x="530" y="294" class="t mid">Clip</text><text x="530" y="311" class="s mid">3 wheel torques</text>
+<path class="ar" d="M590 298H628" marker-end="url(#ah)"/>
+<rect class="bx good" x="630" y="262" width="270" height="74" rx="10"/><text x="644" y="285" class="t">Simulated robot</text><text x="644" y="302" class="s">3 omniwheels on a ball</text><text x="644" y="319" class="s">3 passive arrestors keep it seated (S79)</text>
+<path class="ar" d="M765 336V380H265V368" marker-end="url(#ah)"/><text x="515" y="375" class="s mid">state: tilt, rates, wheel speeds (to LQR and policy)</text>
+</svg>
+    </div>
+    <figcaption><b>The stack today.</b> Blue is derived from the model, violet is learned, teal combines them, green is mechanical. The dashed box is unfinished work. <span class="src">tracking_study_log.md S79, S89, S110, S112, S121, S136; g39_goalcentre_s0/args.json</span></figcaption>
+  </figure>
   <noscript><p class="callout warn">The diagrams work without JavaScript as pictures; the click-for-detail panels need it.</p></noscript>
 </div></div>
 
@@ -90,27 +122,26 @@
 <section class="sec" id="stack"><div class="wrap">
   <div class="eyebrow">1 &middot; Controller stack</div>
   <h2>From a goal to wheel torques</h2>
-  <p class="lead">Think of three people. A navigator with a map who says where to go next and how fast. A trained athlete who keeps the robot upright and tracks that speed. And a cage of small rollers that stops the athlete slipping off the ball. The navigator never touches the wheels; the athlete never sees the map. The picture reads left to right.</p>
+  <p class="lead">A navigator says where to go and how fast. An athlete keeps the robot upright and tracks that speed. A cage of rollers stops the athlete slipping off the ball. Read left to right.</p>
   <figure class="fig" data-m style="margin:0" data-svg="assets/img/arch-stack.svg" data-svg-m="assets/img/arch-stack-m.svg" data-detail="stack" data-first="mix">
     <img src="assets/img/arch-stack.svg" alt="Controller stack: goal, navigation layer, velocity command, LQR with governor and residual PPO policy in parallel, sum with authority 0.25 and clip, wheel torques, simulated robot with arrestors, state fed back" loading="lazy" width="960" height="300">
   </figure>
   <p class="hint">Tap a block for its details. On a phone the stack is drawn top to bottom.</p>
   <div class="detail" id="stack-detail" aria-live="polite" tabindex="-1"></div>
-  <h3>How the pieces talk</h3>
-  <ol class="steps">
+  <details class="more"><summary>How the pieces talk, step by step</summary><div><ol class="steps">
     <li><strong>Goal to command.</strong> Every 10 ms the navigation layer outputs a planar velocity (direction and speed). Without a map it is simply the direction to the goal at min(0.3 m/s, 1.5 &times; distance), Froude-scaled for the design. With a map it is the carrot follower's smooth command (<a href="math.html#s9">physics page, section 9</a>).</li>
     <li><strong>Command to two actions.</strong> The <a class="defn" title="Linear quadratic regulator: textbook feedback gains computed from the planar model">LQR</a> passes the command through its governor and integral and computes a wheel action from the measured tilt, rates and ball rate. In parallel the policy, an MLP, maps 25 observation values and the design vector to a residual action.</li>
     <li><strong>Sum and clip.</strong> applied = clip(a<sub>LQR</sub> + 0.25 a<sub>policy</sub>). The LQR always keeps at least three quarters of the say. With adaptive authority the factor is 0.15 while cruising and rises to 0.3 for about half a second when the command changes fast, nears zero or the body tilts beyond 4 degrees (S112).</li>
     <li><strong>Torques and physics.</strong> The three normalised commands become torques at the wheel limit and the GPU simulator advances the robot. The new state is read back: the LQR sees tilt, rates, ball rate and velocity; the policy sees the same plus its command, heading, velocity integral and goal.</li>
-  </ol>
-  <div class="sowhat"><b>Why this shape</b>Pure learning tracked speed at only 0.54 to 0.66 of the command; the LQR alone was exact but fragile. Keeping the exact part exact and bounding the learned part gives 0.99 to 1.01 tracking with 0.71 to 0.76 goal success undisturbed and 0.42 to 0.44 with pushes and pulls (S83, S84). The arrestors added about 0.15 of that success before any retraining (S79, S80).</div>
+  </ol></div></details>
+  <div class="sowhat"><b>Why this shape</b>Pure learning tracked speed at only 0.54 to 0.66 of the command; the LQR alone was exact but fragile. Keeping the exact part exact and bounding the learned part gave 0.99 to 1.01 tracking with 0.71 to 0.76 goal success undisturbed and 0.42 to 0.44 with pushes and pulls on the earlier <code>g18_ret_rs025</code> checkpoints (S83, S84). The arrestors added about 0.15 of that success before any retraining (S79, S80).</div>
 </div></section>
 
 <!-- ===================== 2. SENSING ===================== -->
 <section class="sec" id="sensing"><div class="wrap">
   <div class="eyebrow">2 &middot; Sensing pipeline</div>
   <h2>From ranges to a map the planner can descend</h2>
-  <p class="lead">A time-of-flight sensor does not see blocks; it returns a grid of distances. Five deterministic steps turn those numbers into a field that tells the robot, in every cell, how far it is from the goal by a path that avoids what it has seen. None of these steps is learned, and the balance controller never receives any of them.</p>
+  <p class="lead">The sensor returns a grid of distances. Five fixed steps turn them into a field the planner can follow. None is learned, and the balance controller receives none of them.</p>
   <figure class="fig" data-m style="margin:0" data-svg="assets/img/arch-sensing.svg" data-svg-m="assets/img/arch-sensing-m.svg" data-detail="sense" data-first="tof">
     <img src="assets/img/arch-sensing.svg" alt="Sensing pipeline: ToF ranges, hit points, memory of 600 points above 3 cm, 64 by 64 occupancy grid inflated by 0.22 m, distance field replanned every 0.2 s; a dashed arrow shows the planner aiming the sensor" loading="lazy" width="920" height="250">
   </figure>
@@ -129,7 +160,7 @@
       <tr><td>perfect map, with pushes and pulls</td><td class="num">0.55 to 0.58</td><td class="num">0.41 to 0.44</td><td class="num">0.13 to 0.20</td></tr>
     </tbody>
   </table></div>
-  <p class="hint">528 worlds (48 per design, 11 designs), 20 s episodes, randomisation scale 1, frozen recommended controller. Source: <span class="src">tracking_study_log.md S89, S90, S91</span></p>
+  <p class="hint">528 worlds (48 per design, 11 designs), 20 s episodes, randomisation scale 1, observation noise on, undisturbed unless stated, frozen balance controller <code>g18_ret_rs025_s1</code> (one seed), MuJoCo-Warp GPU. Source: <span class="src">tracking_study_log.md S89, S90, S91</span></p>
   <div class="sowhat"><b>Why this shape</b>Mount and pitch matter more than resolution, and a planner that turns smoothly must also point the sensor where it is going, not where it is driving. Under pushes even a perfect map falls 0.41, so the remaining limit is disturbance rejection near obstacles, not perception; training the policy with the planner in the loop changed nothing (S91).</div>
 </div></section>
 
@@ -137,7 +168,7 @@
 <section class="sec" id="training"><div class="wrap">
   <div class="eyebrow">3 &middot; Training pipeline</div>
   <h2>4096 robots, each in its own slightly different world</h2>
-  <p class="lead">The learned residual is trained by trial and error on a GPU simulator that runs thousands of robots at once. Each one has a different body, different friction, different pushes and a different patch of ground, so the policy cannot memorise one robot. The trick that makes this work with realistic sensing is an <a class="defn" title="Asymmetric actor-critic: the value network used only during training receives privileged information the policy does not">asymmetric critic</a>: the network that judges outcomes during training is allowed to see the hidden truth; the network that acts is not.</p>
+  <p class="lead">Thousands of simulated robots train at once. Each has a different body, friction, pushes and ground, so the policy cannot memorise one robot. A critic that sees more than the policy speeds up learning and is thrown away afterwards.</p>
   <figure class="fig" data-m style="margin:0" data-svg="assets/img/arch-training.svg" data-svg-m="assets/img/arch-training-m.svg" data-detail="train" data-first="obs">
     <img src="assets/img/arch-training.svg" alt="Training pipeline: 4096 worlds with 11 designs, randomisation at scale 1.75, pushes and pulls, ten terrain kinds and the tasks; what the policy sees; what only the critic sees; actor and critic updated by PPO" loading="lazy" width="920" height="330">
   </figure>
@@ -149,7 +180,7 @@
     <div class="card no"><h3>The policy does not see</h3><ul><li>the terrain or any map</li><li>the floor friction or softness</li><li>the masses, torque scale or damping drawn this episode</li><li>when or how hard it is being pushed</li><li>the LQR's own action (it only feels its effect)</li></ul><p class="hint">It must infer all of this from how the robot moves.</p></div>
     <div class="card crit"><h3>Only the critic sees</h3><ul><li>floor friction and softness</li><li>mass and torque scales, wheel damping</li><li>a height scan of the ground ahead</li><li>the design vector</li></ul><p class="hint">Privileged, training only. Discarded after training.</p></div>
   </div>
-  <div class="tbl-wrap"><table class="tbl" aria-label="Training recipe of the recommended controller">
+  <div class="tbl-wrap"><table class="tbl" aria-label="Training recipe of the recommended controller g39_goalcentre_s0">
     <thead><tr><th>Ingredient</th><th>Setting</th><th>Why</th></tr></thead>
     <tbody>
       <tr><td>Worlds</td><td><code>4096</code>, MuJoCo-Warp float32, 100 Hz</td><td>enough variety per update to average over designs, surfaces and pushes</td></tr>
@@ -164,6 +195,21 @@
     </tbody>
   </table></div>
   <p class="hint">Sources: <span class="src">train_dev.py</span> <span class="src">BRIEF fact sheet</span> <span class="src">tracking_study_log.md S79, S83, S84, S106, S110 to S115</span></p>
+  <figure class="figure" id="terrain-path">
+    <div class="media">
+<svg class="diagram" viewBox="0 0 900 150" role="img" aria-labelledby="tp-t tp-d">
+<title id="tp-t">How the training terrain grew</title>
+<desc id="tp-d">Four stages: ten kinds of 3 m tiles, then a hills tile, then one 24 m generated world, then generated fields with a difficulty level per feature, which is in progress.</desc>
+<defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="bx learned" x="10" y="20" width="200" height="96" rx="10"/><text x="24" y="42" class="t">Ten tile kinds</text><text x="24" y="60" class="s">flat, ramps up and down, rough,</text><text x="24" y="76" class="s">steps up and down, stairs,</text><text x="24" y="92" class="s">bump, small and large drop</text><text x="24" y="108" class="code">g39 trains here</text>
+<rect class="bx learned" x="240" y="20" width="180" height="96" rx="10"/><text x="254" y="42" class="t">+ hills tile</text><text x="254" y="60" class="s">continuous hills,</text><text x="254" y="76" class="s">2 to 10 cm</text><text x="254" y="108" class="code">g44, S128</text>
+<rect class="bx warn" x="450" y="20" width="200" height="96" rx="10"/><text x="464" y="42" class="t">One 24 m world</text><text x="464" y="60" class="s">ramps, stairs, hills, poles,</text><text x="464" y="76" class="s">pit, a 59.6 m goal loop</text><text x="464" y="108" class="code">evaluation, S134</text>
+<rect class="bx dash" x="680" y="20" width="210" height="96" rx="10"/><text x="694" y="42" class="t">Generated fields</text><text x="694" y="60" class="s">one difficulty level</text><text x="694" y="76" class="s">per terrain feature</text><text x="694" y="108" class="code">in progress, not logged</text>
+<path class="ar" d="M210 68H238" marker-end="url(#ah2)"/><path class="ar" d="M420 68H448" marker-end="url(#ah2)"/><path class="ar dash" d="M650 68H678" marker-end="url(#ah2)"/>
+</svg>
+    </div>
+    <figcaption><b>Terrain, from tiles to worlds.</b> The recommended controller trains on the ten tile kinds only. The per-feature levels have no result yet. <span class="src">tracking_study_log.md S83 addendum (tile kinds), S128, S134; experiments/warp_ppo/tiles.py</span></figcaption>
+  </figure>
   <div class="sowhat"><b>Why this shape</b>The policy is forced to be a controller, not a lookup table: it sees only what a robot could sense and must cope with whatever world it lands in. The critic's extra knowledge speeds learning without leaking into the deployed policy. Training with the obstacle map in the loop was tried and changed nothing (S91): the hard cases are push recoveries near obstacles, and the policy already follows the planner's smooth commands.</div>
 </div></section>
 
@@ -171,23 +217,23 @@
 <section class="sec" id="evalp"><div class="wrap">
   <div class="eyebrow">4 &middot; Evaluation protocol</div>
   <h2>One protocol for every controller</h2>
-  <p class="lead">A result is only as good as the test that produced it, and several early results on this project did not survive their tests. The current protocol runs the same frozen controller through the same cells, with every setting written into the file name, and keeps a few sets the controller has never been trained on.</p>
+  <p class="lead">Every frozen controller runs through the same cells. Every setting is written into the file name. Some terrain and designs are never trained on.</p>
   <figure class="fig" data-m style="margin:0" data-svg="assets/img/arch-eval.svg" data-svg-m="assets/img/arch-eval-m.svg" data-detail="evalp" data-first="goal">
     <img src="assets/img/arch-eval.svg" alt="Evaluation protocol: goal task, velocity task, flat tracking, the conditions they are crossed with (randomisation scales, disturbances, seeds, surfaces) and the held-out terrain and designs" loading="lazy" width="920" height="300">
   </figure>
   <p class="hint">Tap a block for its details.</p>
   <div class="detail" id="evalp-detail" aria-live="polite" tabindex="-1"></div>
-  <h3>Headline numbers of the recommended controller</h3>
+  <h3>Headline numbers: the recommended controller against its predecessors</h3>
   <div class="tbl-wrap"><table class="tbl numtab" aria-label="Headline results">
-    <thead><tr><th>Test</th><th class="num">current: adaptive 0.15 / 0.3 + motion layer, arrestors (g34)</th><th class="num">LQR + residual 0.25, arrestors</th><th class="num">same, no arrestors</th><th class="num">pure learning</th></tr></thead>
+    <thead><tr><th>Test</th><th class="num">recommended: g39_goalcentre (S121)</th><th class="num">g34: same recipe, goal logic at the ball body origin</th><th class="num">LQR + residual 0.25, arrestors</th><th class="num">same, no arrestors</th><th class="num">pure learning</th></tr></thead>
     <tbody>
-      <tr><td>flat tracking, achieved / command up to 0.9 m/s</td><td class="num">0.96 to 1.06</td><td class="num">0.99 to 1.01</td><td class="num">0.96 to 1.00</td><td class="num">0.54 to 0.66</td></tr>
-      <tr><td>goal success, undisturbed</td><td class="num">0.77 to 0.79</td><td class="num">0.71 to 0.76</td><td class="num">0.58 to 0.60</td><td class="num">0.44 to 0.51</td></tr>
-      <tr><td>goal success, pushes and pulls</td><td class="num">0.51 to 0.52</td><td class="num">0.42 to 0.44</td><td class="num">0.29 to 0.30</td><td class="num">0.26 to 0.27</td></tr>
-      <tr><td>held-out 1.5x robot, goal success</td><td class="num">not measured</td><td class="num">0.61 to 0.71</td><td class="num"></td><td class="num">0.09 to 0.15</td></tr>
+      <tr><td>flat tracking, achieved / command up to 0.9 m/s</td><td class="num">0.94 to 1.06</td><td class="num">0.96 to 1.06</td><td class="num">0.99 to 1.01</td><td class="num">0.96 to 1.00</td><td class="num">0.54 to 0.66</td></tr>
+      <tr><td>goal success, undisturbed</td><td class="num">0.73 to 0.77</td><td class="num">0.77 to 0.79</td><td class="num">0.71 to 0.76</td><td class="num">0.58 to 0.60</td><td class="num">0.44 to 0.51</td></tr>
+      <tr><td>goal success, pushes and pulls</td><td class="num">0.49 to 0.50</td><td class="num">0.51 to 0.52</td><td class="num">0.42 to 0.44</td><td class="num">0.29 to 0.30</td><td class="num">0.26 to 0.27</td></tr>
+      <tr><td>held-out 1.5x robot, goal success</td><td class="num">not measured</td><td class="num">not measured</td><td class="num">0.61 to 0.71</td><td class="num"></td><td class="num">0.09 to 0.15</td></tr>
     </tbody>
   </table></div>
-  <p class="hint">Engine: MuJoCo-Warp float32 GPU. Randomisation and observation noise: on at scale 1 for the goal rows, off for flat tracking. Three seeds per controller column. The current column (g34) is at free-rolling friction 0.01; the 0.25 column is the earlier g18 family at 0.001 (S84); the no-arrestor column is its predecessor (authority 0.5, S80); pure learning rows are without arrestors. Sources: <span class="src">BRIEF fact sheet</span> <span class="src">tracking_study_log.md S80, S83, S84, S85-R, S113</span>. Full chapter-by-chapter results are on the <a href="generalist.html">results page</a>.</p>
+  <p class="hint">Engine: MuJoCo-Warp float32 GPU. Randomisation and observation noise: on at scale 1 for the goal rows, off for flat tracking. Three seeds per controller column. The g39 column is judged at the true ball centre, which is slightly stricter (S118, S121). The g39 and g34 columns are at free-rolling friction 0.01; the 0.25 column is the earlier g18 family at 0.001 (S84); the no-arrestor column is its predecessor (authority 0.5, S80); pure learning rows are without arrestors. Sources: <span class="src">BRIEF fact sheet</span> <span class="src">tracking_study_log.md S80, S83, S84, S85-R, S113</span>. Full chapter-by-chapter results are on the <a href="generalist.html">results page</a>.</p>
   <h3>Lessons that shaped the protocol</h3>
   <ol class="steps">
     <li><strong>Expose every world to the feature.</strong> 8 s episodes made slow robots look safe because they never reached the obstacle; the velocity task now runs 20 s (S87).</li>
@@ -202,8 +248,8 @@
 <section class="sec" id="history"><div class="wrap">
   <div class="eyebrow">5 &middot; Earlier stack</div>
   <h2>What this replaced</h2>
-  <p class="lead">The first year of the project ran on a CPU simulator with a handful of worker processes, Stable-Baselines3 PPO and a Gymnasium environment, and it compared five controllers: pure LQR, pure PPO, PPO with an outer velocity integral, a fixed small residual, and a learned gate. Those experiments established that a learned tracker alone has a steady-state gain below one, that the LQR is the right core at low speed, and that a residual must be bounded. The GPU stack on this page is their successor. Randomised results from before the engine fix are void (S69, S70) and are not quoted anywhere on this site.</p>
-  <p>The chapter-by-chapter story, including the honest nulls, is on the <a href="story.html">story page</a> and the <a href="generalist.html">results page</a>; the physics behind every block is on the <a href="math.html">physics page</a>.</p>
+  <p class="lead">The first phase ran on a CPU simulator with Stable-Baselines3 PPO and compared five controllers: pure LQR, pure PPO, PPO with an outer velocity integral, a small fixed residual, and a learned gate. The gate collapsed to pure LQR (S18c). The LQR core survived.</p>
+  <p>The full timeline is on the <a href="history.html">history page</a>; the early narrative is on the <a href="story.html">story page</a>.</p>
 </div></section>
 
 </main>

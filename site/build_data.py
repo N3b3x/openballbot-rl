@@ -302,24 +302,24 @@ RUNSPEC = [("g12_pure_s0", "pure learning (no LQR), 300M steps", "pure", "seed 0
            ("g16_ret100_s0", "ramped 1.75x, trained with the ball retainer (arrestors at 100 deg)", "ret", "seed 0"), ("g16_ret100_s1", "ramped 1.75x, trained with the ball retainer (arrestors at 100 deg)", "ret", "seed 1"),
            ("g16_pure_ret100_s0", "pure learning, trained with the retainer", "pureret", "seed 0"), ("g16_pure_ret100_s1", "pure learning, trained with the retainer", "pureret", "seed 1"),
            ("g17_ret100_trk3_s0", "retainer, authority 0.5, tracking weight x3", "trk3", "seed 0"),
-           ("g18_ret_rs015_s0", "retainer, authority 0.15", "ret015", "seed 0"), ("g18_ret_rs025_s0", "retainer, authority 0.25 (recommended)", "ret025", "seed 0"),
-           ("g18_ret_rs025_s1", "retainer, authority 0.25 (recommended)", "ret025", "seed 1"), ("g18_ret_rs035_s0", "retainer, authority 0.35", "ret035", "seed 0"),
+           ("g18_ret_rs015_s0", "retainer, authority 0.15", "ret015", "seed 0"), ("g18_ret_rs025_s0", "retainer, authority 0.25 (then-recommended)", "ret025", "seed 0"),
+           ("g18_ret_rs025_s1", "retainer, authority 0.25 (then-recommended)", "ret025", "seed 1"), ("g18_ret_rs035_s0", "retainer, authority 0.35", "ret035", "seed 0"),
            ("g18_ret_soft_s0", "retainer, soft LQR base, authority 0.5", "retsoft", "seed 0"),
-           ("g18_ret_rs025_s2", "retainer, authority 0.25 (recommended)", "ret025", "seed 2"), ("g19_ret_rs025_400m_s0", "retainer, authority 0.25, 400M steps", "ret025_400", "seed 0"),
+           ("g18_ret_rs025_s2", "retainer, authority 0.25 (then-recommended)", "ret025", "seed 2"), ("g19_ret_rs025_400m_s0", "retainer, authority 0.25, 400M steps", "ret025_400", "seed 0"),
            ("g20_ret_rs025_depth_s0", "retainer, authority 0.25, depth sensor + edge starts", "ret025depth", "seed 0"),
            ("g21_ret_rs025_tau3_s0", "retainer, authority 0.25, 12 training designs (adds tau3; 1920 worlds per goal row)", "ret025_12", "seed 0"),
            ("g21_ret_rs025_tau3_s1", "retainer, authority 0.25, 12 training designs (adds tau3; 1920 worlds per goal row)", "ret025_12", "seed 1"),
            ("g22_ret_rs025_scan_s0", "retainer, authority 0.25, privileged height scan input", "scan025", "seed 0"), ("g22_ret_rs05_scan_s0", "retainer, authority 0.5, privileged height scan input", "scan05", "seed 0"),
            ("g22_pure_ret_scan_s0", "pure learning, retainer, privileged height scan input", "scanpure", "seed 0"),
-           ("g26_ret_rs025_mu01_s0", "recommended recipe on the corrected contact model (free-rolling friction 0.01; recommended checkpoint)", "ret025mu", "seed 0"),
-           ("g26_ret_rs025_mu01_s1", "recommended recipe on the corrected contact model (free-rolling friction 0.01; recommended checkpoint)", "ret025mu", "seed 1"),
-           ("g26_ret_rs025_mu01_s2", "recommended recipe on the corrected contact model (free-rolling friction 0.01; recommended checkpoint)", "ret025mu", "seed 2"),
-           ("g23_nav_rs025_s0", "recommended recipe, trained with the planner in the loop (30 % of worlds on blocks tiles)", "navtrain", "seed 0"), ("g23_nav_rs025_s1", "recommended recipe, trained with the planner in the loop (30 % of worlds on blocks tiles)", "navtrain", "seed 1")]
+           ("g26_ret_rs025_mu01_s0", "then-recommended recipe on the corrected contact model (free-rolling friction 0.01; then-recommended checkpoint)", "ret025mu", "seed 0"),
+           ("g26_ret_rs025_mu01_s1", "then-recommended recipe on the corrected contact model (free-rolling friction 0.01; then-recommended checkpoint)", "ret025mu", "seed 1"),
+           ("g26_ret_rs025_mu01_s2", "then-recommended recipe on the corrected contact model (free-rolling friction 0.01; then-recommended checkpoint)", "ret025mu", "seed 2"),
+           ("g23_nav_rs025_s0", "then-recommended recipe, trained with the planner in the loop (30 % of worlds on blocks tiles)", "navtrain", "seed 0"), ("g23_nav_rs025_s1", "then-recommended recipe, trained with the planner in the loop (30 % of worlds on blocks tiles)", "navtrain", "seed 1")]
 PENDING_RUNS = []
 PEND = '<span class="pend">PENDING</span>'
 SCALES = ("1", "1.75", "2.5")
 ENG = "Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error"
-ENG_NAV18 = ENG + "; earlier measurement: controller g18_ret_rs025_s1 trained and evaluated at wheel-ball free-rolling friction 0.001 (the recommended checkpoint at 0.01 is in Table 37)"
+ENG_NAV18 = ENG + "; earlier measurement: controller g18_ret_rs025_s1 trained and evaluated at wheel-ball free-rolling friction 0.001 (the then-recommended checkpoint at 0.01 is in Table 37)"
 
 
 def battery(run):
@@ -661,7 +661,7 @@ def build_retainer():
 def build_tradeoff():
     rows = []
     spec = [("g12_dr175_s0", "no arrestors (reference)"), ("g12_dr175_s1", "no arrestors (reference)"), ("ZS", "authority 0.5, arrestors added at evaluation only"),
-            ("g18_ret_rs015_s0", "authority 0.15"), ("g18_ret_rs025_s0", "authority 0.25 (recommended)"), ("g18_ret_rs025_s1", "authority 0.25 (recommended)"), ("g18_ret_rs025_s2", "authority 0.25 (recommended)"), ("g19_ret_rs025_400m_s0", "authority 0.25, 400M steps"), ("g18_ret_rs035_s0", "authority 0.35"),
+            ("g18_ret_rs015_s0", "authority 0.15"), ("g18_ret_rs025_s0", "authority 0.25 (then-recommended)"), ("g18_ret_rs025_s1", "authority 0.25 (then-recommended)"), ("g18_ret_rs025_s2", "authority 0.25 (then-recommended)"), ("g19_ret_rs025_400m_s0", "authority 0.25, 400M steps"), ("g18_ret_rs035_s0", "authority 0.35"),
             ("g16_ret100_s0", "authority 0.5"), ("g16_ret100_s1", "authority 0.5"), ("g17_ret100_trk3_s0", "authority 0.5, tracking weight x3"), ("g18_ret_soft_s0", "soft LQR base, authority 0.5"),
             ("g16_pure_ret100_s0", "pure learning (no LQR)"), ("g16_pure_ret100_s1", "pure learning (no LQR)")]
     S["tradeoff"] = []
@@ -687,7 +687,7 @@ def build_tradeoff():
     # retainer held-out terrain
     rows = []
     S["retheld"] = {}
-    for run, lab in (("g18_ret_rs025_s0", "recommended: LQR + residual 0.25, trained with the retainer"), ("g18_ret_rs025_s1", "recommended: LQR + residual 0.25, trained with the retainer"), ("g16_ret100_s0", "LQR + residual 0.5, trained with the retainer"), ("g16_ret100_s1", "LQR + residual 0.5, trained with the retainer"),
+    for run, lab in (("g18_ret_rs025_s0", "then-recommended: LQR + residual 0.25, trained with the retainer"), ("g18_ret_rs025_s1", "then-recommended: LQR + residual 0.25, trained with the retainer"), ("g16_ret100_s0", "LQR + residual 0.5, trained with the retainer"), ("g16_ret100_s1", "LQR + residual 0.5, trained with the retainer"),
                      ("g16_pure_ret100_s0", "pure learning, trained with the retainer"), ("g16_pure_ret100_s1", "pure learning, trained with the retainer"), ("g12_dr175_s0", "no arrestors (reference)"), ("g12_dr175_s1", "no arrestors (reference)")):
         du, dd = json.load(open(WP / run / "eval2_goal_goal_dr_surf_ps0_ts1.json"))["overall"], json.load(open(WP / run / "eval2_goal_goal_dr_surf_pull_ts1.json"))["overall"]
         S["retheld"][run] = (du["success"], dd["success"])
@@ -725,7 +725,7 @@ def build_s84_s85():
     check("S84", "text", "400M vel falls undisturbed", S["vel_tiles"]["g19_ret_rs025_400m_s0"]["fall_u"], 0.38, 0.006)
     check("S84", "text", "depth vel falls undisturbed", S["vel_tiles"]["g20_ret_rs025_depth_s0"]["fall_u"], 0.35, 0.006)
     # per-obstacle falls (velocity task, undisturbed)
-    runs = [("g18_ret_rs025_s0", "recommended, seed 0"), ("g18_ret_rs025_s1", "recommended, seed 1"), ("g20_ret_rs025_depth_s0", "recommended + depth sensor, seed 0")]
+    runs = [("g18_ret_rs025_s0", "then-recommended, seed 0"), ("g18_ret_rs025_s1", "then-recommended, seed 1"), ("g20_ret_rs025_depth_s0", "then-recommended + depth sensor, seed 0")]
     pk = {r: json.load(open(WP / r / "eval2_vel_0.3_dr_surf_ps0.json"))["by_kind"] for r, _ in runs}
     order = sorted(KINDS, key=lambda k: pk["g18_ret_rs025_s0"][k]["fall"])
     rows = [[KIND_LABEL[k]] + [f"{pk[r][k]['fall']:.2f}" for r, _ in runs] for k in order]
@@ -733,8 +733,8 @@ def build_s84_s85():
         V[f"obs.{k}"] = float(np.mean([pk[r][k]["fall"] for r in ("g18_ret_rs025_s0", "g18_ret_rs025_s1")]))
     head = ["Terrain kind"] + [f"{lab} ({r})" for r, lab in runs]
     cap = setup_cap(engine=ENG, dr="on at scale 1", noise="on", worlds="176 per terrain kind", seeds="as in the column headers", protocol="velocity task at 0.3 m/s on the tiles, undisturbed (pushes and pulls off), 100 deg arrestors; fall rate per terrain kind, sorted by the seed-0 value.")
-    inject("generalist.html", "tab_obstacles", html_table(head, rows) + f'<p class="cap"><b>Table 13.</b> Where the recommended controller still falls. {cap}</p>')
-    tex_table("obstacles", "Where the recommended controller still falls (velocity task, undisturbed). " + tex_escape(cap), "tab:gen_obstacles", head, rows, colspec="lccc")
+    inject("generalist.html", "tab_obstacles", html_table(head, rows) + f'<p class="cap"><b>Table 13.</b> Where the then-recommended controller still falls. {cap}</p>')
+    tex_table("obstacles", "Where the then-recommended controller still falls (velocity task, undisturbed). " + tex_escape(cap), "tab:gen_obstacles", head, rows, colspec="lccc")
     for k, (a0, a1, dd) in {"flat": (0.08, 0.07, 0.08), "step_up": (0.61, 0.62, 0.55), "large_drop": (0.64, 0.66, 0.68), "bump": (0.77, 0.74, 0.75), "stairs": (0.48, 0.52, 0.51), "ramp_up": (0.12, 0.14, None), "ramp_down": (0.20, 0.26, None), "rough": (0.17, 0.16, None), "step_down": (0.16, 0.16, None), "small_drop": (0.18, 0.17, None)}.items():
         check("S83/S84", "Table 13", f"{k} seed 0", pk["g18_ret_rs025_s0"][k]["fall"], a0, 0.006)
         check("S83/S84", "Table 13", f"{k} seed 1", pk["g18_ret_rs025_s1"][k]["fall"], a1, 0.006)
@@ -742,21 +742,21 @@ def build_s84_s85():
             check("S84", "Table 13", f"{k} depth", pk["g20_ret_rs025_depth_s0"][k]["fall"], dd, 0.006)
     # depth on top (perception chapter)
     rows = []
-    for run, lab in (("g20_ret_rs025_depth_s0", "recommended + depth sensor (18x14) + edge starts"), ("g18_ret_rs025_s0", "recommended, blind"), ("g18_ret_rs025_s1", "recommended, blind"), ("g18_ret_rs025_s2", "recommended, blind")):
+    for run, lab in (("g20_ret_rs025_depth_s0", "then-recommended + depth sensor (18x14) + edge starts"), ("g18_ret_rs025_s0", "then-recommended, blind"), ("g18_ret_rs025_s1", "then-recommended, blind"), ("g18_ret_rs025_s2", "then-recommended, blind")):
         gs, v = S["goalscale"][run], S["vel_tiles"][run]
         ach = [S["flat"][run][sp]["ratio"] for sp in SP]
         rows.append([f"{lab}<br><small>{run}, seed {run[-1]}</small>", " / ".join(f"{gs[sc]['u']['success']:.2f}" for sc in SCALES), " / ".join(f"{gs[sc]['d']['success']:.2f}" for sc in SCALES),
                      f"{v['fall_u']:.2f} / {v['fall_d']:.2f}", f"{pk[run]['step_up']['fall']:.2f}" if run in pk else "n/a", f"{min(ach):.2f} to {max(ach):.2f}"])
     head = ["Policy", "Goal success undisturbed, DR 1 / 1.75 / 2.5", "Goal success pushes + pulls, DR 1 / 1.75 / 2.5", "Tile velocity falls undisturbed / disturbed (DR 1)", "Step-up falls (velocity task)", "Flat achieved / command"]
-    cap = setup_cap(engine=ENG, dr="on (flat column: off)", noise="on (flat column: off)", worlds="176 per terrain kind (1760 per goal or tile cell); 64 per flat cell", seeds="one seed for the depth arm, three for the blind recommended controller",
+    cap = setup_cap(engine=ENG, dr="on (flat column: off)", noise="on (flat column: off)", worlds="176 per terrain kind (1760 per goal or tile cell); 64 per flat cell", seeds="one seed for the depth arm, three for the blind then-recommended controller",
                     protocol="eval_battery.py with the 100 deg arrestors in training and evaluation; the depth arm also uses edge-focused starts.")
-    inject("generalist.html", "tab_percarm2", html_table(head, rows) + f'<p class="cap"><b>Table 28.</b> Depth sensor on top of the recommended controller. {cap}</p>')
-    tex_table("percarm2", "Depth sensor on top of the recommended controller (retainer), corrected engine. " + tex_escape(cap), "tab:gen_percarm2", head, rows, colspec="lccccc", star=True)
+    inject("generalist.html", "tab_percarm2", html_table(head, rows) + f'<p class="cap"><b>Table 28.</b> Depth sensor on top of the then-recommended controller. {cap}</p>')
+    tex_table("percarm2", "Depth sensor on top of the then-recommended controller (retainer), corrected engine. " + tex_escape(cap), "tab:gen_percarm2", head, rows, colspec="lccccc", star=True)
     V["dep.stepup_gain"] = float(np.mean([pk[r]["step_up"]["fall"] for r in ("g18_ret_rs025_s0", "g18_ret_rs025_s1")]) - pk["g20_ret_rs025_depth_s0"]["step_up"]["fall"])
     # held-out designs (S85-R: re-run after the design-vector fix)
     rows = []
     S["designs_ho"] = {}
-    spec = [("g18_ret_rs025_s1", "recommended: LQR + residual 0.25, retainer", "no"), ("g12_dr175_s1", "LQR + residual 0.5, no retainer", "no"), ("g16_pure_ret100_s1", "pure learning, retainer", "no"),
+    spec = [("g18_ret_rs025_s1", "then-recommended: LQR + residual 0.25, retainer", "no"), ("g12_dr175_s1", "LQR + residual 0.5, no retainer", "no"), ("g16_pure_ret100_s1", "pure learning, retainer", "no"),
             ("g21_ret_rs025_tau3_s0", "LQR + residual 0.25, retainer, 12 designs", "yes"), ("g21_ret_rs025_tau3_s1", "LQR + residual 0.25, retainer, 12 designs", "yes")]
     for run, lab, tr in spec:
         du = json.load(open(WP / run / "eval2_goal_goal_dr_surf_ps0_des-s1.5-tau3.json"))
@@ -783,7 +783,7 @@ def build_s84_s85():
 
 def fig_designs_ho(C, size):
     fig, axs = plt.subplots(1, 2, figsize=size, sharey=True)
-    spec = [("recommended\n(rs 0.25, retainer)", "g18_ret_rs025_s1", C["hybrid"]), ("rs 0.5,\nno retainer", "g12_dr175_s1", C["model"]), ("pure learning,\nretainer", "g16_pure_ret100_s1", C["learned"]),
+    spec = [("then-recommended\n(rs 0.25, retainer)", "g18_ret_rs025_s1", C["hybrid"]), ("rs 0.5,\nno retainer", "g12_dr175_s1", C["model"]), ("pure learning,\nretainer", "g16_pure_ret100_s1", C["learned"]),
             ("rs 0.25, 12 designs\n(s0, s1)", "MEAN12", C["warn"])]
     for ax, key, title in ((axs[0], "u", "(a) undisturbed"), (axs[1], "d", "(b) pushes + pulls")):
         for i, (lab, run, col) in enumerate(spec):
@@ -891,7 +891,7 @@ def build_s100():
             V[f"spl.g18.{g}.{k}.min"], V[f"spl.g18.{g}.{k}.max"] = min(kv), max(kv)
     V["spl.g18.prog_loss"] = 1 - V["spl.g18.gov.prog_mean"] / V["spl.g18.none.prog_mean"]
     # S102 matched pair, both evaluated with PAIR_MU1=0.01 exported (behav_mu01_*.json record pair_mu1)
-    for fam, r, lab in (("g18", "g18_ret_rs025_s1", "g18 seed 1 (trained at 0.001), behaviour-comparison run"), ("g26", "g26_ret_rs025_mu01_s1", "g26 seed 1 (trained at 0.01), recommended checkpoint")):
+    for fam, r, lab in (("g18", "g18_ret_rs025_s1", "g18 seed 1 (trained at 0.001), behaviour-comparison run"), ("g26", "g26_ret_rs025_mu01_s1", "g26 seed 1 (trained at 0.01), then-recommended checkpoint")):
         dn, dg = json.load(open(WP / r / "behav_mu01_none.json")), json.load(open(WP / r / "behav_mu01_oracle.json"))
         for g, d in (("none", dn), ("gov", dg)):
             assert d["pair_mu1"] == 0.01 and d["steps"] == 1500 and d["push_scale"] == 0 and d["speed"] == 0.3, r
@@ -930,7 +930,7 @@ def build_s100():
     check("S103 addendum", "text", "cost in tile exits, smallest", V["sl40.exitcost_min"], 0.04, 0.006)
     check("S103 addendum", "text", "cost in tile exits, largest", V["sl40.exitcost_max"], 0.08, 0.006)
     head = ["Speed layer (g26 seed 1)", "Falls, all tiles"] + [KIND_LABEL[k] for k in kcols] + ["Tile exit reached", "Progress"]
-    cap = setup_cap(engine=ENG + "; wheel-ball free-rolling friction 0.01 (the policy's own training value, recorded in each file)", dr="on at scale 1", noise="on", worlds="176 per terrain kind (1760 per row)", seeds="one policy (g26_ret_rs025_mu01_s1, a recommended checkpoint), one evaluation seed",
+    cap = setup_cap(engine=ENG + "; wheel-ball free-rolling friction 0.01 (the policy's own training value, recorded in each file)", dr="on at scale 1", noise="on", worlds="176 per terrain kind (1760 per row)", seeds="one policy (g26_ret_rs025_mu01_s1, a then-recommended checkpoint), one evaluation seed",
                     protocol="velocity task at 0.3 m/s on the tiles, undisturbed, arrestors on, 40 s episodes so that a slowed robot still reaches its feature, tile seed 0; governor.py slow mode, which lowers the commanded speed to 0.05 m/s within 0.25 m of a rise above 2.4 cm or a drop above 8 cm, read from the perfect height map or from the ToF estimate; files gov_vel03_ps0_{none,oracle_v005,tof18_v005}_40s.json. An earlier 15 s version of this test (S100 to S102) let slowed robots run out of time before their feature and is superseded.")
     inject("generalist.html", "tab_gov_mu01", html_table(head, rows) + f'<p class="cap"><b>Table 36.</b> A terrain-aware speed layer, given time to reach the feature. {cap}</p>')
     tex_table("gov_mu01", "A terrain-aware speed layer with 40\\,s episodes. " + tex_escape(cap), "tab:gen_gov_mu01", head, rows, colspec="p{0.26\\linewidth}cccccccc", star=True)
@@ -1072,7 +1072,7 @@ def build_nav():
     cap = setup_cap(engine=ENG_NAV18, dr="on at scale 1 (11 designs, floor classes)", noise="on (sensor ranges: noise 0.5 percent of range, 2 percent dropout)", worlds="528 per row (48 per design, 11 designs)", seeds="one controller seed (g18_ret_rs025_s1, frozen)",
                     protocol="blocks map, undisturbed, 20 s episodes, goal 1.2 m away behind a block; wavefront planner (eval_nav.py) with obstacles inflated by 0.22 m on a 5 cm grid; nothing is retrained.")
     inject("generalist.html", "tab_nav", html_table(head, rows) + f'<p class="cap"><b>Table 19.</b> Navigation around unclimbable blocks, undisturbed. {cap}</p>')
-    tex_table("nav", "Navigation around unclimbable blocks (undisturbed), frozen recommended controller with a planner. " + tex_escape(cap), "tab:gen_nav", head, rows, colspec="lcccc", star=True)
+    tex_table("nav", "Navigation around unclimbable blocks (undisturbed), frozen then-recommended controller with a planner. " + tex_escape(cap), "tab:gen_nav", head, rows, colspec="lcccc", star=True)
     rows = [row("nav_blind_pp", "blind"), row("nav_oracle_pp", "privileged height map"), row("nav_tof18_head_pp", "ToF 18 x 14, head, pitch -25 deg"),
             row("nav_tof18_hw0.30", "ToF 18 x 14, margin 0.30 m (undisturbed)"), row("nav_tof18_hw0.38", "ToF 18 x 14, margin 0.38 m (undisturbed)"),
             row("nav_tof18_pp_hw0.30", "ToF 18 x 14, margin 0.30 m, pushes + pulls"), row("nav_tof18_pp_hw0.38", "ToF 18 x 14, margin 0.38 m, pushes + pulls"), row("nav_oracle_pp_hw0.38", "privileged map, margin 0.38 m, pushes + pulls")]
@@ -1143,9 +1143,9 @@ def build_s90_s91():
             cells.append(f"{o['success']:.2f} / {o['fall']:.2f} / {o['over_block']:.2f}")
             V[f"nt.{run}.{st}.success"], V[f"nt.{run}.{st}.fall"], V[f"nt.{run}.{st}.ob"] = o["success"], o["fall"], o["over_block"]
         rows.append(cells)
-    head = ["Hazard source", "frozen recommended controller (g18_ret_rs025_s1): reached / fell / on block", "planner-trained, seed 0 (g23_nav_rs025_s0)", "planner-trained, seed 1 (g23_nav_rs025_s1)"]
+    head = ["Hazard source", "frozen then-recommended controller (g18_ret_rs025_s1): reached / fell / on block", "planner-trained, seed 0 (g23_nav_rs025_s0)", "planner-trained, seed 1 (g23_nav_rs025_s1)"]
     cap = setup_cap(engine=ENG_NAV18, dr="on at scale 1", noise="on", worlds="528 per cell", seeds="one frozen controller seed against two planner-trained seeds",
-                    protocol="blocks map, smooth follower (sensor along the command), 20 s; the planner-trained runs spent 30 percent of training worlds on blocks tiles following the smooth planner on the privileged map, otherwise the recommended recipe.")
+                    protocol="blocks map, smooth follower (sensor along the command), 20 s; the planner-trained runs spent 30 percent of training worlds on blocks tiles following the smooth planner on the privileged map, otherwise the then-recommended recipe.")
     inject("generalist.html", "tab_navtrain", html_table(head, rows) + f'<p class="cap"><b>Table 23.</b> Training with the planner in the loop: a null result. {cap}</p>')
     tex_table("navtrain", "Training with the planner in the loop against the frozen controller (null result). " + tex_escape(cap), "tab:gen_navtrain", head, rows, colspec="lccc", star=True)
     L91 = {"navS_oracle": ((0.86, 0.14, 0.04), (0.85, 0.13, 0.01), (0.85, 0.14, 0.02)), "navS_oracle_pp": ((0.55, 0.44, 0.20), (0.55, 0.43, 0.13), (0.57, 0.42, 0.13)),
@@ -1159,7 +1159,7 @@ def build_s90_s91():
 
 
 def build_s104():
-    """S104: navigation on the recommended checkpoint at its own friction (g26 s1, 0.01); S90 protocol, smooth follower, sensor aimed at the target."""
+    """S104: navigation on the then-recommended checkpoint at its own friction (g26 s1, 0.01); S90 protocol, smooth follower, sensor aimed at the target."""
     D = WP / "g26_ret_rs025_mu01_s1"
     spec = [("blind", "navS_blind", "blind (straight to the goal)"), ("oracle", "navS_oracle", "perfect height map (upper bound)"), ("tof", "navS_tof18", "ToF 18 x 14, head, pitched down 25 deg, aimed at the target heading"),
             ("oracle_pp", "navS_oracle_pp", "perfect height map, pushes and pulls"), ("tof_pp", "navS_tof18_pp", "ToF 18 x 14, pushes and pulls")]
@@ -1176,12 +1176,12 @@ def build_s104():
         rows.append([lab, f"{o['success']:.2f}", f"{o['fall']:.2f}", f"{o['stuck']:.2f}", f"{o['over_block']:.2f}", f"{o['median_time_s']:.1f} s", f"{o['heading_rate_rms']:.2f}"])
     V["nav26.tof_gap"] = round(V["nav26.oracle.success"], 2) - round(V["nav26.tof.success"], 2)      # as printed in Table 37
     check("S104", "text", "ToF within ... of the perfect map", V["nav26.tof_gap"], 0.05, 0.006)
-    head = ["Hazard source (recommended checkpoint)", "Reached goal", "Fell", "Stuck", "Rolled onto a block", "Median time to goal", "Commanded heading-rate RMS [rad/s]"]
+    head = ["Hazard source (then-recommended checkpoint)", "Reached goal", "Fell", "Stuck", "Rolled onto a block", "Median time to goal", "Commanded heading-rate RMS [rad/s]"]
     cap = setup_cap(engine=ENG + "; wheel-ball free-rolling friction 0.01, the controller's own training value", dr="on at scale 1 (11 designs, floor classes)", noise="on (sensor ranges: noise 0.5 percent of range, 2 percent dropout)",
-                    worlds="528 per row (48 per design, 11 designs)", seeds="one controller seed (g26_ret_rs025_mu01_s1, a recommended checkpoint, frozen)",
+                    worlds="528 per row (48 per design, 11 designs)", seeds="one controller seed (g26_ret_rs025_mu01_s1, a then-recommended checkpoint, frozen)",
                     protocol="blocks map, 20 s, smooth follower (carrot 0.3 m, turn rate at most 2 rad/s; the blind row heads straight for the goal), sensor gimbal aimed at the planner's target heading; pushes 5 to 20 N and pulls 3 to 12 N in the last two rows; files g26_ret_rs025_mu01_s1/navS_{blind,oracle,tof18}.json and navS_{oracle,tof18}_pp.json.")
-    inject("generalist.html", "tab_nav26", html_table(head, rows) + f'<p class="cap"><b>Table 37.</b> Navigation with the recommended checkpoint on the corrected contact model. {cap}</p>')
-    tex_table("nav26", "Navigation with the recommended checkpoint at friction 0.01 (smooth follower). " + tex_escape(cap), "tab:gen_nav26", head, rows, colspec="lcccccc", star=True)
+    inject("generalist.html", "tab_nav26", html_table(head, rows) + f'<p class="cap"><b>Table 37.</b> Navigation with the then-recommended checkpoint on the corrected contact model. {cap}</p>')
+    tex_table("nav26", "Navigation with the then-recommended checkpoint at friction 0.01 (smooth follower). " + tex_escape(cap), "tab:gen_nav26", head, rows, colspec="lcccccc", star=True)
     L = {"blind": (0.09, 0.91, 0.00, 0.75), "oracle": (0.89, 0.07, 0.04, 0.01), "tof": (0.84, 0.07, 0.08, 0.04), "oracle_pp": (0.57, 0.39, 0.04, 0.16), "tof_pp": (0.51, 0.43, 0.06, 0.17)}
     for key, vals in L.items():
         for q, l in zip(("success", "fall", "stuck", "over_block"), vals):
@@ -1195,19 +1195,19 @@ MR_RUNS = [   # S110 to S116: the motion-layer recipe and its variants (run, row
     ("g26_ret_rs025_mu01_s1", "previous recommendation, raw commands, no motion layer (g26 s1)", "g26"),
     ("g29_mref_s0", "motion layer, fixed authority 0.25 (g29 s0)", "g29"), ("g29_mref_s1", "motion layer, fixed authority 0.25 (g29 s1)", "g29"), ("g29_mref_s2", "motion layer, fixed authority 0.25 (g29 s2)", "g29"),
     ("g32_mref_rsad_s0", "adaptive authority 0.15 / 0.3 (g32 s0)", "g32"), ("g32_mref_rsad_s1", "adaptive authority 0.15 / 0.3 (g32 s1)", "g32"),
-    ("g34_mref_rsad_db_s0", "<b>recommended:</b> adaptive authority + goal dead band (g34 s0)", "g34"), ("g34_mref_rsad_db_s1", "<b>recommended:</b> adaptive authority + goal dead band (g34 s1)", "g34"),
-    ("g34_mref_rsad_db_s2", "<b>recommended:</b> adaptive authority + goal dead band (g34 s2)", "g34"),
+    ("g34_mref_rsad_db_s0", "<b>then-recommended:</b> adaptive authority + goal dead band (g34 s0)", "g34"), ("g34_mref_rsad_db_s1", "<b>then-recommended:</b> adaptive authority + goal dead band (g34 s1)", "g34"),
+    ("g34_mref_rsad_db_s2", "<b>then-recommended:</b> adaptive authority + goal dead band (g34 s2)", "g34"),
     ("g33_mref_rsad_trk3_s0", "adaptive + tracking reward 3 (g33 s0)", "g33"), ("g33_mref_rsad_trk3_s1", "adaptive + tracking reward 3 (g33 s1)", "g33"),
     ("g35_mref_rsad_hardw_s0", "adaptive + hard-design weighting (g35 s0)", "g35"), ("g35_mref_rsad_hardw_s1", "adaptive + hard-design weighting (g35 s1)", "g35"),
     ("g35_mref_rsad_hardw_s2", "adaptive + hard-design weighting (g35 s2)", "g35"),
-    ("g36_deploy_400m_s0", "recommended + weighting, 400M steps (g36 s0)", "g36"), ("g36_deploy_400m_s1", "recommended + weighting, 400M steps (g36 s1)", "g36"),
-    ("g36_deploy_400m_s2", "recommended + weighting, 400M steps (g36 s2)", "g36"),
-    ("g37_push15_s0", "recommended, trained on 1.5 x pushes and pulls (g37 s0)", "g37"), ("g37_push20_s0", "recommended, trained on 2 x pushes and pulls (g37 s0)", "g37")]
+    ("g36_deploy_400m_s0", "then-recommended + weighting, 400M steps (g36 s0)", "g36"), ("g36_deploy_400m_s1", "then-recommended + weighting, 400M steps (g36 s1)", "g36"),
+    ("g36_deploy_400m_s2", "then-recommended + weighting, 400M steps (g36 s2)", "g36"),
+    ("g37_push15_s0", "then-recommended, trained on 1.5 x pushes and pulls (g37 s0)", "g37"), ("g37_push20_s0", "then-recommended, trained on 2 x pushes and pulls (g37 s0)", "g37")]
 HARD = ("kb025", "bal4", "tau6")      # light ball (0.25 x ball mass), heavy body (4 x ballast), weak motors (6 N m torque limit)
 
 
 def build_s105_s116():
-    """S105 to S116: the motion-reference layer, adaptive residual authority and the goal dead band (recommended recipe g34), the variants that
+    """S105 to S116: the motion-reference layer, adaptive residual authority and the goal dead band (then-recommended recipe g34), the variants that
     did not help, navigation and the contact escape on the new controller, and the limits (hard designs on flat ground, sustained pulls)."""
     rows, S["motion"] = [], {}
     for run, lab, fam in MR_RUNS:
@@ -1254,7 +1254,7 @@ def build_s105_s116():
             "Battery goal success DR 1: undisturbed / pushes + pulls", "DR 1.75", "DR 2.5", "Tile velocity falls DR 1: undisturbed / pushes + pulls"]
     cap = setup_cap(engine=ENG + "; wheel-ball free-rolling friction 0.01", dr="on at scale 1 unless a column says 1.75 or 2.5 (training: ramped to 1.75)",
                     noise="on", worlds="goal test 528 per row (48 per design, 11 designs); battery 1760 per cell (16 per design and terrain kind)",
-                    seeds="one per row; three seeds of the recommended recipe g34 (s0, s1, s2)",
+                    seeds="one per row; three seeds of the then-recommended recipe g34 (s0, s1, s2)",
                     protocol="goal test: eval_motion.py, goal 1.2 m away on flat interior tiles, 15 s, no pushes, commands through the motion layer for every run trained with it (the g26 row uses raw commands, as it was trained); "
                              "hard designs = kb025 (light ball, 0.25 x ball mass), bal4 (heavy body, 4 x ballast) and tau6 (weak motors, 6 N m torque limit against 30). Battery: eval_battery.py, goal task 1.1 m and velocity task 0.3 m/s on the tiled map, 8 s, surfaces on, arrestors on; "
                              "pushes 5 to 20 N for 50 ms every 2 to 4 s and pulls 3 to 12 N for 0.5 to 2 s every 4 to 10 s. All recipes 200M steps except g36 (400M); files outputs/study/warp_ppo/RUN/motion_goal_ref.json (g26: motion_goal_raw.json) and RUN/battery.json.")
@@ -1296,8 +1296,8 @@ def build_s105_s116():
     # navigation with the motion layer (S114 and addenda); the g26 rows are those of Table 37
     spec = [("g26", "g26_ret_rs025_mu01_s1", "", "previous recommendation, no motion layer (g26 s1; Table 37)", False),
             ("g32", "g32_mref_rsad_s1", "", "adaptive authority, with the motion layer (g32 s1)", True),
-            ("g34", "g34_mref_rsad_db_s0", "", "<b>recommended</b>, with the motion layer (g34 s0)", True),
-            ("g34raw", "g34_mref_rsad_db_s0", "_nomref", "recommended checkpoint, planner commands raw (g34 s0, NO_MREF=1)", False)]
+            ("g34", "g34_mref_rsad_db_s0", "", "<b>then-recommended</b>, with the motion layer (g34 s0)", True),
+            ("g34raw", "g34_mref_rsad_db_s0", "_nomref", "then-recommended checkpoint, planner commands raw (g34 s0, NO_MREF=1)", False)]
     rows = []
     S["navmr"] = {}
     for key, run, suf, lab, mref in spec:
@@ -1352,7 +1352,7 @@ def build_s105_s116():
             o = d["overall"]
             for q in ("success", "fall", "stuck", "over_block", "median_time_s"):
                 V[f"esc.{key}.{src}.{q}"] = o[q]
-            rows.append([f"{lab}<br><small>{'previous recommendation g26 s1, no layer' if key == 'g26' else 'recommended g34 s0, motion layer'}</small>", f"{o['success']:.3f}", f"{o['fall']:.3f}", f"{o['stuck']:.3f}", f"{o['over_block']:.2f}", f"{o['median_time_s']:.1f} s"])
+            rows.append([f"{lab}<br><small>{'previous recommendation g26 s1, no layer' if key == 'g26' else 'then-recommended g34 s0, motion layer'}</small>", f"{o['success']:.3f}", f"{o['fall']:.3f}", f"{o['stuck']:.3f}", f"{o['over_block']:.2f}", f"{o['median_time_s']:.1f} s"])
     head = ["Controller", "Reached goal", "Fell", "Stuck", "Rolled onto a block", "Median time to goal"]
     cap = setup_cap(engine=ENG + "; wheel-ball free-rolling friction 0.01", dr="on at scale 1", noise="on", worlds="528 per row (48 per design, 11 designs)", seeds="one controller seed per pair of rows, frozen",
                     protocol="blocks map as Table 39 but no terrain sensing at all, 40 s episodes; escape layer experiments/warp_ppo/escape.py through eval_nav.py --source bump: stall detection (under 30 percent of the commanded speed for 1 s, no 0.1 m approach in 4 s, or tilt above 15 deg), a 0.3 m obstacle segment marked 0.2 m ahead, 1 s back-up at 0.15 m/s, re-plan, give up after 6 failures; files outputs/study/warp_ppo/RUN/navS_{blind,bump_v15}_40s.json.")
@@ -1390,7 +1390,7 @@ def build_s105_s116():
     V["lim.sw.p1.bal025"] = json.load(open(D / "eval2_goal_goal_dr_surf_pull_flat_noexit.json"))["by_design"]["bal025"]["fall"]
     head = ["Test on a fully flat map (g34 s0)", "Falls, all 11 designs", "kb025 light ball (0.25 x ball mass)", "bal4 heavy body (4 x ballast)", "tau6 weak motors (6 N m)", "the other eight designs"]
     cap = setup_cap(engine=ENG + "; wheel-ball free-rolling friction 0.01", dr="on at scale 1", noise="on", worlds="528 per row in the first two rows (48 per design); 352 per row in the others (32 per design)",
-                    seeds="one controller seed (g34_mref_rsad_db_s0, recommended recipe), frozen",
+                    seeds="one controller seed (g34_mref_rsad_db_s0, then-recommended recipe), frozen",
                     protocol="TILES_FLAT=1, so no terrain is involved. First two rows: eval_motion.py goal test (1.2 m, 15 s, motion layer in the loop), files motion_goal_ref_allflat[_lqronly].json. Other rows: eval_tiles2.py goal task (1.1 m, 8 s) with PUSH_SCALE multiplying both the pushes and the sustained pulls, files eval2_goal_goal_dr_surf_*_flat_noexit.json.")
     inject("generalist.html", "tab_limits", html_table(head, rows) + f'<p class="cap"><b>Table 41.</b> What the controller cannot absorb, on flat ground. {cap}</p>')
     tex_table("limits", "Limits on flat ground: hard designs and sustained pulls (S114, S116). " + tex_escape(cap), "tab:gen_limits", head, rows, colspec="p{5.2cm}ccccc", star=True)
@@ -1775,8 +1775,8 @@ def build_s94_s95():
     n_kind = sum(1 for k in SS["nom"][SCALE_RUN]["per_world"]["kind"] if k == "step_up")
     V["sc.nworlds"] = n_kind
     V["sc.nseeds"] = len(SCALE_SEEDS)
-    seedtxt = (f"two training seeds of one recipe ({', '.join(SCALE_SEEDS)}), the recommended recipe trained on the 11 designs plus the robot at 0.75, 1.5 and 2 times nominal size (14 designs); cells are the mean of the two seeds (the last column gives each seed); the 0.5 scale was never trained on and was evaluated with seed 0 only, at friction 0.001"
-               if len(SCALE_SEEDS) > 1 else f"one policy ({SCALE_RUN}, seed 0), the recommended recipe trained on the 11 designs plus the robot at 0.75, 1.5 and 2 times nominal size (14 designs); the 0.5 scale was never trained on")
+    seedtxt = (f"two training seeds of one recipe ({', '.join(SCALE_SEEDS)}), the then-recommended recipe trained on the 11 designs plus the robot at 0.75, 1.5 and 2 times nominal size (14 designs); cells are the mean of the two seeds (the last column gives each seed); the 0.5 scale was never trained on and was evaluated with seed 0 only, at friction 0.001"
+               if len(SCALE_SEEDS) > 1 else f"one policy ({SCALE_RUN}, seed 0), the then-recommended recipe trained on the 11 designs plus the robot at 0.75, 1.5 and 2 times nominal size (14 designs); the 0.5 scale was never trained on")
     cap = setup_cap(engine=ENG, dr="on at scale 1 (floor friction 0.4 to 1.2 by surface class)", noise="on", worlds=f"{n_kind} per terrain kind, robot scale and seed ({len(SS['nom'][SCALE_RUN]['per_world']['kind'])} per scale and seed), split into halves at the midpoint of each feature's drawn range",
                     seeds=seedtxt, protocol="velocity task at 0.3 m/s Froude-scaled (times the square root of the scale) on the tiles, undisturbed, arrestors re-fitted per scale, 20 s episodes, tile seed 0; feature sizes are the same absolute sizes for every robot (eval_governor.py --source none --eval-designs); evaluated at wheel-ball free-rolling friction 0.01 (S98) with policies trained at 0.001 (files stepsize_mu01_*.json).")
     inject("generalist.html", "tab_scale5", html_table(head, rows) + f'<p class="cap"><b>Table 30.</b> Five robot sizes against the same obstacles. {cap}</p>')
@@ -1867,12 +1867,12 @@ def build_s94_s95():
     for run in ("g26_ret_rs025_mu01_s0", "g26_ret_rs025_mu01_s1", "g26_ret_rs025_mu01_s2"):
         if run in S.get("goal", {}) and run in S.get("flat", {}):
             g, f = S["goal"][run], S["flat"][run]
-            rows.append([f"recommended checkpoint, 11 designs, trained and evaluated at 0.01<br><small>{run}, seed {run[-1]}</small>", f"{g['u']['success']:.2f} / {g['d']['success']:.2f}", " / ".join(f"{f[sp]['ratio']:.2f}" for sp in SP), " / ".join(f"{f[sp]['fall']:.2f}" for sp in SP)])
+            rows.append([f"then-recommended checkpoint, 11 designs, trained and evaluated at 0.01<br><small>{run}, seed {run[-1]}</small>", f"{g['u']['success']:.2f} / {g['d']['success']:.2f}", " / ".join(f"{f[sp]['ratio']:.2f}" for sp in SP), " / ".join(f"{f[sp]['fall']:.2f}" for sp in SP)])
     head = ["Policy", "Goal success, undisturbed / pushes and pulls (DR scale 1)", "Flat benchmark, achieved over commanded speed at 0.3 / 0.6 / 0.9 m/s", "Flat benchmark falls at 0.3 / 0.6 / 0.9 m/s"]
-    cap = setup_cap(engine=ENG + "; wheel-ball free-rolling friction 0.01 in every row (the scale seeds were trained at 0.001 and evaluated at 0.01 through PAIR_MU1, files battery_mu0.01.json; the recommended checkpoints were trained at 0.01)", dr="on at scale 1 for the goal columns (the 11 training designs of the goal task), off for the flat columns (nominal design)", noise="on (goal), off (flat)", worlds="1760 per goal cell, 64 per flat cell", seeds="one row per training seed, as listed",
+    cap = setup_cap(engine=ENG + "; wheel-ball free-rolling friction 0.01 in every row (the scale seeds were trained at 0.001 and evaluated at 0.01 through PAIR_MU1, files battery_mu0.01.json; the then-recommended checkpoints were trained at 0.01)", dr="on at scale 1 for the goal columns (the 11 training designs of the goal task), off for the flat columns (nominal design)", noise="on (goal), off (flat)", worlds="1760 per goal cell, 64 per flat cell", seeds="one row per training seed, as listed",
                     protocol="the standard battery (eval_battery.py): goal task of Table 2 and the clean flat benchmark of Table 1 on interior tiles.")
-    inject("generalist.html", "tab_scalebatt", html_table(head, rows) + f'<p class="cap"><b>Table 32.</b> The scale policy keeps the recommended controller\'s standard results. {cap}</p>')
-    tex_table("scalebatt", "The scale policy on the standard battery at friction 0.01, against the recommended checkpoints. " + tex_escape(cap), "tab:gen_scalebatt", head, [[re.sub(r"<[^>]+>", " ", c).replace("  ", " ") for c in r] for r in rows], colspec="p{0.3\\linewidth}ccc", star=True)
+    inject("generalist.html", "tab_scalebatt", html_table(head, rows) + f'<p class="cap"><b>Table 32.</b> The scale policy keeps the then-recommended controller\'s standard results. {cap}</p>')
+    tex_table("scalebatt", "The scale policy on the standard battery at friction 0.01, against the then-recommended checkpoints. " + tex_escape(cap), "tab:gen_scalebatt", head, [[re.sub(r"<[^>]+>", " ", c).replace("  ", " ") for c in r] for r in rows], colspec="p{0.3\\linewidth}ccc", star=True)
     if V["sc.batt.mu01"]:
         for i, (u, d_, a1, a2) in enumerate(((0.74, 0.47, 0.91, 0.98), (0.70, 0.44, 0.89, 0.99))):
             if f"sc.batt.goal_u.{i}" in V:
@@ -1887,7 +1887,7 @@ def build_s94_s95():
     inject("generalist.html", "pending_scale", ptxt)
 
 
-MU_RUNS = [("g18_ret_rs025_s1", "recommended controller, seed 1 (trained at 0.001)", "_mu0.01"), ("g18_ret_rs025_s2", "recommended controller, seed 2 (trained at 0.001)", "_mu0.01"),
+MU_RUNS = [("g18_ret_rs025_s1", "then-recommended controller, seed 1 (trained at 0.001)", "_mu0.01"), ("g18_ret_rs025_s2", "then-recommended controller, seed 2 (trained at 0.001)", "_mu0.01"),
            ("g26_ret_rs025_mu01_s0", "same recipe retrained at 0.01, seed 0", ""), ("g26_ret_rs025_mu01_s1", "same recipe retrained at 0.01, seed 1", ""), ("g26_ret_rs025_mu01_s2", "same recipe retrained at 0.01, seed 2", "")]
 MU_DESIGNS = ["all", "kb025", "bal4", "kb4", "bal025", "zeta66", "nom"]
 
@@ -1925,7 +1925,7 @@ def build_s98():
     V["mu.g26.nonfinite.max"] = max(V.get(f"mu.{r}.nonfinite", 0) for r in g26)
     head = ["Policy", "Standing still for 20 s at friction 0.01, falls: all 11 designs / kb025 / bal4 / kb4 / bal025 / zeta66 / nominal", "Driving at 0.3 m/s for 20 s at 0.01, falls: all / kb025 / bal4 / kb4 / bal025 / zeta66 / nominal", "Non-finite worlds (fraction)"]
     cap = setup_cap(engine=ENG + "; wheel-ball free-rolling friction 0.01 for every row (the first two policies were trained at 0.001 and are evaluated at 0.01 through PAIR_MU1; the retrained ones carry 0.01 in args.json; the value is recorded in each file's env_settings)", dr="on at scale 1", noise="on", worlds="32 per design (352 per cell)",
-                    seeds="seeds 1 and 2 of the recommended recipe (seed 0 not re-measured) and the seeds of the recipe retrained at 0.01 that are evaluated so far, one evaluation seed each",
+                    seeds="seeds 1 and 2 of the then-recommended recipe (seed 0 not re-measured) and the seeds of the recipe retrained at 0.01 that are evaluated so far, one evaluation seed each",
                     protocol="flat interior tiles (at least 7.5 m from the map border), 20 s episodes, arrestors on, no pushes or pulls; zero command (standing) or 0.3 m/s at a random heading (driving); no fall was at the map edge; a non-finite state is counted separately where the file records it (new evaluations only) and is 0.000 in every such row.")
     inject("generalist.html", "tab_standing_mu01", html_table(head, rows) + f'<p class="cap"><b>Table 34.</b> Standing and driving for 20 s after the friction correction. {cap}</p>')
     tex_table("standing_mu01", "Standing and driving for 20\\,s on flat interior tiles at wheel-ball free-rolling friction 0.01 (the earlier 20\\,s standing tables are withdrawn, see text). " + tex_escape(cap), "tab:gen_standing_mu01", head,
@@ -1994,7 +1994,7 @@ def build_s98():
     S["pending"].pop("g25_ret_rs025_stand_s0", None)
     txt = (f'<p><span class="pend">PENDING</span> {", ".join(pend)}: the remaining seed of the recipe retrained at 0.01.</p>' if pend else "")
     if len(bats) == 3:
-        txt += ('<div class="callout"><b>Decision: the retrained seeds are the recommended checkpoints.</b> <code>g26_ret_rs025_mu01</code> seeds 0, 1 and 2 replace <code>g18_ret_rs025</code> seeds 0, 1 and 2. The recipe is unchanged (LQR plus residual at authority 0.25, arrestors, 11 designs, randomisation ramped to 1.75, 8 s episodes); only the contact model is corrected, and they are the only family with a reproducible standing number. Their standard battery (Tables 1 and 2, rows "corrected contact model"): goal success {{g26.goal.1.u.min:2}} to {{g26.goal.1.u.max:2}} undisturbed and {{g26.goal.1.d.min:2}} to {{g26.goal.1.d.max:2}} with pushes and pulls at randomisation scale 1, {{g26.goal.1.75.u.min:2}} / {{g26.goal.1.75.d.min:2}} to {{g26.goal.1.75.d.max:2}} at 1.75 and {{g26.goal.2.5.u.min:2}} to {{g26.goal.2.5.u.max:2}} / {{g26.goal.2.5.d.min:2}} to {{g26.goal.2.5.d.max:2}} at 2.5; tile velocity falls {{g26.vel.1.u.min:2}} undisturbed and {{g26.vel.1.d.min:2}} to {{g26.vel.1.d.max:2}} disturbed; flat achieved {{g26.ach.0.3.min:2}} to {{g26.ach.0.3.max:2}} at 0.3 m/s, {{g26.ach.0.6.min:2}} to {{g26.ach.0.6.max:2}} at 0.6 and {{g26.ach.0.9.min:2}} to {{g26.ach.0.9.max:2}} at 0.9 with falls {{g26.falls_max:2}}; standing 20 s {{mu.g26.stand.all.min:3}} to {{mu.g26.stand.all.max:3}} and driving {{mu.g26.drive.all.min:3}} to {{mu.g26.drive.all.max:3}} with no non-finite world; every seed within 0.03 of the others, at or above the g18 seeds on every battery cell, and equal to them on the obstacle course with a speed layer on the same contact model (Table 36: seed 1 of each family, {{spl.pair.g26.none.all:2}} against {{spl.pair.g18.none.all:2}} without and {{spl.pair.g26.gov.all:2}} against {{spl.pair.g18.gov.all:2}} with the governor). A gap between the families reported briefly in S101 was an evaluation bug, now fixed: the governor script did not apply a run\'s own free-rolling friction, so the g26 rows had been evaluated at 0.001 (S102). The g18 numbers remain valid comparisons for every 8 s result and for driving; their standing numbers are void. On the pages, "recommended controller" headline numbers are the g26 ranges where they describe the battery (goal success, tracking) and the g18 values where a table compares recipes at 0.001; each place says which.</div>')
+        txt += ('<div class="callout"><b>Decision: the retrained seeds are the then-recommended checkpoints.</b> <code>g26_ret_rs025_mu01</code> seeds 0, 1 and 2 replace <code>g18_ret_rs025</code> seeds 0, 1 and 2. The recipe is unchanged (LQR plus residual at authority 0.25, arrestors, 11 designs, randomisation ramped to 1.75, 8 s episodes); only the contact model is corrected, and they are the only family with a reproducible standing number. Their standard battery (Tables 1 and 2, rows "corrected contact model"): goal success {{g26.goal.1.u.min:2}} to {{g26.goal.1.u.max:2}} undisturbed and {{g26.goal.1.d.min:2}} to {{g26.goal.1.d.max:2}} with pushes and pulls at randomisation scale 1, {{g26.goal.1.75.u.min:2}} / {{g26.goal.1.75.d.min:2}} to {{g26.goal.1.75.d.max:2}} at 1.75 and {{g26.goal.2.5.u.min:2}} to {{g26.goal.2.5.u.max:2}} / {{g26.goal.2.5.d.min:2}} to {{g26.goal.2.5.d.max:2}} at 2.5; tile velocity falls {{g26.vel.1.u.min:2}} undisturbed and {{g26.vel.1.d.min:2}} to {{g26.vel.1.d.max:2}} disturbed; flat achieved {{g26.ach.0.3.min:2}} to {{g26.ach.0.3.max:2}} at 0.3 m/s, {{g26.ach.0.6.min:2}} to {{g26.ach.0.6.max:2}} at 0.6 and {{g26.ach.0.9.min:2}} to {{g26.ach.0.9.max:2}} at 0.9 with falls {{g26.falls_max:2}}; standing 20 s {{mu.g26.stand.all.min:3}} to {{mu.g26.stand.all.max:3}} and driving {{mu.g26.drive.all.min:3}} to {{mu.g26.drive.all.max:3}} with no non-finite world; every seed within 0.03 of the others, at or above the g18 seeds on every battery cell, and equal to them on the obstacle course with a speed layer on the same contact model (Table 36: seed 1 of each family, {{spl.pair.g26.none.all:2}} against {{spl.pair.g18.none.all:2}} without and {{spl.pair.g26.gov.all:2}} against {{spl.pair.g18.gov.all:2}} with the governor). A gap between the families reported briefly in S101 was an evaluation bug, now fixed: the governor script did not apply a run\'s own free-rolling friction, so the g26 rows had been evaluated at 0.001 (S102). The g18 numbers remain valid comparisons for every 8 s result and for driving; their standing numbers are void. In these tables "then-recommended" means g18_ret_rs025 or, on the corrected contact model, g26_ret_rs025_mu01; each place says which. The current recommendation is g39_goalcentre_s0 (S121).</div>')
     inject("generalist.html", "pending_mu01", txt)
 
 
@@ -2326,14 +2326,14 @@ def fig_tradeoff(C, size):
         ax.plot(pnt["ach"], pnt["d"], marker=mk[k], ms=7 if "0.25" in pnt["label"] else 6, color=col[k], ls="none", mfc=col[k] if "0.25" not in pnt["label"] else "none", mew=2 if "0.25" in pnt["label"] else 1,
                 label=lab_map[k] if k not in seen else None)
         seen.add(k)
-        short = pnt["label"].replace(" (recommended)", "*").replace("authority ", "rs ").replace(", tracking weight x3", " trk x3").replace("soft LQR base, rs 0.5", "soft").replace("pure learning (no LQR)", "pure").replace("no arrestors (reference)", "").replace("rs 0.5, arrestors added at evaluation only", "zero-shot")
+        short = pnt["label"].replace(" (then-recommended)", "*").replace("authority ", "rs ").replace(", tracking weight x3", " trk x3").replace("soft LQR base, rs 0.5", "soft").replace("pure learning (no LQR)", "pure").replace("no arrestors (reference)", "").replace("rs 0.5, arrestors added at evaluation only", "zero-shot")
         if short and pnt["run"] not in ("g12_dr175_s1",):
             ax.annotate(short, (pnt["ach"], pnt["d"]), textcoords="offset points", xytext=(5, 3), fontsize=6.5, color=C["fg"])
     ax.set_xlabel("flat-world achieved / commanded speed (mean of 0.3, 0.6, 0.9 m/s)"); ax.set_ylabel("goal success with pushes and pulls (DR scale 1)")
     ax.set_xlim(0.6, 1.08); ax.set_ylim(0.2, 0.56)
     ax.axvline(1.0, color=C["mute"], ls="--", lw=0.8)
     ax.legend(fontsize=6.5, loc="lower left")
-    ax.set_title("accuracy against robustness, one point per controller (* = recommended, rs 0.25)")
+    ax.set_title("accuracy against robustness, one point per controller (* = then-recommended, rs 0.25)")
     fig.tight_layout()
     return fig
 
@@ -2365,9 +2365,9 @@ CLIPS = [
     ("c2_step_up_cage100", "Same policy, 2.3 cm step, arrestors on (falls later)", "The same policy and world with arrestors falls too, later (5.5 s): the retainer prevents derailing, not every fall."),
     ("c3_step_up_pure_nocage", "Pure learning on a step-up, without arrestors (falls)", "Pure learning trained without arrestors (g12_pure_s0) falls at the 2.3 cm step after 2.8 s."),
     ("c3_step_up_pure_cage", "Pure learning on a step-up, with arrestors", "Pure learning trained with the arrestors (g16_pure_ret100_s1, a different policy from the clip above) crosses toward the goal and does not fall in 8 s."),
-    ("c4_step_up_rs025_cage", "Recommended controller: step-up toward a goal", "LQR + residual at authority 0.25 trained with the arrestors (g18_ret_rs025_s1) climbs the 2.3 cm step toward the goal and holds for 8 s."),
-    ("c4_ramp_vel06_rs025_cage", "Recommended controller: 0.6 m/s up an 11 degree ramp (known weakness, falls)", "The same controller following a 0.6 m/s command up an 11 degree ramp lags the command (0.40 m/s at 2.8 s) and falls at 5.6 s. A known weakness, shown as a single clip, not a statistic."),
-    ("c6_nav_blind", "Navigation, blind: falls into the block", "The recommended balance controller driven straight at the goal with no terrain information rolls onto the 8 cm block and falls."),
+    ("c4_step_up_rs025_cage", "Then-recommended controller: step-up toward a goal", "LQR + residual at authority 0.25 trained with the arrestors (g18_ret_rs025_s1) climbs the 2.3 cm step toward the goal and holds for 8 s."),
+    ("c4_ramp_vel06_rs025_cage", "Then-recommended controller: 0.6 m/s up an 11 degree ramp (known weakness, falls)", "The same controller following a 0.6 m/s command up an 11 degree ramp lags the command (0.40 m/s at 2.8 s) and falls at 5.6 s. A known weakness, shown as a single clip, not a statistic."),
+    ("c6_nav_blind", "Navigation, blind: falls into the block", "The then-recommended balance controller driven straight at the goal with no terrain information rolls onto the 8 cm block and falls."),
     ("c6_nav_oracle", "Navigation with the perfect height map: goes around the block", "The same frozen controller with the wavefront planner on the privileged height map steers around the block end and reaches the goal."),
     ("c7_step4cm_s075", "A 5 cm step, 6.75 cm ball: falls", "The scale policy on the 0.75-scale robot (ball radius 6.75 cm, predicted limit 2.0 cm) drives into a 5 cm up-step at 0.26 m/s, stalls against the edge and falls at 6.6 s."),
     ("c7_step4cm_s2", "The same 5 cm step, 18 cm ball: crosses", "The same policy on the 2-scale robot (ball radius 18 cm, predicted limit 5.2 cm) climbs the same 5 cm step and drives on; no fall in the 8 s clip."),
@@ -2632,7 +2632,7 @@ def build_diag():
     V["cmp.relerr_max"] = max(S["flat"][r][sp]["err"] / float(sp) for r in ("g12_res_s0", "g12_res_s1") for sp in SP)
     V["cmp.soft_gain_u"] = V["fam.soft.u.1"] - V["fam.res.u.1"]
     V["cmp.soft_gain_d"] = V["fam.soft.d.1"] - V["fam.res.d.1"]
-    for fam in ("ret025", "ret025mu"):      # per-seed ranges of the recommended families, for the headline sentences
+    for fam in ("ret025", "ret025mu"):      # per-seed ranges of the then-recommended families, for the headline sentences
         runs = FAM[fam]
         for k_, f_ in (("u", lambda r: S["goalscale"][r]["1"]["u"]["success"]), ("d", lambda r: S["goalscale"][r]["1"]["d"]["success"]), ("velu", lambda r: S["vel_tiles"][r]["fall_u"]), ("veld", lambda r: S["vel_tiles"][r]["fall_d"])):
             vals = [f_(r) for r in runs]

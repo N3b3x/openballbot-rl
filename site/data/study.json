@@ -4686,21 +4686,21 @@
   },
   {
    "run": "g18_ret_rs025_s0",
-   "label": "authority 0.25 (recommended)",
+   "label": "authority 0.25 (then-recommended)",
    "ach": 0.9988940159479777,
    "d": 0.41818180680274963,
    "kind": "res"
   },
   {
    "run": "g18_ret_rs025_s1",
-   "label": "authority 0.25 (recommended)",
+   "label": "authority 0.25 (then-recommended)",
    "ach": 0.9879656036694845,
    "d": 0.4323863387107849,
    "kind": "res"
   },
   {
    "run": "g18_ret_rs025_s2",
-   "label": "authority 0.25 (recommended)",
+   "label": "authority 0.25 (then-recommended)",
    "ach": 0.9534375071525574,
    "d": 0.44090908765792847,
    "kind": "res"
@@ -7656,7 +7656,7 @@
   },
   {
    "name": "c4_step_up_rs025_cage",
-   "title": "Recommended controller: step-up toward a goal",
+   "title": "Then-recommended controller: step-up toward a goal",
    "description": "LQR + residual at authority 0.25 trained with the arrestors (g18_ret_rs025_s1) climbs the 2.3 cm step toward the goal and holds for 8 s.",
    "run": "g18_ret_rs025_s1",
    "kind": "step_up",
@@ -7668,7 +7668,7 @@
   },
   {
    "name": "c4_ramp_vel06_rs025_cage",
-   "title": "Recommended controller: 0.6 m/s up an 11 degree ramp (known weakness, falls)",
+   "title": "Then-recommended controller: 0.6 m/s up an 11 degree ramp (known weakness, falls)",
    "description": "The same controller following a 0.6 m/s command up an 11 degree ramp lags the command (0.40 m/s at 2.8 s) and falls at 5.6 s. A known weakness, shown as a single clip, not a statistic.",
    "run": "g18_ret_rs025_s1",
    "kind": "ramp_up",
@@ -7681,7 +7681,7 @@
   {
    "name": "c6_nav_blind",
    "title": "Navigation, blind: falls into the block",
-   "description": "The recommended balance controller driven straight at the goal with no terrain information rolls onto the 8 cm block and falls.",
+   "description": "The then-recommended balance controller driven straight at the goal with no terrain information rolls onto the 8 cm block and falls.",
    "run": "g18_ret_rs025_s1",
    "kind": "blocks",
    "severity": 0.08,

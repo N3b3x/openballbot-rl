@@ -15,6 +15,7 @@ const PRIMARY = [
   ['index.html', 'Overview', 'i-home', '', ''],
   ['learn/index.html', 'Learn', 'i-learn', '', 'learn'],
   ['generalist.html', 'Results', 'i-results', '', ''],
+  ['history.html', 'History', 'i-clock', '', ''],
   ['videos.html', 'Videos', 'i-video', '', ''],
   ['design.html', 'Guidelines', 'i-ruler', 'Design guidelines', ''],
   ['deploy.html', 'ROS 2', 'i-ros', '', ''],
@@ -36,7 +37,8 @@ const GROUPS = [
     ['reproduce.html', 'Reproduce', 'setup, commands, how to cite', 'i-code', ''],
   ]],
   ['Reference', [
-    ['story.html', 'The journey', 'the narrative version, dead ends included', 'i-route', ''],
+    ['history.html', 'History', 'the timeline, S0 to S138, with every turning point', 'i-clock', ''],
+    ['story.html', 'The early journey', 'S0 to S16 as a narrative, dead ends included', 'i-route', ''],
     ['method.html', 'Setup and method', 'stack, reward, randomisation, protocols', 'i-eval', ''],
     ['results.html', 'Data tables', 'charts straight from the CSVs', 'i-grid', ''],
     ['engines.html', 'Engines', 'CPU against GPU physics', 'i-gpu', ''],

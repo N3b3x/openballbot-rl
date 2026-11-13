@@ -39,13 +39,13 @@
 <section class="wrap" style="padding-top:clamp(40px,7vw,80px);padding-bottom:36px">
   <div class="eyebrow">Design space</div>
   <h1>What shape of ballbot can work at all?</h1>
-  <p class="lede">Move the sliders and the constraint gauges recompute from the same planar model as the <a href="math.html">Math lab</a>. Below the explorer, the same designs are shown again as MuJoCo evidence, kept visibly apart from the predictions, including the cases where simulation contradicted the model.</p>
+  <p class="lede">Move the sliders. Seven constraint gauges recompute from the planar model of <a href="math.html">the physics page</a>. Further down, MuJoCo runs of the same designs are shown next to the predictions, including where simulation contradicted the model.</p>
   <div class="tagrow">
     <span class="chip model">MODEL: planar linear model, live in your browser</span>
     <span class="chip sim">SIM: MuJoCo runs, numbers copied from the repo CSVs</span>
     <span class="chip bad">REFUTED: model prediction contradicted by simulation</span>
   </div>
-  <p style="font-size:.92rem;color:var(--text-3)">All results are simulation only; nothing here is a hardware measurement. Sources: <code>scripts/study/design_space.py</code>, <code>design_constraints.py</code>, <code>docs/research/design_rules.md</code>, <code>outputs/study/results/{design_sweep,design_constraints,dz_lqr,dz_lqr_motor}.csv</code>.</p>
+  <p style="font-size:.92rem;color:var(--text-3)">Simulation only. For the controller-specific sweep of the recommended controller see <a href="design.html">Design guidelines</a>. Sources: <code>scripts/study/design_space.py</code>, <code>design_constraints.py</code>, <code>docs/research/design_rules.md</code>, <code>outputs/study/results/{design_sweep,design_constraints,dz_lqr,dz_lqr_motor}.csv</code>.</p>
 </section>
 
 <!-- ======================= EXPLORER ======================= -->
@@ -96,7 +96,7 @@
 <div class="wrap">
   <div class="eyebrow">2. Rules of the road</div>
   <h2>Six hard rules from the model, three that simulation overturned</h2>
-  <p class="lede" style="margin-bottom:1.4em">Condensed from <code>docs/research/design_rules.md</code>. Tags give the evidence level: MODEL (planar-model derivation), SIM (MuJoCo experiment), LIT (literature summaries in <code>docs/research/lit_ballbot_*.md</code>, which carry their own confidence tags and are not re-verified here). Blue numbers are computed live for the design in the explorer.</p>
+  <p class="lede" style="margin-bottom:1.4em">From <code>docs/research/design_rules.md</code>. Each rule is tagged MODEL (derived), SIM (MuJoCo experiment) or LIT (literature summary, not re-verified here). Blue numbers are live for the design in the explorer.</p>
   <div class="grid g3" id="rule-cards"></div>
   <h3 style="margin-top:2.2em">Where simulation contradicted the model</h3>
   <div class="grid g3" id="refuted-cards"></div>
@@ -111,7 +111,7 @@
 <div class="wrap">
   <div class="eyebrow">3. Precomputed sweep <span class="chip model" style="margin-left:.6em">MODEL</span></div>
   <h2>The sweep, <span id="nrows"></span> designs</h2>
-  <p class="lede" style="margin-bottom:1em">Every dot is one design from <code>design_sweep.csv</code> (one-factor-at-a-time plus a COM-height by ball-mass grid). The star is the design currently set in the explorer (computed live, so it also moves along the knobs the sweep did not vary).</p>
+  <p class="lede" style="margin-bottom:1em">One dot per design in <code>design_sweep.csv</code>. The star is the design set in the explorer, computed live.</p>
   <div class="lab-ctl" style="display:flex;flex-wrap:wrap;gap:12px 22px;align-items:end">
     <div class="ctl"><label for="sx" style="display:block">x axis</label><select id="sx" class="sel"></select> <label style="display:inline"><input id="lx" type="checkbox"> log</label></div>
     <div class="ctl"><label for="sy" style="display:block">y axis</label><select id="sy" class="sel"></select> <label style="display:inline"><input id="ly" type="checkbox"> log</label></div>
@@ -126,7 +126,8 @@
 <div class="wrap">
   <div class="eyebrow">4. Simulation evidence <span class="chip sim" style="margin-left:.6em">SIM</span></div>
   <h2>Zero-shot LQR on each design, next to the model's prediction</h2>
-  <p class="lede" style="margin-bottom:1em">Each design was built as a MuJoCo variant and driven by an LQR that was designed from that design's own model structure, with no tuning on the simulator (<code>scripts/study/eval_design.py</code>). The left block of columns is what the planar model predicts (blue, live); the right block is what simulation did (grey, copied from <code>dz_lqr.csv</code>). They are different kinds of evidence and are never merged into one number.</p>
+  <p class="lede" style="margin-bottom:1em">Each design was built in MuJoCo (CPU engine) and driven by an LQR designed from its own model, with no tuning on the simulator. Blue columns: what the planar model predicts, live. Grey columns: what simulation did, from <code>dz_lqr.csv</code>. The two are never merged into one number.</p>
+  <p class="src-note">Controller: LQR only, no learning, so no training seeds. Script: <code>scripts/study/eval_design.py</code>; the protocol line under the table gives trials, pushes and settings.</p>
   <div class="table-scroll"><table class="simtab" id="simtab" style="min-width:1020px"></table></div>
   <p style="font-size:.84rem;color:var(--text-3);margin-top:.8em" id="protocol"></p>
   <div class="grid g3" style="margin-top:2em" id="evid-cards"></div>

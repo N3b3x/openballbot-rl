@@ -104,7 +104,7 @@ const RECIPES = [
   { label: 'LQR + residual 0.5', small: 'no arrestors', runs: ['g12_dr175_s0', 'g12_dr175_s1'], fill: C.hybrid },
   { label: 'LQR + residual 0.5', small: 'with arrestors', runs: ['g16_ret100_s0', 'g16_ret100_s1'], fill: C.hybrid },
   { label: 'Pure learning', small: 'with arrestors', runs: ['g16_pure_ret100_s0', 'g16_pure_ret100_s1'], fill: C.learned },
-  { label: 'LQR + residual 0.25', small: 'with arrestors, recommended', runs: ['g18_ret_rs025_s0', 'g18_ret_rs025_s1', 'g18_ret_rs025_s2'], fill: C.hybrid },
+  { label: 'LQR + residual 0.25', small: 'with arrestors, then-recommended', runs: ['g18_ret_rs025_s0', 'g18_ret_rs025_s1', 'g18_ret_rs025_s2'], fill: C.hybrid },
 ];
 function chartJourney(host, d) {
   shell(host, (host, tipc) => {
@@ -124,7 +124,7 @@ function chartJourney(host, d) {
 
 // -------------------------------------------------------------------------------- 2. the authority dial
 const DIAL_LABELS = [
-  ['no arrestors (reference)', 'no arrestors', 0.997, 0.262, 'middle'], ['authority 0.15', '0.15', 1.015, 0.335, 'middle'], ['authority 0.25 (recommended)', '0.25, recommended', 0.992, 0.396, 'end'],
+  ['no arrestors (reference)', 'no arrestors', 0.997, 0.262, 'middle'], ['authority 0.15', '0.15', 1.015, 0.335, 'middle'], ['authority 0.25 (then-recommended)', '0.25, then-recommended', 0.992, 0.396, 'end'],
   ['authority 0.35', '0.35', 0.942, 0.470, 'middle'], ['authority 0.5', '0.5', 0.856, 0.506, 'middle'], ['soft LQR base, authority 0.5', 'soft LQR', 0.719, 0.526, 'middle'], ['pure learning (no LQR)', 'pure learning', 0.727, 0.478, 'middle'],
 ];
 function chartDial(host, d) {
@@ -144,7 +144,7 @@ function chartDial(host, d) {
     d.tradeoff.forEach((p) => {
       const col = p.kind === 'pure' ? C.learned : p.kind === 'ref' ? C.mute : C.hybrid, hollow = p.kind === 'ref' || p.kind === 'zs';
       const g = h('g');
-      if (/recommended/.test(p.label)) g.append(h('circle', { cx: xs(p.ach), cy: ys(p.d), r: 11, fill: 'none', stroke: C.hybrid, 'stroke-width': 1.5, 'stroke-dasharray': '3 3', opacity: 0.8 }));
+      if (/then-recommended/.test(p.label)) g.append(h('circle', { cx: xs(p.ach), cy: ys(p.d), r: 11, fill: 'none', stroke: C.hybrid, 'stroke-width': 1.5, 'stroke-dasharray': '3 3', opacity: 0.8 }));
       g.append(h('circle', { cx: xs(p.ach), cy: ys(p.d), r: 6, fill: hollow ? 'var(--bg-2)' : col, stroke: col, 'stroke-width': 2 }), h('circle', { cx: xs(p.ach), cy: ys(p.d), r: 13, fill: 'transparent' }));
       svg.append(focusable(g, tipc, `${p.label} (${p.run}): tracking ${f2(p.ach)}, goal success with pushes and pulls ${f2(p.d)}`, `<b>${p.label}</b><br>run ${p.run}<br>achieved / commanded <b>${f2(p.ach)}</b><br>goal success, pushes + pulls <b>${f2(p.d)}</b>`));
     });
@@ -170,7 +170,7 @@ function chartSize(host) {
       { v: e.s, fill: C.warn, text: `${f2(e.s)}  (${e.lo} to ${e.split} ${e.unit})`, aria: `${e.k}, smaller half ${e.lo} to ${e.split} ${e.unit}: falls ${f2(e.s)}`, tip: `<b>${e.k}</b>, ${e.lo} to ${e.split} ${e.unit}<br>falls <b>${f2(e.s)}</b>` },
       { v: e.l, fill: C.bad, text: `${f2(e.l)}  (${e.split} to ${e.hi} ${e.unit})`, aria: `${e.k}, larger half ${e.split} to ${e.hi} ${e.unit}: falls ${f2(e.l)}`, tip: `<b>${e.k}</b>, ${e.split} to ${e.hi} ${e.unit}<br>falls <b>${f2(e.l)}</b>` },
     ] }));
-    host.append(hbars(host, { id: 'sz', title: 'Falls by obstacle size', desc: 'Fall rate of the recommended controller on each terrain feature, split at the median drawn size into a smaller and a larger half. Up-steps and bumps above about 2.4 cm are nearly always fatal.',
+    host.append(hbars(host, { id: 'sz', title: 'Falls by obstacle size', desc: 'Fall rate of the then-recommended controller on each terrain feature, split at the median drawn size into a smaller and a larger half. Up-steps and bumps above about 2.4 cm are nearly always fatal.',
       rows, xmax: 1, ticks: [0, 0.25, 0.5, 0.75, 1], xlabel: 'share of worlds that fell (0.3 m/s, 20 s)', xshort: 'share of worlds that fell', valW: 120 }, tipc));
   });
 }
@@ -212,7 +212,7 @@ function chartNav(host, d) {
 
 // -------------------------------------------------------------------------------- 5. unseen designs
 const HO = [
-  ['g18_ret_rs025_s1', 'LQR + residual 0.25', 'recommended, arrestors, seed 1', C.hybrid], ['g12_dr175_s1', 'LQR + residual 0.5', 'no arrestors, seed 1', C.hybrid],
+  ['g18_ret_rs025_s1', 'LQR + residual 0.25', 'then-recommended, arrestors, seed 1', C.hybrid], ['g12_dr175_s1', 'LQR + residual 0.5', 'no arrestors, seed 1', C.hybrid],
   ['g16_pure_ret100_s1', 'Pure learning', 'arrestors, seed 1', C.learned], ['g21_ret_rs025_tau3_s0', 'LQR + residual 0.25, 12 designs', 'trained with tau3, seed 0', C.hybrid], ['g21_ret_rs025_tau3_s1', 'LQR + residual 0.25, 12 designs', 'trained with tau3, seed 1', C.hybrid],
 ];
 function chartDesigns(host, d) {
