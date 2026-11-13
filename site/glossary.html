@@ -46,11 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
 <section class="wrap page-head">
   <div class="eyebrow">Glossary</div>
   <h1>Every term, in two sentences</h1>
-  <p class="lede">Each entry says what the thing is in plain language, gives its symbol where it has one, and links to the page where it is used. Link to any entry with <code>glossary.html#id</code>; the id is shown in the entry's "where" line.</p>
+  <p class="lede">Plain-language definitions, with links to where each term is used. Link to any entry with <code>glossary.html#id</code>.</p>
   <div class="tagrow"><span class="chip sim">Simulation only, no hardware</span><span class="chip model">Blue symbol: model quantity</span></div>
   <aside class="tldr"><span class="readtime"></span><ul>
-    <li><b>About 50 entries</b>, alphabetical, each two sentences long with a symbol where one exists and links to the pages that use the term.</li>
-    <li><b>Stable anchors.</b> Every entry has an id, and common synonyms (retainer, residual authority, Froude scaling, goal success, tracking, wavefront planner, domain randomisation, design vector, smooth follower) resolve to the same entry.</li>
+    <li><b>About 50 entries</b>, alphabetical, two sentences each.</li>
+    <li><b>Stable anchors.</b> Every entry has an id; common synonyms resolve to the same entry.</li>
   </ul><span class="fine">Numbers inside definitions are cited to the study log by S-number.</span></aside>
   <nav class="alpha" aria-label="Jump to letter">
     <a href="#A">A</a><a href="#B">B</a><a href="#C">C</a><a href="#D">D</a><a href="#E">E</a><a href="#F">F</a><a href="#G">G</a><a href="#H">H</a><a href="#I">I</a><a href="#L">L</a><a href="#M">M</a><a href="#N">N</a><a href="#O">O</a><a href="#P">P</a><a href="#Q">Q</a><a href="#R">R</a><a href="#S">S</a><a href="#T">T</a><a href="#U">U</a><a href="#V">V</a><a href="#W">W</a>
@@ -63,11 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
 <div class="letter" id="A">A</div>
 
 <div class="entry" id="achieved-speed"><dt>Achieved speed ratio <span class="cat">metric</span></dt><dd>
-<p>The robot's steady forward speed divided by the speed it was asked for, measured after the first 3 s of a flat-ground run. A value of 1.00 means it drives exactly as fast as commanded; the recommended controller reaches 0.99 to 1.01 up to 0.9 m/s (S83).</p>
+<p>The robot's steady forward speed divided by the speed it was asked for, measured after the first 3 s of a flat-ground run. A value of 1.00 means it drives exactly as fast as commanded; the g18_ret_rs025 recipe (LQR + residual 0.25) reaches 0.99 to 1.01 up to 0.9 m/s (S83).</p>
 <p class="where">Used in: <a href="generalist.html#tracking">generalist study, tracking</a> <a href="bounds.html#rule-authority">rules, authority</a> <code>#achieved-speed</code></p></dd></div>
 
 <div class="entry" id="adaptive-authority"><dt>Adaptive authority <span class="cat">controller</span></dt><dd>
-<p>A residual authority that changes during a run: 0.15 while cruising, rising at once to 0.3 when the command changes faster than 0.3 m/s per second, nears zero, or the body tilts beyond 4 degrees, then decaying over about 0.5 s. It is part of the recommended recipe (S112).</p>
+<p>A residual authority that changes during a run: 0.15 while cruising, rising at once to 0.3 when the command changes faster than 0.3 m/s per second, nears zero, or the body tilts beyond 4 degrees, then decaying over about 0.5 s. It is part of the recommended controller <code>g39_goalcentre_s0</code> (S112, S121).</p>
 <p class="where">Used in: <a href="generalist.html#motion">generalist study, motion layer</a> <code>#adaptive-authority</code></p></dd></div>
 
 <div class="entry" id="anisotropic-friction"><span id="elliptic-cone"></span><dt>Anisotropic friction, elliptic cone <span class="sym">"0.001 1.0"</span> <span class="cat">simulation</span></dt><dd>
@@ -133,13 +133,13 @@ document.addEventListener('DOMContentLoaded', () => {
 <p class="where">Used in: <a href="method.html#dr">setup, randomisation</a> <a href="lessons.html#lesson-invariants">lesson 1</a> <code>#dr</code></p></dd></div>
 
 <div class="entry" id="dr-scale"><dt>DR scale <span class="cat">protocol</span></dt><dd>
-<p>A single multiplier applied to every randomisation range at once: scale 1 is the training range, 1.75 and 2.5 are wider than the policy ever saw. Goal success of the recommended controller degrades gracefully with it, 0.71 to 0.76 at scale 1 and 0.60 to 0.66 at 2.5 (S83).</p>
+<p>A single multiplier applied to every randomisation range at once: scale 1 is the training range, 1.75 and 2.5 are wider than the policy ever saw. Goal success of the g18_ret_rs025 recipe (LQR + residual 0.25) degrades gracefully with it: 0.71 to 0.76 at scale 1 and 0.60 to 0.66 at 2.5 (S83).</p>
 <p class="where">Used in: <a href="generalist.html#robust">generalist study, robustness</a> <a href="method.html#dr">setup</a> <code>#dr-scale</code></p></dd></div>
 
 <div class="letter" id="E">E</div>
 
 <div class="entry" id="exposure"><dt>Exposure artefact <span class="cat">evaluation fault</span></dt><dd>
-<p>A false rate caused by counting worlds that never met the thing being measured. Eight-second episodes made slow robots look safe on obstacles because at 0.1 m/s many never reached the feature; with 20 s episodes most of that advantage vanished (S86 withdrawn, S87). The exposure correction stands; the residual claim that speed does not matter at all was later superseded on the corrected contact model (S100).</p>
+<p>A false rate caused by counting worlds that never met the thing being measured. Eight-second episodes made slow robots look safe on obstacles because at 0.1 m/s many never reached the feature (S86 withdrawn, S87).</p>
 <p class="where">Used in: <a href="lessons.html#lesson-exposure">lesson 3</a> <a href="bounds.html#rule-size">rules, obstacle size</a> <code>#exposure</code></p></dd></div>
 
 <div class="letter" id="F">F</div>
@@ -173,11 +173,11 @@ document.addEventListener('DOMContentLoaded', () => {
 <p class="where">Used in: <a href="generalist.html#designs">generalist study, designs</a> <a href="bounds.html#rule-torque">rules, motor headroom</a> <a href="lessons.html#lesson-reference">lesson 5</a> <code>#held-out-design</code></p></dd></div>
 
 <div class="entry" id="held-out-terrain"><dt>Held-out terrain <span class="cat">protocol</span></dt><dd>
-<p>Terrain tiles drawn with a different random seed (tile seed 1) from the ones the policy trained on (tile seed 0), so every feature's position and size is new. The recommended controller loses about 0.05 to 0.07 goal success on it (S76, S84).</p>
+<p>Terrain tiles drawn with a different random seed (tile seed 1) from the ones the policy trained on (tile seed 0), so every feature's position and size is new. The g18_ret_rs025 recipe (LQR + residual 0.25) loses about 0.05 to 0.07 goal success on it (S76, S84).</p>
 <p class="where">Used in: <a href="generalist.html#tiles">generalist study, tiles</a> <code>#held-out-terrain</code></p></dd></div>
 
 <div class="entry" id="hybrid"><dt>Hybrid controller (LQR + residual) <span class="cat">controller</span></dt><dd>
-<p>The study's recommended structure: a model-based LQR provides the stabilising and tracking action and a learned PPO residual, scaled by its authority, adds what the model misses. Shown in teal on the site; the LQR part is blue and the learned part violet.</p>
+<p>The structure of the recommended controller: a model-based LQR provides the stabilising and tracking action and a learned PPO residual, scaled by its authority, adds what the model misses. Shown in teal on the site; the LQR part is blue and the learned part violet.</p>
 <p class="where">Used in: <a href="architecture.html#stack">architecture</a> <a href="architecture.html#stack">overview</a> <code>#hybrid</code></p></dd></div>
 
 <div class="letter" id="I">I</div>
@@ -272,6 +272,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <div class="letter" id="R">R</div>
 
+<div class="entry" id="recommended-controller"><dt>Recommended controller <span class="cat">controller</span></dt><dd>
+<p>On this site it always means the checkpoint <code>g39_goalcentre_s0</code>: an LQR base plus a PPO residual (authority 0.25, adaptive between 0.15 and 0.3), trained with the motion-reference layer and with goal logic on the true ball centre, on 11 designs (S121). Numbers measured on earlier checkpoints (g18_ret_rs025, g26_ret_rs025_mu01, g34) name that checkpoint.</p>
+<p class="where">Used in: <a href="generalist.html#goalcentre">generalist study, goal centre</a> <a href="history.html">history</a> <code>#recommended-controller</code></p></dd></div>
+
 <div class="entry" id="governor"><span id="reference-governor"></span><dt>Velocity reference governor <span class="sym">\(a_{\max}\)</span> <span class="cat">controller</span></dt><dd>
 <p>A filter between the commanded speed and the LQR that limits how fast the reference may change, here 0.5 m/s\(^2\), so a step command does not demand an impossible lean. Lowering it to 0.3 is part of the "soft" base and slows the approach to a goal (S66, S72).</p>
 <p class="where">Used in: <a href="method.html#lqr">setup, LQR</a> <a href="math.html">math lab</a> <code>#governor</code></p></dd></div>
@@ -287,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <p class="where">Used in: <a href="method.html#eval">setup, evaluation</a> <a href="generalist.html#summary">generalist study</a> <code>#seed</code></p></dd></div>
 
 <div class="entry" id="scale-study"><dt>Scale study <span class="cat">protocol</span></dt><dd>
-<p>One policy trained on the 11 designs plus the robot at 0.75, 1.5 and 2 times nominal size (ball radius 6.75, 13.5 and 18 cm; masses scaled by the cube, commands Froude scaled, arrestors re-fitted), then driven over the same absolute obstacle sizes, with a 0.5x robot (4.5 cm ball) held out (S95). It is the direct test of the traction limit and the source of the ball-size design rule: two training seeds, trained at free-rolling friction 0.001 and evaluated on the corrected contact model at 0.01 (S98, S99 addendum), which changed the small robots not at all and the two large robots by 0.05 to 0.06 of overall falls.</p>
+<p>One policy trained on the 11 designs plus the robot at 0.75, 1.5 and 2 times nominal size (ball radius 6.75, 13.5 and 18 cm; masses scaled by the cube, commands Froude scaled, arrestors re-fitted), then driven over the same absolute obstacle sizes, with a 0.5x robot (4.5 cm ball) held out (S95). It is the direct test of the traction limit and the source of the ball-size design rule (two training seeds, evaluated on the corrected contact model, S99 addendum).</p>
 <p class="where">Used in: <a href="generalist.html#ballsize">generalist study, ball size</a> <a href="bounds.html#design-for-your-ballbot">rules, design for your ballbot</a> <code>#scale-study</code></p></dd></div>
 
 <div class="entry" id="speed-governor"><span id="foresight"></span><dt>Speed governor (terrain-aware speed layer) <span class="cat">navigation</span></dt><dd>
@@ -299,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <p class="where">Used in: <a href="generalist.html#summary">generalist study</a> <a href="method.html#eval">setup, evaluation</a> <code>#seed-noise</code></p></dd></div>
 
 <div class="entry" id="tracking-error"><span id="tracking"></span><span id="steady-state-error"></span><dt>Steady-state tracking error (tracking) <span class="cat">metric</span></dt><dd>
-<p>The mean absolute difference between the commanded and the actual speed after the first 3 s of a flat run, in m/s, over surviving worlds. The recommended controller holds it at or below 0.04 to 0.06 m/s up to 0.9 m/s (S83).</p>
+<p>The mean absolute difference between the commanded and the actual speed after the first 3 s of a flat run, in m/s, over surviving worlds. The g18_ret_rs025 recipe (LQR + residual 0.25) holds it at or below 0.04 to 0.06 m/s up to 0.9 m/s (S83).</p>
 <p class="where">Used in: <a href="generalist.html#tracking">generalist study, tracking</a> <code>#tracking-error</code></p></dd></div>
 
 <div class="entry" id="surfaces"><dt>Surfaces (floor classes) <span class="cat">simulation</span></dt><dd>
@@ -325,7 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
 <p class="where">Used in: <a href="bounds.html#rule-traction">rules, traction</a> <a href="generalist.html#perception">generalist study</a> <code>#traction-limit</code></p></dd></div>
 
 <div class="entry" id="traction-p50"><span id="measured-50-percent-point"></span><dt>Traction limit, measured 50 percent point <span class="sym">\(\approx 0.24\,r\)</span> <span class="cat">metric</span></dt><dd>
-<p>The step height at which half of the worlds fall, read from the fall-against-height curve of each ball size; on the corrected contact model (free-rolling friction 0.01, two training seeds) it sits at 0.17 to 0.29 times the ball radius (mean 0.24 r) for the four trained sizes and both up-steps and bumps (S99 addendum; the earlier 0.15 to 0.26 r, mean 0.21 r, of S95 included solver blow-ups on the large robots). It lies below the nominal 0.29 r because floor friction is randomised from 0.4 to 1.2 per world, so the measured curve is the traction limit averaged over that friction spread; the design rule it gives is a ball radius of 3.4 to 4.2 times the tallest step.</p>
+<p>The step height at which half of the worlds fall, read from the fall-against-height curve of each ball size; on the corrected contact model (free-rolling friction 0.01, two training seeds) it sits at 0.17 to 0.29 times the ball radius (mean 0.24 r) for the four trained sizes and both up-steps and bumps (S99 addendum). It lies below the nominal 0.29 r because floor friction is randomised from 0.4 to 1.2 per world; the design rule it gives is a ball radius of 3.4 to 4.2 times the tallest step.</p>
 <p class="where">Used in: <a href="generalist.html#ballsize">generalist study, ball size</a> <a href="bounds.html#design-for-your-ballbot">rules, design for your ballbot</a> <code>#traction-p50</code></p></dd></div>
 
 <div class="letter" id="U">U</div>

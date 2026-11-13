@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- head:common -->
+<script>try{var t=localStorage.getItem('theme');document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}</script>
+<meta name="color-scheme" content="dark light">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/css/tokens.css">
+<!-- /head:common -->
+<title>History of the project | Ballbot</title>
+<meta name="description" content="The ballbot study as a timeline: from a CPU tracking study to the recommended controller g39_goalcentre_s0, with every turning point and correction cited to its log entry. Simulation only.">
+<!-- og -->
+<link rel="canonical" href="https://n3b3x.github.io/openballbot-rl/history.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Ballbot control research">
+<meta property="og:title" content="History of the project | Ballbot">
+<meta property="og:description" content="The ballbot study as a timeline: from a CPU tracking study to the recommended controller g39_goalcentre_s0, with every turning point and correction cited to its log entry. Simulation only.">
+<meta property="og:url" content="https://n3b3x.github.io/openballbot-rl/history.html">
+<meta property="og:image" content="https://n3b3x.github.io/openballbot-rl/assets/img/social-card.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A simulated ballbot: a cylindrical robot balanced on a basketball-textured ball, with the title of the study.">
+<meta name="twitter:card" content="summary_large_image">
+<!-- /og -->
+<link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/viz.css">
+<script type="module" src="assets/js/layout.js"></script>
+</head>
+<body>
+<!-- nojs --><noscript><nav class="nojs" aria-label="Main (JavaScript is off)"><a href="index.html">Overview</a><a href="learn/index.html">Learn</a><a href="generalist.html">Results</a><a href="history.html">History</a><a href="videos.html">Videos</a><a href="design.html">Design guidelines</a><a href="deploy.html">ROS 2</a><a href="math.html">Physics</a><a href="architecture.html">Controller</a><a href="reproduce.html">Reproduce</a><a href="glossary.html">Glossary</a></nav></noscript><!-- /nojs -->
+<main>
+<header class="pagehead wrap">
+  <div class="eyebrow">History <span class="badge-sim">simulation only</span></div>
+  <h1>How the project got here</h1>
+  <p class="lede">Log entries S0 to S138, in eight phases. Each milestone cites its entry in the study log.</p>
+  <div class="meta"><span class="readtime"></span><span class="chip">S0 to S138</span><span class="chip">MuJoCo CPU, then MuJoCo-Warp GPU</span></div>
+</header>
+
+<div class="wrap">
+  <aside class="tldr"><ul>
+    <li><b>Physics first, then a little learning.</b> Pure PPO learned to track but was slow or brittle. An LQR base with a bounded learned residual won (S60).</li>
+    <li><b>The biggest gains were not training tricks.</b> A passive mechanism (S79), a sensor with a planner (S89), and command layers (S110, S136).</li>
+    <li><b>Corrections changed results.</b> Each one is on the timeline in red.</li>
+  </ul></aside>
+
+  <figure class="figure" id="overview">
+    <div class="media">
+<svg class="diagram" viewBox="0 0 1010 190" role="img" aria-labelledby="ov-t ov-d"><title id="ov-t">Eight phases of the project</title><desc id="ov-d">A line with eight stops from the CPU tracking study (S0 to S15) to the recommended controller and generated worlds (S118 to S138).</desc>
+<path class="ln" d="M40 78H970" style="stroke-width:3"/>
+<a href="#e1"><circle cx="68" cy="78" r="13" class="bx learned" style="stroke-width:3"/><text x="68" y="82.5" class="t mid" style="font-size:12px">1</text><text x="68" y="40" class="t mid">CPU tracking</text><text x="68" y="56" class="code mid">S0 to S15</text><text x="68" y="118" class="s mid">learns to track;</text><text x="68" y="134" class="s mid">1 m/s is the edge</text></a>
+<a href="#e2"><circle cx="193" cy="78" r="13" class="bx learned" style="stroke-width:3"/><text x="193" y="82.5" class="t mid" style="font-size:12px">2</text><text x="193" y="40" class="t mid">GPU, many designs</text><text x="193" y="56" class="code mid">S16 to S48</text><text x="193" y="118" class="s mid">4096 worlds; first</text><text x="193" y="134" class="s mid">generalist not robust</text></a>
+<a href="#e3"><circle cx="318" cy="78" r="13" class="bx hybrid" style="stroke-width:3"/><text x="318" y="82.5" class="t mid" style="font-size:12px">3</text><text x="318" y="40" class="t mid">LQR + residual</text><text x="318" y="56" class="code mid">S50 to S68</text><text x="318" y="118" class="s mid">accurate and</text><text x="318" y="134" class="s mid">goal-directed</text></a>
+<a href="#e4"><circle cx="443" cy="78" r="13" class="bx bad" style="stroke-width:3"/><text x="443" y="82.5" class="t mid" style="font-size:12px">4</text><text x="443" y="40" class="t mid">Engine fixes</text><text x="443" y="56" class="code mid">S69 to S78</text><text x="443" y="118" class="s mid">every randomised</text><text x="443" y="134" class="s mid">result re-run</text></a>
+<a href="#e5"><circle cx="568" cy="78" r="13" class="bx good" style="stroke-width:3"/><text x="568" y="82.5" class="t mid" style="font-size:12px">5</text><text x="568" y="40" class="t mid">Arrestors</text><text x="568" y="56" class="code mid">S79 to S85</text><text x="568" y="118" class="s mid">derailing stopped</text><text x="568" y="134" class="s mid">mechanically</text></a>
+<a href="#e6"><circle cx="693" cy="78" r="13" class="bx warn" style="stroke-width:3"/><text x="693" y="82.5" class="t mid" style="font-size:12px">6</text><text x="693" y="40" class="t mid">Limits, navigation</text><text x="693" y="56" class="code mid">S86 to S109</text><text x="693" y="118" class="s mid">ball size sets</text><text x="693" y="134" class="s mid">the step limit</text></a>
+<a href="#e7"><circle cx="818" cy="78" r="13" class="bx hybrid" style="stroke-width:3"/><text x="818" y="82.5" class="t mid" style="font-size:12px">7</text><text x="818" y="40" class="t mid">Motion layer</text><text x="818" y="56" class="code mid">S105 to S117</text><text x="818" y="118" class="s mid">smoother paths,</text><text x="818" y="134" class="s mid">less wobble</text></a>
+<a href="#e8"><circle cx="943" cy="78" r="13" class="bx hybrid" style="stroke-width:3"/><text x="943" y="82.5" class="t mid" style="font-size:12px">8</text><text x="943" y="40" class="t mid">g39 and worlds</text><text x="943" y="56" class="code mid">S118 to S138</text><text x="943" y="118" class="s mid">recommended;</text><text x="943" y="134" class="s mid">goal layer next</text></a>
+<text x="40" y="172" class="k">Colour</text><circle cx="100" cy="168" r="5" class="m-learned"/><text x="110" y="172" class="s">learning</text><circle cx="180" cy="168" r="5" class="m-hybrid"/><text x="190" y="172" class="s">LQR + learned residual</text><circle cx="340" cy="168" r="5" class="m-bad"/><text x="350" y="172" class="s">correction</text><circle cx="430" cy="168" r="5" class="m-good"/><text x="440" y="172" class="s">mechanism</text><circle cx="525" cy="168" r="5" class="m-warn"/><text x="535" y="172" class="s">physical limit</text></svg>
+    </div>
+    <figcaption><b>The project in eight phases.</b> Click a stop to jump to it. <span class="src">docs/research/tracking_study_log.md, S0 to S138</span></figcaption>
+  </figure>
+
+  <div class="ctrl-id"><span><b>Where it stands:</b> the recommended controller is <code>g39_goalcentre_s0</code></span><span>LQR base + PPO residual (authority 0.25, adaptive 0.15 to 0.3), motion-reference layer, goal logic on the true ball centre, 11 designs. S121.</span></div>
+</div>
+
+<section class="block wrap" aria-labelledby="h-tl" id="timeline">
+  <div class="eyebrow">Timeline</div>
+  <h2 id="h-tl">Turning points, in order</h2>
+  <p class="lede">Filled dots are turning points. Red is a correction, amber a limit or a null result, green a win.</p>
+  <ol class="tline">
+  <li class="era" id="e1"><span class="eyebrow">Phase 1 &middot; S0 to S15</span><h2>A CPU study: make it go where it is told</h2><p>One robot, CPU MuJoCo, about 800 steps per second per run.</p></li>
+  <li class="bad"><span class="when">S1</span><span class="tag bad">correction</span><h3>The first "progress" was the robot cheating</h3><p>The policy kicked the ball out within 0.2 to 0.6 s and stood on its wheels. Results void. An off-ball check was added.</p></li>
+  <li class="learned turn"><span class="when">S6</span><span class="tag hybrid">turning point</span><h3>Capping the spin command unlocked speed</h3><p>Infeasible spin commands had been suppressing everything else. With spin capped at 1 rad/s the policy reached 0.91 of a 1 m/s command.</p></li>
+  <li class="model"><span class="when">Model, LQR</span><h3>Physics first: a derived model and an LQR baseline</h3><p>The LQR tracked at 1.00 to 1.08 of the command from 0.25 to 0.75 m/s and was 50 times smoother than PPO. It fell in every 1 m/s trial. (Log sections "First-principles model" and "LQR baseline", between S7 and S8.)</p></li>
+  <li class="hybrid"><span class="when">S10</span><h3>First LQR + learned residual</h3><p>A zero-initialised residual at authority 0.1 kept the LQR strengths and fixed yaw. More authority (0.2) made it worse.</p></li>
+  <li class="warn"><span class="when">S15</span><span class="tag warn">limit</span><h3>Steps are a physical limit, not a learned one</h3><p>Step-trained policies were no better on 2 to 4 cm steps than flat-trained ones. Traction became the suspect.</p></li>
+  <li class="era" id="e2"><span class="eyebrow">Phase 2 &middot; S16 to S48</span><h2>Many robots, on a GPU</h2><p>The goal widened: one controller for many robot designs, terrains and disturbances.</p></li>
+  <li class="warn"><span class="when">S18c</span><span class="tag warn">null result</span><h3>The learned LQR/PPO gate collapsed to pure LQR</h3><p>Mean gate 0.00 on the five designs checked. The "hybrid gate" idea was dropped.</p></li>
+  <li class="learned turn"><span class="when">S21</span><span class="tag hybrid">turning point</span><h3>Training moved to MuJoCo-Warp on the GPU</h3><p>About 140k steps per second with 4096 worlds: 60M steps in 7 minutes. The first transfer to the CPU engine failed because of a porting quirk, then worked.</p></li>
+  <li class="bad"><span class="when">S33 to S36</span><span class="tag bad">correction</span><h3>The first generalist looked terrible, partly by mistake</h3><p>It was far from robust (S33). Two unlearnable designs were dropped, leaving 11 (S34). Then an evaluation bug turned out to have inflated the falls (S36).</p></li>
+  <li class="era" id="e3"><span class="eyebrow">Phase 3 &middot; S50 to S68</span><h2>The structure that was missing</h2><p>Pure learning tracked speed poorly. The LQR came back as the base.</p></li>
+  <li class="learned"><span class="when">S50, S53</span><h3>Pure learning was sluggish</h3><p>Slow tracking was a policy deficiency, not a physical limit.</p></li>
+  <li class="hybrid turn"><span class="when">S60</span><span class="tag hybrid">turning point</span><h3>LQR base + learned residual: accurate and goal-directed</h3><p>First policy with tracking error of 2 to 5 percent of the command up to 0.9 m/s and goal success 0.47. It fell more on the tiles.</p></li>
+  <li class="warn"><span class="when">S61</span><span class="tag warn">null result</span><h3>Full authority fails</h3><p>Residual authority 1.0 was worse than 0.5. The learned part has to stay bounded.</p></li>
+  <li class="era" id="e4"><span class="eyebrow">Phase 4 &middot; S69 to S78</span><h2>Two engine bugs reset the table</h2><p>The most expensive lesson of the project.</p></li>
+  <li class="bad turn"><span class="when">S69, S70</span><span class="tag bad">correction</span><h3>Stale subtree mass: every randomised result before this was invalid</h3><p>Mass randomisation did not update a stored engine constant, in training (S69) and then in evaluation (S70). The policies were retrained as g12. The earlier "wide randomisation does not help" and "mass is the driver" findings (S67, S68) were artefacts.</p></li>
+  <li class="warn"><span class="when">S76</span><span class="tag warn">null result</span><h3>Disturbance-focused training variants: none helped</h3><p>Goal success under pushes and pulls stayed at about 0.3.</p></li>
+  <li class="era" id="e5"><span class="eyebrow">Phase 5 &middot; S79 to S85</span><h2>A mechanical fix beats more training</h2><p>Ask why it falls before training longer.</p></li>
+  <li class="good turn"><span class="when">S79</span><span class="tag hybrid">turning point</span><h3>The body derails off the ball; three passive arrestors stop it</h3><p>95 percent of undisturbed falls ended at the off-ball limit, with derailing at a median tilt of about 15 degrees. Motors were at their torque limit under 1 percent of the time. Arrestors at 100 degrees raised goal success from 0.57 to 0.75 with no retraining (one policy, one seed).</p></li>
+  <li class="hybrid"><span class="when">S83</span><span class="tag hybrid">turning point</span><h3>Authority 0.25 is the knee: the first "recommended controller"</h3><p><code>g18_ret_rs025</code>: achieved speed 0.99 to 1.01 of the command, goal success 0.71 to 0.76 undisturbed and 0.42 to 0.43 with pushes and pulls (two seeds). Superseded later.</p></li>
+  <li class="model"><span class="when">S85-R</span><h3>Unseen robot designs</h3><p>The LQR base against pure learning on designs never trained on. Held-out designs cost more than held-out terrain (S83 addendum).</p></li>
+  <li class="era" id="e6"><span class="eyebrow">Phase 6 &middot; S86 to S109</span><h2>Finding the limits, and steering around them</h2><p>Where it still falls, and what a cheap sensor buys.</p></li>
+  <li class="warn"><span class="when">S88</span><span class="tag warn">limit</span><h3>Ball radius sets the step a ballbot can climb</h3><p>Predicted traction limit: 0.29 ball radii, 2.6 cm for the 9 cm ball (values as restated in S125).</p></li>
+  <li class="good turn"><span class="when">S89</span><span class="tag good">win</span><h3>Seeing obstacles is decisive where they can be avoided</h3><p>Behind 8 cm blocks: blind 0.09 of goals, perfect map 0.91, a small ToF sensor 0.85. Same balance controller (g18_ret_rs025_s1), 528 worlds.</p></li>
+  <li class="warn"><span class="when">S91</span><span class="tag warn">null result</span><h3>Training with the planner in the loop: a null result</h3><p>Tested and rejected.</p></li>
+  <li class="bad"><span class="when">S92</span><span class="tag bad">correction</span><h3>Flat-ground "falls" were robots driving off the map edge</h3><p>At 0.9 m/s, 97 percent of recorded flat falls were at the border. The benchmark now uses interior tiles.</p></li>
+  <li class="bad"><span class="when">S98, S99</span><span class="tag bad">correction</span><h3>Standing falls were float32 solver blow-ups</h3><p>A wheel-ball free-rolling friction of 0.001 broke the solver. It was set to 0.01 and the recipe retrained as <code>g26_ret_rs025_mu01</code>.</p></li>
+  <li class="bad"><span class="when">S87, S100, S102</span><span class="tag bad">correction</span><h3>Speed and steps: two reversals</h3><p>S87 said obstacle falls do not depend on approach speed. On the corrected contact model speed does matter (S100). A "family gap" in S101 was an evaluation bug and was withdrawn (S102).</p></li>
+  <li class="era" id="e7"><span class="eyebrow">Phase 7 &middot; S105 to S117</span><h2>Making it move well</h2><p>Paths oscillated and the robot hunted at the goal (S105).</p></li>
+  <li class="warn"><span class="when">S106</span><span class="tag warn">null result</span><h3>A motion layer on an unchanged policy does not help</h3><p>The policy has to be trained with it.</p></li>
+  <li class="hybrid turn"><span class="when">S110 to S113</span><span class="tag hybrid">turning point</span><h3>Train with a motion-reference layer and adaptive authority</h3><p>Commands are shaped before they reach the balance controller (S110). Authority is 0.15 while cruising and rises to 0.3 when manoeuvring (S112). Recipe <code>g34</code> (S113).</p></li>
+  <li class="good"><span class="when">S114</span><span class="tag good">win</span><h3>Navigation: more goals reached, a quarter less wobble</h3><p>Same planner and sensor, new balance recipe.</p></li>
+  <li class="warn"><span class="when">S115 to S117</span><span class="tag warn">null result</span><h3>More steps, stronger pushes, longer memory: the pull limit stays</h3><p>Sustained pulls, not pushes, cause the falls in the pushed battery (S116).</p></li>
+  <li class="era" id="e8"><span class="eyebrow">Phase 8 &middot; S118 to S138</span><h2>The recommended controller, and bigger worlds</h2><p>Rebuilding the controller for ROS 2 found a bug that training had hidden.</p></li>
+  <li class="bad turn"><span class="when">S118</span><span class="tag bad">correction</span><h3>The goal logic followed a point that swings around the ball</h3><p>The ball body origin sits 0.14 m from the ball centre and rotates with it. Found by the ROS 2 parity work.</p></li>
+  <li class="hybrid turn"><span class="when">S121</span><span class="tag hybrid">turning point</span><h3><code>g39_goalcentre_s0</code> becomes the recommended controller</h3><p>Goal logic on the true ball centre. Hold error 3.6 to 4.9 cm over three seeds, against 11 to 14 cm. ToF navigation 0.87 to 0.89. It is still the recommendation.</p></li>
+  <li class="model"><span class="when">S119</span><h3>A design sweep turns into build guidelines</h3><p>One robot property changed at a time. See <a href="design.html">Design guidelines</a>.</p></li>
+  <li class="warn"><span class="when">S125, S126</span><span class="tag warn">limit</span><h3>Steps measured properly</h3><p>The 9 cm ball passes half of the steps at 2.9 cm (g39, three seeds pooled; predicted 2.6 cm). A 0.6 m/s run-up lifts the limit from about 2.8 to about 4 cm.</p></li>
+  <li class="learned"><span class="when">S127 to S133</span><h3>Bigger balls, hills, and a cost</h3><p>A stall penalty (g43, S127) and a hills tile (g44, S128) help their targets. But the ball-scaled designs in the training mix cost the heavy-body robustness that g34 had (S131, S133). g39 stays recommended.</p></li>
+  <li class="warn turn"><span class="when">S134, S135</span><span class="tag hybrid">turning point</span><h3>In a 24 m world, the goal rule is the problem, not the terrain</h3><p>On flat ground a third of the robots fell in 30 s chasing goals. Capping the commanded speed at 1.2, 0.6 and 0.4 m/s gave 0.37, 0.18 and 0.07 falls (one run per row).</p></li>
+  <li class="good"><span class="when">S136</span><span class="tag good">win</span><h3>Goal layer v1: far goals with a fifth of the falls</h3><p>Pursuit at a capped speed, braking, then hand-over to the trained goal rule: 0.15 falls in 60 s against 0.81. No retraining. One run per row.</p></li>
+  <li class="warn"><span class="when">S137, S138</span><span class="tag warn">null result</span><h3>Looking at the ground ahead: not better yet</h3><p>With fair starts the look-ahead layer falls 0.65 against 0.69 for the blind one. One run each.</p></li>
+  <li class=""><span class="when">Now</span><span class="tag ">in progress</span><h3>Heading command and per-feature terrain levels</h3><p>A heading layer above the policy and generated fields with a difficulty level per terrain feature are in the code (marked S139, S140). They have no log entry yet, so no result is shown here.</p></li>
+  </ol>
+  <p class="src-note">Engines: S0 to S20 ran on CPU MuJoCo. From S21 training and evaluation ran on MuJoCo-Warp (float32, GPU, 100 Hz). From S37 on, results use 11 designs with domain randomisation on; noise and seeds are stated in each log entry. Every number here is copied from the cited entry of <code>docs/research/tracking_study_log.md</code>. Simulation only: no physical robot.</p>
+</section>
+
+<section class="block wrap" aria-labelledby="h-next" id="next">
+  <div class="eyebrow">Read next</div>
+  <h2 id="h-next">Go deeper</h2>
+  <div class="glance">
+    <div class="hybrid"><b><a href="architecture.html">The controller</a></b><p>The control stack as one diagram.</p></div>
+    <div class="learned"><b><a href="generalist.html">Results, chapter by chapter</a></b><p>Every table behind this timeline.</p></div>
+    <div class="bad"><b><a href="lessons.html">Lessons</a></b><p>The corrections, as rules.</p></div>
+    <div class="model"><b><a href="story.html">The early journey</a></b><p>S0 to S16 as a narrative.</p></div>
+  </div>
+</section>
+</main>
+</body>
+</html>

@@ -9,103 +9,79 @@
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/learn.css">
+<link rel="stylesheet" href="../assets/css/viz.css">
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module" src="assets/js/learn.js"></script>
 </head>
 <body>
 <main>
 <header class="lhead"><div class="wrap">
-  <div class="eyebrow"><span>Lesson 1 of 10</span><span class="t">14 min</span><span class="t">Physics</span></div>
+  <div class="eyebrow"><span>Lesson 1 of 10</span><span class="t">8 min</span><span class="t">Physics</span></div>
   <h1>What a ballbot is and why it is hard</h1>
-  <p class="lede">A ballbot is a tall body balanced on a single ball. Motors inside the body turn the ball, and the only way to stay up is to keep rolling the ball back under the body. This lesson builds the intuition for why that is hard, using the real numbers of the simulated robot in this project.</p>
-  <div class="chips"><span class="chip sim">Simulation only, no hardware</span><span class="chip">Model: scripts/study/ballbot_model.py</span></div>
-  <section class="goals" aria-labelledby="g1"><h2 id="g1">You will be able to</h2><ul>
-    <li>describe the parts of a ballbot and the two numbers that make it hard to control: an <b>unstable pole</b> and a <b>non-minimum-phase zero</b>;</li>
-    <li>explain what "the tilt doubles every 0.145 s" means and where it comes from;</li>
-    <li>predict how moving the centre of mass changes the fall, and why the answer is not the one a broomstick suggests.</li>
-  </ul></section>
+  <p class="lede">A ballbot is a tall body balanced on one ball. It stays up only by rolling the ball back under itself, all the time.</p>
+  <div class="chips"><span class="chip sim">Simulation only, no hardware</span></div>
+  <section class="goals" aria-labelledby="g1"><h2 id="g1">You will be able to</h2><ul><li>name the parts of a ballbot;</li><li>explain the two numbers that make it hard: an <b>unstable pole</b> and a <b>non-minimum-phase zero</b>;</li><li>say why a taller body does not fall more slowly here.</li></ul></section>
 </div></header>
 
 <section class="lsec"><div class="wrap">
   <h2><span class="k">1.1</span>Meet the robot</h2>
-  <p>The simulated robot in this study has a <b>9 cm radius ball</b> of 0.17 kg and a <b>3.85 kg body</b> whose centre of mass (COM) sits 13 cm above the centre of the ball, 4.0 kg in total. Three omni-wheels press on the ball from above, 51 degrees from its top. Each omni-wheel drives the ball along its own direction and slides freely across it on small rollers, so together the three can spin the ball about any horizontal axis (and turn the body about the vertical).</p>
+  <p>Three omni-wheels inside the body press on the ball and can spin it about any horizontal axis. The ball touches the floor at one point. Nothing else holds the robot up.</p>
+  <figure class="dia"><div class="media" tabindex="0" role="group" aria-label="Diagram (scrolls sideways on narrow screens)"><svg class="diagram" viewBox="0 0 680 300" role="img" aria-labelledby="p1t p1d"><title id="p1t">The parts of the simulated ballbot, side view</title><desc id="p1d">A tall body sits on a ball. Labels: body 3.85 kg; centre of mass 13 cm above the ball centre; three omni-wheels pressing on the ball 51 degrees from its top; three passive arrestor rollers 100 degrees from the top; ball of radius 9 cm and 0.17 kg; the floor contact is the only support.</desc><defs><marker id="p1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<path class="ln" d="M40 264H640"/><circle class="bx hybrid" cx="190" cy="210" r="54"/><g transform="rotate(0 190 210)"><rect class="bx model" x="154.9" y="28.56" width="70.2" height="135" rx="11.88"/><circle class="bx" cx="148.034" cy="169.537" r="10.8"/><circle class="bx" cx="231.966" cy="169.537" r="10.8"/><circle class="bx warn" cx="132.566" cy="220.127" r="5.4"/><circle class="bx warn" cx="247.434" cy="220.127" r="5.4"/><circle class="m-warn" cx="190" cy="132.24" r="4.86"/></g><path class="ln" d="M228 96H330"/><text class="t" x="338" y="92">Body</text><text class="s" x="338" y="108">3.85 kg of the 4.0 kg total</text><path class="ln" d="M196 132H330"/><text class="t f-warn" x="338" y="136">Centre of mass</text><text class="s" x="338" y="152">13 cm above the ball centre</text><path class="ln" d="M244 172L330 178"/><text class="t" x="338" y="180">3 omni-wheels</text><text class="s" x="338" y="196">press on the ball, 51&deg; from its top</text><path class="ln" d="M252 220L330 222"/><text class="t" x="338" y="224">3 arrestor rollers</text><text class="s" x="338" y="240">passive, 100&deg; from the top; keep the body on the ball</text><path class="ln" d="M150 240L96 214"/><text class="t end" x="92" y="200">Ball</text><text class="s end" x="92" y="216">r = 9 cm, 0.17 kg</text><path class="ln" d="M190 264V282"/><text class="s mid" x="190" y="296">one contact point: the only support</text></svg></div><figcaption><b>The simulated nominal robot.</b> A sketch, not to scale in every detail.<span class="src">ballbot_gym/models/ballbot.xml; arrestors: study log S79, S82</span></figcaption></figure>
   <figure class="widget" data-widget="l01:robot3d">
     <header><h3>The robot, in 3D</h3><span class="tag">drag to orbit</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Push it with the motors off, then with balance on.</b> The amber dot is the body's centre of mass. With the motors off, the smallest push grows into a fall; with the LQR controller of lesson 3 the ball rolls under the body and catches it. The motion is the planar model (one vertical plane) of <code>ballbot_model.py</code>, not a full 3D simulation. The drawing is the site's shared rendering of the nominal design (<code>site/assets/js/robot3d.js</code>, dimensions from <code>ballbot_gym/models/ballbot.xml</code>); the fine detail is an artist's choice.<span class="src">Parameters: ballbot_planar_model.json; controller: bundle.json lqr (lesson 3)</span></figcaption>
+    <figcaption><b>Push it with the motors off, then with balance on.</b> The amber dot is the centre of mass. The motion is the planar model of <code>ballbot_model.py</code>, not a full 3D simulation; the fine detail of the drawing is an artist's choice.<span class="src">Parameters: ballbot_planar_model.json; controller: bundle.json lqr (lesson 3); drawing: site/assets/js/robot3d.js</span></figcaption>
     <noscript><p>The 3D view needs JavaScript. The text describes the same behaviour.</p></noscript>
   </figure>
-  <div class="keys">
-    <div class="key"><b>9 <small>cm</small></b><span>ball radius (0.17 kg ball)</span><div class="s">ballbot.xml</div></div>
-    <div class="key"><b>4.0 <small>kg</small></b><span>total mass, 3.85 kg of it in the body</span><div class="s">ballbot.xml</div></div>
-    <div class="key warn"><b>4.79 <small>1/s</small></b><span>unstable pole: how fast it falls</span><div class="s">ballbot_model.py, S16</div></div>
-    <div class="key model"><b>5.78 <small>1/s</small></b><span>non-minimum-phase zero</span><div class="s">ballbot_model.py, S16</div></div>
-  </div>
 </div></section>
 
 <section class="lsec"><div class="wrap">
-  <h2><span class="k">1.2</span>An inverted pendulum that can roll</h2>
-  <p>Look at the robot from the side and it is two rigid parts: the ball, which rolls without slipping, and the body, which can tilt. Two angles describe it: the ball's rotation <i>&phi;</i> (so the ball has moved <i>x</i> = <i>r&phi;</i>) and the body's tilt <i>&theta;</i>. The motors apply a torque <i>&tau;</i> between body and ball: whatever turns the ball forward pushes the body backward by the same amount.</p>
-  <p>Writing the kinetic and potential energy of both parts and applying Lagrange's equations gives two coupled equations (derived symbolically in <code>derive_planar()</code>):</p>
-  <div class="eq">M(&theta;) [&phi;'', &theta;'']<sup>T</sup> = [&tau; + &hellip;,&nbsp; &minus;&tau; + m<sub>a</sub> g l sin &theta; + &hellip;]<sup>T</sup> <span class="cm">&nbsp; // gravity only acts on the tilt</span></div>
-  <p>Gravity appears only in the tilt equation, with a positive sign: the further the body leans, the harder gravity pulls it over. Linearise around upright and the system has four <dfn>poles</dfn> (the rates of its natural motions). One of them is positive, <b>p = 4.79 1/s</b>. A positive pole means a motion that grows by itself: left alone, the tilt grows like <i>e</i><sup>pt</sup> and doubles every ln 2 / p = 0.145 s.</p>
+  <h2><span class="k">1.2</span>Two reasons it is hard</h2>
+  <figure class="dia"><div class="media" tabindex="0" role="group" aria-label="Diagram (scrolls sideways on narrow screens)"><svg class="diagram" viewBox="0 0 760 250" role="img" aria-labelledby="p2t p2d"><title id="p2t">The two things that make a ballbot hard to control</title><desc id="p2d">Left: with the motors off, a tilt of 1 degree becomes 2, then 4, then 8 degrees, doubling every 0.145 seconds. Right: to move forward the ball first rolls backward, the body leans forward, and only then the ball rolls forward.</desc><defs><marker id="p2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<text class="k f-warn" x="40" y="24">1 &middot; IT FALLS FAST</text><text class="s" x="40" y="42">motors off: the tilt doubles every 0.145 s</text><rect class="bx warn" x="40" y="162" width="44" height="14" rx="4"/><text class="t mid" x="62" y="156">1&deg;</text><text class="code mid" x="62" y="194">start</text><rect class="bx warn" x="110" y="148" width="44" height="28" rx="4"/><text class="t mid" x="132" y="142">2&deg;</text><text class="code mid" x="132" y="194">+0.145 s</text><rect class="bx warn" x="180" y="120" width="44" height="56" rx="4"/><text class="t mid" x="202" y="114">4&deg;</text><text class="code mid" x="202" y="194">+0.145 s</text><rect class="bx warn" x="250" y="64" width="44" height="112" rx="4"/><text class="t mid" x="272" y="58">8&deg;</text><text class="code mid" x="272" y="194">+0.145 s</text><path class="ln" d="M30 176H320"/><text class="k f-model" x="380" y="24">2 &middot; IT MUST GO BACKWARD FIRST</text><text class="s" x="380" y="42">every forward move starts the wrong way</text><circle class="bx hybrid" cx="440" cy="150" r="24"/><g transform="rotate(0 440 150)"><rect class="bx model" x="424.4" y="69.36" width="31.2" height="60" rx="5.28"/></g><path class="ln" d="M390 174H490"/><path class="ar" d="M468 208H412" marker-end="url(#p2a)"/><text class="t mid" x="440" y="228">1. Roll back</text><circle class="bx hybrid" cx="560" cy="150" r="24"/><g transform="rotate(14 560 150)"><rect class="bx model" x="544.4" y="69.36" width="31.2" height="60" rx="5.28"/></g><path class="ln" d="M510 174H610"/><text class="t mid" x="560" y="228">2. Lean forward</text><circle class="bx hybrid" cx="680" cy="150" r="24"/><g transform="rotate(14 680 150)"><rect class="bx model" x="664.4" y="69.36" width="31.2" height="60" rx="5.28"/></g><path class="ln" d="M630 174H730"/><path class="ar" d="M652 208H708" marker-end="url(#p2a)"/><text class="t mid" x="680" y="228">3. Roll forward</text><path class="ln" d="M350 14V236"/></svg></div><figcaption><b>Fast to fall, and wrong-way first.</b> Left: bar heights are the tilt angle. Right: a sketch of one forward start.<span class="src">pole 4.79 1/s and zero 5.78 1/s: scripts/study/ballbot_model.py, study log S16</span></figcaption></figure>
+  <p><b>It falls fast.</b> Left alone, the tilt grows by itself. Control engineers call this an <dfn>unstable pole</dfn>. Here it is <b>4.79 1/s</b>: the tilt doubles every 0.145 s.</p>
+  <p><b>It starts the wrong way.</b> To lean forward, the robot must first roll the ball backward. This is a <dfn>non-minimum-phase zero</dfn>, at <b>5.78 1/s</b>. No controller can remove it.</p>
+  <p>The two numbers are close together, and that is the real problem. A classic bound says the closer they are, the less robust any controller can be (S16).</p>
+  <div class="keys">
+    <div class="key warn"><b>4.79 <small>1/s</small></b><span>unstable pole: how fast it falls</span><div class="s">ballbot_model.py, S16</div></div>
+    <div class="key model"><b>5.78 <small>1/s</small></b><span>non-minimum-phase zero</span><div class="s">ballbot_model.py, S16</div></div>
+    <div class="key bad"><b>10.7</b><span>lowest possible sensitivity peak, a structurally poor margin</span><div class="s">S16</div></div>
+  </div>
+  <details class="more"><summary>The equations behind the two numbers</summary><div>
+    <p>Seen from the side, the robot is two rigid parts: a ball that rolls without slipping (rotation <i>&phi;</i>, so it has moved <i>x</i> = <i>r&phi;</i>) and a body that tilts (<i>&theta;</i>). The motors apply a torque <i>&tau;</i> between them. Lagrange's equations give two coupled equations (<code>derive_planar()</code>):</p>
+    <div class="eq">M(&theta;) [&phi;'', &theta;'']<sup>T</sup> = [&tau; + &hellip;,&nbsp; &minus;&tau; + m<sub>a</sub> g l sin &theta; + &hellip;]<sup>T</sup> <span class="cm">&nbsp; // gravity only acts on the tilt</span></div>
+    <p>Linearised around upright, the system has four poles. One is positive, p = 4.79 1/s, so the tilt grows like <i>e</i><sup>pt</sup> and doubles every ln 2 / p = 0.145 s.</p>
+    <p>The zero has a closed form that depends only on the body, not on the drive:</p>
+    <div class="eq">z = &radic;( m<sub>a</sub> g l / (I<sub>a</sub> + m<sub>a</sub> l<sup>2</sup> + m<sub>a</sub> l r) ) = 5.78 1/s</div>
+    <p>The bound (Skogestad): the peak of the sensitivity function is at least (z + p) / |z &minus; p|. With z/p = 1.21 that is 10.7 (S16).</p>
+  </div></details>
+</div></section>
+
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">1.3</span>Race it against a broomstick</h2>
+  <p>A body on a fixed pivot would fall at 6.94 1/s. The ballbot falls at 4.79 1/s. It is slower because tipping the body has to spin the three motor rotors through the wheels.</p>
+  <p>Raising the centre of mass slows a broomstick. It barely changes the ballbot: 4.5 to 4.8 1/s over the whole design sweep.</p>
   <figure class="widget" data-widget="l01:fall">
     <header><h3>The fall race</h3><span class="tag">motors off</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Same body, two supports.</b> On the left the ball may roll (motors off); on the right the body hinges about the ball centre with the ball held still. Change the COM height and watch the poles in the lower chart. Nonlinear planar model, 1 ms RK4 steps, wheel damping included.<span class="src">ballbot_planar_model.json; dots: outputs/study/specs/ota_sweep.csv (S119)</span></figcaption>
+    <figcaption><b>Same body, two supports.</b> Left: the ball may roll. Right: the ball is held still. Change the COM height and watch the poles. Nonlinear planar model, 1 ms RK4 steps, wheel damping included.<span class="src">ballbot_planar_model.json; dots: outputs/study/specs/ota_sweep.csv (S119)</span></figcaption>
+    <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-  <p>Two things in that figure are worth a second look.</p>
-  <p><b>The wheels slow the fall.</b> A body on a fixed pivot would fall at 6.94 1/s. The ballbot falls at 4.79 1/s, slower, because tipping the body forward has to spin the three motor rotors through the wheels, and their reflected inertia (about 0.10 kg m<sup>2</sup>, roughly 190 times the ball's own) resists the tilt rate. In the same model with that rotor inertia and the wheel damping set to zero the pole would be 11.05 1/s. This is a model calculation from <code>ballbot_planar_model.json</code>, not a separate study entry.</p>
-  <p><b>A taller body does not simply fall more slowly.</b> For a fixed-pivot pendulum, raising the COM lowers the rate. For the ballbot the rate barely moves over the whole range (4.5 to 4.8 1/s in the design sweep) because the body's inertia and the rolling ball change together. What does change is how much the robot must lean to accelerate, the subject of lesson 2.</p>
+  <details class="more"><summary>Why the wheels slow the fall</summary><div><p>The rotors' reflected inertia is about 0.10 kg m<sup>2</sup>, roughly 190 times the ball's own, and it resists the tilt rate. With that inertia and the wheel damping set to zero the pole would be 11.05 1/s. This is a model calculation from <code>ballbot_planar_model.json</code>, not a separate study entry.</p></div></details>
+  <div class="tryit"><div class="lbl">Try it</div><p>In the fall race, move the COM from 13 cm to 22 cm. Does the ballbot fall faster, slower, or about the same? And the fixed-pivot body?</p><details class="answer"><summary>Show the answer</summary><div><p>The ballbot's rate barely changes (4.79 to 4.63 1/s), while the fixed-pivot pendulum slows clearly (6.94 to about 6.1 1/s). In the full simulation the taller body was in fact easier to control (S119: falls while standing 0.7 percent at the nominal height, 0.3 percent at 0.22 m), mainly because it needs less lean per unit of acceleration (lesson 2).</p></div></details></div>
+  <div class="tryit"><div class="lbl">Check yourself</div><p>The unstable pole is 4.79 1/s. The body starts 1 degree off upright, motors off. Roughly how long until it is 8 degrees off?</p><div class="opts"><button>About 0.04 s</button><button data-ok>About 0.4 s</button><button>About 4 s</button></div><details class="answer"><summary>Why</summary><div><p>8 degrees is three doublings of 1 degree, and one doubling takes 0.145 s, so about 0.43 s. The controller runs every 10 ms in this project.</p></div></details></div>
 </div></section>
 
 <section class="lsec"><div class="wrap">
-  <h2><span class="k">1.3</span>The second difficulty: a zero on the wrong side</h2>
-  <p>Instability alone is manageable: a fast enough controller can catch a falling body. The ballbot has a second property that limits how well any controller can do. To roll forward, the body must first lean forward (gravity then pulls it along). But the only way to make the body lean forward is to roll the ball <i>backward</i> under it. So every forward move starts with a small backward move.</p>
-  <p>In control terms the transfer function from motor torque to ball position has a zero at <b>z = +5.78 1/s</b>, in the right half of the complex plane: a <dfn>non-minimum-phase zero</dfn>. Its value has a closed form that depends only on the body (it does not depend on the drive):</p>
-  <div class="eq">z = &radic;( m<sub>a</sub> g l / (I<sub>a</sub> + m<sub>a</sub> l<sup>2</sup> + m<sub>a</sub> l r) ) = 5.78 1/s</div>
-  <p>The closer the zero is to the unstable pole, the worse the best achievable robustness. A classic bound (Skogestad) says the peak of the sensitivity function is at least (z + p) / |z &minus; p|; with z/p = 1.21 that is <b>10.7</b>, a structurally poor margin for any controller (S16). This is why the rest of the course spends so much effort on smooth commands, robust training and honest evaluation.</p>
-  <div class="tryit">
-    <div class="lbl">Try it</div>
-    <p>In the fall race, move the COM from 13 cm to 22 cm. Does the ballbot fall faster, slower, or about the same? And the fixed-pivot body?</p>
-    <details class="answer"><summary>Show the answer</summary><div><p>The ballbot's rate barely changes (4.79 to 4.63 1/s in the readout; the design generator gives 4.63 for the 0.22 m variant), while the fixed-pivot pendulum slows clearly (6.94 to about 6.1 1/s). In the full simulation the taller body was in fact easier to control (S119: falls while standing 0.7 percent at the nominal height, 0.3 percent at 0.22 m), mainly because it needs less lean per unit of acceleration.</p></div></details>
-  </div>
-  <div class="tryit">
-    <div class="lbl">Check yourself</div>
-    <p>The unstable pole is 4.79 1/s. If the body starts 1 degree off upright with the motors off, roughly how long until it is 8 degrees off?</p>
-    <div class="opts">
-      <button>About 0.04 s</button>
-      <button data-ok>About 0.4 s</button>
-      <button>About 4 s</button>
-    </div>
-    <details class="answer"><summary>Why</summary><div><p>8 degrees is three doublings of 1 degree, and one doubling takes ln 2 / 4.79 = 0.145 s, so about 0.43 s. A controller has a fraction of a second to react, and it runs every 10 ms in this project.</p></div></details>
-  </div>
-</div></section>
-
-<section class="lsec"><div class="wrap">
-  <h2><span class="k">1.4</span>Key takeaways</h2>
-  <div class="takeaways"><ul>
-    <li>A ballbot is an inverted pendulum whose pivot (the ball) the motors move. Upright is an equilibrium, but an unstable one.</li>
-    <li>The nominal robot's unstable pole is 4.79 1/s: an uncorrected tilt doubles every 0.145 s.</li>
-    <li>The drive's reflected rotor inertia slows the fall compared with a fixed pivot (4.79 against 6.94 1/s), and the rate is almost independent of COM height.</li>
-    <li>A right-half-plane zero at 5.78 1/s forces the robot to move backward before it can move forward, and caps the robustness of any controller (sensitivity peak at least 10.7).</li>
-  </ul></div>
-  <h3>Code and evidence</h3>
-  <div class="sources">
-    <div><h3>Code</h3><ul>
-      <li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/scripts/study/ballbot_model.py"><code>scripts/study/ballbot_model.py</code></a>: parameters from the XML, Lagrangian, linearisation, pole, zero, lean law</li>
-      <li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/scripts/study/design_space.py"><code>scripts/study/design_space.py</code></a>: parametric robot variants and their analytic margins</li>
-      <li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/ballbot_gym/models/ballbot.xml"><code>ballbot_gym/models/ballbot.xml</code></a>: the simulated robot</li>
-    </ul></div>
-    <div><h3>Study log</h3><ul>
-      <li>Stages and decisions, derived model: pole 4.79, zero 5.78, lean 10.1 deg per m/s<sup>2</sup></li>
-      <li>S16: design space, z/p = 1.21 and the sensitivity bound 10.7</li>
-      <li>S119: the COM-height sweep in the full simulation</li>
-      <li>On the main site: <a href="../math.html">The robot and its physics</a></li>
-    </ul></div>
-  </div>
+  <h2><span class="k">Summary</span>Key takeaways</h2>
+  <div class="takeaways"><ul><li>A ballbot is an inverted pendulum whose pivot (the ball) the motors move.</li><li>Unstable pole 4.79 1/s: an uncorrected tilt doubles every 0.145 s.</li><li>Zero at 5.78 1/s: it must move backward before it can move forward.</li><li>The two are close, which caps the robustness of any controller (sensitivity peak at least 10.7).</li></ul></div>
+  <details class="more"><summary>Code and evidence</summary><div><div class="sources">
+    <div><h3>Code</h3><ul><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/scripts/study/ballbot_model.py"><code>scripts/study/ballbot_model.py</code></a>: parameters, Lagrangian, linearisation, pole, zero, lean law</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/scripts/study/design_space.py"><code>scripts/study/design_space.py</code></a>: parametric robot variants and their analytic margins</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/ballbot_gym/models/ballbot.xml"><code>ballbot_gym/models/ballbot.xml</code></a>: the simulated robot</li></ul></div>
+    <div><h3>Study log and docs</h3><ul><li>Stages and decisions, derived model: pole 4.79, zero 5.78, lean 10.1 deg per m/s<sup>2</sup></li><li>S16: design space, z/p = 1.21 and the sensitivity bound 10.7</li><li>S79, S82: the ball arrestors at 100 degrees</li><li>S119: the COM-height sweep in the full simulation</li><li>On the main site: <a href="../math.html">The robot and its physics</a></li></ul></div>
+  </div></div></details>
 </div></section>
 </main>
 </body>

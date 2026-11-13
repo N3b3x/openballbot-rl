@@ -9,102 +9,119 @@
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/learn.css">
+<link rel="stylesheet" href="../assets/css/viz.css">
 <script type="module" src="assets/js/learn.js"></script>
 </head>
 <body>
 <main>
 <header class="lhead"><div class="wrap">
-  <div class="eyebrow"><span>Lesson 9 of 10</span><span class="t">14 min</span><span class="t">Method</span></div>
+  <div class="eyebrow"><span>Lesson 9 of 10</span><span class="t">9 min</span><span class="t">Method</span></div>
   <h1>Lessons from the study</h1>
-  <p class="lede">Some of the most useful results of the study are corrections. This lesson reads four of them as interactive examples: what was measured, why it was wrong, and the habit that would have caught it.</p>
+  <p class="lede">Some of the most useful results of the study are corrections. Four of them, each with the habit that would have caught it.</p>
   <div class="chips"><span class="chip sim">Simulation only, no hardware</span></div>
-  <section class="goals" aria-labelledby="g1"><h2 id="g1">You will be able to</h2><ul><li>check that a test measures the point and the conditions you think it does;</li><li>recognise an exposure artefact and ask whether every subject met the test;</li><li>decide whether a difference between two runs is a result or seed noise.</li></ul></section>
+  <section class="goals" aria-labelledby="g1"><h2 id="g1">You will be able to</h2><ul><li>check that a test measures the point and conditions you think it does;</li><li>spot an exposure artefact;</li><li>decide whether a difference between two runs is a result or seed noise.</li></ul></section>
 </div></header>
 
 <section class="lsec"><div class="wrap">
-  <h2><span class="k">9.1</span>Every number has a measurement behind it</h2>
-
-  <p>The earlier lessons quote many numbers. This one is about how some of them turned out to be wrong, and what each error taught. The study log (<code>docs/research/tracking_study_log.md</code>) keeps the corrections next to the original claims, with the entry that withdrew them. The main site collects the engineering side in its <a href="../lessons.html">Lessons</a> page (a stale derived field in the physics engine, file names that carry settings, finite maps, reference frames, loaded reference poses, sensor aiming, solver blow-ups). Here are the measurement lessons, each with something to play with.</p>
+  <h2><span class="k">9.1</span>Four mistakes, four habits</h2>
+  <div class="cards">
+    <div class="bad"><b>A. Wrong point measured</b><span>Goal logic followed a point that swings 14 cm around the ball.</span><span class="cite">habit: check what the number is attached to (S118)</span></div>
+    <div class="bad"><b>B. Exposure</b><span>Slowed robots looked safe because they had not reached the obstacle yet.</span><span class="cite">habit: did every subject meet the test? (S103)</span></div>
+    <div class="bad"><b>C. The map was the test</b><span>"Sharp turns make it fall" was terrain next to the start tile.</span><span class="cite">habit: test on a map with only the thing tested (S113)</span></div>
+    <div class="bad"><b>D. One seed</b><span>A behaviour that motivated a fix came from one unlucky training run.</span><span class="cite">habit: compare gaps with the seed spread (S113)</span></div>
+  </div>
 
 </div></section>
+
 <section class="lsec"><div class="wrap">
-  <h2><span class="k">9.2</span>Lesson A: the point you measure may not be the point you think</h2>
-
-  <p>The goal logic, the goal observation, the motion layer's hold loop and the goal metrics all used the position of the <b>ball body origin</b>. In the simulator's model the ball geometry sits 0.14 m from that origin, and the origin rotates with the ball. Upright at reset, it swings horizontally by up to the full 0.14 m as the ball rolls. So the "goal" the robot held was a point on a 14 cm circle around its contact point, and it depended on how far the ball had rolled. Hold errors of 6 to 8 cm RMS reported in S110 to S117 were measured at that swinging point; at the true centre the same policies held 11 to 14 cm off. The fix moves all goal logic to the true centre (S118).</p>
-
-</div></section>
-<figure class="widget" data-widget="l09:swing">
+  <h2><span class="k">9.2</span>A: the point you measure may not be the point you think</h2>
+  <p>Goal logic, goal metrics and the hold loop all used the <b>ball body origin</b>. In the simulator's model that origin sits 0.14 m from the ball centre and rotates with the ball.</p>
+  <div class="keys">
+    <div class="key bad"><b>6 <small>to 8 cm</small></b><span>hold error as first reported, at the swinging point</span><div class="s">S110 to S117</div></div>
+    <div class="key warn"><b>11 <small>to 14 cm</small></b><span>the same policies, measured at the true centre</span><div class="s">S118</div></div>
+    <div class="key good"><b>3.6 <small>to 4.9 cm</small></b><span>after moving all goal logic to the true centre (g39, three seeds)</span><div class="s">S121</div></div>
+  </div>
+  <figure class="widget" data-widget="l09:swing">
     <header><h3>The goal point that swings around the ball</h3><span class="tag">S118</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Roll the ball and watch the red point.</b> Teal: the true ball centre. Red: the ball body origin, 14 cm away. The chart shows its horizontal offset against the distance rolled; it completes a cycle every 0.565 m (2 &pi; r). A robot holding the red point on the goal ends up as much as 14 cm from it.<span class="src">docs/research/tracking_study_log.md S118; ballbot.xml ball geom at (0, 0, -0.14)</span></figcaption>
+    <figcaption><b>Roll the ball and watch the red point.</b> Teal: the true ball centre. Red: the ball body origin, 14 cm away. It completes a cycle every 0.565 m (2 &pi; r).<span class="src">docs/research/tracking_study_log.md S118; ballbot.xml ball geom at (0, 0, -0.14)</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<section class="lsec"><div class="wrap">
-  <h2><span class="k">9.3</span>Lesson B: exposure, or letting every test subject meet the test</h2>
-
-  <p>The first test of a speed layer that slows the robot before obstacles seemed to halve obstacle falls (0.38 to 0.15 to 0.17). Then the same layer was tested on the goal task and did not help. The cause: in 15 s episodes the slowed robots had not yet reached the obstacles, so they could not fall on them. Re-running with 40 s episodes, so that every robot reaches its obstacle, the effect shrank to 0.03 to 0.05 (0.38 without, 0.33 with a perfect map, 0.35 with the ToF sensor), mostly on stairs (S103). The same trap had bitten before (S86) and came back for the zigzag test below.</p>
-
 </div></section>
-<figure class="widget" data-widget="l09:exposure">
+
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">9.3</span>B: let every test subject meet the test</h2>
+  <figure class="dia"><div class="media" tabindex="0" role="group" aria-label="Diagram (scrolls sideways on narrow screens)"><svg class="diagram" viewBox="0 0 760 230" role="img" aria-labelledby="e1t e1d"><title id="e1t">The exposure trap</title><desc id="e1d">Two robots drive toward an obstacle. In a 15 second test the fast robot reaches the obstacle and can fall on it. The slowed robot has not arrived when the test ends, so it cannot fall and looks safe. In a 40 second test both reach the obstacle.</desc><defs><marker id="e1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="bx warn" x="560" y="40" width="26" height="150" rx="4"/><text class="t f-warn mid" x="573" y="30">obstacle</text><text class="t" x="40" y="70">fast robot</text><path class="thick st-model" d="M130 66H556"/><circle class="m-model" cx="556" cy="66" r="6"/><text class="s" x="600" y="70">meets it: can fall</text><text class="t" x="40" y="130">slowed robot</text><path class="thick st-hybrid" d="M130 126H330"/><circle class="m-hybrid" cx="330" cy="126" r="6"/><path class="thick st-hybrid" stroke-dasharray="6 7" d="M344 126H556"/><path class="ar dash" d="M330 96V170"/><text class="t f-bad mid" x="330" y="186">15 s test ends here</text><text class="s mid" x="330" y="202">not arrived, cannot fall, looks safe</text><text class="s" x="600" y="130">40 s test: meets it too</text></svg></div><figcaption><b>A short test flatters a slow robot.</b> Sketch of the mechanism.<span class="src">study log S103 and its addenda</span></figcaption></figure>
+  <div class="tablewrap"><table><caption>A speed layer that slows the robot before obstacles: obstacle falls, simulation (S103)</caption>
+    <thead><tr><th>Episode length</th><th>Without the layer</th><th>With the layer</th><th>Apparent effect</th></tr></thead><tbody>
+    <tr><td>15 s</td><td class="n">0.38</td><td class="n">0.15 to 0.17</td><td>halves the falls</td></tr>
+    <tr><td>40 s, every robot reaches its obstacle</td><td class="n">0.38</td><td class="n">0.33 to 0.35</td><td>0.03 to 0.05</td></tr>
+    </tbody></table></div>
+  <figure class="widget" data-widget="l09:exposure">
     <header><h3>Falls only count if the robot meets the obstacle</h3><span class="tag">S103 and a toy</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Flip between the two episode lengths</b> to see the original and the corrected result, then drag the episode length in the toy to see the mechanism in isolation: with identical risk per obstacle, a slower robot looks safer in a short test.<span class="src">docs/research/tracking_study_log.md S103 and its two addenda; toy model not from data</span></figcaption>
+    <figcaption><b>Flip between the two episode lengths</b>, then drag the length in the toy. Toy model, not from data.<span class="src">docs/research/tracking_study_log.md S103 and its two addenda</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<div class="tryit"><div class="lbl">Try it</div><p>In the toy, set the slowed speed to 0.12 m/s and move the episode length from 15 s to 45 s. At which length do the two curves meet? What would you check in any test that compares a slow controller with a fast one?</p><details class="answer"><summary>Show the answer</summary><div><p>The curves meet when even the slowest robot has had time to reach the farthest obstacle (2.4 m at 0.12 m/s takes 20 s; the curves meet there). The check is: <b>did every subject meet the test?</b> Record how many robots actually reached the feature, and compare falls per robot that did, not per robot started.</p></div></details></div><section class="lsec"><div class="wrap">
-  <h2><span class="k">9.4</span>Lesson C: the test map decides what the test measures</h2>
-
-  <p>Two different tests went wrong the same way. The <b>zigzag test</b> (60 degree command switches every 2 s) fell 28 to 33 percent in every recipe and looked like a limit of the controller. But the robot started on a flat tile and ran for 15 s, and the zigzag's net forward travel of about 2 m carried it onto neighbouring terrain. On a fully flat map the same zigzag fell 5 percent; changing the layer's lateral limit changed nothing (S113). The claim "sharp turns are a recipe limit" was withdrawn.</p>
-  <p>The <b>showcase renders</b> had a similar story. Eight-second clips fell on every terrain tile; the first explanation was "driving off the map edge", which was wrong. The height profiles along the clip paths show a flat pad at each tile's centre and a feature 0.55 to 0.65 m out, followed by harder ones: the clips ran into the next feature (S113 note, corrected on 2026-11-10).</p>
-
+  <div class="tryit"><div class="lbl">Try it</div><p>In the toy, set the slowed speed to 0.12 m/s and move the episode length from 15 s to 45 s. At which length do the two curves meet? What would you check in any test that compares a slow controller with a fast one?</p><details class="answer"><summary>Show the answer</summary><div><p>The curves meet when even the slowest robot has had time to reach the farthest obstacle (2.4 m at 0.12 m/s takes 20 s). The check is: <b>did every subject meet the test?</b> Record how many robots actually reached the feature, and compare falls per robot that did, not per robot started.</p></div></details></div>
 </div></section>
-<figure class="widget" data-widget="l09:tiles">
+
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">9.4</span>C: the test map decides what the test measures</h2>
+  <p>The <b>zigzag test</b> fell 28 to 33 percent in every recipe. It looked like a limit of the controller. But the zigzag drifted about 2 m forward, off the flat start tile and onto terrain.</p>
+  <p>On a fully flat map the same zigzag fell <b>5 percent</b> (S113). The claim was withdrawn.</p>
+  <figure class="widget" data-widget="l09:tiles">
     <header><h3>Tiles and the zigzag</h3><span class="tag">S113</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Switch the map.</b> The same tests, the same controller; the zigzag collapses when the terrain is removed, and the goal test hardly changes. Below, the height profile of the clip paths: slide the robot along it to see which feature it meets.<span class="src">docs/research/tracking_study_log.md S113 (zigzag addendum, rendering note)</span></figcaption>
+    <figcaption><b>Switch the map.</b> Same tests, same controller. Below, the height profile along the clip paths.<span class="src">docs/research/tracking_study_log.md S113 (zigzag addendum, rendering note)</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<section class="lsec"><div class="wrap">
-  <h2><span class="k">9.5</span>Lesson D: seeds, noise and what counts as a result</h2>
-
-  <p>Training is random: a different seed gives a different policy. The study repeats recipes over seeds and treats any difference smaller than the spread between seeds of the <i>same</i> recipe as noise. Several early conclusions fell to this rule: the goal-hunting behaviour that motivated the dead band was one seed (S113); the "hard-design weighting" gain disappeared with a third seed (S114); the benefit of tracking weight 3 did not reproduce (S112, S113).</p>
-
 </div></section>
-<figure class="widget" data-widget="l09:spread">
+
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">9.5</span>D: one seed is not a result</h2>
+  <figure class="dia"><div class="media" tabindex="0" role="group" aria-label="Diagram (scrolls sideways on narrow screens)"><svg class="diagram" viewBox="0 0 760 220" role="img" aria-labelledby="e2t e2d"><title id="e2t">Is a difference real, or seed noise?</title><desc id="e2d">Two rows of dots on a score axis, one dot per training seed. Recipe A's three dots and recipe B's three dots overlap. The spread among seeds of one recipe is wider than the gap between the two recipe means, so the difference is noise.</desc><defs><marker id="e2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<path class="ln" d="M120 170H640"/><text class="s" x="650" y="174">score</text><text class="t f-model end" x="110" y="94">recipe A</text><text class="t f-learned end" x="110" y="134">recipe B</text><circle class="m-model" cx="250" cy="90" r="8"/><circle class="m-model" cx="290" cy="90" r="8"/><circle class="m-model" cx="345" cy="90" r="8"/><circle class="m-learned" cx="275" cy="130" r="8"/><circle class="m-learned" cx="330" cy="130" r="8"/><circle class="m-learned" cx="372" cy="130" r="8"/><path class="ln" d="M250 60H345M250 54V66M345 54V66"/><text class="s mid" x="297" y="48">spread among seeds of one recipe</text><path class="ln" d="M295 188H326M295 182V194M326 182V194"/><text class="s mid" x="310" y="210">gap between the means</text><rect class="bx warn" x="470" y="70" width="200" height="60" rx="8"/><text class="t mid" x="570" y="89.5">gap smaller than spread</text><text class="s mid" x="570" y="104.5">not a result yet:</text><text class="s mid" x="570" y="119.5">run more seeds</text><text class="s" x="120" y="24">each dot = one training seed (positions are illustrative)</text></svg></div><figcaption><b>The rule the study uses.</b> A difference smaller than the spread between seeds of the same recipe is treated as noise.</figcaption></figure>
+  <p>Several early conclusions fell to this rule: the goal hunting behind the dead band (S113), the hard-design weighting gain (S114), the benefit of tracking weight 3 (S112, S113).</p>
+  <figure class="widget" data-widget="l09:spread">
     <header><h3>Is that difference real?</h3><span class="tag">S113</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Pick two recipes.</b> Each dot is one training seed (goal success without pushes at domain-randomisation scale 1). The verdict compares the difference between recipe means with the spread among seeds of the wider recipe. Several differences that looked like findings sit inside the spread.<span class="src">docs/research/tracking_study_log.md S112, S113 tables; values read by scripts/site/build_learn_data.py</span></figcaption>
+    <figcaption><b>Pick two recipes.</b> Each dot is one training seed (goal success without pushes, DR scale 1).<span class="src">docs/research/tracking_study_log.md S112, S113 tables; values read by scripts/site/build_learn_data.py</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<div class="tryit"><div class="lbl">Check yourself</div><p>Recipe B scores 0.78 against recipe A's 0.76 on one seed each, and B is cheaper. What should you conclude?</p><div class="opts"><button>B is better: 0.02 is a win</button><button data-ok>Nothing yet: run more seeds, because two runs of the same recipe already differ by about as much</button><button>A is better because it scored first</button></div><details class="answer"><summary>Why</summary><div><p>In the data above, seeds of one recipe differ by 0.01 to 0.02 in this metric, as much as the gap. A comparison needs several seeds per recipe and a spread. The study logs single-seed results as such, flags them in the entry, and retracts them when a later seed disagrees.</p></div></details></div><section class="lsec"><div class="wrap">
-  <h2><span class="k">9.6</span>The ledger of corrections</h2>
+  <div class="tryit"><div class="lbl">Check yourself</div><p>Recipe B scores 0.78 against recipe A's 0.76 on one seed each, and B is cheaper. What should you conclude?</p><div class="opts"><button>B is better: 0.02 is a win</button><button data-ok>Nothing yet: run more seeds, because two runs of the same recipe differ by about as much</button><button>A is better because it scored first</button></div><details class="answer"><summary>Why</summary><div><p>In the data above, seeds of one recipe differ by 0.01 to 0.02 in this metric, as much as the gap. The study logs single-seed results as such and retracts them when a later seed disagrees.</p></div></details></div>
+</div></section>
 
-  <p>A study log is most useful when it records what it got wrong. These claims were made, acted on for a while and withdrawn or corrected. Each correction has its own entry and a guard in the code where possible.</p>
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">9.6</span>The ledger of corrections</h2>
+  <p>Seven claims were made, acted on for a while, then withdrawn. Each has its own log entry.</p>
+  <details class="more"><summary>Show the seven claims that did not survive</summary><div>
   <div class="tablewrap"><table><caption>Claims that did not survive (all from the study log)</caption>
     <thead><tr><th>Claim</th><th>What it really was</th><th>Entry</th></tr></thead><tbody>
-    <tr><td>Wide randomisation does not help; mass is the driver of falls</td><td>A stale cached subtree mass in the engine corrupted the physics far from the origin</td><td>S69, S70</td></tr>
-    <tr><td>Policies trained at friction 0.01 are worse on obstacles (two policy families)</td><td>The evaluation script did not apply the run's friction</td><td>S102</td></tr>
-    <tr><td>A speed layer halves obstacle falls</td><td>Short episodes: slowed robots had not met the obstacle. Real effect 0.03 to 0.05</td><td>S103</td></tr>
-    <tr><td>The goal rule needs a dead band to stop hunting</td><td>The hunting was one seed; the dead band stays as harmless insurance</td><td>S113</td></tr>
+    <tr><td>Wide randomisation does not help; mass drives falls</td><td>A stale cached subtree mass in the engine corrupted the physics</td><td>S69, S70</td></tr>
+    <tr><td>Policies trained at friction 0.01 are worse on obstacles</td><td>The evaluation script did not apply the run's friction</td><td>S102</td></tr>
+    <tr><td>A speed layer halves obstacle falls</td><td>Short episodes. Real effect 0.03 to 0.05</td><td>S103</td></tr>
+    <tr><td>The goal rule needs a dead band to stop hunting</td><td>The hunting was one seed</td><td>S113</td></tr>
     <tr><td>Sharp turns (zigzag) are a limit of the recipe</td><td>Terrain exposure; 0.051 on a flat map</td><td>S113</td></tr>
     <tr><td>Render clips fell off the map edge</td><td>They ran into the next, harder tile feature</td><td>S113 note</td></tr>
-    <tr><td>Hold error 6 to 8 cm</td><td>Measured at the swinging ball origin; 11 to 14 cm at the true centre</td><td>S118</td></tr>
+    <tr><td>Hold error 6 to 8 cm</td><td>Measured at the swinging origin; 11 to 14 cm at the true centre</td><td>S118</td></tr>
     </tbody></table></div>
-
+  </div></details>
+  <p>More engineering lessons are on the main site: <a href="../lessons.html">Lessons from building this</a>.</p>
 </div></section>
 
 <section class="lsec"><div class="wrap">
   <h2><span class="k">Summary</span>Key takeaways</h2>
-  <div class="takeaways"><ul><li>Check what a measurement is attached to: the ball body origin swung 14 cm around the true centre and blurred every goal metric (S118).</li><li>Count the subjects that met the test: slowed robots looked twice as safe because they had not reached the obstacles (S103).</li><li>The test map is part of the test: the zigzag falls were terrain, not turning (S113).</li><li>A single seed is not a result: compare differences with the spread among seeds of one recipe (S112 to S114).</li><li>Keep a ledger of corrections and give each its own entry.</li></ul></div>
-  <h3 style="margin-top:1.6em">Code and evidence</h3>
-  <div class="sources">
+  <div class="takeaways"><ul><li>Check what a measurement is attached to: the ball body origin swung 14 cm around the true centre (S118).</li><li>Count the subjects that met the test (S103).</li><li>The test map is part of the test: the zigzag falls were terrain, not turning (S113).</li><li>A single seed is not a result: compare differences with the seed spread.</li><li>Keep a ledger of corrections.</li></ul></div>
+  <details class="more"><summary>Code and evidence</summary><div><div class="sources">
     <div><h3>Code</h3><ul><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/experiments/warp_ppo/train_dev.py"><code>experiments/warp_ppo/train_dev.py</code></a>: <code>--goal-centre</code>, <code>ball_xy()</code> (S118)</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/experiments/warp_ppo/eval_motion.py"><code>experiments/warp_ppo/eval_motion.py</code></a>: goal metrics at the true ball centre</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/experiments/warp_ppo/eval_governor.py"><code>experiments/warp_ppo/eval_governor.py</code></a>: the 15 s and 40 s speed-layer tests</li></ul></div>
-    <div><h3>Study log and docs</h3><ul><li>S69, S70: stale subtree mass</li><li>S102: the friction evaluation bug</li><li>S103: the speed-layer exposure artefact</li><li>S113: seeds, the zigzag addendum, the render note</li><li>S118: the goal point on the swinging origin</li><li>On the main site: <a href="../lessons.html">Lessons from building this</a></li></ul></div>
-  </div>
+    <div><h3>Study log and docs</h3><ul><li>S69, S70: stale subtree mass</li><li>S102: the friction evaluation bug</li><li>S103: the speed-layer exposure artefact (the same trap as S86)</li><li>S113: seeds, the zigzag addendum, the render note</li><li>S118: the goal point on the swinging origin; S121: hold error of g39</li><li>On the main site: <a href="../lessons.html">Lessons from building this</a></li></ul></div>
+  </div></div></details>
 </div></section>
 </main>
 </body>

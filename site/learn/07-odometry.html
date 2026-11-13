@@ -9,77 +9,81 @@
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/learn.css">
+<link rel="stylesheet" href="../assets/css/viz.css">
 <script type="module" src="assets/js/learn.js"></script>
 </head>
 <body>
 <main>
 <header class="lhead"><div class="wrap">
-  <div class="eyebrow"><span>Lesson 7 of 10</span><span class="t">14 min</span><span class="t">Estimation</span></div>
+  <div class="eyebrow"><span>Lesson 7 of 10</span><span class="t">8 min</span><span class="t">Estimation</span></div>
   <h1>Knowing where you are</h1>
-  <p class="lede">Without GPS or a map the robot has to track its own motion from wheel encoders and an IMU. It does it to about 2 percent of distance, and the part that limits it is heading.</p>
+  <p class="lede">With no GPS and no map, the robot tracks its own motion from wheel encoders and an IMU. In simulation it is good to about 2 percent of the distance driven. Heading is what limits it.</p>
   <div class="chips"><span class="chip sim">Simulation only, no hardware</span></div>
-  <section class="goals" aria-labelledby="g1"><h2 id="g1">You will be able to</h2><ul><li>list the four stages of the estimator and what each fixes;</li><li>explain how heading and scale errors turn into position drift;</li><li>say what a Kalman filter can and cannot remove, and what the stack needs for longer missions.</li></ul></section>
+  <section class="goals" aria-labelledby="g1"><h2 id="g1">You will be able to</h2><ul><li>list the four stages of the estimator;</li><li>explain how heading and scale errors become position drift;</li><li>say what longer missions need.</li></ul></section>
 </div></header>
 
 <section class="lsec"><div class="wrap">
-  <h2><span class="k">7.1</span>Odometry from wheel encoders and an IMU</h2>
-
-  <p>A navigation stack needs to know where the robot is. There is no GPS or camera localiser here, only what a ballbot has on board: <b>three wheel encoders</b> and a <b>6-axis IMU</b> (a gyroscope and an accelerometer). The estimator of S108 turns them into position, velocity and attitude in four steps, every 10 ms:</p>
-  <ol>
-    <li><b>Attitude.</b> Integrate the bias-corrected gyro; pull roll and pitch toward the direction of gravity seen by the accelerometer (a complementary filter). Yaw has no such reference: with no compass or camera it drifts with whatever gyro bias remains.</li>
-    <li><b>Gyro bias.</b> Estimated only while the robot is standing still (all wheel rates and the gyro near zero), as a slow average. This zero-velocity update is the standard way to observe an IMU bias without an external reference.</li>
-    <li><b>Ball rate.</b> The ball's rotation relative to the body comes from the encoders through a <i>calibration matrix</i>; for a ball rolling without slipping the ball centre moves at v = (&omega;<sub>y</sub> r, &minus;&omega;<sub>x</sub> r).</li>
-    <li><b>Kalman filter</b> on (x, y, v<sub>x</sub>, v<sub>y</sub>): predict with the tilt-compensated horizontal acceleration, update with the encoder velocity. It smooths noise and quantisation; it cannot remove a scale or heading error, which is what makes position drift.</li>
+  <h2><span class="k">7.1</span>The estimator</h2>
+  <figure class="dia"><div class="media" tabindex="0" role="group" aria-label="Diagram (scrolls sideways on narrow screens)"><svg class="diagram" viewBox="0 0 780 250" role="img" aria-labelledby="o1t o1d"><title id="o1t">The odometry estimator in four stages</title><desc id="o1d">The gyroscope and accelerometer feed an attitude filter. While the robot stands still, the gyro bias is estimated and fed back. The three wheel encoders pass through a calibration matrix to give the ball rate and so the velocity. A Kalman filter fuses the velocity with the tilt-compensated acceleration and outputs position and velocity.</desc><defs><marker id="o1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="bx " x="10" y="20" width="130" height="56" rx="8"/><text class="t mid" x="75" y="45">IMU</text><text class="s mid" x="75" y="60">gyro + accelerometer</text><rect class="bx " x="10" y="160" width="130" height="56" rx="8"/><text class="t mid" x="75" y="185">3 wheel encoders</text><text class="s mid" x="75" y="200">wheel angles</text><rect class="bx model" x="190" y="20" width="170" height="56" rx="8"/><text class="t mid" x="275" y="45">1 &middot; attitude</text><text class="s mid" x="275" y="60">gyro, pulled to gravity</text><rect class="bx warn" x="190" y="90" width="170" height="50" rx="8"/><text class="t mid" x="275" y="112">2 &middot; gyro bias</text><text class="s mid" x="275" y="127">only while standing still</text><rect class="bx model" x="190" y="160" width="170" height="56" rx="8"/><text class="t mid" x="275" y="185">3 &middot; ball rate</text><text class="s mid" x="275" y="200">calibration matrix</text><rect class="bx hybrid" x="420" y="90" width="170" height="60" rx="8"/><text class="t mid" x="505" y="109.5">4 &middot; Kalman filter</text><text class="s mid" x="505" y="124.5">predict: acceleration</text><text class="s mid" x="505" y="139.5">correct: encoder speed</text><rect class="bx good" x="640" y="90" width="130" height="60" rx="8"/><text class="t mid" x="705" y="117">position, velocity</text><text class="s mid" x="705" y="132">every 10 ms</text><path class="ar" d="M140 48H188" marker-end="url(#o1a)"/><path class="ar" d="M140 188H188" marker-end="url(#o1a)"/><path class="ar" d="M275 90V78" marker-end="url(#o1a)"/><path class="ar" d="M360 48C400 48 400 90 418 104" marker-end="url(#o1a)"/><path class="ar" d="M360 188C400 188 400 150 418 136" marker-end="url(#o1a)"/><path class="ar" d="M590 120H638" marker-end="url(#o1a)"/><text class="s f-warn mid" x="275" y="236">yaw has no reference: it drifts with whatever bias is left</text></svg></div><figcaption><b>Four stages, every 10 ms.</b> Encoders give speed, the IMU gives attitude, the Kalman filter blends them.<span class="src">experiments/warp_ppo/odometry.py (BallbotOdometry), study log S108</span></figcaption></figure>
+  <p>The Kalman filter smooths noise. It <b>cannot</b> remove a scale error or a heading error. Those two make position drift.</p>
+  <details class="more"><summary>Each stage in detail</summary><div><ol>
+    <li><b>Attitude.</b> Integrate the bias-corrected gyro; pull roll and pitch toward the direction of gravity seen by the accelerometer (a complementary filter). Yaw has no such reference.</li>
+    <li><b>Gyro bias.</b> Estimated only while the robot stands still (all wheel rates and the gyro near zero), as a slow average: a zero-velocity update.</li>
+    <li><b>Ball rate.</b> From the encoders through a calibration matrix; for a ball rolling without slipping the centre moves at v = (&omega;<sub>y</sub> r, &minus;&omega;<sub>x</sub> r).</li>
+    <li><b>Kalman filter</b> on (x, y, v<sub>x</sub>, v<sub>y</sub>): predict with the tilt-compensated horizontal acceleration, update with the encoder velocity.</li>
   </ol>
-  <p>One detail of the simulator: it logs the position of the ball <i>body origin</i>, which sits 14 cm from the ball centre in this model and swings as the ball rolls. The centre rolls cleanly (median slip 2 cm/s at a median 0.46 m/s), so the estimator tracks the centre (the same origin offset reappears as a measurement artefact in lesson 9).</p>
-
-</div></section>
-<figure class="widget" data-widget="l07:kalman">
+  <p>The estimator tracks the ball <i>centre</i>. The simulator's ball body origin sits 14 cm from the centre and swings as the ball rolls (lesson 9). The centre rolls cleanly: median slip 2 cm/s at a median 0.46 m/s.</p></div></details>
+  <figure class="widget" data-widget="l07:kalman">
     <header><h3>A Kalman filter in one dimension</h3><span class="tag">same structure as the estimator</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Fuse a noisy speed sensor with a biased accelerometer.</b> The encoder is unbiased but noisy; the integrated accelerometer is smooth but drifts away because of its bias. The Kalman filter predicts with the accelerometer and corrects with the encoder, and ends up better than either. Push the sliders to extremes: trust the encoder fully (small R) or the accelerometer fully (small process noise) and see the estimate follow one of them. This is a 1D version of the filter in <code>odometry.py</code>, with the sensor noise levels of S108 as defaults.<span class="src">Estimator: experiments/warp_ppo/odometry.py (BallbotOdometry); settings: bundle.json estimator (q_acc 0.5, r_enc 0.02)</span></figcaption>
+    <figcaption><b>Fuse a noisy speed sensor with a biased accelerometer.</b> The filter predicts with the accelerometer and corrects with the encoder, and ends up better than either. A 1D version of the filter in <code>odometry.py</code>, with the S108 noise levels as defaults.<span class="src">Estimator: experiments/warp_ppo/odometry.py (BallbotOdometry); settings: bundle.json estimator (q_acc 0.5, r_enc 0.02)</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
+</div></section>
+
 <section class="lsec"><div class="wrap">
   <h2><span class="k">7.2</span>Why position drifts</h2>
-
-  <p>Position comes from integrating velocity, so any error in the speed or in the direction of travel accumulates. Two kinds of error matter:</p>
-  <ul>
-    <li><b>Scale error</b> (a wrong wheel calibration or ball radius) stretches the path in proportion: 3 percent too fast means 3 percent too far.</li>
-    <li><b>Heading error</b> rotates every later step. A heading error of &delta; makes a position error of about &delta; times the distance driven since the heading went wrong. Heading drifts because the gyro has a bias that cannot be seen without a reference.</li>
-  </ul>
-
-</div></section>
-<figure class="widget" data-widget="l07:drift">
+  <figure class="dia"><div class="media" tabindex="0" role="group" aria-label="Diagram (scrolls sideways on narrow screens)"><svg class="diagram" viewBox="0 0 760 240" role="img" aria-labelledby="o2t o2d"><title id="o2t">Two kinds of error, seen from above</title><desc id="o2d">Left: with a scale error the estimated path is the true path stretched; it keeps its shape. Right: with a heading error the estimated path bends away from the true path, and the gap grows with the distance driven.</desc><defs><marker id="o2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<text class="k f-warn" x="40" y="24">SCALE ERROR</text><text class="s" x="40" y="42">wrong wheel calibration or ball radius</text><path class="thick st-model" d="M40 200C100 80 200 80 260 200"/><path class="thick st-warn" stroke-dasharray="7 6" d="M40 200C107 66 219 66 286 200"/><text class="t mid" x="163" y="226">stretched, same shape</text><path class="ln" d="M360 14V226"/><text class="k f-bad" x="400" y="24">HEADING ERROR</text><text class="s" x="400" y="42">gyro bias nobody can see</text><path class="thick st-model" d="M400 200C460 80 560 80 620 200"/><path class="thick st-bad" stroke-dasharray="7 6" d="M400 200C450 60 560 30 660 120"/><path class="ar" d="M624 196L656 128" marker-end="url(#o2a)"/><text class="t f-bad" x="668" y="170">gap grows</text><text class="s" x="668" y="186">with distance</text><text class="t mid" x="520" y="226">bends away, more and more</text><path class="thick st-model" d="M300 60H330"/><text class="s" x="336" y="64">true</text></svg></div><figcaption><b>Sketches, not data.</b> Blue is the true path, dashed is what the robot believes.</figcaption></figure>
+  <p>Position is speed added up over time, so errors pile up. A heading error of &delta; puts the position off by about &delta; times the distance driven since.</p>
+  <figure class="widget" data-widget="l07:drift">
     <header><h3>Dead reckoning on a figure of eight</h3><span class="tag">illustrative error model</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Break the sensors.</b> The blue path is the truth; the dashed red path is what the robot thinks. The model has only the two error terms above (gyro bias and speed scale) so you can see each one alone; it is not the full filter. With stops, the bias estimate converges while standing (time constant 2 s, as in the estimator) and the heading stops drifting at that rate.<span class="src">Mechanism: S108; zero-velocity update time constant: bundle.json estimator bias_tau</span></figcaption>
+    <figcaption><b>Break the sensors.</b> Blue: truth. Dashed red: what the robot thinks. Only the two error terms above, not the full filter. With stops, the bias estimate converges while standing (time constant 2 s) and the heading stops drifting at that rate.<span class="src">Mechanism: S108; zero-velocity update time constant: bundle.json estimator bias_tau</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<div class="tryit"><div class="lbl">Try it</div><p>(1) Set the speed scale error to 5 percent and the gyro bias to 0. (2) Set the scale to 0 and the bias to 0.01 rad/s. (3) With the bias at 0.01, switch on the 3 s stops. Which error is easier to see in the picture, and which does stopping fix?</p><details class="answer"><summary>Show the answer</summary><div><p>A scale error stretches the whole figure but leaves it recognisable; a heading drift rotates and unwinds it, and the error grows faster the longer it runs. Stopping lets the filter measure the bias (about three quarters of it in a 3 s stop) and lowers the heading error by a large factor, but not to zero, and only works if the robot actually stops. S108 found the same: heading is the error that grows, the gyro bias is only re-estimated while standing, and in the logged driving that is rare.</p></div></details></div><section class="lsec"><div class="wrap">
-  <h2><span class="k">7.3</span>What the simulated study measured</h2>
-
-  <p>S108 drove 128 simulated robots for 60 s each (commands capped at 0.4 m/s, resampled every 3 s, half of them chasing goals) on a flat map, logging the true state and the sensor streams, and ran the estimator offline. The calibration of the encoder matrix was fitted on the first 64 robots and the results are on the other 64. The IMU noise values are typical MEMS figures (gyro bias standard deviation 0.005 rad/s, random walk, noise; accelerometer bias 0.03 m/s<sup>2</sup>), not a specific part.</p>
-
+  <div class="tryit"><div class="lbl">Try it</div><p>(1) Set the speed scale error to 5 percent and the gyro bias to 0. (2) Set the scale to 0 and the bias to 0.01 rad/s. (3) With the bias at 0.01, switch on the 3 s stops. Which error is easier to see, and which does stopping fix?</p><details class="answer"><summary>Show the answer</summary><div><p>A scale error stretches the whole figure but leaves it recognisable; a heading drift rotates and unwinds it, and the error grows faster the longer it runs. Stopping lets the filter measure the bias (about three quarters of it in a 3 s stop) and lowers the heading error by a large factor, but not to zero, and only works if the robot actually stops. S108 found the same: the gyro bias is only re-estimated while standing, and in the logged driving that is rare.</p></div></details></div>
 </div></section>
-<figure class="widget" data-widget="l07:errors">
+
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">7.3</span>What the simulated study measured</h2>
+  <div class="keys">
+    <div class="key good"><b>about 2 <small>%</small></b><span>position error, as a share of distance driven, flat ground</span><div class="s">S108, 64 held-out robots, median</div></div>
+    <div class="key warn"><b>12 <small>deg</small></b><span>heading error after one minute</span><div class="s">S108</div></div>
+    <div class="key bad"><b>13 <small>%</small></b><span>error over the first 2 m with an uncalibrated wheel matrix</span><div class="s">S108</div></div>
+  </div>
+  <p>Odometry is good for a few metres. Longer missions need something that observes heading or position: a better gyro, stops to re-measure the bias, or matching against a map.</p>
+  <details class="more"><summary>Protocol</summary><div><p>128 simulated robots drove 60 s each on a flat map (commands capped at 0.4 m/s, resampled every 3 s, half of them chasing goals). The estimator ran offline on the logged sensor streams. The encoder calibration was fitted on the first 64 robots; results are on the other 64. IMU noise values are typical MEMS figures (gyro bias standard deviation 0.005 rad/s; accelerometer bias 0.03 m/s<sup>2</sup>), not a specific part. On terrain with steps and drops the error is larger: 3.6 to 3.8 percent of distance, against 2.0 to 2.4 on flat ground (S108 addendum).</p></div></details>
+  <figure class="widget" data-widget="l07:errors">
     <header><h3>How well the robot knows where it is</h3><span class="tag">S108</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>About 2 percent of the distance driven.</b> Median errors on 64 held-out robots. Heading is the error that grows with time; a 2 percent error in the ball radius hardly matters; using the planar model's wheel matrix instead of the calibrated one is the worst case at the start.<span class="src">outputs/study/warp_ppo/odom/odom_results_flat.json (S108), read by scripts/site/build_learn_data.py</span></figcaption>
+    <figcaption><b>Median errors on 64 held-out robots.</b> Heading is the error that grows with time. A 2 percent error in the ball radius hardly matters.<span class="src">outputs/study/warp_ppo/odom/odom_results_flat.json (S108), read by scripts/site/build_learn_data.py</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<div class="tryit"><div class="lbl">Check yourself</div><p>After a minute of driving, the realistic-sensor estimate is 22 cm off and 12 degrees off in heading. Which change would reduce position error most?</p><div class="opts"><button>A more precise ball radius measurement</button><button data-ok>An absolute heading or position correction (a better gyro, stop-and-recalibrate, or matching against the map)</button><button>A faster Kalman filter</button></div><details class="answer"><summary>Why</summary><div><p>S108: a 2 percent ball radius error changes the position error almost not at all, while the heading drift turns into most of the position error. The fix has to come from something that observes heading: a better gyro, pauses to re-estimate the bias, or landmark or map matching from the ToF sensor or a camera; in ROS 2, a localiser fused with the odometry (lesson 10).</p><p>On terrain with steps and drops the error is a little larger (3.6 to 3.8 percent of distance, against 2.0 to 2.4 on flat ground), because the ball slips and rolls over edges that the flat-ground calibration does not model (S108 addendum).</p></div></details></div>
+  <div class="tryit"><div class="lbl">Check yourself</div><p>After a minute of driving, the realistic-sensor estimate is 22 cm off and 12 degrees off in heading. Which change would reduce position error most?</p><div class="opts"><button>A more precise ball radius measurement</button><button data-ok>An absolute heading or position correction</button><button>A faster Kalman filter</button></div><details class="answer"><summary>Why</summary><div><p>S108: a 2 percent ball radius error changes the position error almost not at all, while the heading drift turns into most of the position error. The fix has to come from something that observes heading: a better gyro, pauses to re-estimate the bias, or landmark or map matching from the ToF sensor or a camera; in ROS 2, a localiser fused with the odometry (lesson 10).</p></div></details></div>
+</div></section>
+
 <section class="lsec"><div class="wrap">
   <h2><span class="k">Summary</span>Key takeaways</h2>
-  <div class="takeaways"><ul><li>Encoders give speed, the IMU gives attitude; a Kalman filter fuses encoder speed with accelerometer prediction.</li><li>Gyro bias is only observable while standing still, so heading drifts: 12 degrees after a minute.</li><li>Calibration of the wheel matrix matters most (13 percent error over the first 2 m uncalibrated); ball radius error hardly matters.</li><li>Odometry is good for a few metres; longer missions need an absolute heading or position correction.</li></ul></div>
-  <h3 style="margin-top:1.6em">Code and evidence</h3>
-  <div class="sources">
+  <div class="takeaways"><ul><li>Encoders give speed, the IMU gives attitude; a Kalman filter fuses them.</li><li>Gyro bias is only observable while standing still, so heading drifts: 12 degrees after a minute.</li><li>Wheel-matrix calibration matters most (13 percent error over the first 2 m uncalibrated); ball radius error hardly matters.</li><li>Odometry is good for a few metres; longer missions need an absolute heading or position correction.</li></ul></div>
+  <details class="more"><summary>Code and evidence</summary><div><div class="sources">
     <div><h3>Code</h3><ul><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/experiments/warp_ppo/odometry.py"><code>experiments/warp_ppo/odometry.py</code></a>: <code>BallbotOdometry</code></li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/experiments/warp_ppo/eval_odom.py"><code>experiments/warp_ppo/eval_odom.py</code></a>: error evaluation</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/ros2/ballbot_control/ballbot_control/core/estimator.py"><code>ros2/ballbot_control/ballbot_control/core/estimator.py</code></a>: the deployed port</li></ul></div>
     <div><h3>Study log and docs</h3><ul><li>S108: wheel-encoder and IMU odometry, flat ground and the terrain addendum</li><li>S118 note: the ball body origin is 0.14 m from the ball centre (lesson 9)</li><li>On the main site: <a href="../architecture.html">The controller</a></li></ul></div>
-  </div>
+  </div></div></details>
 </div></section>
 </main>
 </body>

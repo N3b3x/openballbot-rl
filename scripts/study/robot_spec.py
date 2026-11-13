@@ -218,15 +218,84 @@ def evaluate_built(prefix, n):
     print("wrote", OUT / f"{prefix}_sim.csv")
 
 
+# ---------------------------------------------------------------- one spec for the picture, the layout rules and the simulator design
+LAYOUT_DEFAULTS = dict(wheels=3, drive=dict(type="direct", ratio=1.0, efficiency=1.0), guards=dict(reach_deg=112.0, gap_mm=1.0), arms=False)
+
+
+def effective_spec(spec):
+    """The spec as the simulator sees it. The spec's motor_torque_limit and rotor_inertia are MOTOR-side numbers; a transmission of ratio N and efficiency eta
+    gives the wheel a torque limit N * eta * tau and a reflected rotor inertia N^2 * J. Direct drive is N = 1. (The simulator has no wheel speed limit, so the
+    speed lost to the ratio is reported but not simulated.)"""
+    d = {**LAYOUT_DEFAULTS["drive"], **(spec.get("drive") or {})}; N, eta = float(d["ratio"]), float(d["efficiency"])
+    e = {k: spec[k] for k in KEYS}; e["name"] = spec["name"]
+    e["motor_torque_limit"] = spec["motor_torque_limit"] * N * eta; e["rotor_inertia"] = spec["rotor_inertia"] * N ** 2
+    return e, dict(type=d["type"], ratio=N, efficiency=eta)
+
+
+def spec_to_layout(spec):
+    """The same spec as a wheel layout (ballbot_layout.py) for the rules and the picture. Wheel and body sizes scale with the ball unless the spec gives them."""
+    import ballbot_layout as BL
+    k = spec["ball_radius_m"] / 0.09; _, drv = effective_spec(spec); guards = spec.get("guards", {}); g = {**LAYOUT_DEFAULTS["guards"], **(guards or {})}
+    L = BL.family(spec["name"], int(spec.get("wheels", 3)), float(spec["contact_zenith_deg"]), spec.get("contact_zenith_b_deg"),
+                  R=spec["ball_radius_m"], rw=spec.get("wheel_radius_m", 0.035 * k), ww=spec.get("wheel_width_m", 0.03 * k), body_mass=spec["body_mass_kg"], ball_mass=spec["ball_mass_kg"],
+                  body_r=spec.get("body_half_width_m", 0.11 * k), body_h=spec.get("body_height_m", 0.28 * k), tau_max=spec["motor_torque_limit"], rotor_J=spec["rotor_inertia"],
+                  drive="direct" if drv["type"] == "direct" else "geared", N=drv["ratio"], eta=drv["efficiency"], arr_theta=(None if guards is False else g["reach_deg"]), arr_gap_mm=g["gap_mm"])
+    L["arms"] = bool(spec.get("arms", False))
+    return L
+
+
+def show(spec, out):
+    """Picture + rules + simulator mapping of one spec, in one image; returns the report dict."""
+    import ballbot_layout as BL, layout_render as LR
+    from PIL import Image, ImageDraw
+    L = spec_to_layout(spec); v = BL.validate(L); c = LR.checks(L); eff, drv = effective_spec(spec); sim_ok = int(spec.get("wheels", 3)) == 3 and spec.get("contact_zenith_b_deg") is None
+    bad = [k for k, x in v["rules"].items() if not x] + (["motors do not fit above the wheels"] if c["motor_below"] else [])
+    k = spec["ball_radius_m"] / 0.09
+    a = LR.render(L, 760, 900, az=152, el=-8, dist=1.15 * k, look_z=0.27 * k); b = LR.render(L, 760, 900, az=152, el=-14, dist=0.64 * k, look_z=0.13 * k, cutaway=True)
+    img = Image.new("RGB", (760 * 2 + 640, 900), (16, 22, 34)); img.paste(a, (0, 0)); img.paste(b, (760, 0)); d = ImageDraw.Draw(img); st = dict(y=16); x = 1540
+
+    def line(t, col=(236, 241, 248), sz=15, bold=False, dy=24):
+        d.text((x, st["y"]), t, fill=col, font=LR._f(sz, bold)); st["y"] += dy
+    HEAD = (120, 170, 255); OKC = (94, 224, 138); BADC = (255, 107, 107); DIM = (150, 163, 182)
+    line(spec["name"], sz=22, bold=True, dy=34); line("SPEC (what you set)", HEAD, 13, True)
+    two = f" / {spec['contact_zenith_b_deg']:.0f} deg" if spec.get("contact_zenith_b_deg") else ""
+    gtxt = "none" if L["arr_theta"] is None else f"to {L['arr_theta']:.0f} deg, gap {L['arr_gap_mm']:g} mm"
+    for t in (f"ball: radius {spec['ball_radius_m'] * 100:.1f} cm, mass {spec['ball_mass_kg']:.3f} kg", f"body: mass {spec['body_mass_kg']:.2f} kg, COM {spec['body_com_height_m'] * 100:.1f} cm above ball centre",
+              f"wheels: {L['n']} at {spec['contact_zenith_deg']:.0f} deg from the top{two}", f"motor: {spec['motor_torque_limit']:.1f} N m, rotor inertia {spec['rotor_inertia']:.4f} kg m2",
+              f"drive: {drv['type']}, ratio {drv['ratio']:g}, efficiency {drv['efficiency']:.2f}", f"guards: {gtxt};  arms: {'yes (visual only)' if L['arms'] else 'no'}"): line(t)
+    st["y"] += 8; line("AT THE WHEEL (what the physics uses)", HEAD, 13, True)
+    line(f"torque limit {eff['motor_torque_limit']:.1f} N m, reflected inertia {eff['rotor_inertia']:.4f} kg m2"); line(f"speed is divided by {drv['ratio']:g} (not simulated: the simulator has no wheel speed limit)", DIM, 12)
+    st["y"] += 8; line("LAYOUT RULES", HEAD, 13, True)
+    for kname, okk in v["rules"].items(): line(("PASS  " if okk else "FAIL  ") + kname, OKC if okk else BADC, 13, dy=20)
+    line(("PASS  " if not c["motor_below"] else "FAIL  ") + "motors fit above the wheels", OKC if not c["motor_below"] else BADC, 13, dy=20)
+    line(f"wheel-ball gap {c['ball_gap_mm']:.2f} mm, wheel clearance {c['wheel_clear_mm']:.0f} mm", DIM, 12)
+    st["y"] += 8; line("SIMULATOR", HEAD, 13, True); rep = dict(spec=spec, effective=eff, drive=drv, rules=v["rules"], checks=c, layout_ok=not bad, simulator_supported=sim_ok)
+    if bad:
+        line("not built: the layout fails the rules above", BADC)
+    elif not sim_ok:
+        line("picture and rules only: the simulator supports", (255, 180, 84)); line("3 wheels at one height today", (255, 180, 84))
+    else:
+        dsg = spec_to_design(eff); ph = physics(dsg); rep.update(design=dsg, physics=ph)
+        line(f"design: scale {dsg['s']:.3f}, ball x{dsg['kball']:.2f}, ballast x{dsg['kbal']:.2f}", sz=13, dy=20); line(f"        ballast height {dsg['zb'] * 100:.1f} cm, wheel angle {dsg['dz']:+.0f} deg", sz=13, dy=20)
+        line(f"total mass {ph['total_mass']:.2f} kg, COM {ph['l'] * 100:.1f} cm ({ph['l_over_r']:.2f} ball radii)", sz=13, dy=20)
+        line(f"analytic check: {'feasible' if ph['feasible'] else 'NOT feasible'}, limit: {ph['binding']}", OKC if ph["feasible"] else BADC, 13, dy=20)
+        line("physics model: validated crude geometry (not this picture)", DIM, 12)
+    img.save(out); print("saved", out)
+    return rep
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
     b = sub.add_parser("build"); b.add_argument("spec"); b.add_argument("--eval", action="store_true"); b.add_argument("--n", type=int, default=256)
     w = sub.add_parser("sweep"); w.add_argument("cfg"); w.add_argument("--eval", action="store_true"); w.add_argument("--n", type=int, default=256)
     e = sub.add_parser("evaluate"); e.add_argument("prefix"); e.add_argument("--n", type=int, default=256)
+    sh = sub.add_parser("show"); sh.add_argument("spec"); sh.add_argument("out")
     a = ap.parse_args()
     if a.cmd == "evaluate":
         evaluate_built(a.prefix, a.n); return
+    if a.cmd == "show":
+        rep = show(yaml.safe_load(open(a.spec)), a.out); print(json.dumps({k: rep[k] for k in ("effective", "drive", "layout_ok", "simulator_supported")}, indent=1, default=float)); return
     if a.cmd == "build":
         rep = build(yaml.safe_load(open(a.spec)), a.eval, a.n)
         print(summary_line(rep))

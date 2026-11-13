@@ -9,68 +9,80 @@
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/learn.css">
+<link rel="stylesheet" href="../assets/css/viz.css">
 <script type="module" src="assets/js/learn.js"></script>
 </head>
 <body>
 <main>
 <header class="lhead"><div class="wrap">
-  <div class="eyebrow"><span>Lesson 5 of 10</span><span class="t">14 min</span><span class="t">Commands</span></div>
+  <div class="eyebrow"><span>Lesson 5 of 10</span><span class="t">8 min</span><span class="t">Commands</span></div>
   <h1>Commands that feel good</h1>
-  <p class="lede">A ballbot cannot follow every command a planner can write. A small layer of limits makes the commands followable, and it only works when the learned controller is trained with it.</p>
+  <p class="lede">A planner can write commands a ballbot cannot follow. A small layer of limits fixes the commands. It only works if the learned controller is trained with it.</p>
   <div class="chips"><span class="chip sim">Simulation only, no hardware</span></div>
-  <section class="goals" aria-labelledby="g1"><h2 id="g1">You will be able to</h2><ul><li>list the five things the motion-reference layer does and the limit each uses;</li><li>explain why abrupt commands hurt a non-minimum-phase robot;</li><li>say why the layer must be present during training, and which limit smooths navigation paths.</li></ul></section>
+  <section class="goals" aria-labelledby="g1"><h2 id="g1">You will be able to</h2><ul><li>list what the motion-reference layer does;</li><li>explain why abrupt commands hurt this robot;</li><li>say why the layer must be present during training.</li></ul></section>
 </div></header>
 
 <section class="lsec"><div class="wrap">
-  <h2><span class="k">5.1</span>The problem: a command a ballbot cannot follow</h2>
-
-  <p>The balance controller tracks a velocity command. A planner or a goal rule produces that command, and it knows nothing about leaning. Three things go wrong when raw commands are passed straight through (S105):</p>
-  <ul>
-    <li><b>The heading turns faster than the robot can lean into.</b> A recorded navigation run commanded a smooth heading (1.6 rad/s RMS), but the ball's actual velocity heading swung at 8.1 rad/s RMS, with a slow sideways sway at 0.32 Hz.</li>
-    <li><b>A goal overshoot flips the command by 180 degrees.</b> Lesson 2: reversing takes a lean in the opposite direction, which the robot cannot produce instantly.</li>
-    <li><b>Nothing holds position at the goal.</b> The goal rule saturates, the LQR has almost no position weight, and a switch at 5 cm chatters, so the robot hunts around a goal it has missed.</li>
-  </ul>
-  <p>The fix is a <b>motion-reference layer</b> between the planner and the balance controller. It turns a desired velocity into a command a ballbot can follow:</p>
-  <div class="pipeline" aria-label="Layer stages"><span>desired velocity</span><i>&rarr;</i><span>slew-limit speed</span><i>&rarr;</i><span>limit turn rate</span><i>&rarr;</i><span>brake before reversing</span><i>&rarr;</i><span>arrival braking curve</span><i>&rarr;</i><span>position hold</span><i>&rarr;</i><span>balance controller</span></div>
-  <ul>
-    <li><b>Speed slew:</b> accelerate at most 0.4 m/s<sup>2</sup>, brake at most 0.5 m/s<sup>2</sup>.</li>
-    <li><b>Turn rate:</b> at most min(1.5 rad/s, a<sub>lat</sub> / speed), with a<sub>lat</sub> = 0.35 m/s<sup>2</sup>: the faster you go, the slower you may turn.</li>
-    <li><b>Reversal:</b> a desired heading more than 90 degrees away is approached by braking first (speed scaled by the cosine of the error).</li>
-    <li><b>Arrival:</b> near a goal the speed is capped at &radic;(2 a<sub>brk</sub> (d &minus; d<sub>stop</sub>)), the speed from which braking at a<sub>brk</sub> stops exactly at the goal.</li>
-    <li><b>Hold:</b> within 6 cm and slow, a gentle position loop (gain 0.8, speed cap 0.06 m/s, dead band 1.5 cm) holds the goal.</li>
-  </ul>
-
+  <h2><span class="k">5.1</span>The problem</h2>
+  <p>A planner knows nothing about leaning. Passing its raw commands straight to the balance controller goes wrong in three ways (S105):</p>
+  <div class="cards">
+    <div class="bad"><b>It sways</b><span>The command turned smoothly (1.6 rad/s RMS). The ball's real heading swung at 8.1 rad/s RMS.</span></div>
+    <div class="bad"><b>It flips</b><span>Overshooting a goal reverses the command by 180 degrees. Reversing needs the opposite lean, which takes time (lesson 2).</span></div>
+    <div class="bad"><b>It hunts</b><span>Nothing holds position at the goal, so the robot circles a goal it has missed.</span></div>
+  </div>
 </div></section>
-<figure class="widget" data-widget="l05:compare">
+
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">5.2</span>The fix: a motion-reference layer</h2>
+  <figure class="dia"><div class="media" tabindex="0" role="group" aria-label="Diagram (scrolls sideways on narrow screens)"><svg class="diagram" viewBox="0 0 900 200" role="img" aria-labelledby="c1t c1d"><title id="c1t">The command stack</title><desc id="c1d">A goal rule or a planner produces a desired velocity. The motion-reference layer shapes it in five stages: slew the speed, limit the turn rate, brake before reversing, follow an arrival braking curve, and hold position. The shaped command goes to the balance controller, the LQR plus the learned residual, which drives the wheels.</desc><defs><marker id="c1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="zone" x="160" y="56" width="592" height="112" rx="12"/><text class="k f-hybrid" x="172" y="78">MOTION-REFERENCE LAYER</text><text class="s end" x="740" y="78">makes the command followable</text><rect class="bx " x="10" y="96" width="124" height="56" rx="8"/><text class="t mid" x="72" y="121">goal or planner</text><text class="s mid" x="72" y="136">desired velocity</text><path class="ar" d="M134 124H170" marker-end="url(#c1a)"/><rect class="bx " x="172" y="96" width="104" height="56" rx="8"/><text class="t mid" x="224" y="121">speed slew</text><text class="s mid" x="224" y="136">0.4 up, 0.5 down</text><rect class="bx " x="288" y="96" width="104" height="56" rx="8"/><text class="t mid" x="340" y="121">turn rate</text><text class="s mid" x="340" y="136">1.5 rad/s or less</text><path class="ar" d="M276 124H287" marker-end="url(#c1a)"/><rect class="bx " x="404" y="96" width="104" height="56" rx="8"/><text class="t mid" x="456" y="121">reversal</text><text class="s mid" x="456" y="136">brake first</text><path class="ar" d="M392 124H403" marker-end="url(#c1a)"/><rect class="bx " x="520" y="96" width="104" height="56" rx="8"/><text class="t mid" x="572" y="121">arrival</text><text class="s mid" x="572" y="136">brake to the goal</text><path class="ar" d="M508 124H519" marker-end="url(#c1a)"/><rect class="bx " x="636" y="96" width="104" height="56" rx="8"/><text class="t mid" x="688" y="121">hold</text><text class="s mid" x="688" y="136">within 6 cm</text><path class="ar" d="M624 124H635" marker-end="url(#c1a)"/><path class="ar" d="M740 124H778" marker-end="url(#c1a)"/><rect class="bx hybrid" x="780" y="96" width="110" height="56" rx="8"/><text class="t mid" x="835" y="121">balance</text><text class="s mid" x="835" y="136">LQR + residual</text><text class="s mid" x="835" y="180">lessons 3 and 4</text><text class="s mid" x="72" y="180">lesson 6</text></svg></div><figcaption><b>Five limits between the planner and the balance controller.</b><span class="src">experiments/warp_ppo/motion_ref.py; settings: bundle.json motion_ref</span></figcaption></figure>
+  <div class="tablewrap"><table><caption>The five limits and their settings</caption>
+    <thead><tr><th>Stage</th><th>Limit</th></tr></thead><tbody>
+    <tr><td>Speed slew</td><td>accelerate at most 0.4 m/s<sup>2</sup>, brake at most 0.5 m/s<sup>2</sup></td></tr>
+    <tr><td>Turn rate</td><td>at most min(1.5 rad/s, a<sub>lat</sub> / speed), a<sub>lat</sub> = 0.35 m/s<sup>2</sup></td></tr>
+    <tr><td>Reversal</td><td>a heading more than 90 degrees away is reached by braking first</td></tr>
+    <tr><td>Arrival</td><td>speed capped at &radic;(2 a<sub>brk</sub> (d &minus; d<sub>stop</sub>))</td></tr>
+    <tr><td>Hold</td><td>within 6 cm and slow: gain 0.8, speed cap 0.06 m/s, dead band 1.5 cm</td></tr>
+    </tbody></table></div>
+  <figure class="dia"><div class="media" tabindex="0" role="group" aria-label="Diagram (scrolls sideways on narrow screens)"><svg class="diagram" viewBox="0 0 760 250" role="img" aria-labelledby="c2t c2d"><title id="c2t">Two of the limits, as curves</title><desc id="c2d">Left: the allowed turn rate against speed is flat at 1.5 radians per second at low speed, then falls as 0.35 divided by the speed. Right: the allowed speed against distance to the goal falls along a square-root braking curve and ends in a hold zone within 6 centimetres of the goal.</desc><defs><marker id="c2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<path class="ln" d="M60 190H340M60 190V60"/><text class="s mid" x="200.0" y="210">speed</text><text class="s" x="54" y="52">turn rate allowed</text><polyline class="thick st-hybrid" points="60,80.0 121,80.0 138,104.4 164,125.8 190,138.7 229,150.5 268,157.9 320,164.3"/><text class="t" x="70" y="70">1.5 rad/s</text><text class="t" x="230" y="128">0.35 m/s&#178; &divide; speed</text><text class="s mid" x="200" y="238">faster means gentler turns</text><path class="ln" d="M430 190H710M430 190V60"/><text class="s mid" x="570.0" y="210">distance to the goal (goal at the right)</text><text class="s" x="424" y="52">speed allowed</text><polyline class="thick st-hybrid" points="684,190.0 679,173.3 669,161.1 648,145.8 622,132.2 583,116.3 544,103.3 492,88.5 440,75.6"/><rect class="bx good" x="684" y="150" width="26" height="40" rx="4"/><text class="t f-good mid" x="697" y="142">hold</text><text class="code" x="566" y="74">&radic;(2 &middot; a_brk &middot; d)</text><text class="s mid" x="570" y="238">brakes so it stops exactly at the goal</text></svg></div><figcaption><b>The shapes of two limits.</b> Sketches of the formulas in the table, axes not to scale.</figcaption></figure>
+  <figure class="widget" data-widget="l05:compare">
     <header><h3>With and without the layer</h3><span class="tag">layer ported from motion_ref.py</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Pick a scenario and tighten or loosen the limits.</b> Amber: the raw command stream. Teal: the same desired velocity through the layer. The stand-in follower is a plain lag, so the picture shows the effect of the command, not the real robot. In the goal scenario the layer brakes along its curve and holds. Make the follower sluggish (lag near 1 s) and the layer overshoots too: it assumes the robot can follow it, which is why the policy has to be trained with it (S106, S110). Heading rate is measured only while the command is moving.<span class="src">Layer: experiments/warp_ppo/motion_ref.py, settings from bundle.json motion_ref; goal rule from bundle.json goal_rule</span></figcaption>
+    <figcaption><b>Pick a scenario and change the limits.</b> Amber: the raw command. Teal: the same command through the layer. The follower is a plain lag, a stand-in, so this shows the effect on the command, not the real robot.<span class="src">Layer: experiments/warp_ppo/motion_ref.py, settings from bundle.json motion_ref; goal rule from bundle.json goal_rule</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<div class="tryit"><div class="lbl">Try it</div><p>Choose the zigzag scenario. Raise the turn-rate limit to 4 rad/s and the lateral limit to 1 m/s<sup>2</sup>. What happens to the layer's heading rate? Then choose the 180 degree turn and lower the braking limit to 0.2.</p><details class="answer"><summary>Show the answer</summary><div><p>With the limits relaxed the layer passes most of the zigzag through and its heading rate climbs toward the raw one: the smoothing comes from the limits, not from the layer existing. In the real navigation test it was the same: raising the turn limit from 1.5 to 2 rad/s brought the path wobble back to the no-layer level (1.72 against 1.79), while accelerating and braking harder cost nothing (S114). On the turn-around, a lower braking limit makes the robot take longer to stop before it reverses, visible as a longer slow stretch in the speed plot.</p></div></details></div><section class="lsec"><div class="wrap">
-  <h2><span class="k">5.2</span>Does it work on the real controller?</h2>
-
-  <p>The first test was disappointing and instructive. Putting the layer in front of an <i>unchanged</i> policy made goal arrival worse: falls doubled from 0.15 to 0.31 (S106). The command looked better but the policy had been trained on raw, piecewise-constant commands and had never seen slow ramps or a position-hold loop. <b>Command shaping has to be trained with, not bolted on.</b></p>
-  <p>Training with the layer (S110) fixed it: goal falls dropped from 0.15 to 0.11 or 0.12, command reversals from 1.19 to 0.38 per run, hold error from 7.5 to 6.0 cm. In navigation with a planner and the ToF sensor (S114), the path wobbles a quarter less (heading-rate RMS 1.31 against 1.79 rad/s) and the layer costs only 0.3 s per route on average (median time 9.2 s against 8.9 s).</p>
-
+  <div class="tryit"><div class="lbl">Try it</div><p>Choose the zigzag scenario. Raise the turn-rate limit to 4 rad/s and the lateral limit to 1 m/s<sup>2</sup>. What happens to the layer's heading rate? Then choose the 180 degree turn and lower the braking limit to 0.2.</p><details class="answer"><summary>Show the answer</summary><div><p>With the limits relaxed the layer passes most of the zigzag through and its heading rate climbs toward the raw one: the smoothing comes from the limits, not from the layer existing. In the navigation test it was the same: raising the turn limit from 1.5 to 2 rad/s brought the path wobble back to the no-layer level (1.72 against 1.79), while accelerating and braking harder cost nothing (S114). On the turn-around, a lower braking limit makes the robot take longer to stop before it reverses.</p></div></details></div>
 </div></section>
-<figure class="widget" data-widget="l05:navlayer">
+
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">5.3</span>Train with it, do not bolt it on</h2>
+  <p>The same layer was tested two ways. The result flipped.</p>
+  <div class="keys">
+    <div class="key bad"><b>0.15 &rarr; 0.31</b><span>goal falls, layer added to an unchanged policy</span><div class="s">S106, checkpoint g26</div></div>
+    <div class="key good"><b>0.15 &rarr; 0.11 <small>to 0.12</small></b><span>goal falls, policy trained with the layer</span><div class="s">S110, runs g29_mref</div></div>
+    <div class="key good"><b>1.19 &rarr; 0.38</b><span>command reversals per run, trained with the layer</span><div class="s">S110</div></div>
+  </div>
+  <p>The old policy had only seen raw, piecewise-constant commands. Slow ramps and a hold loop were new to it. <b>The inputs seen in training are part of the controller.</b></p>
+  <p>In navigation with a planner and the ToF sensor, the path wobbles a quarter less (heading-rate RMS 1.31 against 1.79 rad/s) and a route takes 0.3 s longer (S114).</p>
+  <figure class="widget" data-widget="l05:navlayer">
     <header><h3>Navigation with the layer: which limit does the smoothing</h3><span class="tag">S114 addenda</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>The turn-rate limit does the smoothing.</b> ToF navigation on the recommended recipe, 528 worlds (11 designs by 48), 20 s, blocks map, simulation only. Pick a setting for the success, fall, stuck and time numbers; the bars show path wobble.<span class="src">docs/research/tracking_study_log.md S114 (two addenda); checked by scripts/site/build_learn_data.py</span></figcaption>
+    <figcaption><b>The turn-rate limit does the smoothing.</b> ToF navigation with the motion-layer recipe (checkpoint g34), 528 worlds (11 designs by 48), 20 s, blocks map, simulation only. Bars show path wobble.<span class="src">docs/research/tracking_study_log.md S114 (two addenda); checked by scripts/site/build_learn_data.py</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<div class="tryit"><div class="lbl">Check yourself</div><p>The layer clearly shapes the command better, but on an unchanged policy goal falls doubled. What is the most likely reason?</p><div class="opts"><button>The layer has a bug</button><button data-ok>The policy never saw slow ramps or a hold loop in training, so it behaves badly on commands unlike those it learned from</button><button>Slower commands are always harder for a ballbot</button></div><details class="answer"><summary>Why</summary><div><p>That is the diagnosis in S106: the policy was trained on piecewise-constant commands and a raw goal rule. Retraining with the layer in the loop (S110) turned the same layer from a loss into a gain. The general lesson for learned controllers: the distribution of inputs at training time is part of the controller.</p></div></details></div>
+  <div class="tryit"><div class="lbl">Check yourself</div><p>The layer shapes the command better, but on an unchanged policy goal falls doubled. What is the most likely reason?</p><div class="opts"><button>The layer has a bug</button><button data-ok>The policy never saw slow ramps or a hold loop in training</button><button>Slower commands are always harder for a ballbot</button></div><details class="answer"><summary>Why</summary><div><p>That is the diagnosis in S106: the policy was trained on piecewise-constant commands and a raw goal rule. Retraining with the layer in the loop (S110) turned the same layer from a loss into a gain.</p></div></details></div>
+</div></section>
+
 <section class="lsec"><div class="wrap">
   <h2><span class="k">Summary</span>Key takeaways</h2>
-  <div class="takeaways"><ul><li>Raw commands make the ballbot sway and hunt: its heading cannot turn as fast as a planner assumes, and nothing holds position.</li><li>The layer slews speed, limits the turn rate by lateral acceleration, brakes before reversals, brakes to goals along sqrt(2 a d) and holds position.</li><li>Added to an unchanged policy it doubled goal falls (S106); trained with, it improved arrival and hold (S110).</li><li>On navigation it cuts path wobble by about a quarter at a cost of 0.3 s per route; the turn-rate limit is the part that matters.</li></ul></div>
-  <h3 style="margin-top:1.6em">Code and evidence</h3>
-  <div class="sources">
+  <div class="takeaways"><ul><li>Raw commands make the ballbot sway, flip and hunt.</li><li>The layer slews speed, limits the turn rate, brakes before reversals, brakes to goals and holds position.</li><li>Added to an unchanged policy it doubled goal falls (S106). Trained with, it improved arrival and hold (S110).</li><li>On navigation it cuts path wobble by about a quarter at a cost of 0.3 s per route. The turn-rate limit is the part that matters.</li></ul></div>
+  <details class="more"><summary>Code and evidence</summary><div><div class="sources">
     <div><h3>Code</h3><ul><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/experiments/warp_ppo/motion_ref.py"><code>experiments/warp_ppo/motion_ref.py</code></a>: the layer (batched over worlds)</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/ros2/ballbot_control/ballbot_control/core/motion_ref.py"><code>ros2/ballbot_control/ballbot_control/core/motion_ref.py</code></a>: the deployed copy and the training goal rule</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/experiments/warp_ppo/eval_motion.py"><code>experiments/warp_ppo/eval_motion.py</code></a>: goal, curve and zigzag tests</li></ul></div>
-    <div><h3>Study log and docs</h3><ul><li>S105: why the paths oscillate and the robot hunts</li><li>S106: the layer on an unchanged policy does not help</li><li>S110: training with the layer</li><li>S114: terrain navigation, the gain split and the layer's limits</li><li>S113 zigzag addendum: the zigzag column was terrain exposure (lesson 9)</li></ul></div>
-  </div>
+    <div><h3>Study log and docs</h3><ul><li>S105: why the paths oscillate and the robot hunts (heading sway at 0.32 Hz)</li><li>S106: the layer on an unchanged policy does not help</li><li>S110: training with the layer (hold error 7.5 to 6.0 cm)</li><li>S114: terrain navigation, the gain split and the layer's limits (median time 9.2 s against 8.9 s)</li><li>S113 zigzag addendum: the zigzag column was terrain exposure (lesson 9)</li></ul></div>
+  </div></div></details>
 </div></section>
 </main>
 </body>

@@ -38,17 +38,17 @@
 <header class="pagehead wrap">
   <div class="eyebrow">Design guidelines <span class="badge-sim">simulation only</span></div>
   <h1>What to build so this controller can balance it</h1>
-  <p class="lede">A design sweep changed one property of the simulated robot at a time, ran the recommended controller on each variant over 256 randomised worlds and counted the falls (study log S119). Seven rules came out of it, in order of how much they matter. They are guidelines for a first build, not measurements of one.</p>
+  <p class="lede">Seven rules for a first build. They come from a simulated sweep that changed one robot property at a time and counted the falls. Guidelines, not measurements of a built robot.</p>
   <div class="meta"><span class="readtime"></span><span class="chip">S119</span><span class="chip">22 variants</span><span class="chip">256 worlds each</span></div>
 </header>
 
 <div class="wrap">
   <aside class="tldr"><ul>
-    <li><b>The ball must not be too light.</b> Below about 2 percent of the body mass the robot falls even standing still; 4 percent is fine, 8 to 15 percent is better. A planar physics model cannot see this; only full contact simulation does.</li>
-    <li><b>Give the wheels torque margin and inertia.</b> At least 15 N m peak per wheel for a 4 kg robot, and do not go below the nominal rotor inertia.</li>
-    <li><b>Build tall, not low; 3 to 5 kg of body.</b> A higher centre of mass is easier to balance; body mass sets how hard a steady push the robot can lean against.</li>
-    <li><b>Ball size:</b> 9 cm radius or more, and expect to retrain the learned part for a different ball size.</li>
-  </ul><span class="fine">Every number below is generated from <code>outputs/study/specs/ota_sim.csv</code> by <code>site/build_data.py</code> and checked against log entry S119.</span></aside>
+    <li><b>Do not make the ball too light.</b> Below about 2 percent of the body mass the robot falls even standing still; 4 percent is fine, 8 to 15 percent is better.</li>
+    <li><b>Give the wheels torque and inertia.</b> At least 15 N m peak per wheel for a 4 kg robot, and no less than the nominal rotor inertia.</li>
+    <li><b>Build tall, 3 to 5 kg.</b> A higher centre of mass is easier to balance; body mass sets how hard a steady push it can lean against.</li>
+    <li><b>Ball radius 9 cm or more.</b> Expect to retrain the learned part for a different ball size.</li>
+  </ul><span class="fine">Numbers are generated from <code>outputs/study/specs/ota_sim.csv</code> and checked against log entry S119.</span></aside>
 </div>
 
 <nav class="pagetoc" aria-label="On this page"></nav>
@@ -56,7 +56,7 @@
 <section class="block wrap" id="reference" aria-labelledby="h-ref">
   <div class="eyebrow">The starting point</div>
   <h2 id="h-ref">The reference robot</h2>
-  <p class="lede">Every variant changes one number of this robot ("nominal"), which matches the simulated design the controller was trained around.</p>
+  <p class="lede">Every variant changes one number of this robot, the "nominal" design the controller was trained around.</p>
   <div class="specgrid">
     <figure class="figure plain specfig" data-num="1">
       <svg viewBox="0 0 360 400" role="img" aria-labelledby="ref-t ref-d" class="diagram">
@@ -81,7 +81,7 @@
         <text x="310" y="234" class="s" transform="rotate(90 310 234)" text-anchor="middle">13 cm</text>
         <line x1="40" y1="372" x2="320" y2="372" stroke="var(--line-2)" stroke-width="2"/>
       </svg>
-      <figcaption><b>The nominal robot.</b> Schematic, not to scale; numbers from <code>specs/nominal.yaml</code> and the design guidelines. <span class="src">S119; docs/research/design_guidelines.md</span></figcaption>
+      <figcaption><b>The nominal robot.</b> Schematic, not to scale. <span class="src">specs/nominal.yaml; S119</span></figcaption>
     </figure>
     <dl class="specs">
       <div><dt><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-ball"/></svg>Ball</dt><dd>9 cm radius, 0.17 kg</dd></div>
@@ -89,7 +89,7 @@
       <div><dt><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-omni"/></svg>Wheels</dt><dd>three omniwheels touching the ball 51 degrees from its top</dd></div>
       <div><dt><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-torque"/></svg>Motors</dt><dd>direct drive, torque limit 30 N m per wheel</dd></div>
       <div><dt><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-integrator"/></svg>Rotor inertia</dt><dd>0.005 kg m<sup>2</sup> (motor plus wheel, seen at the wheel)</dd></div>
-      <div><dt><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-ppo"/></svg>Controller</dt><dd>LQR plus learned residual, checkpoint g34 s0 (the recommendation at the time of the sweep)</dd></div>
+      <div><dt><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-ppo"/></svg>Controller</dt><dd>LQR plus learned residual, as recommended at the time of the sweep</dd></div>
     </dl>
   </div>
   <p class="src-note">Nominal falls over 256 worlds: standing at the goal <span class="v" data-k="ota.nom.still" data-f="3" data-m="1">0.007</span>, with short pushes <span class="v" data-k="ota.nom.pushes" data-f="3" data-m="1">0.007</span>, with half-strength pulls <span class="v" data-k="ota.nom.half_pulls" data-f="3" data-m="1">0.017</span>, driving at 0.3 m/s <span class="v" data-k="ota.nom.drive" data-f="3" data-m="1">0.001</span>, goals on terrain <span class="v" data-k="ota.nom.terrain" data-f="3" data-m="1">0.138</span> (S119).</p>
@@ -98,38 +98,38 @@
 <section class="block wrap" id="rules" aria-labelledby="h-rules">
   <div class="eyebrow">Seven rules</div>
   <h2 id="h-rules">The rules, in order of importance</h2>
-  <p class="lede">Each rule gives the guideline, then the evidence from the sweep. "Falls standing" is the share of 256 simulated robots that fall while holding a goal on flat ground with no disturbance, the simplest test there is.</p>
+  <p class="lede">Most important first. "Falls standing" is the share of 256 simulated robots that fall while holding a goal on flat ground with no disturbance.</p>
   <ol class="rules">
     <li class="rule">
       <span class="itile"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-ball"/></svg></span>
-      <div><h3>Ball mass: at least 4 percent of the body mass; 8 to 15 percent is better</h3>
-      <p>Falls standing: <span class="v" data-k="ota.ota_ballmas_0p042.still" data-f="0" data-m="100">41</span> percent at 1 percent of the body mass (0.042 kg), <span class="v" data-k="ota.ota_ballmas_0p084.still" data-f="0" data-m="100">5</span> percent at 2 percent, <span class="v" data-k="ota.nom.still" data-f="1" data-m="100">0.7</span> percent at the nominal 4.4 percent, and <span class="v" data-k="ota.ota_ballmas_0p34.still" data-f="0" data-m="100">0</span> percent at 9 and 17 percent. The planar analytic model hardly moves with ball mass; this limit appears only in full contact simulation.</p>
+      <div><h3>Ball mass: at least 4 percent of the body mass</h3>
+      <p>8 to 15 percent is better. Falls standing: <span class="v" data-k="ota.ota_ballmas_0p042.still" data-f="0" data-m="100">41</span> percent at 1 percent of the body mass, <span class="v" data-k="ota.ota_ballmas_0p084.still" data-f="0" data-m="100">5</span> percent at 2 percent, <span class="v" data-k="ota.nom.still" data-f="1" data-m="100">0.7</span> percent at the nominal 4.4 percent, <span class="v" data-k="ota.ota_ballmas_0p34.still" data-f="0" data-m="100">0</span> percent at 9 and 17 percent.</p>
       <div class="bars" role="img" aria-label="Falls standing against ball mass: 0.042 kg 41 percent, 0.084 kg 5 percent, 0.168 kg under 1 percent, 0.34 kg and 0.67 kg none">
         <span><b>0.042 kg</b><i><span class="v" data-k="ota.ota_ballmas_0p042.still" data-f="3" data-m="1">0.409</span></i></span><span><b>0.084</b><i><span class="v" data-k="ota.ota_ballmas_0p084.still" data-f="3" data-m="1">0.052</span></i></span><span class="nom"><b>0.168 nominal</b><i><span class="v" data-k="ota.nom.still" data-f="3" data-m="1">0.007</span></i></span><span><b>0.34</b><i><span class="v" data-k="ota.ota_ballmas_0p34.still" data-f="3" data-m="1">0.000</span></i></span><span><b>0.67</b><i><span class="v" data-k="ota.ota_ballmas_0p67.still" data-f="3" data-m="1">0.000</span></i></span>
       </div></div><span class="chip">S119</span>
     </li>
     <li class="rule">
       <span class="itile warn"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-torque"/></svg></span>
-      <div><h3>Wheel torque: a peak of at least 15 N m per wheel for a 4 kg robot; size the continuous rating for about 3 N m</h3>
-      <p>Falls standing: <span class="v" data-k="ota.ota_motortor_15.still" data-f="3" data-m="1">0.009</span> at 15 N m (as good as the nominal 30), <span class="v" data-k="ota.ota_motortor_10.still" data-f="3" data-m="1">0.044</span> at 10, <span class="v" data-k="ota.ota_motortor_6.still" data-f="2" data-m="1">0.13</span> at 6 and <span class="v" data-k="ota.ota_motortor_3.still" data-f="2" data-m="1">0.48</span> at 3, where the robot cannot hold itself up. Driving at 0.3 m/s still works with weak motors; holding still does not. The torque actually used in a ROS 2 parity rollout was small most of the time (median 0.73 N m, 90th percentile 2.6, 99th 8.1) with short peaks up to the limit during push recoveries (S119).</p>
+      <div><h3>Wheel torque: at least 15 N m peak per wheel</h3>
+      <p>For a 4 kg robot; size the continuous rating for about 3 N m. Falls standing: <span class="v" data-k="ota.ota_motortor_15.still" data-f="3" data-m="1">0.009</span> at 15 N m (as good as the nominal 30), <span class="v" data-k="ota.ota_motortor_10.still" data-f="3" data-m="1">0.044</span> at 10, <span class="v" data-k="ota.ota_motortor_6.still" data-f="2" data-m="1">0.13</span> at 6 and <span class="v" data-k="ota.ota_motortor_3.still" data-f="2" data-m="1">0.48</span> at 3. Torque used in a ROS 2 parity rollout: median 0.73 N m, 90th percentile 2.6, 99th 8.1, with short peaks up to the limit.</p>
       <div class="bars" role="img" aria-label="Falls standing against torque limit: 3 N m 48 percent, 6 N m 13 percent, 10 N m 4 percent, 15 N m 1 percent, 30 N m nominal under 1 percent">
         <span><b>3 N m</b><i><span class="v" data-k="ota.ota_motortor_3.still" data-f="3" data-m="1">0.481</span></i></span><span><b>6</b><i><span class="v" data-k="ota.ota_motortor_6.still" data-f="3" data-m="1">0.133</span></i></span><span><b>10</b><i><span class="v" data-k="ota.ota_motortor_10.still" data-f="3" data-m="1">0.044</span></i></span><span><b>15</b><i><span class="v" data-k="ota.ota_motortor_15.still" data-f="3" data-m="1">0.009</span></i></span><span class="nom"><b>30 nominal</b><i><span class="v" data-k="ota.nom.still" data-f="3" data-m="1">0.007</span></i></span>
       </div></div><span class="chip">S119</span>
     </li>
     <li class="rule">
       <span class="itile model"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-omni"/></svg></span>
-      <div><h3>Rotor inertia: do not go below the nominal 0.005 kg m<sup>2</sup>; more helped</h3>
-      <p>Four times the nominal (0.02) was the best variant of the whole sweep: terrain-goal falls <span class="v" data-k="ota.ota_rotorine_0p02.terrain" data-f="3" data-m="1">0.109</span> against <span class="v" data-k="ota.nom.terrain" data-f="3" data-m="1">0.138</span>. A fifth of it (0.001) fails badly, <span class="v" data-k="ota.ota_rotorine_0p001.still" data-f="2" data-m="1">0.43</span> falling standing, and the plain LQR without the learned part falls just as often (<span class="v" data-k="otaq.rotorine_0p001.lqr" data-f="2" data-m="1">0.49</span>): a physical limit of that build, not a training gap.</p></div><span class="chip">S119</span>
+      <div><h3>Rotor inertia: not below the nominal 0.005 kg m<sup>2</sup></h3>
+      <p>More helped: four times the nominal (0.02) was the best variant of the sweep, terrain-goal falls <span class="v" data-k="ota.ota_rotorine_0p02.terrain" data-f="3" data-m="1">0.109</span> against <span class="v" data-k="ota.nom.terrain" data-f="3" data-m="1">0.138</span>. A fifth of it (0.001) fails badly: <span class="v" data-k="ota.ota_rotorine_0p001.still" data-f="2" data-m="1">0.43</span> fall standing, and the plain LQR falls just as often (<span class="v" data-k="otaq.rotorine_0p001.lqr" data-f="2" data-m="1">0.49</span>), so it is a limit of that build, not of the training.</p></div><span class="chip">S119</span>
     </li>
     <li class="rule">
       <span class="itile model"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-tilt"/></svg></span>
-      <div><h3>Centre-of-mass height: at least the nominal 1.4 ball radii above the ball centre, higher is better up to 2.4 (the highest tested); do not build it low</h3>
-      <p>Higher is easier over the whole tested range: falls standing <span class="v" data-k="ota.ota_bodycom_0p08.still" data-f="3" data-m="1">0.037</span> at 0.9 radii (8 cm), <span class="v" data-k="ota.nom.still" data-f="3" data-m="1">0.007</span> at 1.45 (nominal) and <span class="v" data-k="ota.ota_bodycom_0p22.still" data-f="3" data-m="1">0.003</span> at 2.4 (22 cm); terrain-goal falls <span class="v" data-k="ota.ota_bodycom_0p08.terrain" data-f="2" data-m="1">0.20</span> down to <span class="v" data-k="ota.ota_bodycom_0p22.terrain" data-f="3" data-m="1">0.125</span>. A tall body tips more slowly and needs less lean per unit of acceleration. The analytic grip check warns above about 2 radii because it asks for recovery from a 15 degree tilt, which the controller never lets happen.</p></div><span class="chip">S119</span>
+      <div><h3>Centre of mass: build tall, not low</h3>
+      <p>At least the nominal 1.4 ball radii above the ball centre; higher is better up to 2.4, the highest tested. Falls standing: <span class="v" data-k="ota.ota_bodycom_0p08.still" data-f="3" data-m="1">0.037</span> at 0.9 radii (8 cm), <span class="v" data-k="ota.nom.still" data-f="3" data-m="1">0.007</span> at 1.45 (nominal) and <span class="v" data-k="ota.ota_bodycom_0p22.still" data-f="3" data-m="1">0.003</span> at 2.4 (22 cm). Terrain-goal falls: <span class="v" data-k="ota.ota_bodycom_0p08.terrain" data-f="2" data-m="1">0.20</span> down to <span class="v" data-k="ota.ota_bodycom_0p22.terrain" data-f="3" data-m="1">0.125</span>.</p></div><span class="chip">S119</span>
     </li>
     <li class="rule">
       <span class="itile learned"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-push"/></svg></span>
-      <div><h3>Body mass: 3 to 5 kg for these motors; not below 3 kg if the robot must resist steady pushing or pulling</h3>
-      <p>Balance and terrain barely change with body mass, but resistance to a steady pull does: half-strength pulls (1.5 to 6 N) topple <span class="v" data-k="ota.ota_bodymas_2.half_pulls" data-f="2" data-m="1">0.24</span> at 2 kg, <span class="v" data-k="ota.ota_bodymas_3.half_pulls" data-f="3" data-m="1">0.034</span> at 3 kg and <span class="v" data-k="ota.nom.half_pulls" data-f="3" data-m="1">0.017</span> at the nominal 3.85 kg. The static estimate agrees: leaning 5 degrees, a body resists about <span class="v" data-k="ota.pull5.bodymas_2" data-f="1" data-m="1">1.7</span> N at 2 kg and <span class="v" data-k="ota.pull5.nom" data-f="1" data-m="1">3.3</span> N at 3.85 kg. Above about 5 kg the same motors start to struggle (falls standing <span class="v" data-k="ota.ota_bodymas_6p5.still" data-f="3" data-m="1">0.021</span> at 6.5 kg).</p></div><span class="chip">S119, S116</span>
+      <div><h3>Body mass: 3 to 5 kg for these motors</h3>
+      <p>Not below 3 kg if the robot must resist steady pushing or pulling. Half-strength pulls (1.5 to 6 N) topple <span class="v" data-k="ota.ota_bodymas_2.half_pulls" data-f="2" data-m="1">0.24</span> at 2 kg, <span class="v" data-k="ota.ota_bodymas_3.half_pulls" data-f="3" data-m="1">0.034</span> at 3 kg and <span class="v" data-k="ota.nom.half_pulls" data-f="3" data-m="1">0.017</span> at the nominal 3.85 kg. Leaning 5 degrees, a body resists about <span class="v" data-k="ota.pull5.bodymas_2" data-f="1" data-m="1">1.7</span> N at 2 kg and <span class="v" data-k="ota.pull5.nom" data-f="1" data-m="1">3.3</span> N at 3.85 kg. Above about 5 kg the same motors start to struggle (falls standing <span class="v" data-k="ota.ota_bodymas_6p5.still" data-f="3" data-m="1">0.021</span> at 6.5 kg).</p></div><span class="chip">S119, S116</span>
     </li>
     <li class="rule">
       <span class="itile"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-contact"/></svg></span>
@@ -138,8 +138,8 @@
     </li>
     <li class="rule">
       <span class="itile bad"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-terrain"/></svg></span>
-      <div><h3>Ball size: 9 cm or larger; a different size needs the learned part retrained</h3>
-      <p>A 7 cm ball is genuinely harder: the plain LQR falls <span class="v" data-k="otaq.ballrad_0p07.lqr" data-f="2" data-m="1">0.28</span> of the time and the full controller <span class="v" data-k="otaq.ballrad_0p07.full" data-f="2" data-m="1">0.11</span>; grip becomes the limit and the robot tips faster. A 12 cm ball is physically easy, the plain LQR falls only <span class="v" data-k="otaq.ballrad_0p12.lqr" data-f="3" data-m="1">0.022</span>, yet the learned controller falls <span class="v" data-k="otaq.ballrad_0p12.full" data-f="2" data-m="1">0.69</span> because it never trained on another ball size. That row measures the controller's training range, not the robot. The larger ball also climbs taller steps: see <a href="generalist.html#ballsize">ball size against step size</a>.</p></div><span class="chip">S119, S94</span>
+      <div><h3>Ball size: 9 cm radius or larger</h3>
+      <p>A different size needs the learned part retrained. A 7 cm ball is harder: the plain LQR falls <span class="v" data-k="otaq.ballrad_0p07.lqr" data-f="2" data-m="1">0.28</span> of the time and the full controller <span class="v" data-k="otaq.ballrad_0p07.full" data-f="2" data-m="1">0.11</span>. A 12 cm ball is physically easy (the plain LQR falls only <span class="v" data-k="otaq.ballrad_0p12.lqr" data-f="3" data-m="1">0.022</span>), yet the learned controller falls <span class="v" data-k="otaq.ballrad_0p12.full" data-f="2" data-m="1">0.69</span> because it never trained on another ball size. Larger balls also climb taller steps: <a href="generalist.html#ballsize">ball size against step size</a>.</p></div><span class="chip">S119, S94</span>
     </li>
   </ol>
 </section>
@@ -147,30 +147,38 @@
 <section class="block wrap" id="sweep" aria-labelledby="h-sweep">
   <div class="eyebrow">The evidence</div>
   <h2 id="h-sweep">The whole sweep</h2>
-  <p class="lede">Each panel varies one property and keeps every other at its nominal value (dotted line). Three of the five tests are drawn; the table has all five.</p>
-  <figure class="sfig"><img class="fig-light" src="figures/study/ota_light.svg" alt="Six small charts of fall rate against one robot property each: ball mass, torque limit, rotor inertia, centre-of-mass height, body mass and ball radius. Falls rise sharply for a very light ball, weak motors, low rotor inertia and the 12 cm ball; a higher centre of mass lowers falls; a light body raises falls under steady pulls." loading="lazy" width="960" height="540"><img class="fig-dark" src="figures/study/ota_dark.svg" alt="Six small charts of fall rate against one robot property each." loading="lazy" width="960" height="540"><figcaption><b>Figure 2. One property at a time.</b> Falls of 256 simulated robots per point: holding a goal with no disturbance, with half-strength sustained pulls, and reaching goals on terrain tiles. Engine: MuJoCo-Warp GPU, corrected; domain randomisation and sensor noise on; controller g34 s0, frozen. Simulation only.</figcaption></figure>
+  <p class="lede">Each panel varies one property; the dotted line is the nominal value.</p>
+  <figure class="sfig"><img class="fig-light" src="figures/study/ota_light.svg" alt="Six small charts of fall rate against one robot property each: ball mass, torque limit, rotor inertia, centre-of-mass height, body mass and ball radius. Falls rise sharply for a very light ball, weak motors, low rotor inertia and the 12 cm ball; a higher centre of mass lowers falls; a light body raises falls under steady pulls." loading="lazy" width="960" height="540"><img class="fig-dark" src="figures/study/ota_dark.svg" alt="Six small charts of fall rate against one robot property each." loading="lazy" width="960" height="540"><figcaption><b>Figure 2. One property at a time.</b> Falls of 256 simulated robots per point: holding a goal with no disturbance, with half-strength sustained pulls, and reaching goals on terrain tiles. <span class="src">Domain randomisation and sensor noise on; controller g34 s0, frozen; S119</span></figcaption></figure>
+  <details class="more"><summary>The full table: 22 variants, five tests</summary><div>
   <!-- BUILD:tab_ota -->
 <div class="table" data-num="1"><p class="caption" data-num="1">The design sweep. Engine: Warp GPU (MuJoCo-Warp 3.17, float32), corrected for the S69 stale-subtree-mass error; wheel-ball free-rolling friction 0.01. Domain randomisation: on (standard ranges). Observation noise: on. Worlds per cell: 256 per case. Seeds: one controller checkpoint (g34_mref_rsad_db_s0, design-conditioned; every spec is a design it never trained on). Protocol: scripts/study/robot_spec.py maps a spec in physical units onto the parametric generator of design_space.py and, with --eval, runs the controller; cases on a fully flat map except the last column: goal hold without disturbance, with the short pushes, with half-strength sustained pulls, driving at 0.3 m/s, and goals on the standard terrain tiles. Files outputs/study/specs/ota_sim.csv and spec_nominal_sim.csv.</p><div class="scroll"><table><thead><tr><th>Variation (one property at a time)</th><th>Nominal value</th><th>Falls: standing at the goal</th><th>with short pushes</th><th>with half-strength pulls (1.5 to 6 N)</th><th>driving at 0.3 m/s</th><th>goals on terrain tiles</th></tr></thead><tbody class="num"><tr><td><b>nominal robot</b> (specs/nominal.yaml)</td><td>ball 9 cm, 0.168 kg; body 3.85 kg, COM 0.131 m; 30 N m; rotor 0.005 kg m<sup>2</sup>; contact 51 deg</td><td>0.007</td><td>0.007</td><td>0.017</td><td>0.001</td><td>0.138</td></tr><tr><td>ball mass 0.042 kg</td><td>nominal 0.168 kg</td><td>0.409</td><td>0.407</td><td>0.464</td><td>0.393</td><td>0.534</td></tr><tr><td>ball mass 0.084 kg</td><td>nominal 0.168 kg</td><td>0.052</td><td>0.052</td><td>0.070</td><td>0.006</td><td>0.186</td></tr><tr><td>ball mass 0.34 kg</td><td>nominal 0.168 kg</td><td>0.000</td><td>0.000</td><td>0.012</td><td>0.000</td><td>0.130</td></tr><tr><td>ball mass 0.67 kg</td><td>nominal 0.168 kg</td><td>0.000</td><td>0.000</td><td>0.013</td><td>0.000</td><td>0.140</td></tr><tr><td>body COM height 0.08 m</td><td>nominal 0.131 m</td><td>0.037</td><td>0.031</td><td>0.051</td><td>0.010</td><td>0.201</td></tr><tr><td>body COM height 0.10 m</td><td>nominal 0.131 m</td><td>0.020</td><td>0.021</td><td>0.031</td><td>0.004</td><td>0.169</td></tr><tr><td>body COM height 0.17 m</td><td>nominal 0.131 m</td><td>0.004</td><td>0.004</td><td>0.018</td><td>0.000</td><td>0.130</td></tr><tr><td>body COM height 0.22 m</td><td>nominal 0.131 m</td><td>0.003</td><td>0.001</td><td>0.013</td><td>0.000</td><td>0.125</td></tr><tr><td>body mass 2.0 kg</td><td>nominal 3.85 kg</td><td>0.002</td><td>0.003</td><td>0.243</td><td>0.000</td><td>0.136</td></tr><tr><td>body mass 3.0 kg</td><td>nominal 3.85 kg</td><td>0.004</td><td>0.007</td><td>0.034</td><td>0.000</td><td>0.136</td></tr><tr><td>body mass 5.0 kg</td><td>nominal 3.85 kg</td><td>0.009</td><td>0.013</td><td>0.019</td><td>0.001</td><td>0.147</td></tr><tr><td>body mass 6.5 kg</td><td>nominal 3.85 kg</td><td>0.021</td><td>0.018</td><td>0.020</td><td>0.001</td><td>0.152</td></tr><tr><td>wheel torque limit 3 N m</td><td>nominal 30 N m</td><td>0.481</td><td>0.482</td><td>0.507</td><td>0.001</td><td>0.543</td></tr><tr><td>wheel torque limit 6 N m</td><td>nominal 30 N m</td><td>0.133</td><td>0.134</td><td>0.118</td><td>0.000</td><td>0.234</td></tr><tr><td>wheel torque limit 10 N m</td><td>nominal 30 N m</td><td>0.044</td><td>0.052</td><td>0.067</td><td>0.000</td><td>0.179</td></tr><tr><td>wheel torque limit 15 N m</td><td>nominal 30 N m</td><td>0.009</td><td>0.011</td><td>0.041</td><td>0.000</td><td>0.145</td></tr><tr><td>rotor inertia 0.001 kg m<sup>2</sup></td><td>nominal 0.005 kg m<sup>2</sup></td><td>0.433</td><td>0.444</td><td>0.468</td><td>0.372</td><td>0.538</td></tr><tr><td>rotor inertia 0.02 kg m<sup>2</sup></td><td>nominal 0.005 kg m<sup>2</sup></td><td>0.000</td><td>0.000</td><td>0.014</td><td>0.000</td><td>0.109</td></tr><tr><td>contact angle 41 deg</td><td>nominal 51 deg</td><td>0.015</td><td>0.015</td><td>0.034</td><td>0.004</td><td>0.136</td></tr><tr><td>contact angle 61 deg</td><td>nominal 51 deg</td><td>0.025</td><td>0.028</td><td>0.031</td><td>0.006</td><td>0.166</td></tr><tr><td>ball radius 7 cm</td><td>nominal 9 cm</td><td>0.109</td><td>0.109</td><td>0.111</td><td>0.025</td><td>0.259</td></tr><tr><td>ball radius 12 cm</td><td>nominal 9 cm</td><td>0.704</td><td>0.699</td><td>0.713</td><td>0.763</td><td>0.730</td></tr></tbody></table></div></div>
 <!-- /BUILD:tab_ota -->
+  </div></details>
 </section>
 
 <section class="block wrap" id="limits" aria-labelledby="h-lim">
   <div class="eyebrow">Design around these</div>
   <h2 id="h-lim">Limits no rule removes</h2>
   <div class="grid g3">
-    <div class="card"><span class="itile warn"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-push"/></svg></span><h3>Steady pushes and pulls</h3><p>Short shoves are absorbed completely. A steady sideways force is resisted only up to roughly m g sin(5 degrees), about 3.3 N for the nominal body; at 3 to 12 N about a third of robots fall on flat ground, and neither longer training, stronger training pushes nor a longer controller memory changes that. More body mass is the only lever found.</p><span class="chip">S116, S117</span></div>
-    <div class="card"><span class="itile bad"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-terrain"/></svg></span><h3>Steps</h3><p>A 1.5 cm step is crossed most of the time (two of three random clips); about 4 in 10 robots fall on the step-ups of the standard terrain set, and a 3 cm step at 0.5 m/s is beyond the nominal robot. Taller steps need a larger ball or a route around them.</p><span class="chip">S113 note, S94</span></div>
-    <div class="card"><span class="itile"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-design"/></svg></span><h3>Hard designs</h3><p>A very light ball, a very light body and weak motors are what the controller struggles with most; for heavy-body and weak-motor builds it is already close to what the plain LQR achieves, so they sit near the build's physical limit.</p><span class="chip">S114, S116</span></div>
+    <div class="card"><span class="itile warn"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-push"/></svg></span><h3>Steady pushes and pulls</h3><p>Short shoves are absorbed. A steady sideways force is resisted only up to roughly m g sin(5 degrees), about 3.3 N for the nominal body; at 3 to 12 N about a third of robots fall on flat ground. More body mass is the only lever found.</p><span class="chip">S116, S117</span></div>
+    <div class="card"><span class="itile bad"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-terrain"/></svg></span><h3>Steps</h3><p>A 1.5 cm step is crossed most of the time; a 3 cm step at 0.5 m/s is beyond the nominal robot. Taller steps need a larger ball or a route around them.</p><span class="chip">S113 note, S94</span></div>
+    <div class="card"><span class="itile"><svg class="ico" aria-hidden="true"><use href="assets/img/icons.svg#i-design"/></svg></span><h3>Hard designs</h3><p>A very light ball, a very light body and weak motors are what the controller struggles with most. Heavy-body and weak-motor builds sit near their physical limit.</p><span class="chip">S114, S116</span></div>
   </div>
 </section>
 
 <section class="block wrap" id="check" aria-labelledby="h-check">
   <div class="eyebrow">Your design</div>
   <h2 id="h-check">Check a candidate design</h2>
-  <p>Write the design as a spec in physical units and run the spec tool. It builds the simulated robot, reports the analytic margins and, with <code>--eval</code>, runs the controller on it:</p>
+  <p>Write the design as a spec in physical units and run the spec tool. With <code>--eval</code> it also runs the controller on it:</p>
   <pre class="cmd"><code>python scripts/study/robot_spec.py build specs/nominal.yaml --eval</code></pre>
-  <p>Copy <code>specs/nominal.yaml</code>, change the numbers and compare the five fall rates with the nominal row of Table 1. For a family of variants use the sweep mode with a file like <code>specs/sweep_one_at_a_time.yaml</code>. The sweep ran with g34; the recommendation has since moved to <a href="generalist.html#goalcentre">g39</a>, whose balance and battery robustness are within the g34 range, so the guidelines are expected to carry over but have not been re-run (set <code>SPEC_RUN=g39_goalcentre_s0</code> to do so).</p>
-  <div class="callout warn"><b>Caveats.</b> Simulation only: contact, friction, motor and sensor models are idealised and real numbers will differ. One property was varied at a time; combinations were not tested. The controller was trained on 11 designs around the nominal robot, so a design it never saw can fail because the controller is unfamiliar with it; an LQR-only check separates the two, as for the ball size above. Torque numbers assume direct drive at the wheel: with a gearbox divide by the ratio and check the motor's speed range against about 1 m/s of ball speed. Every guideline rests on one sweep of 256 robots per case and one controller checkpoint.</div>
+  <p>Copy <code>specs/nominal.yaml</code>, change the numbers and compare the five fall rates with the nominal row of the full table. For a family of variants use the sweep mode with a file like <code>specs/sweep_one_at_a_time.yaml</code>.</p>
+  <div class="callout warn"><b>Caveats.</b><ul>
+    <li>Contact, friction, motor and sensor models are idealised; real numbers will differ.</li>
+    <li>One property was varied at a time; combinations were not tested.</li>
+    <li>One sweep of 256 robots per case and one controller checkpoint. The sweep ran before the recommendation moved to <a href="generalist.html#goalcentre">the current controller</a> and has not been re-run (set <code>SPEC_RUN=g39_goalcentre_s0</code> to do so).</li>
+    <li>A design the controller never saw can fail because the controller is unfamiliar with it; an LQR-only check separates the two.</li>
+    <li>Torque numbers assume direct drive: with a gearbox divide by the ratio and check the motor's speed range against about 1 m/s of ball speed.</li>
+  </ul></div>
 </section>
 </main>
 <script type="module">

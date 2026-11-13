@@ -37,13 +37,13 @@
 <header class="page-hero wrap">
   <div class="eyebrow">Literature</div>
   <h1>What the field knows about ballbots, and how sure we are</h1>
-  <p class="lede">A catalogue built from three survey reports in <code>docs/research/</code>: classical control, learning and simulation, hardware and open source. Confidence tags are exactly as the reports mark them. Entries with no URL in a report have no link here, and entries whose year the reports do not give are listed as year n/a and left off the timeline.</p>
-  <div class="callout warn"><strong>Read the confidence tags.</strong> The reports were compiled from web searches and page fetches in one pass. Many entries were seen only as abstracts, search snippets or citations in other papers, and the sweep is not exhaustive. Verify before citing.</div>
+  <p class="lede">A catalogue of prior ballbot work, built from three survey reports in <code>docs/research/</code>. Each entry carries the confidence tag its report gave it.</p>
+  <div class="callout warn"><strong>Read the confidence tags.</strong> The reports come from one pass of web searches. Many entries were seen only as abstracts or snippets, and the sweep is not exhaustive. Verify before citing.</div>
 </header>
 
 <section class="wrap" aria-labelledby="tlh">
   <h2 id="tlh" style="font-size:1.4rem">The field on a timeline</h2>
-  <p class="lede" style="font-size:1rem">Each dot is a catalogue entry placed by year and primary type. Select a dot to jump to its card.</p>
+  <p class="lede" style="font-size:1rem">One dot per entry, by year and type. Select a dot to jump to its card. Entries without a year in the reports are left off.</p>
   <div class="timeline-wrap"><svg id="timeline" viewBox="0 0 960 300" role="img" aria-label="Timeline of ballbot literature from 2005 to 2026 by type"></svg></div>
   <div class="tl-tip" id="tip" aria-live="polite">Hover or focus a dot for details.</div>
   <div class="legend-row" id="tlLegend"></div>
@@ -68,10 +68,11 @@
 
 <section class="block"><div class="wrap">
   <div class="eyebrow">Positioning</div>
-  <h2>Where we stand and our possible edge</h2>
+  <h2>Where this study stands, and its possible edge</h2>
+  <p class="lede" style="font-size:1rem">Written during the early CPU study. The speed and push figures below are from that stage (study log, stages S10 to S13), not from the current recommended controller.</p>
   <div class="panels">
     <div class="card panel"><h3>Where we stand</h3><ul>
-      <li>Ballbot RL is thin. The two real works are Salehi (2025, uneven terrain, simulation only, open code, the base of this repo) and asRoBallet (accepted RSS 2026, zero-shot sim-to-real on hardware, no released code found). The rest is small: a DDPG assist, fall-damage arms, iLQG refinement.</li>
+      <li>Ballbot RL is thin. Two substantial works: Salehi (2025, uneven terrain, simulation only, open code, the base of this repo) and asRoBallet (accepted RSS 2026, zero-shot sim-to-real on hardware, no released code found).</li>
       <li>We overlap both: Perlin terrain and depth or ToF like Salehi; velocity tracking and robustness randomisation like asRoBallet; residual-on-LQR like Zhou 2021 and Hybrid LMC.</li>
       <li>Our simulation-only 0.75 m/s tracking is inside the range Kugle tested (1 m/s) and below Rezero's claimed 2 to 3.5 m/s, which is itself unverified and conflicting between sources.</li>
       <li>Our 50 N push recovery has no directly comparable published number; CMU and BallIP report only qualitative push tolerance.</li></ul></div>
@@ -81,13 +82,13 @@
       <li><strong>ToF multizone sensing plus a height-scan teacher on a ballbot:</strong> none found.</li>
       <li><strong>Quantified traction-limited step climbing (2 to 3 cm):</strong> not found for ballbots (Ascento climbs 15 cm, with legs).</li>
       <li><strong>Reproducibility:</strong> asRoBallet has no released code; this repo plus Salehi's Apache-2.0 base gives open baselines.</li>
-      <li><strong>Honest counterpoint:</strong> asRoBallet beats LQR strongly under shifted conditions, so our hybrid must beat pure PPO as well as pure LQR. And we have simulation only: no sim-to-real claim.</li></ul></div>
+      <li><strong>Counterpoint:</strong> asRoBallet beats LQR strongly under shifted conditions, so a hybrid must beat pure PPO as well as pure LQR. This study is simulation only: no sim-to-real claim.</li></ul></div>
   </div>
 </div></section>
 
 <section class="block"><div class="wrap">
   <div class="eyebrow">Honesty</div>
-  <h2>What we could not verify</h2>
+  <h2>What could not be verified</h2>
   <div class="panels">
     <div class="card panel"><h3>Conflicts and corrections found while surveying</h3><ul>
       <li>Rezero top speed: 3.5 m/s per IEEE Spectrum, about 2 m/s at 20 degrees per Pham 2024. Conflicting; treat as unverified.</li>
@@ -96,7 +97,7 @@
       <li>"Inkwell/Hollis Insect", a CMU "0.6 m/s" figure and a "Pratt" ballbot paper in the original brief could not be matched to any real source and are not cited.</li>
       <li>Our body-to-ball mass ratio is 23. The survey found no source near that: BallIP is about 2 to 3, the literature roughly 2 to 12.</li></ul></div>
     <div class="card panel"><h3>Not read, or not found</h3><ul>
-      <li>Several key PDFs were unreadable to the surveyor: Fankhauser thesis, Pham 2024, Watson 2018, CMU ICRA 2006, Nagarajan 2014, Xiao 2023 and dissertation, Kugle thesis, MBBR 2015. Numbers for them are from abstracts or secondary sources.</li>
+      <li>Several key PDFs could not be read: Fankhauser thesis, Pham 2024, Watson 2018, CMU ICRA 2006, Nagarajan 2014, Xiao 2023 and dissertation, Kugle thesis, MBBR 2015. Their numbers are from abstracts or secondary sources.</li>
       <li>Rezero mass and ball size, CMU ball mass, Kugle ball diameter and motors, MiaPURE ball and motors: not found.</li>
       <li>No Disney ballbot paper, no Isaac Sim or Unity ballbot model, no ballbot RL step-climbing paper, no published study of omniwheel roller-count versus fidelity.</li>
       <li>Torque-to-weight design rules: no source states one; any ratio on this site is derived by us.</li>

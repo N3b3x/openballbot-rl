@@ -4,7 +4,7 @@
 #hero-canvas canvas{width:100%;height:100%;cursor:grab}
 #hero-canvas canvas:active{cursor:grabbing}
 .hero-fallback{position:absolute;inset:0;z-index:0;display:flex;align-items:flex-end;justify-content:center;background:var(--bg-2)}
-.hero-fallback img{width:min(720px,90%);margin:0 0 4% auto}
+.hero-fallback img{width:auto;height:min(94%,780px);max-width:min(640px,60%);object-fit:contain;object-position:bottom;margin:0 6% 2% auto}
 .hero-fallback[hidden]{display:none}
 .hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,var(--bg) 0%,color-mix(in srgb,var(--bg) 70%,transparent) 34%,transparent 62%),linear-gradient(0deg,var(--bg) 0%,transparent 22%)}
 .hero-copy{position:relative;z-index:2;pointer-events:none;padding-top:clamp(48px,10vh,110px);padding-bottom:140px;max-width:var(--maxw);margin:0 auto;padding-left:var(--gutter);padding-right:var(--gutter)}
@@ -27,7 +27,8 @@
 @media (max-width:700px){
   .hero{min-height:0;display:flex;flex-direction:column}
   #hero-canvas{position:relative;inset:auto;order:2;height:min(56vh,400px)}
-  .hero-fallback{position:relative;order:2;min-height:240px}
+  .hero-fallback{position:relative;order:2;min-height:240px;justify-content:center}
+  .hero-fallback img{height:min(56vh,400px);max-width:90%;margin:0 auto}
   .hero::after{display:none}
   .hero-copy{padding-top:36px;padding-bottom:8px}
   .hero-ui{position:relative;order:3;padding-top:8px}
@@ -83,7 +84,7 @@ section.block{padding-block:clamp(44px,7vw,88px)} section.block.wrap{padding-inl
 .honest h2{margin-bottom:.4em}
 .honest .cols{display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));margin-top:1rem}
 .honest h4{font:600 .78rem var(--font-mono);letter-spacing:.12em;text-transform:uppercase;margin:0 0 .5em}
-.honest .c-sim h4{color:var(--text-2)} .honest .c-fail h4{color:var(--bad)} .honest .c-open h4{color:var(--warn)}
+.honest .c-sim h4{color:var(--text-2)} .honest .c-fail h4{color:var(--bad-text)} .honest .c-open h4{color:var(--good-text)}
 .honest ul{margin:0;padding-left:1.1em;color:var(--text-2);font-size:.92rem}
 .honest li{margin-bottom:.45em}
 .honest .src-note{margin-top:1.2em}
@@ -150,6 +151,10 @@ pre.cmd code{background:none;padding:0;white-space:pre}
 .vclip.ok{border-color:color-mix(in srgb,var(--good) 35%,var(--line))} .vclip.fall{border-color:color-mix(in srgb,var(--bad) 40%,var(--line))}
 .vclip .vplayer{border-radius:0}
 .vtext{padding:14px 18px 18px} .vtext h3{font-size:1.05rem;margin:0 0 .35em} .vtext p{font-size:.9rem;margin:0}
+.vrow.three{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.more-row{margin:18px 0 0}
+.honest details.more{margin:1.2em 0 0;background:transparent} .honest details.more .src-note{margin-top:0}
+.latest+details.more{margin-top:18px} .latest+details.more ul{margin:0;padding-left:1.1em;font-size:.92rem;color:var(--text-2)} .latest+details.more li{margin-bottom:.5em}
 .vboth{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;font-size:.86rem;color:var(--text-3)}
 .latest .card{display:flex;flex-direction:column;gap:.3em} .latest .card h3{font-size:1.08rem;margin:.3em 0 0} .latest .card p{font-size:.9rem;margin:0}
 .latest .chip{align-self:flex-start}

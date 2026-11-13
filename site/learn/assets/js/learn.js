@@ -4,16 +4,16 @@
 // the viewport, and its export `lqr(el, ctx)` builds it. ctx = { data, reduced, onTheme }.
 
 export const LESSONS = [
-  ['01-ballbot.html', 'What a ballbot is and why it is hard', 14],
-  ['02-lean.html', 'Lean to accelerate', 12],
-  ['03-lqr.html', 'LQR balance control', 18],
-  ['04-learning.html', 'Adding learning', 18],
-  ['05-commands.html', 'Commands that feel good', 14],
-  ['06-navigation.html', 'Sensing and navigation', 16],
-  ['07-odometry.html', 'Knowing where you are', 14],
-  ['08-design.html', 'Designing the robot', 16],
-  ['09-lessons.html', 'Lessons from the study', 14],
-  ['10-ros2.html', 'From simulation to ROS 2', 14],
+  ['01-ballbot.html', 'What a ballbot is and why it is hard', 8],
+  ['02-lean.html', 'Lean to accelerate', 7],
+  ['03-lqr.html', 'LQR balance control', 8],
+  ['04-learning.html', 'Adding learning', 10],
+  ['05-commands.html', 'Commands that feel good', 8],
+  ['06-navigation.html', 'Sensing and navigation', 9],
+  ['07-odometry.html', 'Knowing where you are', 8],
+  ['08-design.html', 'Designing the robot', 8],
+  ['09-lessons.html', 'Lessons from the study', 9],
+  ['10-ros2.html', 'From simulation to ROS 2', 9],
 ];
 
 // Short prerequisite and teaser lines, shown under the goals and in the pager (index = lesson number - 1).

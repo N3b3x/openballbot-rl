@@ -28,6 +28,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <!-- /og -->
 <link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/viz.css">
 <link rel="stylesheet" href="assets/css/math.css">
 <link rel="stylesheet" href="assets/css/study.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
@@ -42,9 +43,40 @@
   <p class="eyebrow">Setup and method</p>
   <h1>What was built, and how it was checked</h1>
   <div class="tldr">
-    <p><b>TL;DR.</b> Two physics engines (a CPU reference and a GPU engine that runs 4096 robots at once, checked against each other). A planar model of the robot derived from first principles, which gives an <span class="term"><a href="glossary.html#lqr">LQR</a></span> controller with no tuning on the simulator. A reinforcement-learning loop (<span class="term"><a href="glossary.html#ppo">PPO</a></span>) that lives entirely on the GPU, with the exact observation, reward and randomisation written out below. A library of terrain tiles, floor materials and 13 robot designs. And the evaluation protocols, each with its metric definitions. One engine bug that invalidated a year of randomised results is described honestly in section 1.</p>
+    <span class="readtime"></span>
+    <ul>
+      <li><b>Two engines.</b> A CPU reference and a GPU engine that runs 4096 robots at once, checked against each other.</li>
+      <li><b>One derived model.</b> It gives an <span class="term"><a href="glossary.html#lqr">LQR</a></span> with no tuning on the simulator.</li>
+      <li><b>One learning loop.</b> <span class="term"><a href="glossary.html#ppo">PPO</a></span> on the GPU; observation, reward and randomisation are written out below.</li>
+      <li><b>Fixed protocols.</b> Every result on the <a href="generalist.html">results page</a> uses one of the protocols in section 8.</li>
+    </ul>
   </div>
-  <p class="lede">This page is the foundation of the <a href="generalist.html">results page</a>: every equation, every setting, every protocol. Read it when a result makes you ask "measured how?". Terms link to the <a href="glossary.html">glossary</a>.</p>
+  <p class="lede">Read this page when a result makes you ask "measured how?". Short version first; the full text sits under each "Details" fold.</p>
+  <figure class="figure" id="pipeline">
+    <div class="media"><svg class="diagram" viewBox="0 0 900 330" role="img" aria-labelledby="pl-t"><title id="pl-t">Training pipeline: robot designs, terrain tiles and domain randomisation feed 4096 parallel worlds on the GPU engine; PPO trains the residual on top of the LQR; the checkpoint goes through the evaluation battery; results are logged by S-number and built into the site data.</title>
+      <defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+      <text class="k" x="10" y="14">what varies per world</text>
+      <rect class="bx" x="10" y="22" width="190" height="52" rx="9"/><text class="t" x="22" y="43">11 robot designs</text><text class="s" x="22" y="61">mass, ball, COM, motors</text>
+      <rect class="bx" x="10" y="84" width="190" height="52" rx="9"/><text class="t" x="22" y="105">Ten terrain kinds</text><text class="s" x="22" y="123">64 tiles, 7 floor materials</text>
+      <rect class="bx warn" x="10" y="146" width="190" height="52" rx="9"/><text class="t" x="22" y="167">Domain randomisation</text><text class="s" x="22" y="185">noise, latency, pushes, pulls</text>
+      <path class="ar" d="M200 48L250 96" marker-end="url(#ah2)"/><path class="ar" d="M200 110L250 110" marker-end="url(#ah2)"/><path class="ar" d="M200 172L250 124" marker-end="url(#ah2)"/>
+      <rect class="bx model" x="252" y="50" width="200" height="120" rx="10"/><text class="k" x="266" y="70">simulate</text><text class="t" x="266" y="92">4096 worlds at once</text><text class="s" x="266" y="111">MuJoCo-Warp, GPU, float32</text><text class="s" x="266" y="128">physics 500 Hz, control 100 Hz</text><text class="s" x="266" y="145">LQR base runs in every world</text>
+      <path class="ar" d="M452 92L500 92" marker-end="url(#ah2)"/><text class="s mid" x="476" y="84">obs</text>
+      <path class="ar" d="M500 132L452 132" marker-end="url(#ah2)"/><text class="s mid" x="476" y="150">action</text>
+      <rect class="bx learned" x="502" y="50" width="200" height="120" rx="10"/><text class="k" x="516" y="70">learn</text><text class="t" x="516" y="92">PPO on the GPU</text><text class="s" x="516" y="111">64 steps per world per update</text><text class="s" x="516" y="128">MLP 3 x 512, history 8</text><text class="s" x="516" y="145">200M steps per run</text>
+      <path class="ar" d="M702 110L748 110" marker-end="url(#ah2)"/>
+      <rect class="bx hybrid" x="750" y="80" width="140" height="60" rx="10"/><text class="t" x="762" y="104">Checkpoint</text><text class="s" x="762" y="122">LQR + residual</text>
+      <path class="ar" d="M820 140L820 232" marker-end="url(#ah2)"/>
+      <rect class="bx good" x="610" y="234" width="280" height="84" rx="10"/><text class="k" x="624" y="254">evaluate</text><text class="t" x="624" y="274">Battery: goal, velocity, flat</text><text class="s" x="624" y="292">randomisation x1, x1.75, x2.5</text><text class="s" x="624" y="308">with and without pushes and pulls</text>
+      <path class="ar" d="M610 276L562 276" marker-end="url(#ah2)"/>
+      <rect class="bx" x="370" y="244" width="190" height="64" rx="10"/><text class="k" x="384" y="264">record</text><text class="t" x="384" y="284">Study log, entry S-number</text><text class="s" x="384" y="300">settings stored in each file</text>
+      <path class="ar" d="M370 276L322 276" marker-end="url(#ah2)"/>
+      <rect class="bx" x="130" y="244" width="190" height="64" rx="10"/><text class="k" x="144" y="264">publish</text><text class="t" x="144" y="284">site/data, tables, figures</text><text class="code" x="144" y="300">site/build_data.py</text>
+      <rect class="bx dash" x="10" y="244" width="104" height="64" rx="10"/><text class="t" x="20" y="272">CPU MuJoCo</text><text class="s" x="20" y="290">cross-check</text>
+      <path class="ar dash" d="M62 244C62 215 200 200 290 172" marker-end="url(#ah2)"/>
+    </svg></div>
+    <figcaption><b>The pipeline in one picture.</b> Designs, terrain and randomisation set up each world. The GPU engine steps 4096 of them. PPO learns the residual on top of the LQR. Every checkpoint runs the same battery, and every result gets a log entry. Schematic, no data. <span class="src">experiments/warp_ppo/train_dev.py, eval_battery.py; run settings from g39_goalcentre_s0/args.json (S121)</span></figcaption>
+  </figure>
   <ul class="chapters">
     <li><a href="#stack">1 Software stack</a></li><li><a href="#model">2 Physics model</a></li><li><a href="#lqr">3 LQR</a></li><li><a href="#learning">4 Learning problem</a></li>
     <li><a href="#residual">5 LQR + residual</a></li><li><a href="#world">6 Terrain, floors, designs</a></li><li><a href="#dr">7 Randomisation</a></li><li><a href="#eval">8 Evaluation</a></li>
@@ -54,8 +86,11 @@
 <section class="block" id="stack"><div class="wrap">
   <p class="eyebrow">1 Software stack</p>
   <h2>Two engines, one robot model</h2>
-  <p class="lead">The robot is a cylindrical body on a solid ball, driven by three omniwheels spaced 120 degrees apart whose contact points lie 51.2 degrees from the top of the ball. Each omniwheel is a capsule with anisotropic friction (0.001 along the roller direction, 1.0 across it). Physics runs at 500 Hz; controllers act at 100 Hz (a 10 ms control period).</p>
+  <p class="lead">A cylindrical body on a ball, driven by three omniwheels 120 degrees apart. Physics runs at 500 Hz, controllers at 100 Hz. Both engines apply the same contact-frame correction for the omniwheel rollers.</p>
+  <details class="more"><summary>Details: robot geometry and the contact-frame correction</summary><div>
+  <p>The robot is a cylindrical body on a solid ball, driven by three omniwheels spaced 120 degrees apart whose contact points lie 51.2 degrees from the top of the ball. Each omniwheel is a capsule with anisotropic friction (0.001 along the roller direction, 1.0 across it). Physics runs at 500 Hz; controllers act at 100 Hz (a 10 ms control period).</p>
   <p>MuJoCo's contact frame is not guaranteed to align the low-friction axis with the roller axis, so a <b>contact-frame correction</b> recomputes the frame between collision detection and constraint construction; it is applied in both engines. <b>Table S1</b> lists the components and what was verified about each.</p>
+  </div></details>
   <div class="table" data-num="S1"><p class="caption" data-num="S1">Software components. Engine validation used the LQR (no learning); the numbers are from the engine report and the study log.</p><div class="scroll"><table>
     <thead><tr><th>Component</th><th>Role</th><th>What was verified</th></tr></thead>
     <tbody>
@@ -65,21 +100,37 @@
     <tr><td>CPU renderer, NVENC encoder</td><td>Videos only (one Warp world replayed on a checkerboard floor)</td><td>Rollouts are re-simulated, not recorded from training.</td></tr>
     </tbody></table></div></div>
   <p class="wtm"><b>What this means.</b> Results trained on the GPU engine can be trusted to the extent the LQR parity shows: the same outcome in about 95 percent of tests. Warp is not bit-reproducible and is the harsher engine by a few falls in the policy-transfer checks.</p>
-  <h3>An engine pitfall found late: stale subtree mass under mass randomisation</h3>
+  <h3>Three pitfalls found late</h3>
+  <div class="glance">
+    <div class="bad"><b>Stale subtree mass</b><p>Masses were randomised per world; a derived quantity was not updated. Every randomised result before the fix is superseded and not shown.</p></div>
+    <div class="bad"><b>1000 to 1 friction cone</b><p>Too ill-conditioned for float32. Standing robots "fell" by solver blow-up. Free-rolling friction is now 0.01 (S98).</p></div>
+    <div class="warn"><b>An observation quirk, kept</b><p>The <code>motor_state</code> slots hold base velocity, not wheel rates. The policies never see wheel encoders.</p></div>
+  </div>
+  <details class="more"><summary>Details: stale subtree mass under mass randomisation</summary><div>
   <p class="lead">When body masses are randomised per world in a batched model, every quantity derived from them must be recomputed too. One was not, for a long time.</p>
   <p>The engine locates each body subtree's centre of mass by dividing mass-weighted positions by a stored <code>body_subtreemass</code> and uses that point as the reference of the dynamics. The training code randomised <code>body_mass</code> (ball and base) but never updated <code>body_subtreemass</code>, so the reference point was wrong by a fraction of the robot's distance from the world origin (the tiles lie up to 12 m away), and the error vanished exactly at the nominal mass. Evidence (LQR alone, clean flat world, 64 worlds, falls at 0.3 and 0.6 m/s): nominal 0.12 and 0.16; ball mass randomised, 0.41 and 0.81 before the fix and 0.17 and 0.23 after. The fix recomputes the subtree masses from the per-world masses at every reset.</p>
   <p class="wtm"><b>What this means.</b> Every run and evaluation with randomisation on before the fix is superseded and is not shown anywhere on this site; everything with randomisation off was unaffected. The rule: after changing any per-world mass, check the quantities derived from it, and compare a randomised run against the nominal one far from the origin.</p>
-  <h3>A second engine pitfall: a 1000 to 1 anisotropic friction cone in float32</h3>
+  </div></details>
+  <details class="more"><summary>Details: the anisotropic friction cone in float32</summary><div>
   <p class="lead">The omniwheel rollers are modelled as anisotropic friction at the wheel-ball contact: almost free along the roller axis, full grip across it. That ratio was too large for the float32 solver.</p>
   <p>The wheel-ball contact pairs had friction 0.001 along the roller axis and 1.0 across it, with the elliptic cone, and the contact-frame fix aligns the 0.001 direction with the roller axis. In MuJoCo-Warp (float32) that 1000 to 1 cone is ill-conditioned when the contact is nearly stationary: a standing robot at 1 to 2 degrees of tilt can have its state turn non-finite in a single 10 ms step, preferentially on the designs where the ball is heavy relative to the body. Because a non-finite state is counted as a fall by the termination rule, every 20 s standing fall rate measured before the fix was an artefact (results page, chapter 8), while driving and the 8 s battery were almost untouched. Contact buffer size, the solver type, warm starts, iteration counts, the arrestors, randomisation and the height field were ruled out one by one in a diagnostic of 880 standing worlds (log entry S98). Raising the free-rolling coefficient to 0.01 gives zero non-finite worlds with the real falls unchanged (0.002 already leaves 1 world of 880), so 0.01 is the model default for all later training and evaluation; the policies trained at 0.001 are re-evaluated at 0.01 where a standing number is quoted. The free-rolling coefficient of real omniwheel rollers was never measured here. Lesson: with per-world randomised contact parameters in a batched float32 engine, keep friction ratios within the solver's conditioning and test standing still, not only motion.</p>
-  <h3>One observation quirk, kept on purpose</h3>
+  </div></details>
+  <details class="more"><summary>Details: the observation quirk</summary><div>
   <p>The original CPU environment builds its <code>motor_state</code> input from <code>qvel[joint.id]</code>, which indexes the base free joint, not the wheel degrees of freedom. The policies therefore receive scaled base-velocity components in those three slots and never see wheel encoders. A first GPU port that read the true wheel rates failed on the CPU engine until the quirk was copied exactly. As trained, the policies do not use wheel odometry.</p>
+  </div></details>
 </div></section>
 
 <section class="block" id="model"><div class="wrap">
   <p class="eyebrow">2 Physics model</p>
   <h2>Derived planar dynamics</h2>
-  <p class="lead">A ballbot leans to accelerate, like a person on a unicycle. The <span class="term"><a href="glossary.html#planar-model">planar model</a></span> describes one vertical plane of that motion with two coordinates, the ball's rotation and the body's tilt, and is derived here from the robot's masses and geometry. All numbers below are recomputed from <code>ballbot_gym/models/ballbot_planar_model.json</code> by <code>site/build_data.py</code>, which also checks them against the formulas.</p>
+  <p class="lead">A ballbot leans to accelerate. The <span class="term"><a href="glossary.html#planar-model">planar model</a></span> describes one vertical plane with two coordinates: ball rotation and body tilt. Three results matter.</p>
+  <div class="glance">
+    <div class="bad"><b>It falls fast</b><p>Unstable pole at <span class="v" data-k="model.p" data-f="2" data-m="1">4.79</span> 1/s. An uncontrolled lean grows by a factor e every 0.21 s.</p></div>
+    <div class="warn"><b>It must go backward first</b><p><span class="term"><a href="glossary.html#non-minimum-phase">Non-minimum-phase</a></span> zero at <span class="v" data-k="model.z" data-f="2" data-m="1">5.78</span> 1/s. This bounds how fast it can respond.</p></div>
+    <div class="model"><b>Lean buys little</b><p><span class="term"><a href="glossary.html#lean-law">Lean law</a></span>: <span class="v" data-k="model.kappa_deg" data-f="1" data-m="1">10.2</span> degrees of lean per m/s\(^2\) of acceleration.</p></div>
+  </div>
+  <p>The derivation is folded below and told step by step on <a href="math.html">The robot and its physics</a>. Numbers are recomputed from <code>ballbot_gym/models/ballbot_planar_model.json</code> by <code>site/build_data.py</code>.</p>
+  <details class="more"><summary>Details: omniwheel transmission and equations of motion</summary><div>
   <h3>Omniwheel transmission</h3>
   <p>Let \(\boldsymbol\Omega\) be the angular velocity of the ball relative to the body. Wheel \(i\) has spin axis \(\boldsymbol a_i\), contact point \(\boldsymbol p_i\) on the ball, effective radius \(r_w\) and rim direction \(\boldsymbol t_i\). Because the passive rollers absorb the orthogonal component, rolling without slip in the driven direction gives</p>
   <div class="eqn">$$\boldsymbol\omega_w=W\boldsymbol\Omega,\qquad W_{i,:}=\tfrac1{r_w}(\boldsymbol p_i\times\boldsymbol t_i)^{\!\top},\qquad \boldsymbol T=W^{\!\top}\boldsymbol\tau_w,\qquad \boldsymbol\tau_w=W^{-\top}\boldsymbol T .$$</div>
@@ -96,7 +147,8 @@
   <p>Parameters extracted from the simulator model: \(m_a=3.853\) kg, \(l=0.1306\) m, \(I_a=0.0366\) kg m\(^2\), \(m_k=0.168\) kg, \(r=0.09\) m, \(I_k=5.44\times10^{-4}\) kg m\(^2\), \(J_w=0.005\) kg m\(^2\), \(d_w=0.1\) N m s, torque limit 30 N m per wheel. Linearising about the upright equilibrium with state \(s=(\varphi,\theta,\dot\varphi,\dot\theta)\) gives \(\dot s=As+B_s\tau\) with</p>
   <div class="eqn">$$A=\begin{pmatrix}0&0&1&0\\0&0&0&1\\0&11.53&-12.35&12.35\\0&27.31&6.56&-6.56\end{pmatrix},\qquad B_s=\begin{pmatrix}0\\0\\6.02\\-3.20\end{pmatrix}.$$</div>
   <p>The 3-D linearisation decouples into two such planes plus a yaw channel.</p>
-  <h3>Structural properties</h3>
+  </div></details>
+  <details class="more"><summary>Details: the three propositions and their proofs</summary><div>
   <div class="prop"><span class="tag">Proposition 1: open-loop instability</span>
     <p>With \(d_{\rm eff}=0\) the poles are \(\{0,0,\pm\lambda\}\), \(\lambda=\sqrt{m_agl\,M_{11}/\det M_0}\) (<span class="v" data-k="model.lam0" data-f="2" data-m="1">5.23</span> 1/s). With the wheel damping the unstable pole is <span class="v" data-k="model.p" data-f="2" data-m="1">4.79</span> 1/s, so an unactuated lean grows by a factor \(e\) every 0.21 s.</p></div>
   <div class="prop"><span class="tag">Proposition 2: non-minimum phase</span>
@@ -108,28 +160,38 @@
     <div class="eqn">$$\kappa=\frac{(m_a+m_k)r^2+I_k+m_alr}{m_a\,g\,l\,r}.$$</div><p>Numerically \(\kappa=\) <span class="v" data-k="model.kappa" data-f="3" data-m="1">0.176</span> rad per m/s\(^2\) (<span class="v" data-k="model.kappa_deg" data-f="1" data-m="1">10.2</span> degrees per m/s\(^2\)).</p></div>
   <details class="proof"><summary>Derivation of Proposition 3</summary>
     <p>The row sums of \(M\) are \(M_{11}+M_{12}=I_k+(m_a+m_k)r^2+m_alr\cos\theta\) and \(M_{12}+M_{22}=I_a+m_al^2+m_alr\cos\theta\); the \(J_{\rm eff}\) terms cancel. The sum of the two rows of \(B\tau\) and of \(D\dot q\) vanishes because \((1,1)B=(1,1)D=0\). Setting \(\ddot\theta=\dot\theta=0\), \(\cos\theta\approx1\) and \(a=r\ddot\varphi\) gives the stated \(\kappa\).</p></details>
+  </div></details>
   <p class="wtm"><b>What this means.</b> A lean of one degree buys only about 0.1 m/s\(^2\) of acceleration, and the 30 degree off-ball limit caps quasi-static acceleration near <span class="v" data-k="model.lean30" data-f="1" data-m="1">2.8</span> m/s\(^2\). That is why timid policies are timid, and why fast response is bounded by the zero at <span class="v" data-k="model.z" data-f="2" data-m="1">5.78</span> 1/s. Known mismatches with the simulator: soft ball-floor contact lets the ball creep on sudden accelerations, and measured wheel rates differ from \(W\) by a constant 27 to 28 percent (the effective rolling radius of the capsule contact).</p>
 </div></section>
 
 <section class="block" id="lqr"><div class="wrap">
   <p class="eyebrow">3 Model-based controller</p>
   <h2>LQR with a reference governor</h2>
-  <p class="lead">An <span class="term"><a href="glossary.html#lqr">LQR</a></span> (linear quadratic regulator) is the feedback gain that minimises a weighted sum of state error and control effort for a linear model. Here it is designed on \((A,B_s)\) only, with no tuning on the simulator beyond three outer-loop constants.</p>
+  <p class="lead">An <span class="term"><a href="glossary.html#lqr">LQR</a></span> is the feedback gain that best trades state error against control effort for a linear model. Here it is designed on the derived model only.</p>
+  <div class="glance">
+    <div class="model"><b>One gain per design</b><p>Discrete-time design at the 10 ms control period, from each design's own planar model.</p></div>
+    <div class="model"><b>Reference governor</b><p>The speed reference moves at most 0.5 m/s\(^2\) (about 5 degrees of lean), because of the zero.</p></div>
+    <div class="model"><b>Integral and yaw</b><p>A slow integral removes steady speed error. A separate loop handles yaw.</p></div>
+  </div>
+  <details class="more"><summary>Details: cost, gains and the discrete design</summary><div>
   <p>For each plane the cost \(\int(s^{\!\top}Qs+R\tau^2)\,dt\) with \(Q=\mathrm{diag}(10^{-6},50,1,1)\), \(R=1\) and the feedback \(\tau=-K(s-s_{\rm ref})\). The continuous Riccati solution is \(K=(K_0,K_\theta,K_{\dot\varphi},K_{\dot\theta})\) with \(K_0=-0.001\), \(K_\theta=\) <span class="v" data-k="model.Kc1" data-f="2" data-m="1">-76.14</span>, \(K_{\dot\varphi}=\) <span class="v" data-k="model.Kc2" data-f="2" data-m="1">-4.33</span> and \(K_{\dot\theta}=\) <span class="v" data-k="model.Kc3" data-f="2" data-m="1">-11.58</span> (negative entries because \(B_s\) has a positive torque convention on \(\varphi\) and negative on \(\theta\)); the fastest closed-loop pole is <span class="v" data-k="model.clmin" data-f="1" data-m="1">-20.3</span> 1/s.</p>
-  <h3>Discrete time at the control period</h3>
   <p>A continuous design with light rotors has a pole so fast that it is unstable when sampled at 100 Hz. The controllers used with the GPU stack are therefore designed in discrete time with a zero-order hold at \(T=0.01\) s: \(A_d,B_d\) from the matrix exponential, the discrete Riccati equation with \(QT\) and \(RT\), and \(K_d=(RT+B_d^{\!\top}XB_d)^{-1}B_d^{\!\top}XA_d\). For the nominal design \(K_{d,0}=-0.001\), \(K_{d,\theta}=\) <span class="v" data-k="model.Kd1" data-f="2" data-m="1">-73.87</span>, \(K_{d,\dot\varphi}=\) <span class="v" data-k="model.Kd2" data-f="2" data-m="1">-4.21</span>, \(K_{d,\dot\theta}=\) <span class="v" data-k="model.Kd3" data-f="2" data-m="1">-11.23</span>. The same code builds one gain per robot design from that design's own planar model.</p>
-  <h3>Reference governor, integral action and yaw</h3>
+  </div></details>
+  <details class="more"><summary>Details: governor, integral action and yaw equations</summary><div>
   <p>A step in the velocity reference demands an impulsive torque because of the non-minimum-phase zero, so a <span class="term"><a href="glossary.html#reference-governor">reference governor</a></span> moves the reference toward the command at most \(a_{\max}=0.5\) m/s\(^2\) (a lean of about 5 degrees by Proposition 3):</p>
   <div class="eqn">$$v_{\rm ref}\leftarrow v_{\rm ref}+\Delta v\,\min\!\Big(1,\tfrac{a_{\max}T}{\lVert\Delta v\rVert}\Big),\ \ \Delta v=c_{xy}-v_{\rm ref};\qquad \xi\leftarrow\mathrm{clip}\big(\xi+(v_{\rm ref}-v_{\rm meas})T,\,\pm2\big);\qquad \dot\varphi_{\rm ref}=\frac{v_{\rm ref}+k_i\,\xi}{r},\ k_i=1 .$$</div>
   <p>The slow integral \(\xi\) on the measured body velocity removes the steady-state error caused by contact creep (it is why the LQR reaches an achieved-over-commanded ratio of 1.00; an earlier claim that it is also essential for standing still over 20 s rested on a measurement voided by the standing blow-up described below and in chapter 8 of the results page, and is unverified). The planar state is \(s=(0,\theta,\dot\varphi-\dot\varphi_{\rm ref},\dot\theta)\) in each plane; yaw uses \(T_z=-k_\psi(\omega_{\rm cmd}-\omega_z)\) with \(k_\psi=5\). The planar torques and \(T_z\) form the ball torque in world axes, mapped to the wheels by \(\boldsymbol\tau_w=W^{-\top}R^{\!\top}\boldsymbol T\) and normalised to \(a_{\rm LQR}=\mathrm{clip}(-\boldsymbol\tau_w/\tau_d,\pm1)\). A batched version of exactly this law runs on the GPU (<code>experiments/warp_ppo/lqr_gpu.py</code>).</p>
+  </div></details>
   <p class="wtm"><b>What this means.</b> The LQR is precise wherever the planar model is right and fragile where it is not: it tracks slow commands to within a few percent and falls at speed, under pushes, and on designs whose ball mass is far from nominal.</p>
 </div></section>
 
 <section class="block" id="learning"><div class="wrap">
   <p class="eyebrow">4 Learning problem</p>
   <h2>GPU-resident PPO, exactly as coded</h2>
-  <p class="lead"><span class="term"><a href="glossary.html#ppo">PPO</a></span> (proximal policy optimisation) trains a neural-network policy by trial and error, improving it a little at a time so that each update stays close to the last. Everything below mirrors <code>experiments/warp_ppo/train_dev.py</code>.</p>
-  <h3>Observation</h3>
+  <p class="lead"><span class="term"><a href="glossary.html#ppo">PPO</a></span> trains a neural-network policy by trial and error in small, safe steps. Everything here mirrors <code>experiments/warp_ppo/train_dev.py</code>.</p>
+  <h3>What the policy sees</h3>
+  <p>25 numbers, plus the last 8 (observation, action) pairs and a 6-number design vector: 255 inputs in the main runs.</p>
+  <details class="more"><summary>Details: the observation layout (Table S2)</summary><div>
   <p>The policy input is the 25-number vector below, optionally followed by a stack of the last \(K\) (observation, action) pairs, a 6-number design vector, and a sensor vector. <span class="term"><a href="glossary.html#observation-noise">Observation noise</a></span> (Gaussian noise added to what the policy sees, when randomisation is on) applies to slots 0 to 8 only.</p>
   <div class="table" data-num="S2"><p class="caption" data-num="S2">Observation layout. Sigma is 0.01. With history 8 and the design vector the main runs see \(25+8\cdot28+6=255\) numbers.</p><div class="scroll"><table>
     <thead><tr><th>Slots</th><th>Content</th><th>Notes</th></tr></thead>
@@ -144,27 +206,44 @@
     <tr><td>20, 21</td><td>velocity-error integral \(\xi_{\!v}\leftarrow\mathrm{clip}(\xi_{\!v}+(c-v)\cdot0.01,\pm1)\)</td><td></td></tr>
     <tr><td>22 to 24</td><td>goal error divided by 2 and clipped at 2 (two numbers), goal flag</td><td>zero outside goal mode</td></tr>
     </tbody></table></div></div>
-  <h3>Action, commands, goals</h3>
+  </div></details>
+  <h3>What it does</h3>
+  <p>Three normalised wheel torques, 100 times a second. The command is a velocity (resampled every 300 control steps) or a goal 0.7 to 1.8 m away. Episodes last 8 s.</p>
+  <details class="more"><summary>Details: action scaling, command sampling and the goal rule</summary><div>
   <p>The action is a normalised wheel-torque vector \(a_t\in[-1,1]^3\) applied as \(\tau=\mathrm{clip}(\kappa\,\tau_d\,a,\pm\tau_d)\), with \(\tau_d\) the design's torque limit and \(\kappa\sim\mathcal U(0.85,1.15)\) per episode under randomisation. Velocity commands are resampled every 300 control steps: zero with probability 0.1, otherwise speed \(\mathcal U(0,1.2)\) m/s times the design factor \(\sqrt{r_{\rm ball}/0.09}\) (<span class="term"><a href="glossary.html#froude-scaling">Froude scaling</a></span>: speeds scale with the square root of the size so that dynamics stay similar), direction uniform, yaw rate \(\mathcal U(-1,1)\) rad/s. Episodes last 800 steps (8 s).</p>
   <p>In goal mode the command is a saturating proportional rule on the goal error \(g-p\), so speed is free up to a cap while the same tracking reward still applies:</p>
   <div class="eqn">$$c_{xy}=\min\!\big(k_g\lVert g-p\rVert,\ v_{\max}f\big)\frac{g-p}{\lVert g-p\rVert},\qquad k_g=1.5\ \mathrm{s^{-1}},\qquad c_{xy}=0\ \text{if }\lVert g-p\rVert<0.05\ \mathrm m,\quad c_\omega=0 .$$</div>
   <p>Goals are drawn 0.7 to 1.8 m away; on arrival within 0.2 m a world with waypoints left draws the next goal. With <b>cross-focus</b> a goal is, with probability 0.6, placed 1.1 to 1.3 m from the tile centre along a tile axis, so reaching it means crossing the terrain feature.</p>
-  <h3>Reward</h3>
+  </div></details>
+  <h3>What it is paid for</h3>
+  <div class="glance">
+    <div class="good"><b>Paid</b><p>Matching the commanded speed and yaw rate. Leaning toward the command while still too slow. A small bonus for each upright step.</p></div>
+    <div class="warn"><b>Charged</b><p>Torque, sudden changes of action, and the ball sitting off-centre under the body.</p></div>
+    <div class="bad"><b>Fall</b><p>Tilt above 70 degrees, ball offset above 30 degrees, or a non-finite state. Leaving the tile ends the episode without penalty.</p></div>
+  </div>
+  <details class="more"><summary>Details: the reward equation</summary><div>
   <p>With \(e=\lVert v-c_{xy}\rVert\), \(\hat c=c_{xy}/\lVert c_{xy}\rVert\), \(p=v\cdot\hat c\), \(e_\omega=|\omega_z-c_\omega|\), \(\ell\) the lean along the command and \(\beta\) the ball-offset angle, the reward in <code>train_dev.py</code> is</p>
   <div class="eqn">$$\text{raw}=(\lVert c\rVert-e)+\tfrac12e^{-e^2/0.25^2}+\tfrac12(|c_\omega|-e_\omega)+\tfrac14e^{-e_\omega^2/0.5^2}+\tfrac12\,\mathbb 1[\lVert c\rVert>0.05]\Big(1-\mathrm{clip}\big(\tfrac{p}{\lVert c\rVert},0,1\big)\Big)\mathrm{clip}\big(\tfrac{\ell}{0.3},-1,1\big),$$
   $$r_t=2.5\,w_{\rm trk}\,\text{raw}-w_{\rm pen}\Big[5{\times}10^{-4}\lVert a_t\rVert^2+0.1\lVert a_t-a_{t-1}\rVert^2+0.25\big(\tfrac{\beta}{30^\circ}\big)^2\Big]+\begin{cases}0.1&\text{upright}\\-2&\text{fall.}\end{cases}$$</div>
   <p>The first four terms pay for matching the commanded speed and yaw rate; the lean term pays for leaning toward the command while still below it. A fall is a tilt above 70 degrees, a ball offset above 30 degrees, or a non-finite state; leaving the 2.9 m tile square truncates the episode without penalty.</p>
-  <h3>PPO</h3>
+  </div></details>
+  <h3>How it learns</h3>
+  <p>A tanh MLP (3 layers of 512), 4096 worlds times 64 steps per update. The critic also sees privileged simulator values during training; the actor sees only deployable inputs.</p>
+  <details class="more"><summary>Details: the PPO loss and hyperparameters</summary><div>
   <p>A diagonal Gaussian policy with a learnable log standard deviation and a tanh MLP (width 512, three hidden layers). The loss is the clipped surrogate plus a value term, with no entropy bonus:</p>
   <div class="eqn">$$\hat A_t=\sum_{l\ge0}(\gamma\lambda)^l\delta_{t+l},\ \ \delta_t=r_t+\gamma V_\phi(s_{t+1})-V_\phi(s_t);\qquad \mathcal L=-\mathbb E\big[\min(\rho_t\hat A_t,\ \mathrm{clip}(\rho_t,0.8,1.2)\hat A_t)\big]+0.25\,\mathbb E\big[(V_\phi-\hat R_t)^2\big].$$</div>
   <p>\(\gamma=0.995\), \(\lambda=0.95\); 4096 worlds times 64 steps per iteration, 5 epochs of 8 minibatches, Adam with learning rate \(3\times10^{-4}\) decaying to \(3\times10^{-5}\), early stop at approximate KL 0.03, running reward and observation normalisation. The actor sees only deployable inputs; the <span class="term"><a href="glossary.html#asymmetric-critic">asymmetric critic</a></span> (the value network used only during training) additionally sees floor friction, mass and torque offsets, wheel damping, a local height scan and the design vector.</p>
+  </div></details>
   <p class="wtm"><b>What this means.</b> Nothing in the reward values looking ahead: a policy that sees a step is paid for matching its commanded speed, not for slowing down before it. That shapes what the perception results (results page, chapter 12) can and cannot say.</p>
 </div></section>
 
 <section class="block" id="residual"><div class="wrap">
   <p class="eyebrow">5 Hybrid</p>
   <h2>LQR base plus a bounded learned residual</h2>
-  <p class="lead">The <span class="term"><a href="glossary.html#residual">residual</a></span> controller lets the LQR do the balancing and the policy add a bounded correction. In the environment step, \(a=\mathrm{clip}\big(a_{\rm LQR}+r_s\,a_\pi,\ \pm1\big)\), where \(a_\pi\) is the policy output and \(r_s\) the <span class="term"><a href="glossary.html#residual-authority">residual authority</a></span>. The LQR runs inside the environment from the true simulator state at every control step with one gain set per design; latency, torque scaling and pushes act on the sum. The policy output layer starts near zero, so training starts from the plain LQR.</p>
+  <p class="lead">The LQR balances. The policy adds a bounded correction: \(a=\mathrm{clip}\big(a_{\rm LQR}+r_s\,a_\pi,\ \pm1\big)\). The <span class="term"><a href="glossary.html#residual-authority">residual authority</a></span> \(r_s\) sets how much the policy may add. Training starts from the plain LQR.</p>
+  <details class="more"><summary>Details: where the LQR runs</summary><div>
+  <p>The LQR runs inside the environment from the true simulator state at every control step with one gain set per design; latency, torque scaling and pushes act on the sum. The policy output layer starts near zero, so training starts from the plain LQR.</p>
+  </div></details>
   <figure class="sfig">
     <svg class="archsvg" viewBox="0 0 800 300" role="img" aria-label="Architecture: command and observation feed a reference-governed LQR and a policy MLP; their actions are summed with weight r_s and sent to the wheels of the ballbot.">
       <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--text-3)"/></marker></defs>
@@ -179,48 +258,80 @@
       <path class="a" d="M540 64L600 118" style="stroke:var(--model)"/><path class="a" d="M540 236L600 182" style="stroke:var(--learned)"/><path class="a" d="M690 150L716 150"/>
       <path class="a" d="M755 185L755 296L255 296L255 280" style="stroke-dasharray:4 4"/><text class="muted" x="505" y="291" text-anchor="middle" style="font-size:11px">state feedback</text>
     </svg>
-    <figcaption><b>Architecture of the LQR plus residual controller.</b> Blue: model-based path; violet: learned path; teal: the sum with authority \(r_s\) (0.25 in the recommended controller). Schematic, no data. Engine: Warp GPU (training and evaluation); randomisation and noise act on the summed action and on the policy observation as in section 7. The ball <span class="term"><a href="glossary.html#arrestor">arrestors</a></span> of the recommended controller are a mechanical addition to the robot, described on the results page (chapter 8), and leave this diagram unchanged.</figcaption>
+    <figcaption><b>Architecture of the LQR plus residual controller.</b> Blue: model-based path; violet: learned path; teal: the sum with authority \(r_s\) (base setting 0.25; the recommended controller <code>g39_goalcentre_s0</code> moves it between 0.15 and 0.3 during a run, S112, S121). Schematic, no data. Engine: Warp GPU (training and evaluation); randomisation and noise act on the summed action and on the policy observation as in section 7. The ball <span class="term"><a href="glossary.html#arrestor">arrestors</a></span> are a mechanical addition (results page, chapter 8) and leave this diagram unchanged.</figcaption>
   </figure>
-  <p class="wtm"><b>What this means.</b> With \(r_s=0\) this is the pure LQR; with \(r_s=1\) the policy can override it entirely. The results page shows that 0.25 is the knee between tracking accuracy and robustness.</p>
+  <p class="wtm"><b>What this means.</b> \(r_s=0\) is the pure LQR; \(r_s=1\) lets the policy override it. The results page shows 0.25 is the knee between tracking accuracy and robustness.</p>
 </div></section>
 
 <section class="block" id="world"><div class="wrap">
   <p class="eyebrow">6 World</p>
   <h2>Terrain tiles, floor materials and robot designs</h2>
   <h3>Terrain tile library</h3>
-  <p class="lead">The GPU engine holds one height field shared by all worlds, so per-world terrain comes from one 24 m <span class="term"><a href="glossary.html#tile-map">tile map</a></span> of 8 by 8 tiles. Each world picks a tile at reset; features sit symmetrically around the tile centre so that any heading meets them; a world is truncated, not penalised, when it leaves the 2.9 m square around its tile centre. <b>Figure M1</b> and <b>Table A</b> show the ten kinds.</p>
+  <p class="lead">One 24 m map of 8 by 8 tiles holds ten terrain kinds. Each world starts on one tile. The feature surrounds the tile centre, so any heading meets it.</p>
+  <details class="more"><summary>Details: why one shared map</summary><div>
+  <p>The GPU engine holds one height field shared by all worlds, so per-world terrain comes from one 24 m <span class="term"><a href="glossary.html#tile-map">tile map</a></span> of 8 by 8 tiles. Each world picks a tile at reset; features sit symmetrically around the tile centre so that any heading meets them; a world is truncated, not penalised, when it leaves the 2.9 m square around its tile centre. <b>Figure M1</b> and <b>Table A</b> show the ten kinds.</p>
+  </div></details>
   <figure class="sfig"><img class="fig-light" src="figures/study/tiles_light.svg" alt="Cross-sections of the ten terrain tile types at a representative severity" loading="lazy" width="672" height="282"><img class="fig-dark" src="figures/study/tiles_dark.svg" alt="Cross-sections of the ten terrain tile types at a representative severity" loading="lazy" width="672" height="282">
     <figcaption><b>Figure M1. Terrain tile library, cross-section through the tile centre (green dot).</b> Representative severities are drawn; each title gives the training range. Illustration generated from <code>experiments/warp_ppo/tiles.py</code>; no simulation. Engine: not applicable (geometry only). Domain randomisation: not applicable. Seeds: map seed 0, the same 64 tiles in training and evaluation. Worlds: not applicable.</figcaption></figure>
   <!-- BUILD:tab_tiles -->
 <div class="table" data-num="A"><p class="caption" data-num="A">Terrain kinds. Map 24 m, 3.4 cm cells, tiles of 3 m, truncation outside 2.9 m. Source: experiments/warp_ppo/tiles.py (seed 0). Geometry only: no engine, randomisation, noise or seeds apply.</p><div class="scroll"><table><thead><tr><th>Terrain kind</th><th>Severity range</th><th>Profile</th><th>Tiles of 64</th></tr></thead><tbody class=""><tr><td>flat</td><td>none</td><td>no feature</td><td>7</td></tr><tr><td>step up</td><td>1 to 6 cm</td><td>single raised step 0.6 m from the centre on each axis</td><td>7</td></tr><tr><td>step down</td><td>1 to 6 cm</td><td>robot stands on a plateau, floor drops by the severity</td><td>7</td></tr><tr><td>small drop</td><td>3 to 8 cm</td><td>drop of 3 to 8 cm</td><td>7</td></tr><tr><td>large drop</td><td>10 to 20 cm</td><td>drop of 10 to 20 cm</td><td>6</td></tr><tr><td>ramp up</td><td>3 to 12 deg</td><td>slope over 1.0 m starting 0.5 m from the centre</td><td>6</td></tr><tr><td>ramp down</td><td>3 to 12 deg</td><td>descending slope over 1.0 m</td><td>6</td></tr><tr><td>stairs</td><td>1 to 4 cm</td><td>2 to 3 treads of 0.4 m, riser = severity</td><td>6</td></tr><tr><td>bump</td><td>1 to 5 cm</td><td>slab 0.3 m wide, 0.6 m from the centre</td><td>6</td></tr><tr><td>rough</td><td>0.5 to 3 cm</td><td>smooth two-octave noise outside a flat 0.5 m start zone</td><td>6</td></tr></tbody></table></div></div>
 <!-- /BUILD:tab_tiles -->
   <h3>Floor materials</h3>
-  <p class="lead">With floor classes on, each world draws one of seven materials: a ball-floor sliding friction (jittered by plus or minus 15 percent) and a contact time constant standing in for softness. The values are plausible, not measured. <b>Table B</b> lists them.</p>
+  <p class="lead">Each world draws one of seven floors, from wet tile (friction 0.3) to rubber (1.3). The values are plausible, not measured.</p>
+  <details class="more"><summary>Details: the seven floor classes (Table B)</summary><div>
   <!-- BUILD:tab_surfaces -->
 <div class="table" data-num="B"><p class="caption" data-num="B">Floor material classes used when floor randomisation is on. Source: experiments/warp_ppo/train_dev.py. Values are plausible, not measured.</p><div class="scroll"><table><thead><tr><th>Floor class</th><th>Sliding friction mu</th><th>Contact time constant [s]</th></tr></thead><tbody class="num"><tr><td>concrete</td><td>0.9</td><td>0.020</td></tr><tr><td>hardwood</td><td>0.6</td><td>0.020</td></tr><tr><td>carpet</td><td>1.1</td><td>0.045</td></tr><tr><td>grass</td><td>0.8</td><td>0.050</td></tr><tr><td>gravel</td><td>0.7</td><td>0.030</td></tr><tr><td>wet tile</td><td>0.3</td><td>0.020</td></tr><tr><td>rubber</td><td>1.3</td><td>0.020</td></tr></tbody></table></div></div>
 <!-- /BUILD:tab_surfaces -->
+  </div></details>
   <h3>Robot designs</h3>
-  <p class="lead">Thirteen designs were compiled; they share one topology, so the 25 model fields that differ are stacked and assigned per world. Eleven are used in training; <b>s0.5</b> (half scale) and <b>J0005</b> (very light rotors) were dropped early as unlearnable. Command speeds scale with the square root of the ball radius, pushes with the mass. <b>Table C</b> lists what each design changes.</p>
+  <p class="lead">Thirteen designs were compiled; eleven are trained on. Each changes one property of the nominal robot: ball mass, body mass, COM height, rotor inertia, torque limit or wheel contact angle.</p>
+  <details class="more"><summary>Details: all 13 designs (Table C)</summary><div>
+  <p><b>s0.5</b> (half scale) and <b>J0005</b> (very light rotors) were dropped early as unlearnable. Command speeds scale with the square root of the ball radius, pushes with the mass.</p>
   <!-- BUILD:tab_designs -->
 <div class="table" data-num="C"><p class="caption" data-num="C">The 13 compiled robot designs. Source: ballbot_gym/models/variants/dz_*.json and configs/env/dz_*.yaml. Geometry and mass properties only; no engine or randomisation applies. The eleven designs marked yes form the training set of every main run.</p><div class="scroll"><table><thead><tr><th>Design</th><th>What it changes</th><th>Body mass [kg]</th><th>Ball mass [kg]</th><th>COM height l [m]</th><th>Rotor inertia [kg m^2]</th><th>Torque limit [N m]</th><th>Contact zenith [deg]</th><th>In training set</th></tr></thead><tbody class="num"><tr><td><b>nom</b></td><td>reference robot</td><td>3.85</td><td>0.168</td><td>0.131</td><td>0.005</td><td>30</td><td>51</td><td>yes</td></tr><tr><td><b>zhigh</b></td><td>ballast raised: COM height about 1.9 times nominal</td><td>3.85</td><td>0.168</td><td>0.254</td><td>0.005</td><td>30</td><td>51</td><td>yes</td></tr><tr><td><b>zlow</b></td><td>ballast lowered: COM height about 0.67 times nominal</td><td>3.85</td><td>0.168</td><td>0.087</td><td>0.005</td><td>30</td><td>51</td><td>yes</td></tr><tr><td><b>kb4</b></td><td>ball mass x4</td><td>3.85</td><td>0.672</td><td>0.131</td><td>0.005</td><td>30</td><td>51</td><td>yes</td></tr><tr><td><b>bal4</b></td><td>body ballast x4 (body mass 3.5 times nominal, pushes scaled)</td><td>13.45</td><td>0.168</td><td>0.124</td><td>0.005</td><td>30</td><td>51</td><td>yes</td></tr><tr><td><b>J02</b></td><td>wheel rotor inertia x4</td><td>3.85</td><td>0.168</td><td>0.131</td><td>0.02</td><td>30</td><td>51</td><td>yes</td></tr><tr><td><b>tau6</b></td><td>torque limit 6 N m (one fifth)</td><td>3.85</td><td>0.168</td><td>0.131</td><td>0.005</td><td>6</td><td>51</td><td>yes</td></tr><tr><td><b>bal025</b></td><td>ballast x0.25 (body mass 0.38 times nominal)</td><td>1.45</td><td>0.168</td><td>0.145</td><td>0.005</td><td>30</td><td>51</td><td>yes</td></tr><tr><td><b>kb025</b></td><td>ball mass x0.25</td><td>3.85</td><td>0.042</td><td>0.131</td><td>0.005</td><td>30</td><td>51</td><td>yes</td></tr><tr><td><b>zeta41</b></td><td>wheel contact zenith 41 deg (nominal 51)</td><td>3.85</td><td>0.168</td><td>0.132</td><td>0.005</td><td>30</td><td>41</td><td>yes</td></tr><tr><td><b>zeta66</b></td><td>wheel contact zenith 66 deg</td><td>3.85</td><td>0.168</td><td>0.129</td><td>0.005</td><td>30</td><td>66</td><td>yes</td></tr><tr><td><b>s0.5</b></td><td>half scale (all lengths x0.5, masses x0.125)</td><td>0.48</td><td>0.021</td><td>0.065</td><td>0.0001563</td><td>1.875</td><td>51</td><td>no (dropped)</td></tr><tr><td><b>J0005</b></td><td>rotor inertia x0.1</td><td>3.85</td><td>0.168</td><td>0.131</td><td>0.0005</td><td>30</td><td>51</td><td>no (dropped)</td></tr></tbody></table></div></div>
 <!-- /BUILD:tab_designs -->
-  <p class="wtm"><b>What this means.</b> Two of the eleven training designs stress the controller hardest, and the picture changed with the S98 correction (results page, chapter 8): with the wheel-ball free-rolling friction at 0.01, the quarter-mass ball kb025 unseats within the first second in about a quarter of standing worlds and half of driving worlds, the four-times base mass bal4 falls in about a fifth of driving worlds, and the heavy-ball designs kb4 and bal025, which the voided numbers had blamed, stand for 20 s at 0.00. Every other design stands and drives at 0.00 to 0.02 over 20 s.</p>
+  </div></details>
+  <p class="wtm"><b>What this means.</b> Two designs are the hard ones on the corrected contact model (S98): the quarter-mass ball <b>kb025</b> and the four-times body ballast <b>bal4</b>. Every other design stands and drives at 0.00 to 0.02 falls over 20 s.</p>
+  <details class="more"><summary>Details: per-design behaviour after the S98 correction</summary><div>
+  <p><b>What this means.</b> Two of the eleven training designs stress the controller hardest, and the picture changed with the S98 correction (results page, chapter 8): with the wheel-ball free-rolling friction at 0.01, the quarter-mass ball kb025 unseats within the first second in about a quarter of standing worlds and half of driving worlds, the four-times base mass bal4 falls in about a fifth of driving worlds, and the heavy-ball designs kb4 and bal025, which the voided numbers had blamed, stand for 20 s at 0.00. Every other design stands and drives at 0.00 to 0.02 over 20 s.</p>
+  </div></details>
 </div></section>
 
 <section class="block" id="dr"><div class="wrap">
   <p class="eyebrow">7 Domain randomisation</p>
   <h2>What is randomised, with ranges</h2>
-  <p class="lead"><span class="term"><a href="glossary.html#domain-randomisation">Domain randomisation</a></span> draws the robot's physical parameters, the floor, the terrain and the disturbances at random for every world, so that the policy must work on a family of robots rather than one. All ranges are drawn per world at reset unless marked "per step". Standard runs use scale 1; the wide-randomisation runs multiply the mass, friction, torque, damping-spread, latency-probability and noise ranges by a master scale that ramps from 1 to 1.75 over the first half of training (push and pull strength are not scaled by it). When randomisation is off, noise, latency, pushes, pulls, torque scale and parameter jitter are all off. <b>Table D</b> is the full list.</p>
+  <p class="lead"><span class="term"><a href="glossary.html#domain-randomisation">Domain randomisation</a></span> gives every world a different robot, floor, terrain and set of disturbances, so the policy must work on a family of robots.</p>
+  <div class="glance">
+    <div><b>Robot</b><p>Masses plus or minus 15 percent, wheel friction plus or minus 20 percent, torque plus or minus 15 percent, wheel damping.</p></div>
+    <div><b>Signals</b><p>Sensor noise every step. With probability 0.2 the previous action is applied again.</p></div>
+    <div class="warn"><b>Disturbances</b><p>Pushes of 5 to 20 N for 50 ms. Pulls of 3 to 12 N for 0.5 to 2 s.</p></div>
+    <div><b>Scale</b><p>Wide runs ramp the ranges from 1 to 1.75 over the first half of training. Pushes and pulls are not scaled.</p></div>
+  </div>
+  <details class="more"><summary>Details: every range (Table D)</summary><div>
+  <p><span class="term"><a href="glossary.html#domain-randomisation">Domain randomisation</a></span> draws the robot's physical parameters, the floor, the terrain and the disturbances at random for every world, so that the policy must work on a family of robots rather than one. All ranges are drawn per world at reset unless marked "per step". Standard runs use scale 1; the wide-randomisation runs multiply the mass, friction, torque, damping-spread, latency-probability and noise ranges by a master scale that ramps from 1 to 1.75 over the first half of training (push and pull strength are not scaled by it). When randomisation is off, noise, latency, pushes, pulls, torque scale and parameter jitter are all off. <b>Table D</b> is the full list.</p>
   <!-- BUILD:tab_dr -->
 <div class="table" data-num="D"><p class="caption" data-num="D">Domain randomisation. Source: configs/env/dz_nom.yaml (the ranges) and experiments/warp_ppo/train_dev.py (how they are applied; each statement was matched against the source by site/build_data.py). Engine: Warp GPU. Randomisation: this table is the randomisation.</p><div class="scroll"><table><thead><tr><th>Quantity</th><th>Range</th><th>When</th><th>Notes</th></tr></thead><tbody class=""><tr><td>Robot design</td><td>one of 11 designs, uniform</td><td>per episode</td><td>Table C</td></tr><tr><td>Base mass and ball mass</td><td>each times (1 plus uniform plus or minus 0.15)</td><td>per episode</td><td>independent draws</td></tr><tr><td>Wheel-ball transverse friction</td><td>times (1 plus uniform plus or minus 0.20)</td><td>per episode</td><td>the cross-roller direction of the anisotropic pair</td></tr><tr><td>Wheel damping</td><td>uniform 0.07 to 0.15 N m s times the design's nominal damping over 0.1</td><td>per episode, each wheel</td><td>master scale widens the spread around 0.1</td></tr><tr><td>Torque scale</td><td>1 plus uniform plus or minus 0.15</td><td>per episode</td><td>applied to the commanded torque</td></tr><tr><td>Action latency</td><td>with probability 0.2 the previous action is applied instead</td><td>per control step</td><td>probability capped at 0.6 when scaled</td></tr><tr><td>Observation noise</td><td>Gaussian, sigma 0.01 (orientation 0.25 sigma, angular velocity 2 sigma, linear velocity 1 sigma)</td><td>per control step</td><td>slots 0 to 8 only</td></tr><tr><td>Pushes</td><td>horizontal force 5 to 20 N (times the design push factor), random direction, 5 control steps (50 ms)</td><td>every 2 to 4 s</td><td>factor = push range of the design over 20 N</td></tr><tr><td>Pulls</td><td>horizontal force 3 to 12 N, random direction, 0.5 to 2 s</td><td>every 4 to 10 s</td><td>only in runs with pulls on; not scaled per design</td></tr><tr><td>Floor material</td><td>one of 7 classes; friction times (1 plus uniform plus or minus 0.15)</td><td>per episode</td><td>Table B</td></tr><tr><td>Terrain tile and start</td><td>uniform over 64 tiles; start offset uniform plus or minus 0.3 m; start yaw uniform over a full turn</td><td>per episode</td><td>Table A</td></tr><tr><td>Master scale (wide runs)</td><td>multiplies mass, friction, torque, damping spread, latency probability and noise ranges; 1 to 1.75 over the first half of training</td><td>per iteration</td><td>does not scale pushes or pulls</td></tr></tbody></table></div></div>
 <!-- /BUILD:tab_dr -->
+  </div></details>
   <p class="wtm"><b>What this means.</b> A result "with DR on" means the controller was tested on 11 designs with randomised masses, friction, motors, latency, noise and floors; "DR off" means the nominal robot with none of that. Every table says which.</p>
 </div></section>
 
 <section class="block" id="eval"><div class="wrap">
   <p class="eyebrow">8 Evaluation</p>
   <h2>Protocols and metric definitions</h2>
-  <p class="lead">All GPU evaluations use <code>experiments/warp_ppo/eval_tiles2.py</code> (and <code>eval_battery.py</code>, which runs the standard set) with a deterministic policy, a fixed seed and no command resampling; the first fall of a world freezes it. Every evaluation file records its settings (push scale, randomisation scale, tile seed, design list, arrestors) in its name and inside the JSON, after an early lesson in which results overwrote each other silently. <b>Table E</b> lists the protocols.</p>
+  <p class="lead">One deterministic policy, a fixed seed, no command resampling. The first fall freezes a world. Every result file stores its own settings.</p>
+  <div class="table" data-num="E1"><p class="caption" data-num="E1">The main protocols in one line each. Engine: MuJoCo-Warp GPU. Seeds: evaluation seed fixed; training seeds are stated with each result. Full set-ups and metric definitions are in Table E below.</p><div class="scroll"><table>
+    <thead><tr><th>Protocol</th><th>Robots and world</th><th>Randomisation, noise</th><th>Main number</th></tr></thead>
+    <tbody>
+    <tr><td><b>Clean flat benchmark</b></td><td>nominal design, flat, 64 worlds per row, 800 steps</td><td>off, off</td><td>achieved speed over commanded</td></tr>
+    <tr><td><b>Velocity task on tiles</b></td><td>11 designs x 10 terrain kinds x 16 = 1760 worlds, 0.3 m/s</td><td>on, on</td><td>fall rate</td></tr>
+    <tr><td><b>Goal task</b></td><td>same layout, goal 1.1 m away, 800 steps</td><td>on (scale 1, 1.75, 2.5), on</td><td>goal success</td></tr>
+    <tr><td><b>Long-horizon flat</b></td><td>11 designs x 32 worlds, 20 s, standing or 0.3 m/s</td><td>on, on</td><td>fall rate per design</td></tr>
+    <tr><td><b>Navigation course</b></td><td>11 designs x 48 = 528 worlds, blocks map, 20 s</td><td>on, on</td><td>goals reached</td></tr>
+    <tr><td><b>Held-out terrain and designs</b></td><td>new tile map, or designs never trained on</td><td>on, on</td><td>goal success</td></tr>
+    </tbody></table></div></div>
+  <details class="more"><summary>Details: full protocol table and metric definitions (Table E)</summary><div>
+  <p>All GPU evaluations use <code>experiments/warp_ppo/eval_tiles2.py</code> (and <code>eval_battery.py</code>, which runs the standard set) with a deterministic policy, a fixed seed and no command resampling; the first fall of a world freezes it. Every evaluation file records its settings (push scale, randomisation scale, tile seed, design list, arrestors) in its name and inside the JSON, after an early lesson in which results overwrote each other silently. <b>Table E</b> lists the protocols.</p>
   <div class="table" data-num="E"><p class="caption" data-num="E">Evaluation protocols. All on the Warp GPU engine unless the row says otherwise.</p><div class="scroll"><table>
     <thead><tr><th>Protocol</th><th>Setup</th><th>Metrics</th></tr></thead>
     <tbody>
@@ -234,9 +345,11 @@
     <tr><td><b>Engine cross-check</b></td><td><code>eval_design</code> protocol on both engines with the LQR: speeds 0.4, 0.8, 1.1 times the square root of the design scale (4 trials each), pushes of 0.5, 1 and 1.5 body weights (16 per level).</td><td>Speed ratio, falls, push falls.</td></tr>
     <tr><td><b>CPU baseline protocol</b></td><td>8 directions by speeds up to 1 m/s, 2 repeats, heading test from 6 random start yaws, 30 random-command episodes, nominal robot.</td><td>Ratio, RMSE, heading error, action rate, falls (earlier study).</td></tr>
     </tbody></table></div></div>
-  <h3>Methods note: the flat benchmark and the map edge</h3>
+  </div></details>
+  <details class="more"><summary>Details: methods note on the flat benchmark and the map edge</summary><div>
   <p>The first version of the flat benchmark placed its worlds on the tile positions of the normal protocol, including the border tiles of the 24 m height field, 1.5 m from the edge. With tile exits disabled, a robot driving outward left the map and was counted as a fall; a per-fall position record showed that most recorded flat falls were such drop-offs, which also made falls appear to rise with commanded speed. The benchmark now uses interior tiles only and keeps a falls-at-map-edge field in every evaluation file; the flat rows of every battery were re-run, and the results page shows the corrected column. The steady-state error and achieved speed were computed over surviving worlds and are unaffected by the artefact (the re-run, being a fresh sample, moved them by a few thousandths).</p>
-  <p class="wtm"><b>What this means.</b> With 1760 worlds a fall rate near 0.5 has a binomial standard error of about 0.012, a terrain kind (176 worlds) about 0.04, and a 64-world row about 0.06; these cover world-to-world sampling only. <span class="term"><a href="glossary.html#seed-noise">Seed noise</a></span>, the spread between identical training runs, was measured separately at about 0.02 in goal success on the corrected engine. Single-seed rows are labelled as such everywhere.</p>
+  </div></details>
+  <p class="wtm"><b>How much to trust a number.</b> Sampling error is about 0.012 for a 1760-world fall rate near 0.5, about 0.04 for one terrain kind (176 worlds) and about 0.06 for a 64-world row. <span class="term"><a href="glossary.html#seed-noise">Seed noise</a></span> between identical training runs is about 0.02 in goal success. Single-seed rows are labelled.</p>
 </div></section>
 </main>
 <script>

@@ -9,91 +9,91 @@
 <link rel="icon" href="data:,">
 <link rel="stylesheet" href="../assets/css/tokens.css">
 <link rel="stylesheet" href="assets/css/learn.css">
+<link rel="stylesheet" href="../assets/css/viz.css">
 <script type="module" src="assets/js/learn.js"></script>
 </head>
 <body>
 <main>
 <header class="lhead"><div class="wrap">
-  <div class="eyebrow"><span>Lesson 10 of 10</span><span class="t">14 min</span><span class="t">Deployment</span></div>
+  <div class="eyebrow"><span>Lesson 10 of 10</span><span class="t">9 min</span><span class="t">Deployment</span></div>
   <h1>From simulation to ROS 2</h1>
-  <p class="lede">A trained controller is only useful if it can leave the simulator. This lesson follows it into a ROS 2 package: the pieces, the safety logic, how the port is checked against the simulator, and what is still unknown because there is no robot.</p>
+  <p class="lede">The controller was exported into a ROS 2 package and checked against the simulator, tick by tick. It has never run on a robot. There is no robot yet.</p>
   <div class="chips"><span class="chip sim">Simulation only, no hardware</span></div>
-  <section class="goals" aria-labelledby="g1"><h2 id="g1">You will be able to</h2><ul><li>name the layers of the package and where each lesson's idea lives in it;</li><li>explain why a ballbot's safety logic latches faults instead of disabling;</li><li>say what a parity test proves, and what it does not.</li></ul></section>
+  <section class="goals" aria-labelledby="g1"><h2 id="g1">You will be able to</h2><ul><li>name the layers of the package;</li><li>explain why a ballbot's safety logic latches faults instead of switching off;</li><li>say what a parity test proves, and what it does not.</li></ul></section>
 </div></header>
 
 <section class="lsec"><div class="wrap">
-  <h2><span class="k">10.1</span>From a simulator checkpoint to a ROS 2 controller</h2>
-
-  <p>Everything so far lives in a simulator on a GPU. The last step is to make the controller something a robot could run: a software package that reads an IMU and three wheel encoders, runs the stack of lessons 3 to 7, and writes three motor torques every 10 ms, with a <b>Nav2</b> navigation stack above it. The package is <code>ros2/ballbot_control</code>. It is built to be tested without ROS, and it has <b>never run on a robot or even under a real ROS installation</b>: there is no physical robot yet (the section "What was not verified" below is part of the lesson).</p>
-  <p>The design has three layers, from least to most ROS:</p>
-  <ul>
-    <li><b>A pure-Python core</b> (numpy only, no ROS imports, enforced by a test) holding every piece of control logic: estimator, motion layer, observation builder, actor, LQR, authority and safety.</li>
-    <li><b>Two thin ROS 2 nodes</b>: <code>controller_node</code> (100 Hz, subscribes to /cmd_vel, /imu and /joint_states, publishes /wheel_torque_cmd and diagnostics) and <code>estimator_node</code> (publishes /odom and the TF for Nav2).</li>
-    <li><b>An exported bundle</b>: the trained policy and everything needed to run it, written by <code>export_policy.py</code> from a checkpoint.</li>
-  </ul>
-
-</div></section>
-<figure class="widget" data-widget="l10:stack">
+  <h2><span class="k">10.1</span>Three layers</h2>
+  <figure class="dia"><div class="media" tabindex="0" role="group" aria-label="Diagram (scrolls sideways on narrow screens)"><svg class="diagram" viewBox="0 0 780 260" role="img" aria-labelledby="x1t x1d"><title id="x1t">From a trained checkpoint to a tested control core</title><desc id="x1d">Top row: the trained checkpoint g39_goalcentre_s0 is exported by export_policy.py into a bundle of four files, which a pure-Python core loads; two thin ROS 2 nodes wrap the core. Bottom row, the parity test: a recorded simulator rollout of 13,299 ticks is replayed through the core, seven signals are compared at every tick, and the worst wheel torque difference is 1.3e-3 newton metres.</desc><defs><marker id="x1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<text class="k f-hybrid" x="10" y="18">EXPORT</text><rect class="bx learned" x="10" y="30" width="150" height="64" rx="8"/><text class="t mid" x="85" y="59">trained checkpoint</text><text class="code mid" x="85" y="74">g39_goalcentre_s0</text><rect class="bx " x="196" y="30" width="170" height="64" rx="8"/><text class="t mid" x="281" y="51.5">bundle, 4 files</text><text class="s mid" x="281" y="66.5">actor: onnx, ts, npz</text><text class="s mid" x="281" y="81.5">bundle.json: all settings</text><rect class="bx hybrid" x="402" y="30" width="170" height="64" rx="8"/><text class="t mid" x="487" y="51.5">pure-Python core</text><text class="s mid" x="487" y="66.5">numpy only, no ROS</text><text class="s mid" x="487" y="81.5">all control logic</text><rect class="bx " x="608" y="30" width="162" height="64" rx="8"/><text class="t mid" x="689" y="51.5">2 ROS 2 nodes</text><text class="s mid" x="689" y="66.5">controller_node 100 Hz</text><text class="s mid" x="689" y="81.5">estimator_node</text><path class="ar" d="M160 62H194" marker-end="url(#x1a)"/><path class="ar" d="M366 62H400" marker-end="url(#x1a)"/><path class="ar" d="M572 62H606" marker-end="url(#x1a)"/><text class="k f-model" x="10" y="150">PARITY TEST</text><rect class="bx model" x="10" y="162" width="190" height="70" rx="8"/><text class="t mid" x="105" y="186.5">recorded simulator rollout</text><text class="s mid" x="105" y="201.5">13,299 ticks, 33 worlds,</text><text class="s mid" x="105" y="216.5">all 11 designs</text><rect class="bx " x="402" y="162" width="170" height="70" rx="8"/><text class="t mid" x="487" y="186.5">compare every tick</text><text class="s mid" x="487" y="201.5">command, observation,</text><text class="s mid" x="487" y="216.5">actions, authority, torque</text><rect class="bx good" x="608" y="162" width="162" height="70" rx="8"/><text class="t mid" x="689" y="186.5">worst torque gap</text><text class="s mid" x="689" y="201.5">1.3e-3 N m</text><text class="s mid" x="689" y="216.5">float32 against float64</text><path class="ar" d="M200 197H400" marker-end="url(#x1a)"/><text class="s mid" x="300" y="188">replay</text><path class="ar" d="M487 96V160" marker-end="url(#x1a)"/><path class="ar" d="M572 197H606" marker-end="url(#x1a)"/></svg></div><figcaption><b>Export on top, the check below.</b> The recommended controller, <code>g39_goalcentre_s0</code>, is the exported one.<span class="src">ros2/README.md; experiments/warp_ppo/export_policy.py; ros2/ballbot_control/test/parity_replay.py</span></figcaption></figure>
+  <div class="cards">
+    <div class="hybrid"><b>Pure-Python core</b><span>Every piece of control logic: estimator, motion layer, observation builder, actor, LQR, authority, safety. No ROS imports, enforced by a test.</span></div>
+    <div><b>Two thin ROS 2 nodes</b><span><code>controller_node</code> reads /cmd_vel, /imu and /joint_states and writes /wheel_torque_cmd. <code>estimator_node</code> publishes /odom and the TF for Nav2.</span></div>
+    <div class="learned"><b>The bundle</b><span>The trained network plus one JSON file with every setting. The node has no hard-coded numbers.</span></div>
+  </div>
+  <details class="more"><summary>What is in the bundle</summary><div><p>One folder (<code>config/bundle/g39_goalcentre_s0/</code>) with <code>actor.onnx</code>, <code>actor.ts</code> (TorchScript), <code>actor_weights.npz</code> (plain numpy) and <code>bundle.json</code>. Each actor file is about 2.6 MB. The JSON carries the control rate (100 Hz, torque held for 10 ms), the observation layout with units and clips, history length and order, the normalisation, the rule that combines LQR and network, the authority and motion-layer parameters, the LQR weights and per-design gains, the design table, the estimator calibration, the goal point (the true ball centre for g39) and the source run with its training arguments.</p></div></details>
+  <figure class="widget" data-widget="l10:stack">
     <header><h3>The deployment stack</h3><span class="tag">click a box</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Select a box</b> (pointer, or Tab then Enter) to see what it does, the topic or file behind it, and which lesson it comes from. Teal lines are the ones touching the selected box. The same estimator code runs twice, inside the controller (no transport delay in the balance loop) and in a separate node for Nav2.<span class="src">ros2/README.md, Architecture and Message interfaces</span></figcaption>
+    <figcaption><b>Select a box</b> (pointer, or Tab then Enter) to see what it does, the topic or file behind it, and which lesson it comes from. The same estimator code runs twice: inside the controller and in a separate node for Nav2.<span class="src">ros2/README.md, Architecture and Message interfaces</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<section class="lsec"><div class="wrap">
-  <h2><span class="k">10.2</span>The exported policy</h2>
-
-  <p>A checkpoint is exported into one folder (<code>config/bundle/g39_goalcentre_s0/</code>) with four files: <code>actor.onnx</code>, <code>actor.ts</code> (TorchScript), <code>actor_weights.npz</code> (plain numpy) and <code>bundle.json</code>. Each actor file is about 2.6 MB. The JSON file carries everything that is not weights: the control rate (100 Hz, torque held for 10 ms), the observation layout with units and clips, history length and order, the normalisation, the rule that combines LQR and network, the authority and motion-layer parameters, the LQR weights and per-design gains, the design table with the 6-number design vectors, the estimator calibration, the goal point (the true ball centre for g39) and the source run with its training arguments. One file describes the whole controller, so the node needs no hard-coded numbers; a controller trained later with different settings runs by loading its bundle.</p>
-
 </div></section>
+
 <section class="lsec"><div class="wrap">
-  <h2><span class="k">10.3</span>Safety, because a ballbot cannot just turn off</h2>
-
-  <p>For most robots "disable" is the safe state. For a ballbot it is the opposite: unpowered, it falls. The supervisor therefore has three states. <b>HOLD</b> (startup, or after disable) applies zero torque and expects the robot to be held or on a stand. <b>ACTIVE</b> is balancing; it is entered only on an enable request while the body is within 3 degrees of upright and the sensor data is fresh, and it resets the controller as a training episode would start. <b>FAULT</b> latches on a tilt above 30 degrees, a non-finite value, or sensor data older than 50 ms, with zero torque until the fault is cleared and the robot is enabled again. A command that stops arriving (0.5 s) does not disable anything: the robot stops and holds position, because an upright ballbot must keep balancing.</p>
-
-</div></section>
-<figure class="widget" data-widget="l10:safety">
+  <h2><span class="k">10.2</span>Safety: a ballbot cannot just turn off</h2>
+  <p>For most robots, "off" is safe. An unpowered ballbot falls. So the supervisor has three states, and a fault <b>latches</b>.</p>
+  <figure class="dia"><div class="media" tabindex="0" role="group" aria-label="Diagram (scrolls sideways on narrow screens)"><svg class="diagram" viewBox="0 0 780 250" role="img" aria-labelledby="x2t x2d"><title id="x2t">The safety supervisor as a state machine</title><desc id="x2d">Three states. HOLD: zero torque, the robot is held or on a stand. On an enable request, with the body within 3 degrees of upright and fresh sensor data, it goes to ACTIVE, balancing. From ACTIVE, a tilt above 30 degrees, a non-finite value or sensor data older than 50 milliseconds latches FAULT with zero torque. FAULT returns to HOLD only when the fault is cleared deliberately. A command that stops arriving for 0.5 seconds keeps the robot ACTIVE: it stops and holds position.</desc><defs><marker id="x2a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+<rect class="bx " x="20" y="60" width="170" height="70" rx="8"/><text class="t mid" x="105" y="84.5">HOLD</text><text class="s mid" x="105" y="99.5">zero torque</text><text class="s mid" x="105" y="114.5">robot held or on a stand</text><rect class="bx good" x="305" y="60" width="170" height="70" rx="8"/><text class="t mid" x="390" y="84.5">ACTIVE</text><text class="s mid" x="390" y="99.5">balancing</text><text class="s mid" x="390" y="114.5">100 Hz</text><rect class="bx bad" x="590" y="60" width="170" height="70" rx="8"/><text class="t mid" x="675" y="84.5">FAULT</text><text class="s mid" x="675" y="99.5">latched</text><text class="s mid" x="675" y="114.5">zero torque</text><path class="ar" d="M190 82H303" marker-end="url(#x2a)"/><text class="s mid" x="247" y="56">enable + within 3&deg;</text><text class="s mid" x="247" y="72">+ fresh data</text><path class="ar" d="M303 112H190" marker-end="url(#x2a)"/><text class="s mid" x="247" y="128">disable</text><path class="ar" d="M475 95H588" marker-end="url(#x2a)"/><text class="s mid" x="532" y="56">tilt over 30&deg;, bad value,</text><text class="s mid" x="532" y="72">or data older than 50 ms</text><path class="ar dash" d="M675 130V200H105V132" marker-end="url(#x2a)"/><text class="s mid" x="390" y="192">fault cleared on purpose (then enable again)</text><path class="ar" d="M360 60C350 16 430 16 420 58" marker-end="url(#x2a)"/><text class="s mid" x="390" y="14">no command for 0.5 s: stay ACTIVE, stop and hold position</text></svg></div><figcaption><b>HOLD, ACTIVE, FAULT.</b> After a fault the state of the robot is unknown, so it never re-engages by itself.<span class="src">ros2/ballbot_control/ballbot_control/core/safety.py; thresholds from config/ballbot_control.yaml</span></figcaption></figure>
+  <figure class="widget" data-widget="l10:safety">
     <header><h3>Drive the supervisor</h3><span class="tag">port of core/safety.py</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Try to break it.</b> Press Enable with the tilt at 10 degrees (it waits); lower the tilt to 1 and it engages; raise the tilt past 30 degrees or age the data past 50 ms and it latches a fault. Below, the command gate: stop the commands for more than 0.5 s and the desired velocity becomes zero, with the robot holding the point where it will come to rest.<span class="src">ros2/ballbot_control/ballbot_control/core/safety.py; thresholds from config/ballbot_control.yaml</span></figcaption>
+    <figcaption><b>Try to break it.</b> Press Enable with the tilt at 10 degrees (it waits); lower the tilt to 1 and it engages; raise it past 30 degrees or age the data past 50 ms and it latches a fault.<span class="src">ros2/ballbot_control/ballbot_control/core/safety.py; thresholds from config/ballbot_control.yaml</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<div class="tryit"><div class="lbl">Try it</div><p>Enable the robot at 1 degree. Raise the tilt to 25 degrees: what happens? Then to 31. Then lower it back to 1 and press Enable: does it re-engage?</p><details class="answer"><summary>Show the answer</summary><div><p>At 25 degrees it keeps going (the cutoff is 30). At 31 it latches FAULT and stays there even when the tilt returns to 1: the fault has to be cleared deliberately and the robot enabled again. The latch is the point. After a fault the state of the robot is unknown, and automatic re-engaging could spin the wheels against a fallen body.</p></div></details></div><section class="lsec"><div class="wrap">
-  <h2><span class="k">10.4</span>Parity: does the port do what the simulator did?</h2>
-
-  <p>The control logic was written twice, once in the GPU simulator for training and once in the portable core. If they differ even slightly, the trained network sees inputs it never saw. So the project replays a recorded simulator rollout through the core and compares every intermediate: the shaped command, the 25-number observation, the 255-number actor input, the network action, the LQR action, the authority and the final wheel torque. For the recommended controller the worst-case torque difference over 13,299 ticks, 33 worlds and all 11 designs was 1.3e-3 N m (1.5e-3 for the earlier g34). The exported actors match the original network to below 1e-6 (TorchScript exactly, numpy float64 2.4e-7).</p>
-
+  <div class="tryit"><div class="lbl">Try it</div><p>Enable the robot at 1 degree. Raise the tilt to 25 degrees: what happens? Then to 31. Then lower it back to 1 and press Enable: does it re-engage?</p><details class="answer"><summary>Show the answer</summary><div><p>At 25 degrees it keeps going (the cutoff is 30). At 31 it latches FAULT and stays there even when the tilt returns to 1: the fault has to be cleared deliberately and the robot enabled again. Automatic re-engaging could spin the wheels against a fallen body.</p></div></details></div>
 </div></section>
-<figure class="widget" data-widget="l10:parity">
+
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">10.3</span>Parity: is the port the same controller?</h2>
+  <p>The control logic exists twice: in the GPU simulator for training, and in the portable core. If they differ, the network sees inputs it never trained on.</p>
+  <p>So a recorded simulator run is replayed through the core and every intermediate signal is compared. The worst wheel torque difference was <b>1.3e-3 N m</b>. The exported actors match the original network to below 1e-6.</p>
+  <figure class="widget" data-widget="l10:parity">
     <header><h3>Parity report</h3><span class="tag">S118, ros2/README.md</span></header>
     <div class="stage ph"></div>
     <div class="body"></div>
-    <figcaption><b>Float32 against float64 is the only remaining difference.</b> Each row is one quantity along the signal path; the bar is the size of the disagreement between the core and the simulator on the log scale (the shorter, the closer). The 37 tests of the package also check the simulator-state to estimator mapping, the safety logic and a closed-loop run on CPU MuJoCo.<span class="src">values parsed from ros2/README.md by scripts/site/build_learn_data.py</span></figcaption>
+    <figcaption><b>Float32 against float64 is the only remaining difference.</b> Each row is one quantity along the signal path; shorter bars are closer (log scale). The package's 37 tests also check the estimator mapping, the safety logic and a closed-loop run on CPU MuJoCo.<span class="src">values parsed from ros2/README.md by scripts/site/build_learn_data.py</span></figcaption>
     <noscript><p>This figure needs JavaScript. The text around it explains the same idea.</p></noscript>
   </figure>
-<section class="lsec"><div class="wrap">
-  <h2><span class="k">10.5</span>What was not verified</h2>
-
-  <p>A parity test shows that the code <i>is</i> the simulator's code; it does not show that the robot behaves. These are stated plainly in the package README, and they are the reason this lesson says "could", not "does":</p>
-  <ul>
-    <li><b>No ROS build or run.</b> ROS 2 was not installed on the development machine. The nodes were only exercised against stand-in message classes, which checks wiring, not executors, QoS, TF, Nav2 integration or timing.</li>
-    <li><b>No hardware.</b> Motor sign conventions, encoder directions, IMU mounting, torque mapping, driver latency, sensor noise and compute timing are all unverified.</li>
-    <li><b>The state comes from an estimator, not from the simulator.</b> Two approximate mappings: the base angular velocity the policy saw in training was 2 ms older than a gyro sample would be (a median change of 1.8e-3 in the action), and some velocities are reconstructed from the ball-centre velocity (0.3 m/s at the 99th percentile during impacts).</li>
-    <li><b>Real-time.</b> Python and the ROS 2 Python executor are not real-time; the README lists three routes (an isolated core with a real-time kernel, a ros2_control C++ plugin with the Python core as the test oracle, or the whole balance loop on a microcontroller).</li>
-    <li><b>Open issues.</b> The adaptive-authority dead band in the simulator reads the ball body-origin speed, which the core replaces by the centre speed; retraining with the dead band on the centre velocity would remove that. The "motor" observation entries are base velocities divided by torque, a training artefact that the core reproduces and a future retraining should replace with real wheel rates.</li>
-  </ul>
-
 </div></section>
-<div class="tryit"><div class="lbl">Check yourself</div><p>Why does the parity test feed the core the simulator's exact state instead of the estimator's output?</p><div class="opts"><button>To make the test pass more easily</button><button data-ok>To isolate one question: is the control logic the same code path? State estimation is a separate error source with its own tests</button><button>Because the estimator is not part of the controller</button></div><details class="answer"><summary>Why</summary><div><p>Testing the two questions separately makes failures interpretable. If the parity test also ran the estimator and failed, you would not know whether the logic or the estimate was wrong. The estimator is checked against its own reference (the study's odometry.py) and the closed-loop run on CPU MuJoCo puts the two together; on hardware the second question would be the main one, and the tests cannot answer it.</p></div></details></div>
+
+<section class="lsec"><div class="wrap">
+  <h2><span class="k">10.4</span>What was not verified</h2>
+  <p>Parity shows the code <i>is</i> the simulator's code. It does not show that a robot behaves.</p>
+  <div class="cards">
+    <div class="good"><b>Checked</b><span>Core against simulator, tick by tick. Exported network against the original. Safety logic. A closed-loop run on CPU MuJoCo.</span></div>
+    <div class="warn"><b>No ROS build or run</b><span>ROS 2 was not installed on the development machine. Nodes ran only against stand-in message classes.</span></div>
+    <div class="bad"><b>No hardware</b><span>Motor signs, encoder directions, IMU mounting, torque mapping, driver latency, noise and timing are all unverified.</span></div>
+    <div class="warn"><b>Not real-time</b><span>Python and its ROS 2 executor are not real-time. The README lists three routes.</span></div>
+  </div>
+  <details class="more"><summary>The remaining caveats</summary><div><ul>
+    <li><b>The state comes from an estimator, not from the simulator.</b> The base angular velocity the policy saw in training was 2 ms older than a gyro sample would be (a median change of 1.8e-3 in the action), and some velocities are reconstructed from the ball-centre velocity (0.3 m/s at the 99th percentile during impacts).</li>
+    <li><b>Real-time routes.</b> An isolated core with a real-time kernel, a ros2_control C++ plugin with the Python core as the test oracle, or the whole balance loop on a microcontroller.</li>
+    <li><b>Open issues.</b> The adaptive-authority dead band in the simulator reads the ball body-origin speed, which the core replaces by the centre speed (S122 retrains with the centre speed). The "motor" observation entries are base velocities divided by torque, a training artefact that the core reproduces.</li>
+    <li><b>Parity numbers.</b> 13,299 ticks, 33 worlds, all 11 designs: 1.3e-3 N m for g39 (1.5e-3 for the earlier g34). TorchScript matches exactly, numpy float64 to 2.4e-7.</li>
+  </ul></div></details>
+  <div class="tryit"><div class="lbl">Check yourself</div><p>Why does the parity test feed the core the simulator's exact state instead of the estimator's output?</p><div class="opts"><button>To make the test pass more easily</button><button data-ok>To isolate one question: is the control logic the same code path?</button><button>Because the estimator is not part of the controller</button></div><details class="answer"><summary>Why</summary><div><p>Testing the two questions separately makes failures interpretable. If the parity test also ran the estimator and failed, you would not know whether the logic or the estimate was wrong. The estimator is checked against its own reference (the study's odometry.py) and the closed-loop run on CPU MuJoCo puts the two together; on hardware the second question would be the main one, and the tests cannot answer it.</p></div></details></div>
+</div></section>
+
 <section class="lsec"><div class="wrap">
   <h2><span class="k">Summary</span>Key takeaways</h2>
-  <div class="takeaways"><ul><li>The package splits into a pure-Python core, two thin ROS 2 nodes and an exported bundle; the core runs without ROS.</li><li>One bundle.json plus the actor files describes the whole controller, including the goal point, motion layer and authority.</li><li>Safety is HOLD, ACTIVE and FAULT; a fault latches and a command timeout holds position rather than disabling.</li><li>Parity shows the port matches the simulator to float32 rounding (1.3e-3 N m worst torque difference); it does not show that a robot works.</li><li>No ROS build, no hardware, estimator mapping approximate: stated limits, not footnotes.</li></ul></div>
-  <h3 style="margin-top:1.6em">Code and evidence</h3>
-  <div class="sources">
+  <div class="takeaways"><ul><li>The package is a pure-Python core, two thin ROS 2 nodes and an exported bundle. The core runs without ROS.</li><li>One bundle.json plus the actor files describes the whole controller.</li><li>Safety is HOLD, ACTIVE and FAULT. A fault latches; a command timeout holds position.</li><li>Parity: the port matches the simulator to float32 rounding (1.3e-3 N m worst torque difference). It does not show that a robot works.</li><li>No ROS build, no hardware: stated limits, not footnotes.</li></ul></div>
+  <details class="more"><summary>Code and evidence</summary><div><div class="sources">
     <div><h3>Code</h3><ul><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/ros2/README.md"><code>ros2/README.md</code></a>: architecture, interfaces, safety, parity, what was not verified</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/ros2/ballbot_control/ballbot_control/core/controller.py"><code>ros2/ballbot_control/ballbot_control/core/controller.py</code></a>: one tick of the controller</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/ros2/ballbot_control/ballbot_control/core/safety.py"><code>ros2/ballbot_control/ballbot_control/core/safety.py</code></a>: supervisor and command gate</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/experiments/warp_ppo/export_policy.py"><code>experiments/warp_ppo/export_policy.py</code></a>: checkpoint to bundle</li><li><a href="https://github.com/N3b3x/openballbot-rl/blob/master/ros2/ballbot_control/test/parity_replay.py"><code>ros2/ballbot_control/test/parity_replay.py</code></a>: the parity replay</li></ul></div>
     <div><h3>Study log and docs</h3><ul><li>S118: ROS 2 parity work, goal point, observation quirk, parity numbers</li><li>S119: torque actually used in a parity rollout (median 0.73 N m, 99th percentile 8.1)</li><li>S121: g39_goalcentre_s0 recommended; S122 notes the dead-band mismatch</li><li>On the main site: <a href="../reproduce.html">Reproduce</a></li></ul></div>
-  </div>
+  </div></div></details>
 </div></section>
 </main>
 </body>

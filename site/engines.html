@@ -28,6 +28,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <!-- /og -->
 <link rel="stylesheet" href="assets/css/site.css">
+<link rel="stylesheet" href="assets/css/viz.css">
 <style>
 .vgrid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));list-style:none;margin:0;padding:0}
 .vcard{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
@@ -43,7 +44,19 @@
 <section class="wrap" style="padding-top:clamp(40px,7vw,80px);padding-bottom:24px">
   <p class="eyebrow">Does the result depend on the engine?</p>
   <h1>Physics engines</h1>
-  <p class="lede">Every number on this site comes from MuJoCo on the CPU. Before moving the study to a faster engine we asked two questions: does the same robot with the same controller behave the same way, and is it actually faster? Two side experiments answer them. Simulation only; no hardware claims.</p>
+  <p class="lede">The early study ran on CPU MuJoCo. The generalist study trains and evaluates on MuJoCo-Warp on the GPU. This page is the check behind that move: same robot, same controller, do the engines agree, and is the GPU faster? Simulation only.</p>
+  <figure class="figure">
+    <div class="media"><svg class="diagram" viewBox="0 0 860 250" role="img" aria-labelledby="eng-t"><title id="eng-t">Who does what: CPU MuJoCo is the float64 reference and cross-check; MuJoCo-Warp on the GPU is the float32 training and evaluation engine; Isaac Sim PhysX was tried and kept only as a possible independent check.</title>
+      <defs><marker id="ahe" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ah" d="M0 0L10 5L0 10z"/></marker></defs>
+      <rect class="bx model" x="10" y="20" width="270" height="150" rx="10"/><text class="k" x="26" y="42">reference</text><text class="t" x="26" y="64">MuJoCo on the CPU</text><text class="s" x="26" y="84">float64, one world per process</text><text class="s" x="26" y="104">1,364 control steps per second</text><text class="s" x="26" y="130">Used for: the early study, re-checking</text><text class="s" x="26" y="147">GPU-trained policies, video rendering</text>
+      <rect class="bx hybrid" x="420" y="20" width="270" height="150" rx="10"/><text class="k" x="436" y="42">training engine</text><text class="t" x="436" y="64">MuJoCo-Warp on the GPU</text><text class="s" x="436" y="84">float32, 4096 worlds at once</text><text class="s" x="436" y="104">355,000 control steps per second</text><text class="s" x="436" y="130">Used for: training and evaluation</text><text class="s" x="436" y="147">of the generalist study</text>
+      <path class="ar" d="M280 70L418 70" marker-end="url(#ahe)" marker-start="url(#ahe)"/><text class="s mid" x="350" y="60">same contact model</text>
+      <text class="t mid f-good" x="350" y="96">LQR parity</text><text class="s mid" x="350" y="113">94.6 % speed runs</text><text class="s mid" x="350" y="129">96.1 % push runs</text>
+      <rect class="bx bad dash" x="720" y="20" width="130" height="150" rx="10"/><text class="k" x="732" y="42">tried</text><text class="t" x="732" y="64">Isaac Sim</text><text class="t" x="732" y="81">(PhysX)</text><text class="s" x="732" y="104">no anisotropic</text><text class="s" x="732" y="120">friction</text><text class="s" x="732" y="146">cross-check only</text>
+      <rect class="bx warn" x="10" y="196" width="840" height="44" rx="10"/><text class="t" x="26" y="215">Rule that follows</text><text class="s" x="150" y="215">Warp runs are not bit-reproducible and Warp is the harsher engine by a few falls.</text><text class="s" x="150" y="231">Every table on the site states its engine.</text>
+    </svg></div>
+    <figcaption><b>Who does what.</b> CPU MuJoCo is the reference. MuJoCo-Warp is about 260 times faster at 4096 worlds and agrees on fall against no fall in about 95 percent of LQR tests over 17 designs. <span class="src">experiments/mjx_port/REPORT.md; throughput table below</span></figcaption>
+  </figure>
 </section>
 
 <section class="block" id="verdict"><div class="wrap">
@@ -51,16 +64,16 @@
   <h2>One engine is a plausible accelerator, the other is a cross-check</h2>
   <div class="verdict">
     <div class="card"><span class="chip good">MuJoCo-Warp (GPU): go with caveats</span>
-      <p style="margin-top:.8em">Same contact model as our CPU engine. Under the LQR controller the speed ratios agree to within 0.01 and 94.6 % of speed runs and 96.1 % of push runs agree on fall versus no fall across 17 designs. About 260 times the throughput of one CPU process at 4096 parallel worlds. A small GPU PPO test then trained a policy that transfers to the CPU engine (below). Not yet tested: sensors, terrain, the motor model, per-world randomisation.</p></div>
+      <p style="margin-top:.8em">Same contact model as the CPU engine. With the LQR, speed ratios agree within 0.01, and 94.6 % of speed runs and 96.1 % of push runs agree on fall against no fall over 17 designs. About 260 times the throughput at 4096 worlds. A policy trained on it transfers to the CPU engine (below).</p></div>
     <div class="card"><span class="chip bad">Isaac Sim (PhysX): no-go as the main engine</span>
-      <p style="margin-top:.8em">It installs and runs here, but PhysX has no anisotropic friction, so the wheels needed a fragile roller-ring emulation. It reproduces nominal tracking and the contact-angle ranking but not the failure boundaries: at 1.1 times speed MuJoCo falls and PhysX holds. No large speedup was shown. Useful later as an independent cross-check.</p></div>
+      <p style="margin-top:.8em">PhysX has no anisotropic friction, so the wheels needed a fragile roller-ring emulation. It reproduces nominal tracking but not where the robot falls: at 1.1 times speed MuJoCo falls and PhysX holds. No large speedup was shown.</p></div>
   </div>
 </div></section>
 
 <section class="block" id="warp"><div class="wrap">
   <p class="eyebrow">MuJoCo CPU vs MuJoCo-Warp</p>
   <h2>Same model, same LQR, two engines</h2>
-  <p class="howto"><b>How to read it.</b> The controller is the model-based LQR from the study, nominal design. The last two columns are noise floors: the CPU engine at two MuJoCo versions, and the CPU engine with a 1e-6 rad initial tilt. Warp is float32; the CPU runs are float64. Source: <code>experiments/mjx_port/REPORT.md</code>, <code>outputs/study/mjx_port/*.csv</code>.</p>
+  <p class="howto"><b>How to read it.</b> Controller: the LQR, nominal design, no learning. The last two columns are noise floors: two CPU MuJoCo versions, and a 1e-6 rad initial tilt. Warp is float32; the CPU is float64. 4 trials per speed, 16 pushes per level; no training seeds apply. The report does not state randomisation or noise for this test. Source: <code>experiments/mjx_port/REPORT.md</code>, <code>outputs/study/mjx_port/*.csv</code>.</p>
   <div class="tablewrap"><table>
     <thead><tr><th>Metric</th><th>Warp vs CPU</th><th>CPU 3.13 vs 3.17</th><th>CPU + 1e-6 rad vs CPU</th></tr></thead>
     <tbody class="num">
@@ -72,9 +85,12 @@
     <tr><td>Push falls of 16 at 0.5 / 1 / 1.5 x weight</td><td>0 / 14 / 16 vs 0 / 12 to 13 / 16</td><td>identical</td><td>0 / 14 / 16 vs 0 / 13 / 16</td></tr>
     <tr><td>Torque-step ball-speed RMS error</td><td>5.5 % of peak</td><td>0.35 %</td><td>0.20 %</td></tr>
     </tbody></table></div>
-  <div class="callout warn"><b>What the gap means.</b> Warp reproduces the headline behaviour, but its trajectory error is 25 to 100 times the CPU version-to-version spread. The likely cause is float32 plus solver effects amplified by the unstable robot (open loop it e-folds in about 0.16 s); this was not isolated. GPU runs are not bit-reproducible, and marginal designs flip individual runs, so any GPU-trained policy would need CPU validation.</div>
+  <div class="callout warn"><b>What the gap means.</b> Warp reproduces the headline behaviour, but its trajectory error is 25 to 100 times the CPU version-to-version spread. Likely cause, not isolated: float32 and solver effects amplified by an unstable robot. GPU runs are not bit-reproducible, so GPU-trained policies need a CPU check.</div>
   <h3>17-design sweep</h3>
-  <p>Designs vary contact angle, scale, mass distribution, rotor inertia, motor torque and wheel friction (the two friction variants were made for this test). The design ranking is preserved: tall-centre-of-mass and 1.5x-scale robots are robust, low-centre, high-ball-mass and light-ball designs are fragile, and the half-scale robot fails on both engines. The largest disagreement is the 0.25 friction variant (CPU 4 of 4 falls at 0.4, Warp 1 of 4); the cause is not known. Per-design table: <code>outputs/study/mjx_port/sweep_cpu_vs_warp_wide.csv</code>.</p>
+  <p>The design ranking is preserved on both engines. Tall-centre-of-mass and 1.5x-scale robots are robust. Low-centre, high-ball-mass and light-ball designs are fragile. The half-scale robot fails on both.</p>
+  <details class="more"><summary>Details: what the designs vary, and the largest disagreement</summary><div>
+  <p>Designs vary contact angle, scale, mass distribution, rotor inertia, motor torque and wheel friction (the two friction variants were made for this test). The largest disagreement is the 0.25 friction variant (CPU 4 of 4 falls at 0.4, Warp 1 of 4); the cause is not known. Per-design table: <code>outputs/study/mjx_port/sweep_cpu_vs_warp_wide.csv</code>.</p>
+  </div></details>
   <h3>Throughput</h3>
   <div class="tablewrap"><table>
     <thead><tr><th>Setup</th><th>Control steps per second</th></tr></thead>
@@ -85,18 +101,20 @@
     <tr><td>Warp, 4096 worlds</td><td>355,000 (about 260 x one CPU process)</td></tr>
     <tr><td>Warp, 4096 worlds with a host-side LQR in the loop</td><td>283,000</td></tr>
     </tbody></table></div>
-  <p style="font-size:.88rem;color:var(--text-3)">Measured while training shared the GPU, so these are lower bounds. Not tested: sensors, cameras, per-world randomisation, the motor model, terrain, PPO training. Estimated porting effort: 3 to 4 weeks for a proprioceptive environment, 1 to 2 more for terrain and the ToF sensor.</p>
+  <p style="font-size:.88rem;color:var(--text-3)">Measured while training shared the GPU, so these are lower bounds. At the time of this side study, sensors, per-world randomisation, terrain and PPO training on Warp were still untested; the generalist study later built all of them (<a href="method.html">Setup and method</a>).</p>
   <h3>Training a policy on the GPU engine</h3>
-  <p>A small PPO test ran the whole loop on the GPU: physics, observations, reward, resets and the PPO update. 60 million steps took 7 minutes (about 140,000 steps per second); the CPU runs reach 5 million in hours. The policy was then evaluated on the CPU engine with the same protocol as every other controller.</p>
+  <p>A small PPO test ran the whole loop on the GPU. 60 million steps took 7 minutes (about 140,000 steps per second); the CPU runs reach 5 million in hours. The policy was then evaluated on both engines.</p>
+  <p class="src-note">Run <code>wp_nom_q_s0</code>, log entry S21. Randomisation: observation noise, latency, torque and pushes on; mass, friction and damping not randomised. One seed. 4 trials per speed, 16 pushes per level.</p>
   <div class="tablewrap"><table>
     <thead><tr><th>Engine</th><th>Speed ratio 0.4 / 0.8 / 1.1</th><th>Falls (of 4) per speed</th><th>Push falls 0.5x / 1x / 1.5x</th></tr></thead>
     <tbody class="num">
     <tr><td>CPU MuJoCo 3.13 (float64)</td><td>0.70 / 0.76 / 0.65</td><td>0 / 0 / 0</td><td>0 / 0 / 0</td></tr>
     <tr><td>Warp (float32)</td><td>0.74 / 0.71 / 0.61</td><td>0 / 0 / 0</td><td>0.25 / 0.19 / 0.25</td></tr>
     </tbody></table></div>
-  <div class="callout"><b>What it shows.</b> A policy trained only on Warp balances on the CPU engine without a fall, so the sim-to-sim gap did not break this learned controller. The first attempt fell every time on the CPU: my port fed the policy true wheel speeds while the CPU environment feeds a different quantity (a known quirk), a porting bug rather than an engine difference. Limits: one seed, no mass, friction or damping randomisation on the GPU yet, flat floor, push test shows Warp harsher than CPU for reasons not yet understood. Code: <code>experiments/warp_ppo/</code>.</div>
+  <div class="callout"><b>What it shows.</b> A policy trained only on Warp balances on the CPU engine without a fall. The first attempt fell every time on the CPU because of a porting bug (the port fed true wheel speeds; the CPU environment feeds a different quantity), not an engine difference. Limits: one seed, flat floor; Warp is harsher under pushes for reasons not understood. Code: <code>experiments/warp_ppo/</code>.</div>
   <h3>Scale-up: seven designs, three nominal seeds</h3>
-  <p>The same GPU recipe with full per-world randomisation (mass, friction, damping, torque, pushes, latency, noise) was repeated for the nominal design with three seeds and for six other designs. Each policy was checked on both engines with the study protocol. Every design that balances on Warp balances on the CPU engine, and the one that fails (1.5 times scale) fails on both, as it did with CPU-trained PPO.</p>
+  <p>Every design that balances on Warp balances on the CPU engine. The one that fails (1.5 times scale) fails on both.</p>
+  <p class="src-note">Log entry S21b. Trained on Warp with full per-world randomisation (mass, friction, damping, torque, pushes, latency, noise). Three seeds for the nominal design, one seed for the six others. Each policy checked on both engines.</p>
   <div class="tablewrap"><table>
     <thead><tr><th>Design</th><th>Engine</th><th>Speed ratio 0.4 / 0.8 / 1.1</th><th>Falls (of 4)</th><th>Push falls 0.5x / 1x / 1.5x</th></tr></thead>
     <tbody class="num">
@@ -109,14 +127,14 @@
     <tr><td>tall centre of mass</td><td>CPU / Warp</td><td>0.82 / 0.87 / 0.77 &middot; 0.85 / 0.84 / 0.79</td><td>0 / 0</td><td>0, 0, 0 on both</td></tr>
     <tr><td>low centre of mass</td><td>CPU / Warp</td><td>0.77 / 0.71 / 0.63 &middot; 0.72 / 0.72 / 0.63</td><td>0 / 1 at 0.4</td><td>0, 0, 0 &middot; 0, 0, 0.06</td></tr>
     </tbody></table></div>
-  <p style="font-size:.88rem;color:var(--text-3)">Four trials per speed cell (one fall is 25 %), sixteen pushes per level, one seed except nominal. Warp is consistently the harsher engine by a few runs; the cause is not known. Full table: <code>docs/research/tracking_study_log.md</code> section S21b.</p>
+  <p style="font-size:.88rem;color:var(--text-3)">Four trials per speed cell (one fall is 25 %), sixteen pushes per level. Warp is the harsher engine by a few runs; the cause is not known.</p>
   <ul class="vgrid" id="warpgrid"></ul>
 </div></section>
 
 <section class="block" id="physx"><div class="wrap">
   <p class="eyebrow">MuJoCo CPU vs Isaac Sim (PhysX)</p>
   <h2>Where the physics models differ</h2>
-  <p class="howto"><b>How to read it.</b> The MJCF model was converted with the official converter. Anisotropic ball-wheel friction is not available in PhysX, so each wheel was emulated with a ring of 16 passive rollers. Reduced protocol (2 headings, 4 pushes per level) for PhysX run time; MuJoCo re-run on the same protocol. Source: <code>experiments/isaac_port/REPORT.md</code>.</p>
+  <p class="howto"><b>How to read it.</b> Controller: the LQR, nominal design. PhysX has no anisotropic friction, so each wheel is a ring of 16 passive rollers. Reduced protocol (2 headings, 4 pushes per level) on both engines. The report does not state randomisation or noise; no training seeds apply. Source: <code>experiments/isaac_port/REPORT.md</code>.</p>
   <div class="tablewrap"><table>
     <thead><tr><th>Metric, nominal design</th><th>MuJoCo</th><th>PhysX</th></tr></thead>
     <tbody class="num">
@@ -126,14 +144,19 @@
     <tr><td>Open-loop pulse tilt difference</td><td colspan="2">0.4 deg RMS</td></tr>
     </tbody></table></div>
   <ul>
-    <li><b>Failure boundaries differ.</b> At 1.1 times speed MuJoCo falls (all runs in 8 of 9 designs) while PhysX holds, with a ratio near 1.1. Fall counts agree in only 1 of 9 designs at 1.1 and 7 of 9 at 0.8. In the 1x push PhysX falls more in 5 of 9 designs and less in none.</li>
+    <li><b>Failure boundaries differ.</b> At 1.1 times speed MuJoCo falls (all runs in 8 of 9 designs) while PhysX holds. Fall counts agree in only 1 of 9 designs at 1.1 and 7 of 9 at 0.8. In the 1x push PhysX falls more in 5 of 9 designs and less in none.</li>
     <li><b>The contact-angle ranking is reproduced:</b> the 66 degree design survives pushes and the 41 degree design does not.</li>
     <li><b>The emulation is fragile.</b> For the same run 2 of 4 roller-ring configurations held balance and 2 fell; a naive import (isotropic friction, capsule wheels) loses balance after 0.39 s.</li>
+    <li><b>Speed:</b> at 4096 environments about 15,000 control steps per second, roughly 10 times one MuJoCo process.</li>
+  </ul>
+  <details class="more"><summary>Details: what was not finished, and the cost</summary><div>
+  <ul>
     <li><b>Not finished in PhysX:</b> 8 of the 17 designs (including the half-scale and light-ball ones). Friction forces from the PhysX contact report read about 15 times lower than MuJoCo's, so only normal forces were compared.</li>
-    <li><b>Speed:</b> at 4096 environments about 15,000 control steps per second, roughly 10 times one MuJoCo process, with a 35 to 59 ms floor per physics step that may be contention with training (not resolved).</li>
+    <li><b>Speed floor:</b> a 35 to 59 ms floor per physics step that may be contention with training (not resolved).</li>
     <li><b>Cost on disk:</b> the install is a 7.5 GB download and a 16 GB environment.</li>
   </ul>
-  <div class="callout"><b>Reading.</b> PhysX is a second, independent engine for sanity checks, not a drop-in replacement: the behaviours our study cares about (where the controller falls) are exactly where it disagrees. The cheaper way to accelerate is MuJoCo-Warp, which keeps the MuJoCo contact model.</div>
+  </div></details>
+  <div class="callout"><b>Reading.</b> PhysX is an independent engine for sanity checks, not a replacement: it disagrees exactly where the study looks, at the point where the controller falls. MuJoCo-Warp keeps the MuJoCo contact model.</div>
   <ul class="vgrid" id="physxgrid"></ul>
 </div></section>
 </main>

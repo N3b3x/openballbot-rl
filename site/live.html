@@ -41,7 +41,8 @@
 <header class="wrap pagehead">
   <div class="eyebrow">Live, in your browser</div>
   <h1>Drive the trained policy</h1>
-  <p class="lede">This page runs the real controller. A neural network trained with PPO reads the robot's state 100 times a second and sets three wheel torques; MuJoCo, compiled to WebAssembly, simulates the physics. Set a velocity command, shove the robot, and watch it keep its balance on the ball. Everything here is <strong>simulation</strong>; no hardware was involved.</p>
+  <p class="lede">A trained neural network balances the robot in your browser. It reads the robot's state 100 times a second and sets three wheel torques. MuJoCo, compiled to WebAssembly, runs the physics. Set a velocity, shove the robot, watch it recover. <strong>Simulation only.</strong></p>
+  <div class="callout warn" style="margin-top:14px"><strong>Which policy this is.</strong> <code>robs_c_s0</code>: an early pure-PPO policy from the CPU study (study log, stage S13), with no LQR base. It is <strong>not</strong> the recommended controller <code>g39_goalcentre_s0</code>, which is not yet exported to the browser.</div>
   <div class="lv-badges" aria-live="polite">
     <span class="lv-badge busy" id="b-engine"><i></i><span>MuJoCo WebAssembly: loading</span></span>
     <span class="lv-badge" id="b-fix"><i></i><span>Contact-frame fix: pending</span></span>
@@ -108,7 +109,8 @@
 <section class="block wrap" id="policy">
   <div class="eyebrow">What the network does</div>
   <h2>Eight signals in, three torques out</h2>
-  <p class="lede">The policy is a small multilayer perceptron: the actor has 22 inputs (the eight signals below), two layers of 256 tanh units and 3 outputs, about 72,000 weights (144,391 parameters including the value network that is only used in training). It has no camera and no memory beyond the last action and one integral term: it balances from the robot's own motion alone.</p>
+  <p class="lede">A small network: 22 inputs (the eight signals below), two layers of 256 tanh units, 3 outputs. No camera. No memory beyond the last action and one integral term.</p>
+  <p class="lv-small">About 72,000 actor weights; 144,391 parameters including the value network used only in training.</p>
   <div class="lv-two" style="margin-top:28px">
     <div class="card">
       <h3>What it sees (live)</h3>
@@ -130,14 +132,14 @@
     </div>
   </div>
   <div class="callout" style="margin-top:28px">
-    <strong>An honest curiosity.</strong> The input called <code>motor_state</code> is meant to be the three wheel speeds. Reading the environment code (<code>ballbot_gym/envs/ballbot_env.py</code>) shows it indexes the velocity vector by <em>joint number</em> instead of <em>degree-of-freedom address</em>, so what the policy actually receives is <code>[base vy, base vz, base roll rate] / 30</code> (entries 1 to 3 of the velocity vector, which belong to the base's free joint). The policy was trained on exactly that signal, so this page reproduces it, because faithful behaviour matters more than the label. So the row labelled <code>motor_state</code> in the table above is not a wheel speed.
+    <strong>A known quirk.</strong> The input called <code>motor_state</code> is not the wheel speeds. The environment code (<code>ballbot_gym/envs/ballbot_env.py</code>) indexes the velocity vector by joint number, so the policy receives <code>[base vy, base vz, base roll rate] / 30</code>. It was trained on that signal, so this page reproduces it.
   </div>
 </section>
 
 <section class="block wrap" id="parity">
   <div class="eyebrow">Parity with the Python reference</div>
   <h2>Does the browser behave like the training environment?</h2>
-  <p class="lede">A claim of faithfulness needs evidence. We recorded deterministic rollouts of the same policy in the original Python environment (MuJoCo 3.13.0, no domain randomisation, flat floor) and replayed the same initial states and commands here, with the policy running in JavaScript and the physics in WebAssembly.</p>
+  <p class="lede">The same policy was rolled out in the Python environment (MuJoCo 3.13.0 on the CPU, no domain randomisation, no noise, flat floor, deterministic). The same starts and commands are replayed here and compared.</p>
   <div class="lv-two" style="margin-top:24px">
     <div class="card">
       <h3>Base-position difference, JavaScript + WASM vs Python</h3>
@@ -154,21 +156,21 @@
     </div>
   </div>
   <div class="callout warn">
-    <strong>What this does and does not show.</strong> The agreement is measured on noise-free runs from a clean start. The policy was trained with domain randomisation (random masses, friction, torque scale, one-step latency, sensor noise and random pushes); this page runs the nominal model with no noise and no hidden pushes, so it shows what the policy does in the idealised case. Contact-rich chaotic dynamics eventually amplify tiny numerical differences, so longer runs than 8 s (or other commands) may drift further than the table shows; we only report what we measured. The floor is flat: the study's rough-terrain and book-climbing experiments are not reproduced here.
+    <strong>What this shows.</strong> Agreement on noise-free 8 s runs from a clean start. The policy was trained with domain randomisation; this page runs the nominal model with no noise and no hidden pushes. Longer runs or other commands may drift further than the table shows. The floor is flat.
   </div>
 </section>
 
 <section class="block wrap" id="fix">
   <div class="eyebrow">Why this was not obvious</div>
   <h2>Reproducing the omniwheel contact fix in JavaScript</h2>
-  <p class="lede">The robot drives the ball with three omniwheels. Each wheel is modelled as a capsule that rolls freely along its own axis (friction 0.001) and grips across it (friction 1.0). Stock MuJoCo picks the first contact tangent arbitrarily, so that anisotropy points the wrong way. The study's Python environment therefore runs its own stepper that rewrites every ball-wheel contact frame so the first tangent follows the capsule axis.</p>
+  <p class="lede">Each omniwheel is a capsule that rolls freely along its axis (friction 0.001) and grips across it (friction 1.0). Stock MuJoCo picks the contact tangent arbitrarily, so the free direction can point the wrong way. The study's stepper rewrites every ball-wheel contact frame. The browser has to do the same.</p>
   <div class="lv-two">
     <div class="card">
       <h3>How the browser does the same</h3>
       <ol style="color:var(--text-2);padding-left:1.2em;margin:0">
         <li>The official <code>@mujoco/mujoco</code> 3.13.0 build exposes the individual pipeline stages, so the step is split as in Python: kinematics, collision, <em>rewrite frames</em>, constraints, forces, then <code>mj_implicit</code>.</li>
         <li><code>data.contact</code> is returned <strong>by copy</strong>, so writing to it has no effect. The frames are instead rewritten in place inside the live WebAssembly memory (<code>data.arena</code>), whose struct layout the page calibrates and verifies against <code>data.contact</code> before using it.</li>
-        <li>Switch the fix off with the checkbox above and the same code falls over almost immediately, matching what the Python environment does without the fix (it also falls at control step 25 in the reference run).</li>
+        <li>Switch the fix off with the checkbox above and the robot falls almost at once, as in Python without the fix (control step 25 in the reference run).</li>
       </ol>
     </div>
     <div class="card">
